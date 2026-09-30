@@ -9,7 +9,7 @@ public class TrailSimulatorTarget : TargetRules
 	{
 		Type = TargetType.Game;
 		// BuildEnvironment = TargetBuildEnvironment.Unique;
-		DefaultBuildSettings = BuildSettingsVersion.V5;
+		DefaultBuildSettings = BuildSettingsVersion.V7;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_8;
 		ExtraModuleNames.Add("TrailSimulator");
 		
