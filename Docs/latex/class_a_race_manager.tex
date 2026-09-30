@@ -1,0 +1,1987 @@
+\doxysection{ARace\+Manager Class Reference}
+\hypertarget{class_a_race_manager}{}\label{class_a_race_manager}\index{ARaceManager@{ARaceManager}}
+
+
+{\ttfamily \#include $<$Race\+Manager.\+h$>$}
+
+Inheritance diagram for ARace\+Manager\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_a_race_manager}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_a_race_manager_aed4cc09acb3bc0af1f2c0518ae289f14}{ARace\+Manager}} ()
+\item 
+virtual void \mbox{\hyperlink{class_a_race_manager_a1525d2861aee893fcc940e5732ad497d}{Tick}} (float Delta\+Time) override
+\item 
+\mbox{\hyperlink{class_a_race_manager_ad1f7c7e3e04f7614051b4e97df0d8632}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE}} (FOn\+Change\+Destination)
+\item 
+bool \mbox{\hyperlink{class_a_race_manager_ad0ce5d52716d42c23fdc6c697cf65ed0}{Refresh\+Subsystems}} () const
+\begin{DoxyCompactList}\small\item\em Ensure \doxylink{class_subsystems}{Subsystems} in Internal methods. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_a_race_manager_a7943b49899815f936822cbf753e4918c}{Refresh\+Subsystems\+From\+PIE}} () const
+\begin{DoxyCompactList}\small\item\em Ensure \doxylink{class_subsystems}{Subsystems} in EWorld\+Type\+::\+PIE. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a59fa9c3cae0c27b87d3879ef12375ba7}{Handle\+Races\+Datas\+Gathered}} (\mbox{\hyperlink{struct_f_race_entries}{FRace\+Entries}} Races)
+\begin{DoxyCompactList}\small\item\em Called when all the Races are gathered. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_add13d46001f9f3c4627b2d878f7a4d74}{Handle\+Path\+Datas\+Gathered}} (int64 Race\+ID, \mbox{\hyperlink{struct_f_race_path}{FRace\+Path}} Race\+Path\+Datas)
+\begin{DoxyCompactList}\small\item\em Handle the Path datas, spawns the Path and calls Draw\+Path(). \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a68e21311f4d80dcc389aa1afb7a88132}{Offset\+Path}} (int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a25a94b1221e0b3dca469362bf5991faf}{Handle\+Race\+Setup\+Datas\+Gathered}} (int64 Race\+ID, \mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}} Race\+Setup\+Datas)
+\begin{DoxyCompactList}\small\item\em Called when the Race setup is gathered. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a640a1ee5381e1945fc30038e25e14589}{Handle\+Race\+Pois\+Datas\+Gathered}} (int64 Race\+ID, \mbox{\hyperlink{struct_f_p_o_is}{FPOIs}} Race\+Pois\+Datas)
+\begin{DoxyCompactList}\small\item\em Called when the Pois are gathered and spawn them. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a7a30ed79dedaa0cd55cb6570bad2d775}{Get\+Pois\+Datas}} (int64 Race\+ID)
+\begin{DoxyCompactList}\small\item\em Binding proxy to gather Pois datas. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_accd5f2aa7d3408357e826413e61642b9}{Handle\+Runners\+Datas\+Gathered}} (int64 Race\+ID, \mbox{\hyperlink{struct_f_runners}{FRunners}} Race\+Runners\+Datas)
+\begin{DoxyCompactList}\small\item\em Called when the Runners datas are gathered and spawn them. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_af92337100709daf839ecb3a33e4028e7}{Handle\+Update\+Runners}} (int64 Race\+ID, \mbox{\hyperlink{struct_f_runners}{FRunners}} Runners\+Datas)
+\begin{DoxyCompactList}\small\item\em Updating Runners for current race. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a1fee9d7b592843afa3781a3b0ce3fc92}{Get\+Runners\+Datas}} (int64 Race\+ID)
+\begin{DoxyCompactList}\small\item\em Binding proxy to gather Runners datas. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a8d306f5214f5f69edaf05a1e9b61ba8e}{Get\+Checkpoints\+Datas}} (int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_acbe29932f1f258cb7066248627b6ee3d}{Save\+Georef\+Location}} (int64 Race\+ID, FVector Georef\+Location)
+\begin{DoxyCompactList}\small\item\em Keeps track of the Georef locations for each Race. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a56de829b26c399b8c5f907c5fedf7630}{Move\+To\+Path\+\_\+\+Internal}} (int64 Race\+ID)
+\begin{DoxyCompactList}\small\item\em Moving the Pawn to the required path -\/ Answering to CURL Request. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_aa170809be5dc65927b3b934838ca940d}{Rt\+Move\+To\+Path}} (int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a27e0cbd2e7ad7192237a735a2c74e3e4}{Ed\+Move\+To\+Path}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ad05ce120bd71b2d91e06b9bbef29e893}{Toggle\+Path\+\_\+\+Internal}} (int64 Race\+ID, bool b\+Show) const
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Path. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a6deb046af600e28f5af3ae1b5f18edd6}{Rt\+Toggle\+Path}} (int64 Race\+ID, bool b\+Show) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_adce7a0ead7308c48c89e841807bf72c8}{Ed\+Toggle\+Path}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a00a37e6748233c8db0dabdcd8c2a0a63}{Refresh\+Race\+\_\+\+Internal}} (int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a256f82530c0f11e5a2b70df9032ae9aa}{Ed\+Refresh\+Race}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a005379160c77dcdfbf1c6e2fe24e5b6b}{Rt\+Refresh\+Race}} (int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a29a456d46a4a37a574144258cb5df946}{Toggle\+Slope\+\_\+\+Internal}} (int64 Race\+ID, bool b\+Show) const
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Slope. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a314e932b9a1e09b7fa12e5d31c95e8f8}{Rt\+Toggle\+Slope}} (int64 Race\+ID, bool b\+Show) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a262108391ac656c0068e148e18f0bb08}{Ed\+Toggle\+Slope}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ad913faf0dcb389b6cae02d8d68082b7f}{Toggle\+Kms\+\_\+\+Internal}} (int64 Race\+ID, bool b\+Show) const
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Km. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_ab0ad37714eae5695fe4df48a3926c396}{Rt\+Toggle\+Kms}} (int64 Race\+ID, bool b\+Show) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a0487a066c69d66a2361bf5bed181c2eb}{Ed\+Toggle\+Kms}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a7fca2f0bac1c4211a98b72eab127e9f8}{Toggle\+Pulse\+\_\+\+Internal}} (int64 Race\+ID, bool b\+Display)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a20cafbf7bf0e85c64be6f01b575821a8}{Ed\+Toggle\+Pulse}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a6f1347cdb5399e9315d9c07473ba9d3a}{Rt\+Toggle\+Pulse}} (int64 Race\+ID, bool b\+Display)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a5a815cbdcf2f55f08b4313b5be34b88d}{Toggle\+Race\+\_\+\+Internal}} (int64 Race\+ID, bool b\+Show) const
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Race with all children. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_af76c108b091ba14a60f1f25215ac3956}{Rt\+Toggle\+Race}} (int64 Race\+ID, bool b\+Show) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a2965cad041bfcd61846f622d4fcec3bb}{Ed\+Toggle\+Race}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a3627d1225ce810c37d63aa68c62afb12}{Toggle\+Runners\+\_\+\+Internal}} (int64 Race\+ID, bool b\+Show) const
+\begin{DoxyCompactList}\small\item\em Hiding Runners without testing Teams. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_af52bb8509d7c1cae21016fb9520b2439}{Teleport\+To\+Team\+\_\+\+Internal}} (int64 Team\+ID, int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Moving the Pawn to the Team location. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a42ee6c6cfce289c5cee17bb3be5c1538}{Rt\+Teleport\+To\+Team}} (int64 Team\+ID, int64 Race\+ID) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a2d3071373a8c6aaf4927146ec440bc0d}{Ed\+Teleport\+To\+Team}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_aa1274b2e8ba7ba67a11691af209e2e09}{Toggle\+Flag\+\_\+\+Internal}} (int64 Team\+ID, int64 Race\+ID, bool b\+Display) const
+\begin{DoxyCompactList}\small\item\em Toggle Team flag display. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a55085299a0fd525ec15b7f47ef273982}{Rt\+Toggle\+Flag}} (int64 Team\+ID, int64 Race\+ID, bool b\+Display) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_afd212a3a2575d8446c30b5a0737690b3}{Ed\+Toggle\+Flag}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a439f0091652e39f8d52cb5cc87c93764}{Toggle\+Photo\+\_\+\+Internal}} (int64 Team\+ID, int64 Race\+ID, bool b\+Display) const
+\begin{DoxyCompactList}\small\item\em Toggle Team photo display. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a62a6fdf4daef00510fed538160564853}{Rt\+Toggle\+Photo}} (int64 Team\+ID, int64 Race\+ID, bool b\+Display) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a4102e9cfb6a1fe741365f9630f0a3f67}{Ed\+Toggle\+Photo}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_adfab05c5a48bebcd72fea56f50d6f5fe}{Toggle\+Club\+\_\+\+Internal}} (int64 Team\+ID, int64 Race\+ID, bool b\+Display) const
+\begin{DoxyCompactList}\small\item\em Toggle Team club display. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_ae7ab6a7d38ccd42549b3b9c634e4e942}{Rt\+Toggle\+Club}} (int64 Team\+ID, int64 Race\+ID, bool b\+Display) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a17da6ee00d8b2375fe63da7c7941d7fe}{Ed\+Toggle\+Club}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_aaeb41196075a5cb8ef95ab68bbea8b96}{Toggle\+Team\+\_\+\+Internal}} (int64 Team\+ID, int64 Race\+ID, bool b\+Display) const
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Team. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_ae69df62a230135badd0844db4a49967a}{Rt\+Toggle\+Team}} (int64 Team\+ID, int64 Race\+ID, bool b\+Display) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_aa7b12dd174d9d01a6c96b62ff85115bc}{Ed\+Toggle\+Team}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ac011477a4cf009e6c0cc435ce2080381}{Toggle\+Teams\+\_\+\+Internal}} (int64 Race\+ID, bool b\+Display) const
+\begin{DoxyCompactList}\small\item\em Toggle Teams by Race\+ID. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a8f85a737a933addc4d399bb53465e1dd}{Rt\+Toggle\+Teams}} (int64 Race\+ID, bool b\+Display) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a162f186b27a1e4cc054ceb91101b6b86}{Ed\+Toggle\+Teams}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a8ee40e81e194739b9a89fe8d62e8a8d6}{Anim\+Team\+\_\+\+Internal}} (int64 Team\+ID, int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Playing the orbit animation around a Team. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a75e67b540bef5bc148355c8e73aa3539}{Rt\+Anim\+Team}} (int64 Team\+ID, int64 Race\+ID) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a871b131b5bf3080a9cbcb1f0aad3040e}{Ed\+Anim\+Team}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a3c6fdd85c9eff849eac7a294e7ac2acb}{Stop\+Anim\+Team\+\_\+\+Internal}} (int64 Team\+ID, int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Ending the Team animation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_ad11813936b905dbcbb3298a7e0fb7113}{Rt\+Stop\+Anim\+Team}} (int64 Team\+ID, int64 Race\+ID) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a9197536d2df2ad0cb808a292830f9f63}{Ed\+Stop\+Anim\+Team}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ac250d17bc47567b80d734fbcb5c4f861}{Toggle\+Checkpoints\+\_\+\+Internal}} (int64 Race\+ID, bool b\+Show) const
+\begin{DoxyCompactList}\small\item\em Show/\+Hide all Checkpoints. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a9da7b4e960b2be90ee041c1990885961}{Rt\+Toggle\+Checkpoints}} (int64 Race\+ID, bool b\+Show) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a9329baa026384e5c16b8d602f03291fe}{Ed\+Toggle\+Checkpoints}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a3fdb86f54ba4f55080a71f5b23ad0697}{Toggle\+Checkpoint\+\_\+\+Internal}} (int64 Checkpoint\+ID, int64 Race\+ID, bool b\+Display) const
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Checkpoint. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_ad8c035e1b362ec65ff188bf135042cea}{Rt\+Toggle\+Checkpoint}} (int64 Checkpoint\+ID, int64 Race\+ID, bool b\+Display) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a6e0fbaddcfec53dbc3bbb09450e838f8}{Ed\+Toggle\+Checkpoint}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a0b70bc64e82cb7021589c35547780471}{Toggle\+Checkpoint\+Weather\+\_\+\+Internal}} (int64 Team\+ID, int64 Race\+ID, bool b\+Display) const
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Weather. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a91df00a82651b77e20ae2ccf7d283716}{Rt\+Toggle\+Checkpoint\+Weather}} (int64 Checkpoint\+ID, int64 Race\+ID, bool b\+Show)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a2d04d02e8fc2be4ec81258a7f8107d1d}{Ed\+Toggle\+Checkpoint\+Weather}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a8bc8d3cbc52ae5b789a3e17471e4ce02}{Teleport\+To\+Checkpoint\+\_\+\+Internal}} (int64 Checkpoint\+ID, int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Teleport to Checkpoint. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_aba9f13d4f837f937492383a722fa0f6f}{Rt\+Teleport\+To\+Checkpoint}} (int64 Checkpoint\+ID, int64 Race\+ID) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a26036fa5e2d62332f1bae8f084a5e19b}{Ed\+Teleport\+To\+Checkpoint}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a24c3474c10cd893bbd724b3c085aae13}{Anim\+Checkpoint\+\_\+\+Internal}} (int64 Checkpoint\+ID, int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Play/\+Stop Checkpoint animation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a2fcd1e7dd2d501a4f92a37bc0b722bf0}{Rt\+Anim\+Checkpoint}} (int64 Checkpoint\+ID, int64 Race\+ID) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a9bbea189561dd3149347e8241cf4d8b0}{Ed\+Anim\+Checkpoint}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ac3135c08014ef76809466f88ba0dab64}{Stop\+Anim\+Checkpoint\+\_\+\+Internal}} (int64 Checkpoint\+ID, int64 Race\+ID) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_adac963870aaf942b3929caf4a40c156e}{Rt\+Stop\+Anim\+Checkpoint}} (int64 Checkpoint\+ID, int64 Race\+ID) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_aed61365ad90512edb1524949e3fa033b}{Ed\+Stop\+Anim\+Checkpoint}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a9b3af55c6ca2e64cc66bc85217becef8}{Add\+Team\+To\+Group\+\_\+\+Internal}} (int64 Race\+ID, int64 Group\+ID, int64 Team\+ID) const
+\begin{DoxyCompactList}\small\item\em Adding a Team to a Group. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a959795b1b4b3daaf33952299425dc7b0}{Rt\+Add\+Team\+To\+Group}} (int64 Race\+ID, int64 Group\+ID, int64 Team\+ID) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ad9f450bfa031441b0f6bb3ac6c2051e0}{Ed\+Add\+Team\+To\+Group}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a02163514df2ecb33fdbab7f2f56182a1}{Remove\+Team\+From\+Group\+\_\+\+Internal}} (int64 Race\+ID, int64 Group\+ID, int64 Team\+ID) const
+\begin{DoxyCompactList}\small\item\em Removing a Team from a Group. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a5c20826e85338e79e9c07eebc6296391}{Rt\+Remove\+Team\+From\+Group}} (int64 Race\+ID, int64 Group\+ID, int64 Team\+ID) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ae322b27593538d077decf02dd8c8f1e4}{Ed\+Remove\+Team\+From\+Group}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ac1bd79bbeedf5566f5df054c8cb1123a}{Toggle\+Group\+\_\+\+Internal}} (int64 Race\+ID, int64 Group\+ID, bool b\+Display) const
+\begin{DoxyCompactList}\small\item\em Show/\+Hide a whole Group. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a3a2f714348c9d6a13f90d820322caa2d}{Rt\+Toggle\+Group}} (int64 Race\+ID, int64 Group\+ID, bool b\+Display) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ad821d9a0dbfe53bda63faea528284ead}{Ed\+Toggle\+Group}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a9bc9609cea0fc375cdc346696b8e345a}{Toggle\+Poi\+\_\+\+Internal}} (int64 Poi\+ID, int64 Race\+ID, bool b\+Display) const
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Poi. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a5139cfa4c17a4927f8a75863c1a5d3f6}{Rt\+Toggle\+Poi}} (int64 Poi\+ID, int64 Race\+ID, bool b\+Display) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_af3a08de0fc137d750742a2dcc3d5fc5f}{Ed\+Toggle\+Poi}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a0d6db43e9ac23d3168cec91ae2027bf8}{Toggle\+Pois\+\_\+\+Internal}} (int64 Race\+ID, bool b\+Display) const
+\begin{DoxyCompactList}\small\item\em Show/\+Hide all Pois. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a3086addc3a0bc3ce8093843890699c9b}{Rt\+Toggle\+Pois}} (int64 Race\+ID, bool b\+Show) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_afc54a3e7fa30fb75d000ad8c3f022ded}{Ed\+Toggle\+Pois}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a21ab6177ff0d321731f7316aace79824}{Toggle\+Poi\+Weather\+\_\+\+Internal}} (int64 Poi\+ID, int64 Race\+ID, bool b\+Display) const
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Weather. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a74ea9ee040c8a80aced072e1c9c34d03}{Rt\+Toggle\+Poi\+Weather}} (int64 Poi\+ID, int64 Race\+ID, bool b\+Show)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ade3c54ac9055dbf24e9751036adbd094}{Ed\+Toggle\+Poi\+Weather}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ac231cc0772e461ca7df64ec1fc07459e}{Teleport\+To\+Poi\+\_\+\+Internal}} (int64 Poi\+ID, int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Teleport to Poi. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a5e7565fd0b2367634558b20f7e4f21f0}{Rt\+Teleport\+To\+Poi}} (int64 Poi\+ID, int64 Race\+ID) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a0a8f857c6258709297e7fb7ae10ca0db}{EDTeleport\+To\+Poi}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a17bdc8a04b8c0c829aa93b11fec25e38}{Anim\+Poi\+\_\+\+Internal}} (int64 Poi\+ID, int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Start/\+Stop Poi Animation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a3682e7b6d8bd0a02ae11ced18ba52ebd}{Rt\+Anim\+Poi}} (int64 Poi\+ID, int64 Race\+ID) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a4559d49adb179a9d9b798be5c88fbda3}{Ed\+Anim\+Poi}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a8c7f4382bf8a0c7f418f177b13b069ef}{Stop\+Anim\+Poi\+\_\+\+Internal}} (int64 Poi\+ID, int64 Race\+ID) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a693d235225a6a1d0076b7b9551f12138}{Rt\+Stop\+Anim\+Poi}} (int64 Poi\+ID, int64 Race\+ID) const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a27336549db9b99822cf44555647fdb22}{Ed\+Stop\+Anim\+Poi}} () const
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a19dbf6e4883594deae22807c63c9c674}{Ed\+Reset\+Saved\+Datas}} ()
+\begin{DoxyCompactList}\small\item\em Resetting Saved values to default. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_aa254366baf40f39806df9589b17ddfb3}{Save\+Main\+Url\+\_\+\+Internal}} (FString New\+Main\+Url)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ac1d8b4a29000ccbd2021b5758cff001d}{Rt\+Save\+Main\+Url}} (FString New\+Url)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_aec48ab43bb5d7dfa87114b4f21870451}{Update\+Fetch\+Frequency\+\_\+\+Internal}} (float Fetch\+Value, int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Updating the fetch frequency. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_ababbcd09e8b86e2bf458dfe8ad504cf5}{Rt\+Update\+Fetch\+Frequency}} (float Fetch\+Value, int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ac32a2bba86bbecebc2a83a205ec32ace}{Ed\+Update\+Fetch\+Frequency}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a571067088159d5d6d2a7326bee1e321d}{Change\+Path\+Offset\+\_\+\+Internal}} (float Offset\+Value, int64 Race\+ID)
+\begin{DoxyCompactList}\small\item\em Changing the ZOffset of Path. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_ab05cf59c6954b241e50a7349c84597ce}{Rt\+Change\+Path\+Offset}} (float Offset\+Value, int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a9aa2f97942e2afa9787749ddf4b315fe}{Ed\+Change\+Path\+Offset}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a61b5a78b2f0adef3d2d840567d9aaace}{Update\+Glow\+Intensity\+\_\+\+Internal}} (float Glow\+Value, int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Updating Glow intensity. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a9391df99eaa36e06d7dcda440bd57f92}{Rt\+Update\+Glow\+Intensity}} (float Glowvalue, int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a3a661a8bd2b1ed37d543181c2121ee73}{Ed\+Update\+Glow\+Intensity}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_abd3b82bc2384ca98a7557c8546939e11}{Update\+Pulse\+Frequency\+\_\+\+Internal}} (float Pulse\+Speed, int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Updating the Pulse speed. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_abcb13527b120dd398f0b32da1e4dcf50}{Rt\+Update\+Pulse\+Frequency}} (float Glowvalue, int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ae3768adbe1dc20ea17e434af6719e96d}{Ed\+Update\+Pulse\+Frequency}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a6b016641300822b5392096bfce1a616b}{Update\+Min\+Max\+\_\+\+Internal}} (FVector Min\+Value, FVector Max\+Value, int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Updating the Min \& Max size of a Team. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a7ba1f2fc78803603d3a60437effb7493}{Rt\+Update\+Min\+Max}} (float Min\+Value, float Max\+Value, int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a2afdcbcfbd91774d90501147425160cb}{Ed\+Update\+Min\+Max}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a1f0d09f0366b6482878b06a0920c0cf4}{Update\+Near\+Far\+\_\+\+Internal}} (float Near\+Value, float Far\+Value) const
+\begin{DoxyCompactList}\small\item\em Updating the Near \& Far distance for scale. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a1b3621127f0704ff56b4569b7a0979c9}{Rt\+Update\+Near\+Far}} (float Near\+Value, float Far\+Value)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a0b79607356b0c91a88133bd2df049dd6}{Ed\+Update\+Near\+Far}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ab602017d0c689435a1eb76eac0629e27}{Update\+Race\+Url\+By\+ID\+\_\+\+Internal}} (FString url, int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Updating the Url for a race. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_a34f04f24bf80598da9502783bfc5b81e}{Rt\+Update\+Race\+Url\+By\+ID}} (FString url, int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a5fd848478cbf7271fe0ce407526e1eff}{Ed\+Update\+Race\+Url\+By\+ID}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_af928021d0bb30cfed4291f3e98e64afe}{Update\+Main\+Url\+\_\+\+Internal}} (FString url)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a32d18d3120c6bd58ed1ed0928a1de00a}{Ed\+Update\+Main\+Url}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a439c46072766872dd48d428810cd0aa8}{Rt\+Update\+Main\+Url}} (FString New\+Url)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a03baec6045eb42872c2a84b7ef4c95e8}{Start\+Travel\+Fwd\+\_\+\+Internal}} (int64 Race\+ID)
+\begin{DoxyCompactList}\small\item\em Starting/\+Stoping the Travel. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_race_manager_aab78e01f083296a0248e79d1b34cef94}{Ed\+Start\+Travel\+Fwd}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_ad8d43dfc3af0a6f7963fad0a912c81b1}{Rt\+Start\+Travel\+Fwd}} (int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_aceacf806ae9c17d6647dc8cc07eaca29}{Start\+Travel\+Bkd\+\_\+\+Internal}} (int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_af717e5dfa6e5f51bc15f441d203397ea}{Ed\+Start\+Travel\+Bkd}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a628596e3a8be19fa3e60bbb3c75c6e3c}{Rt\+Start\+Travel\+Bkd}} (int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a2c33463ebe83378000ab23d280eced38}{Stop\+Travel\+\_\+\+Internal}} (int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a1d643c0a8ec249818d092e05704ad9f7}{Ed\+Stop\+Travel}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a40f21cc6cb03614985c731c7c4a8f9a7}{Rt\+Stop\+Travel}} (int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a6e1a7b6bbc6038c29aa9ff3f12cb4fd6}{Pause\+Travel\+\_\+\+Internal}} (int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_a_race_manager_af012d85559efd8668f300933524d5614}{Ed\+Pause\+Travel}} ()
+\item 
+void \mbox{\hyperlink{class_a_race_manager_a38aceb71bc0501d0be4f69ec876a3036}{Rt\+Pause\+Travel}} (int64 Race\+ID)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+FOn\+Change\+Destination \mbox{\hyperlink{class_a_race_manager_ae141a10fc0ea54be84435fe59bb3e6b0}{On\+Change\+Destination}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_path_subsystem}{UPath\+Subsystem}} $>$ \mbox{\hyperlink{class_a_race_manager_a346cdd14d106fd4d0fad1a4247124707}{Path\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_runner_subsystem}{URunner\+Subsystem}} $>$ \mbox{\hyperlink{class_a_race_manager_aad7b8c513a6e8bd1372cd169a23c1230}{Runner\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_team_subsystem}{UTeam\+Subsystem}} $>$ \mbox{\hyperlink{class_a_race_manager_a406a029f5f8ca8903728bc304ab8527e}{Team\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_race_subsystem}{URace\+Subsystem}} $>$ \mbox{\hyperlink{class_a_race_manager_ae87b296768e8d5b58f25bfffe1fc3cc7}{Race\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_scale_subsystem}{UScale\+Subsystem}} $>$ \mbox{\hyperlink{class_a_race_manager_aebd820d3e42f4d5fe139a980bef4f09f}{Scale\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_poi_subsystem}{UPoi\+Subsystem}} $>$ \mbox{\hyperlink{class_a_race_manager_ae7486e56511ec8358882db416e95dd98}{Poi\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_checkpoint_subsystem}{UCheckpoint\+Subsystem}} $>$ \mbox{\hyperlink{class_a_race_manager_aca0207854a674c71328942dd2e9b03c0}{Checkpoint\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_trails_subsystem}{UTrails\+Subsystem}} $>$ \mbox{\hyperlink{class_a_race_manager_a9303601c8b39f09394039babdb8de920}{Trails\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_settings_subsystem}{USettings\+Subsystem}} $>$ \mbox{\hyperlink{class_a_race_manager_ad91b1ee9131ddf9e2550e7a7d4f9125d}{Settings\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_weather_subsystem}{UWeather\+Subsystem}} $>$ \mbox{\hyperlink{class_a_race_manager_acfcb7ebc46944912f43c92a23c70a113}{Weather\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_loading_status_subsystem}{ULoading\+Status\+Subsystem}} $>$ \mbox{\hyperlink{class_a_race_manager_a02096d9e430cb6ef173ca96de8a51c82}{Loading\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_http_gateway_subsystem}{UHttp\+Gateway\+Subsystem}} $>$ \mbox{\hyperlink{class_a_race_manager_a8de0aa0efb08da17b83b9560c6a8cfd9}{Http\+Gateway\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_team_group_subsystem}{UTeam\+Group\+Subsystem}} $>$ \mbox{\hyperlink{class_a_race_manager_a4076261190d82b6f790cd67b1930ff6e}{Team\+Group\+Subsystem}}
+\item 
+float \mbox{\hyperlink{class_a_race_manager_a36289467f044188ad870ada66616fd0e}{Test\+Pulse}} = 1.f
+\item 
+bool \mbox{\hyperlink{class_a_race_manager_ae3890048964902fee63a7b6d8b3edbac}{b\+Afficher}} = true
+\item 
+int64 \mbox{\hyperlink{class_a_race_manager_af3cba806b4339c7bfc39796330b15ec5}{Test\+Race\+ID}} = 1
+\item 
+float \mbox{\hyperlink{class_a_race_manager_af586648d9e5ecf5f3c57592dd80df13f}{Test\+Min\+Scale}} = 100.f
+\item 
+float \mbox{\hyperlink{class_a_race_manager_ab6aabe562e34b3bbac843cf4a892d0ce}{Test\+Max\+Scale}} = 300.f
+\item 
+float \mbox{\hyperlink{class_a_race_manager_ae1a2bf22987447750a2fb576230fe7a8}{Test\+Near\+Dist}} = 50000.f
+\item 
+float \mbox{\hyperlink{class_a_race_manager_a268a97ce385e0a4464e0aacd8791cd5a}{Test\+Far\+Dist}} = 1000000.f
+\item 
+float \mbox{\hyperlink{class_a_race_manager_a1f2a108bac76eb7e764baaffb94b441b}{Test\+ZOffset}} = 100.f
+\item 
+float \mbox{\hyperlink{class_a_race_manager_aea8db229c0d4669ee2db2e2bbd3088f0}{Test\+Fetch}} = 1.f
+\item 
+float \mbox{\hyperlink{class_a_race_manager_ad2ffe67655f777a8ed00cca04a3532a3}{Test\+Glow}} = 50.f
+\item 
+FString \mbox{\hyperlink{class_a_race_manager_a4920ebba5265d8d6490144d3ed63a8fa}{Test\+Url}} = FString("{}https\+://simulacre.\+ltvprod.\+cc/"{})
+\item 
+int64 \mbox{\hyperlink{class_a_race_manager_adf67a71228d721372397c7f6392cb212}{Test\+Team\+ID}} = 3675699636
+\item 
+int64 \mbox{\hyperlink{class_a_race_manager_a2c6fd7838652db58479ce0e10961490c}{Test\+Checkpoint\+ID}} = 4086211504
+\item 
+int64 \mbox{\hyperlink{class_a_race_manager_a41a86860b6b30e280247f8b19440531d}{Test\+Poi\+ID}} = 792472354
+\item 
+int64 \mbox{\hyperlink{class_a_race_manager_a16a76ad7bda125f9d32a7b37af083f84}{Test\+Group\+ID}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_a_race_manager_a650b6914c983afc294fbed265bda5a9d}{Begin\+Play}} () override
+\begin{DoxyCompactList}\small\item\em Begin\+Play. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_a_race_manager_aa6971e024d9e36a582331da7710fee38}{End\+Play}} (const EEnd\+Play\+Reason\+::\+Type End\+Play\+Reason) override
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_a_race_manager_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_a_race_manager_aed4cc09acb3bc0af1f2c0518ae289f14}\index{ARaceManager@{ARaceManager}!ARaceManager@{ARaceManager}}
+\index{ARaceManager@{ARaceManager}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{ARaceManager()}{ARaceManager()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aed4cc09acb3bc0af1f2c0518ae289f14} 
+ARace\+Manager\+::\+ARace\+Manager (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_a_race_manager_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_a_race_manager_a9b3af55c6ca2e64cc66bc85217becef8}\index{ARaceManager@{ARaceManager}!AddTeamToGroup\_Internal@{AddTeamToGroup\_Internal}}
+\index{AddTeamToGroup\_Internal@{AddTeamToGroup\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{AddTeamToGroup\_Internal()}{AddTeamToGroup\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a9b3af55c6ca2e64cc66bc85217becef8} 
+void ARace\+Manager\+::\+Add\+Team\+To\+Group\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{int64}]{Group\+ID}{, }\item[{int64}]{Team\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Adding a Team to a Group. 
+
+GROUPS 
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Group\+ID} & \\
+\hline
+{\em Team\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a24c3474c10cd893bbd724b3c085aae13}\index{ARaceManager@{ARaceManager}!AnimCheckpoint\_Internal@{AnimCheckpoint\_Internal}}
+\index{AnimCheckpoint\_Internal@{AnimCheckpoint\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{AnimCheckpoint\_Internal()}{AnimCheckpoint\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a24c3474c10cd893bbd724b3c085aae13} 
+void ARace\+Manager\+::\+Anim\+Checkpoint\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Play/\+Stop Checkpoint animation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Checkpoint\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+WIP 
+\end{DoxyNote}
+\Hypertarget{class_a_race_manager_a17bdc8a04b8c0c829aa93b11fec25e38}\index{ARaceManager@{ARaceManager}!AnimPoi\_Internal@{AnimPoi\_Internal}}
+\index{AnimPoi\_Internal@{AnimPoi\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{AnimPoi\_Internal()}{AnimPoi\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a17bdc8a04b8c0c829aa93b11fec25e38} 
+void ARace\+Manager\+::\+Anim\+Poi\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Start/\+Stop Poi Animation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Poi\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+WIP 
+\end{DoxyNote}
+\Hypertarget{class_a_race_manager_a8ee40e81e194739b9a89fe8d62e8a8d6}\index{ARaceManager@{ARaceManager}!AnimTeam\_Internal@{AnimTeam\_Internal}}
+\index{AnimTeam\_Internal@{AnimTeam\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{AnimTeam\_Internal()}{AnimTeam\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a8ee40e81e194739b9a89fe8d62e8a8d6} 
+void ARace\+Manager\+::\+Anim\+Team\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Playing the orbit animation around a Team. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Team\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a650b6914c983afc294fbed265bda5a9d}\index{ARaceManager@{ARaceManager}!BeginPlay@{BeginPlay}}
+\index{BeginPlay@{BeginPlay}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{BeginPlay()}{BeginPlay()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a650b6914c983afc294fbed265bda5a9d} 
+void ARace\+Manager\+::\+Begin\+Play (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+
+
+Begin\+Play. 
+
+\begin{DoxyNote}{Note}
+Initializes \doxylink{class_subsystems}{Subsystems}, Binds Datas gathered, Calls first requests 
+\end{DoxyNote}
+Http\+Gateway\+Subsystem\Hypertarget{class_a_race_manager_a571067088159d5d6d2a7326bee1e321d}\index{ARaceManager@{ARaceManager}!ChangePathOffset\_Internal@{ChangePathOffset\_Internal}}
+\index{ChangePathOffset\_Internal@{ChangePathOffset\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{ChangePathOffset\_Internal()}{ChangePathOffset\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a571067088159d5d6d2a7326bee1e321d} 
+void ARace\+Manager\+::\+Change\+Path\+Offset\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{float}]{Offset\+Value}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Changing the ZOffset of Path. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Offset\+Value} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_ad1f7c7e3e04f7614051b4e97df0d8632}\index{ARaceManager@{ARaceManager}!DECLARE\_MULTICAST\_DELEGATE@{DECLARE\_MULTICAST\_DELEGATE}}
+\index{DECLARE\_MULTICAST\_DELEGATE@{DECLARE\_MULTICAST\_DELEGATE}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE()}{DECLARE\_MULTICAST\_DELEGATE()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ad1f7c7e3e04f7614051b4e97df0d8632} 
+ARace\+Manager\+::\+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE (\begin{DoxyParamCaption}\item[{FOn\+Change\+Destination}]{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_ad9f450bfa031441b0f6bb3ac6c2051e0}\index{ARaceManager@{ARaceManager}!EdAddTeamToGroup@{EdAddTeamToGroup}}
+\index{EdAddTeamToGroup@{EdAddTeamToGroup}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdAddTeamToGroup()}{EdAddTeamToGroup()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ad9f450bfa031441b0f6bb3ac6c2051e0} 
+void ARace\+Manager\+::\+Ed\+Add\+Team\+To\+Group (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a9bbea189561dd3149347e8241cf4d8b0}\index{ARaceManager@{ARaceManager}!EdAnimCheckpoint@{EdAnimCheckpoint}}
+\index{EdAnimCheckpoint@{EdAnimCheckpoint}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdAnimCheckpoint()}{EdAnimCheckpoint()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a9bbea189561dd3149347e8241cf4d8b0} 
+void ARace\+Manager\+::\+Ed\+Anim\+Checkpoint (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a4559d49adb179a9d9b798be5c88fbda3}\index{ARaceManager@{ARaceManager}!EdAnimPoi@{EdAnimPoi}}
+\index{EdAnimPoi@{EdAnimPoi}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdAnimPoi()}{EdAnimPoi()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a4559d49adb179a9d9b798be5c88fbda3} 
+void ARace\+Manager\+::\+Ed\+Anim\+Poi (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a871b131b5bf3080a9cbcb1f0aad3040e}\index{ARaceManager@{ARaceManager}!EdAnimTeam@{EdAnimTeam}}
+\index{EdAnimTeam@{EdAnimTeam}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdAnimTeam()}{EdAnimTeam()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a871b131b5bf3080a9cbcb1f0aad3040e} 
+void ARace\+Manager\+::\+Ed\+Anim\+Team (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a9aa2f97942e2afa9787749ddf4b315fe}\index{ARaceManager@{ARaceManager}!EdChangePathOffset@{EdChangePathOffset}}
+\index{EdChangePathOffset@{EdChangePathOffset}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdChangePathOffset()}{EdChangePathOffset()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a9aa2f97942e2afa9787749ddf4b315fe} 
+void ARace\+Manager\+::\+Ed\+Change\+Path\+Offset (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a27e0cbd2e7ad7192237a735a2c74e3e4}\index{ARaceManager@{ARaceManager}!EdMoveToPath@{EdMoveToPath}}
+\index{EdMoveToPath@{EdMoveToPath}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdMoveToPath()}{EdMoveToPath()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a27e0cbd2e7ad7192237a735a2c74e3e4} 
+void ARace\+Manager\+::\+Ed\+Move\+To\+Path (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_af012d85559efd8668f300933524d5614}\index{ARaceManager@{ARaceManager}!EdPauseTravel@{EdPauseTravel}}
+\index{EdPauseTravel@{EdPauseTravel}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdPauseTravel()}{EdPauseTravel()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_af012d85559efd8668f300933524d5614} 
+void ARace\+Manager\+::\+Ed\+Pause\+Travel (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a256f82530c0f11e5a2b70df9032ae9aa}\index{ARaceManager@{ARaceManager}!EdRefreshRace@{EdRefreshRace}}
+\index{EdRefreshRace@{EdRefreshRace}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdRefreshRace()}{EdRefreshRace()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a256f82530c0f11e5a2b70df9032ae9aa} 
+void ARace\+Manager\+::\+Ed\+Refresh\+Race (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_ae322b27593538d077decf02dd8c8f1e4}\index{ARaceManager@{ARaceManager}!EdRemoveTeamFromGroup@{EdRemoveTeamFromGroup}}
+\index{EdRemoveTeamFromGroup@{EdRemoveTeamFromGroup}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdRemoveTeamFromGroup()}{EdRemoveTeamFromGroup()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ae322b27593538d077decf02dd8c8f1e4} 
+void ARace\+Manager\+::\+Ed\+Remove\+Team\+From\+Group (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a19dbf6e4883594deae22807c63c9c674}\index{ARaceManager@{ARaceManager}!EdResetSavedDatas@{EdResetSavedDatas}}
+\index{EdResetSavedDatas@{EdResetSavedDatas}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdResetSavedDatas()}{EdResetSavedDatas()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a19dbf6e4883594deae22807c63c9c674} 
+void ARace\+Manager\+::\+Ed\+Reset\+Saved\+Datas (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Resetting Saved values to default. 
+
+SETTINGS \Hypertarget{class_a_race_manager_af717e5dfa6e5f51bc15f441d203397ea}\index{ARaceManager@{ARaceManager}!EdStartTravelBkd@{EdStartTravelBkd}}
+\index{EdStartTravelBkd@{EdStartTravelBkd}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdStartTravelBkd()}{EdStartTravelBkd()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_af717e5dfa6e5f51bc15f441d203397ea} 
+void ARace\+Manager\+::\+Ed\+Start\+Travel\+Bkd (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_aab78e01f083296a0248e79d1b34cef94}\index{ARaceManager@{ARaceManager}!EdStartTravelFwd@{EdStartTravelFwd}}
+\index{EdStartTravelFwd@{EdStartTravelFwd}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdStartTravelFwd()}{EdStartTravelFwd()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aab78e01f083296a0248e79d1b34cef94} 
+void ARace\+Manager\+::\+Ed\+Start\+Travel\+Fwd (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_aed61365ad90512edb1524949e3fa033b}\index{ARaceManager@{ARaceManager}!EdStopAnimCheckpoint@{EdStopAnimCheckpoint}}
+\index{EdStopAnimCheckpoint@{EdStopAnimCheckpoint}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdStopAnimCheckpoint()}{EdStopAnimCheckpoint()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aed61365ad90512edb1524949e3fa033b} 
+void ARace\+Manager\+::\+Ed\+Stop\+Anim\+Checkpoint (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a27336549db9b99822cf44555647fdb22}\index{ARaceManager@{ARaceManager}!EdStopAnimPoi@{EdStopAnimPoi}}
+\index{EdStopAnimPoi@{EdStopAnimPoi}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdStopAnimPoi()}{EdStopAnimPoi()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a27336549db9b99822cf44555647fdb22} 
+void ARace\+Manager\+::\+Ed\+Stop\+Anim\+Poi (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a9197536d2df2ad0cb808a292830f9f63}\index{ARaceManager@{ARaceManager}!EdStopAnimTeam@{EdStopAnimTeam}}
+\index{EdStopAnimTeam@{EdStopAnimTeam}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdStopAnimTeam()}{EdStopAnimTeam()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a9197536d2df2ad0cb808a292830f9f63} 
+void ARace\+Manager\+::\+Ed\+Stop\+Anim\+Team (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a1d643c0a8ec249818d092e05704ad9f7}\index{ARaceManager@{ARaceManager}!EdStopTravel@{EdStopTravel}}
+\index{EdStopTravel@{EdStopTravel}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdStopTravel()}{EdStopTravel()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a1d643c0a8ec249818d092e05704ad9f7} 
+void ARace\+Manager\+::\+Ed\+Stop\+Travel (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a26036fa5e2d62332f1bae8f084a5e19b}\index{ARaceManager@{ARaceManager}!EdTeleportToCheckpoint@{EdTeleportToCheckpoint}}
+\index{EdTeleportToCheckpoint@{EdTeleportToCheckpoint}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdTeleportToCheckpoint()}{EdTeleportToCheckpoint()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a26036fa5e2d62332f1bae8f084a5e19b} 
+void ARace\+Manager\+::\+Ed\+Teleport\+To\+Checkpoint (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a0a8f857c6258709297e7fb7ae10ca0db}\index{ARaceManager@{ARaceManager}!EDTeleportToPoi@{EDTeleportToPoi}}
+\index{EDTeleportToPoi@{EDTeleportToPoi}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EDTeleportToPoi()}{EDTeleportToPoi()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a0a8f857c6258709297e7fb7ae10ca0db} 
+void ARace\+Manager\+::\+EDTeleport\+To\+Poi (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a2d3071373a8c6aaf4927146ec440bc0d}\index{ARaceManager@{ARaceManager}!EdTeleportToTeam@{EdTeleportToTeam}}
+\index{EdTeleportToTeam@{EdTeleportToTeam}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdTeleportToTeam()}{EdTeleportToTeam()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a2d3071373a8c6aaf4927146ec440bc0d} 
+void ARace\+Manager\+::\+Ed\+Teleport\+To\+Team (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a6e0fbaddcfec53dbc3bbb09450e838f8}\index{ARaceManager@{ARaceManager}!EdToggleCheckpoint@{EdToggleCheckpoint}}
+\index{EdToggleCheckpoint@{EdToggleCheckpoint}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdToggleCheckpoint()}{EdToggleCheckpoint()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a6e0fbaddcfec53dbc3bbb09450e838f8} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Checkpoint (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a9329baa026384e5c16b8d602f03291fe}\index{ARaceManager@{ARaceManager}!EdToggleCheckpoints@{EdToggleCheckpoints}}
+\index{EdToggleCheckpoints@{EdToggleCheckpoints}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdToggleCheckpoints()}{EdToggleCheckpoints()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a9329baa026384e5c16b8d602f03291fe} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Checkpoints (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a2d04d02e8fc2be4ec81258a7f8107d1d}\index{ARaceManager@{ARaceManager}!EdToggleCheckpointWeather@{EdToggleCheckpointWeather}}
+\index{EdToggleCheckpointWeather@{EdToggleCheckpointWeather}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdToggleCheckpointWeather()}{EdToggleCheckpointWeather()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a2d04d02e8fc2be4ec81258a7f8107d1d} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Checkpoint\+Weather (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a17da6ee00d8b2375fe63da7c7941d7fe}\index{ARaceManager@{ARaceManager}!EdToggleClub@{EdToggleClub}}
+\index{EdToggleClub@{EdToggleClub}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdToggleClub()}{EdToggleClub()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a17da6ee00d8b2375fe63da7c7941d7fe} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Club (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_afd212a3a2575d8446c30b5a0737690b3}\index{ARaceManager@{ARaceManager}!EdToggleFlag@{EdToggleFlag}}
+\index{EdToggleFlag@{EdToggleFlag}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdToggleFlag()}{EdToggleFlag()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_afd212a3a2575d8446c30b5a0737690b3} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Flag (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_ad821d9a0dbfe53bda63faea528284ead}\index{ARaceManager@{ARaceManager}!EdToggleGroup@{EdToggleGroup}}
+\index{EdToggleGroup@{EdToggleGroup}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdToggleGroup()}{EdToggleGroup()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ad821d9a0dbfe53bda63faea528284ead} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Group (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a0487a066c69d66a2361bf5bed181c2eb}\index{ARaceManager@{ARaceManager}!EdToggleKms@{EdToggleKms}}
+\index{EdToggleKms@{EdToggleKms}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdToggleKms()}{EdToggleKms()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a0487a066c69d66a2361bf5bed181c2eb} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Kms (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_adce7a0ead7308c48c89e841807bf72c8}\index{ARaceManager@{ARaceManager}!EdTogglePath@{EdTogglePath}}
+\index{EdTogglePath@{EdTogglePath}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdTogglePath()}{EdTogglePath()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_adce7a0ead7308c48c89e841807bf72c8} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Path (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a4102e9cfb6a1fe741365f9630f0a3f67}\index{ARaceManager@{ARaceManager}!EdTogglePhoto@{EdTogglePhoto}}
+\index{EdTogglePhoto@{EdTogglePhoto}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdTogglePhoto()}{EdTogglePhoto()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a4102e9cfb6a1fe741365f9630f0a3f67} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Photo (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_af3a08de0fc137d750742a2dcc3d5fc5f}\index{ARaceManager@{ARaceManager}!EdTogglePoi@{EdTogglePoi}}
+\index{EdTogglePoi@{EdTogglePoi}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdTogglePoi()}{EdTogglePoi()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_af3a08de0fc137d750742a2dcc3d5fc5f} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Poi (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_afc54a3e7fa30fb75d000ad8c3f022ded}\index{ARaceManager@{ARaceManager}!EdTogglePois@{EdTogglePois}}
+\index{EdTogglePois@{EdTogglePois}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdTogglePois()}{EdTogglePois()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_afc54a3e7fa30fb75d000ad8c3f022ded} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Pois (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_ade3c54ac9055dbf24e9751036adbd094}\index{ARaceManager@{ARaceManager}!EdTogglePoiWeather@{EdTogglePoiWeather}}
+\index{EdTogglePoiWeather@{EdTogglePoiWeather}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdTogglePoiWeather()}{EdTogglePoiWeather()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ade3c54ac9055dbf24e9751036adbd094} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Poi\+Weather (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a20cafbf7bf0e85c64be6f01b575821a8}\index{ARaceManager@{ARaceManager}!EdTogglePulse@{EdTogglePulse}}
+\index{EdTogglePulse@{EdTogglePulse}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdTogglePulse()}{EdTogglePulse()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a20cafbf7bf0e85c64be6f01b575821a8} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Pulse (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a2965cad041bfcd61846f622d4fcec3bb}\index{ARaceManager@{ARaceManager}!EdToggleRace@{EdToggleRace}}
+\index{EdToggleRace@{EdToggleRace}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdToggleRace()}{EdToggleRace()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a2965cad041bfcd61846f622d4fcec3bb} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Race (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a262108391ac656c0068e148e18f0bb08}\index{ARaceManager@{ARaceManager}!EdToggleSlope@{EdToggleSlope}}
+\index{EdToggleSlope@{EdToggleSlope}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdToggleSlope()}{EdToggleSlope()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a262108391ac656c0068e148e18f0bb08} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Slope (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_aa7b12dd174d9d01a6c96b62ff85115bc}\index{ARaceManager@{ARaceManager}!EdToggleTeam@{EdToggleTeam}}
+\index{EdToggleTeam@{EdToggleTeam}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdToggleTeam()}{EdToggleTeam()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aa7b12dd174d9d01a6c96b62ff85115bc} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Team (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a162f186b27a1e4cc054ceb91101b6b86}\index{ARaceManager@{ARaceManager}!EdToggleTeams@{EdToggleTeams}}
+\index{EdToggleTeams@{EdToggleTeams}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdToggleTeams()}{EdToggleTeams()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a162f186b27a1e4cc054ceb91101b6b86} 
+void ARace\+Manager\+::\+Ed\+Toggle\+Teams (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_ac32a2bba86bbecebc2a83a205ec32ace}\index{ARaceManager@{ARaceManager}!EdUpdateFetchFrequency@{EdUpdateFetchFrequency}}
+\index{EdUpdateFetchFrequency@{EdUpdateFetchFrequency}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdUpdateFetchFrequency()}{EdUpdateFetchFrequency()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ac32a2bba86bbecebc2a83a205ec32ace} 
+void ARace\+Manager\+::\+Ed\+Update\+Fetch\+Frequency (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a3a661a8bd2b1ed37d543181c2121ee73}\index{ARaceManager@{ARaceManager}!EdUpdateGlowIntensity@{EdUpdateGlowIntensity}}
+\index{EdUpdateGlowIntensity@{EdUpdateGlowIntensity}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdUpdateGlowIntensity()}{EdUpdateGlowIntensity()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a3a661a8bd2b1ed37d543181c2121ee73} 
+void ARace\+Manager\+::\+Ed\+Update\+Glow\+Intensity (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a32d18d3120c6bd58ed1ed0928a1de00a}\index{ARaceManager@{ARaceManager}!EdUpdateMainUrl@{EdUpdateMainUrl}}
+\index{EdUpdateMainUrl@{EdUpdateMainUrl}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdUpdateMainUrl()}{EdUpdateMainUrl()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a32d18d3120c6bd58ed1ed0928a1de00a} 
+void ARace\+Manager\+::\+Ed\+Update\+Main\+Url (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a2afdcbcfbd91774d90501147425160cb}\index{ARaceManager@{ARaceManager}!EdUpdateMinMax@{EdUpdateMinMax}}
+\index{EdUpdateMinMax@{EdUpdateMinMax}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdUpdateMinMax()}{EdUpdateMinMax()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a2afdcbcfbd91774d90501147425160cb} 
+void ARace\+Manager\+::\+Ed\+Update\+Min\+Max (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a0b79607356b0c91a88133bd2df049dd6}\index{ARaceManager@{ARaceManager}!EdUpdateNearFar@{EdUpdateNearFar}}
+\index{EdUpdateNearFar@{EdUpdateNearFar}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdUpdateNearFar()}{EdUpdateNearFar()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a0b79607356b0c91a88133bd2df049dd6} 
+void ARace\+Manager\+::\+Ed\+Update\+Near\+Far (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_ae3768adbe1dc20ea17e434af6719e96d}\index{ARaceManager@{ARaceManager}!EdUpdatePulseFrequency@{EdUpdatePulseFrequency}}
+\index{EdUpdatePulseFrequency@{EdUpdatePulseFrequency}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdUpdatePulseFrequency()}{EdUpdatePulseFrequency()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ae3768adbe1dc20ea17e434af6719e96d} 
+void ARace\+Manager\+::\+Ed\+Update\+Pulse\+Frequency (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a5fd848478cbf7271fe0ce407526e1eff}\index{ARaceManager@{ARaceManager}!EdUpdateRaceUrlByID@{EdUpdateRaceUrlByID}}
+\index{EdUpdateRaceUrlByID@{EdUpdateRaceUrlByID}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EdUpdateRaceUrlByID()}{EdUpdateRaceUrlByID()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a5fd848478cbf7271fe0ce407526e1eff} 
+void ARace\+Manager\+::\+Ed\+Update\+Race\+Url\+By\+ID (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_aa6971e024d9e36a582331da7710fee38}\index{ARaceManager@{ARaceManager}!EndPlay@{EndPlay}}
+\index{EndPlay@{EndPlay}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{EndPlay()}{EndPlay()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aa6971e024d9e36a582331da7710fee38} 
+void ARace\+Manager\+::\+End\+Play (\begin{DoxyParamCaption}\item[{const EEnd\+Play\+Reason\+::\+Type}]{End\+Play\+Reason}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_a_race_manager_a8d306f5214f5f69edaf05a1e9b61ba8e}\index{ARaceManager@{ARaceManager}!GetCheckpointsDatas@{GetCheckpointsDatas}}
+\index{GetCheckpointsDatas@{GetCheckpointsDatas}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{GetCheckpointsDatas()}{GetCheckpointsDatas()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a8d306f5214f5f69edaf05a1e9b61ba8e} 
+void ARace\+Manager\+::\+Get\+Checkpoints\+Datas (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a7a30ed79dedaa0cd55cb6570bad2d775}\index{ARaceManager@{ARaceManager}!GetPoisDatas@{GetPoisDatas}}
+\index{GetPoisDatas@{GetPoisDatas}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{GetPoisDatas()}{GetPoisDatas()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a7a30ed79dedaa0cd55cb6570bad2d775} 
+void ARace\+Manager\+::\+Get\+Pois\+Datas (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Binding proxy to gather Pois datas. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a1fee9d7b592843afa3781a3b0ce3fc92}\index{ARaceManager@{ARaceManager}!GetRunnersDatas@{GetRunnersDatas}}
+\index{GetRunnersDatas@{GetRunnersDatas}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{GetRunnersDatas()}{GetRunnersDatas()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a1fee9d7b592843afa3781a3b0ce3fc92} 
+void ARace\+Manager\+::\+Get\+Runners\+Datas (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Binding proxy to gather Runners datas. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_add13d46001f9f3c4627b2d878f7a4d74}\index{ARaceManager@{ARaceManager}!HandlePathDatasGathered@{HandlePathDatasGathered}}
+\index{HandlePathDatasGathered@{HandlePathDatasGathered}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{HandlePathDatasGathered()}{HandlePathDatasGathered()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_add13d46001f9f3c4627b2d878f7a4d74} 
+void ARace\+Manager\+::\+Handle\+Path\+Datas\+Gathered (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{\mbox{\hyperlink{struct_f_race_path}{FRace\+Path}}}]{Race\+Path\+Datas}{}\end{DoxyParamCaption})}
+
+
+
+Handle the Path datas, spawns the Path and calls Draw\+Path(). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Race\+Path\+Datas} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a640a1ee5381e1945fc30038e25e14589}\index{ARaceManager@{ARaceManager}!HandleRacePoisDatasGathered@{HandleRacePoisDatasGathered}}
+\index{HandleRacePoisDatasGathered@{HandleRacePoisDatasGathered}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{HandleRacePoisDatasGathered()}{HandleRacePoisDatasGathered()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a640a1ee5381e1945fc30038e25e14589} 
+void ARace\+Manager\+::\+Handle\+Race\+Pois\+Datas\+Gathered (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{\mbox{\hyperlink{struct_f_p_o_is}{FPOIs}}}]{Race\+Pois\+Datas}{}\end{DoxyParamCaption})}
+
+
+
+Called when the Pois are gathered and spawn them. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Race\+Pois\+Datas} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a59fa9c3cae0c27b87d3879ef12375ba7}\index{ARaceManager@{ARaceManager}!HandleRacesDatasGathered@{HandleRacesDatasGathered}}
+\index{HandleRacesDatasGathered@{HandleRacesDatasGathered}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{HandleRacesDatasGathered()}{HandleRacesDatasGathered()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a59fa9c3cae0c27b87d3879ef12375ba7} 
+void ARace\+Manager\+::\+Handle\+Races\+Datas\+Gathered (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_race_entries}{FRace\+Entries}}}]{Races\+Array}{}\end{DoxyParamCaption})}
+
+
+
+Called when all the Races are gathered. 
+
+Request Callbacks
+
+
+\begin{DoxyParams}{Parameters}
+{\em Races\+Array} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a25a94b1221e0b3dca469362bf5991faf}\index{ARaceManager@{ARaceManager}!HandleRaceSetupDatasGathered@{HandleRaceSetupDatasGathered}}
+\index{HandleRaceSetupDatasGathered@{HandleRaceSetupDatasGathered}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{HandleRaceSetupDatasGathered()}{HandleRaceSetupDatasGathered()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a25a94b1221e0b3dca469362bf5991faf} 
+void ARace\+Manager\+::\+Handle\+Race\+Setup\+Datas\+Gathered (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{\mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}}}]{Race\+Setup\+Datas}{}\end{DoxyParamCaption})}
+
+
+
+Called when the Race setup is gathered. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Race\+Setup\+Datas} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_accd5f2aa7d3408357e826413e61642b9}\index{ARaceManager@{ARaceManager}!HandleRunnersDatasGathered@{HandleRunnersDatasGathered}}
+\index{HandleRunnersDatasGathered@{HandleRunnersDatasGathered}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{HandleRunnersDatasGathered()}{HandleRunnersDatasGathered()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_accd5f2aa7d3408357e826413e61642b9} 
+void ARace\+Manager\+::\+Handle\+Runners\+Datas\+Gathered (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{\mbox{\hyperlink{struct_f_runners}{FRunners}}}]{Runners\+Datas}{}\end{DoxyParamCaption})}
+
+
+
+Called when the Runners datas are gathered and spawn them. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Runners\+Datas} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_af92337100709daf839ecb3a33e4028e7}\index{ARaceManager@{ARaceManager}!HandleUpdateRunners@{HandleUpdateRunners}}
+\index{HandleUpdateRunners@{HandleUpdateRunners}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{HandleUpdateRunners()}{HandleUpdateRunners()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_af92337100709daf839ecb3a33e4028e7} 
+void ARace\+Manager\+::\+Handle\+Update\+Runners (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{\mbox{\hyperlink{struct_f_runners}{FRunners}}}]{Runners\+Datas}{}\end{DoxyParamCaption})}
+
+
+
+Updating Runners for current race. 
+
+Updating Runners for current race 
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Runners\+Datas} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a56de829b26c399b8c5f907c5fedf7630}\index{ARaceManager@{ARaceManager}!MoveToPath\_Internal@{MoveToPath\_Internal}}
+\index{MoveToPath\_Internal@{MoveToPath\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{MoveToPath\_Internal()}{MoveToPath\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a56de829b26c399b8c5f907c5fedf7630} 
+void ARace\+Manager\+::\+Move\+To\+Path\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Moving the Pawn to the required path -\/ Answering to CURL Request. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a68e21311f4d80dcc389aa1afb7a88132}\index{ARaceManager@{ARaceManager}!OffsetPath@{OffsetPath}}
+\index{OffsetPath@{OffsetPath}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{OffsetPath()}{OffsetPath()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a68e21311f4d80dcc389aa1afb7a88132} 
+void ARace\+Manager\+::\+Offset\+Path (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a6e1a7b6bbc6038c29aa9ff3f12cb4fd6}\index{ARaceManager@{ARaceManager}!PauseTravel\_Internal@{PauseTravel\_Internal}}
+\index{PauseTravel\_Internal@{PauseTravel\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{PauseTravel\_Internal()}{PauseTravel\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a6e1a7b6bbc6038c29aa9ff3f12cb4fd6} 
+void ARace\+Manager\+::\+Pause\+Travel\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a00a37e6748233c8db0dabdcd8c2a0a63}\index{ARaceManager@{ARaceManager}!RefreshRace\_Internal@{RefreshRace\_Internal}}
+\index{RefreshRace\_Internal@{RefreshRace\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RefreshRace\_Internal()}{RefreshRace\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a00a37e6748233c8db0dabdcd8c2a0a63} 
+void ARace\+Manager\+::\+Refresh\+Race\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_ad0ce5d52716d42c23fdc6c697cf65ed0}\index{ARaceManager@{ARaceManager}!RefreshSubsystems@{RefreshSubsystems}}
+\index{RefreshSubsystems@{RefreshSubsystems}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RefreshSubsystems()}{RefreshSubsystems()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ad0ce5d52716d42c23fdc6c697cf65ed0} 
+bool ARace\+Manager\+::\+Refresh\+Subsystems (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Ensure \doxylink{class_subsystems}{Subsystems} in Internal methods. 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_a_race_manager_a7943b49899815f936822cbf753e4918c}\index{ARaceManager@{ARaceManager}!RefreshSubsystemsFromPIE@{RefreshSubsystemsFromPIE}}
+\index{RefreshSubsystemsFromPIE@{RefreshSubsystemsFromPIE}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RefreshSubsystemsFromPIE()}{RefreshSubsystemsFromPIE()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a7943b49899815f936822cbf753e4918c} 
+bool ARace\+Manager\+::\+Refresh\+Subsystems\+From\+PIE (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Ensure \doxylink{class_subsystems}{Subsystems} in EWorld\+Type\+::\+PIE. 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_a_race_manager_a02163514df2ecb33fdbab7f2f56182a1}\index{ARaceManager@{ARaceManager}!RemoveTeamFromGroup\_Internal@{RemoveTeamFromGroup\_Internal}}
+\index{RemoveTeamFromGroup\_Internal@{RemoveTeamFromGroup\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RemoveTeamFromGroup\_Internal()}{RemoveTeamFromGroup\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a02163514df2ecb33fdbab7f2f56182a1} 
+void ARace\+Manager\+::\+Remove\+Team\+From\+Group\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{int64}]{Group\+ID}{, }\item[{int64}]{Team\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Removing a Team from a Group. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Group\+ID} & \\
+\hline
+{\em Team\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a959795b1b4b3daaf33952299425dc7b0}\index{ARaceManager@{ARaceManager}!RtAddTeamToGroup@{RtAddTeamToGroup}}
+\index{RtAddTeamToGroup@{RtAddTeamToGroup}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtAddTeamToGroup()}{RtAddTeamToGroup()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a959795b1b4b3daaf33952299425dc7b0} 
+void ARace\+Manager\+::\+Rt\+Add\+Team\+To\+Group (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{int64}]{Group\+ID}{, }\item[{int64}]{Team\+ID}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a2fcd1e7dd2d501a4f92a37bc0b722bf0}\index{ARaceManager@{ARaceManager}!RtAnimCheckpoint@{RtAnimCheckpoint}}
+\index{RtAnimCheckpoint@{RtAnimCheckpoint}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtAnimCheckpoint()}{RtAnimCheckpoint()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a2fcd1e7dd2d501a4f92a37bc0b722bf0} 
+void ARace\+Manager\+::\+Rt\+Anim\+Checkpoint (\begin{DoxyParamCaption}\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a3682e7b6d8bd0a02ae11ced18ba52ebd}\index{ARaceManager@{ARaceManager}!RtAnimPoi@{RtAnimPoi}}
+\index{RtAnimPoi@{RtAnimPoi}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtAnimPoi()}{RtAnimPoi()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a3682e7b6d8bd0a02ae11ced18ba52ebd} 
+void ARace\+Manager\+::\+Rt\+Anim\+Poi (\begin{DoxyParamCaption}\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a75e67b540bef5bc148355c8e73aa3539}\index{ARaceManager@{ARaceManager}!RtAnimTeam@{RtAnimTeam}}
+\index{RtAnimTeam@{RtAnimTeam}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtAnimTeam()}{RtAnimTeam()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a75e67b540bef5bc148355c8e73aa3539} 
+void ARace\+Manager\+::\+Rt\+Anim\+Team (\begin{DoxyParamCaption}\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_ab05cf59c6954b241e50a7349c84597ce}\index{ARaceManager@{ARaceManager}!RtChangePathOffset@{RtChangePathOffset}}
+\index{RtChangePathOffset@{RtChangePathOffset}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtChangePathOffset()}{RtChangePathOffset()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ab05cf59c6954b241e50a7349c84597ce} 
+void ARace\+Manager\+::\+Rt\+Change\+Path\+Offset (\begin{DoxyParamCaption}\item[{float}]{Offset\+Value}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_aa170809be5dc65927b3b934838ca940d}\index{ARaceManager@{ARaceManager}!RtMoveToPath@{RtMoveToPath}}
+\index{RtMoveToPath@{RtMoveToPath}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtMoveToPath()}{RtMoveToPath()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aa170809be5dc65927b3b934838ca940d} 
+void ARace\+Manager\+::\+Rt\+Move\+To\+Path (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a38aceb71bc0501d0be4f69ec876a3036}\index{ARaceManager@{ARaceManager}!RtPauseTravel@{RtPauseTravel}}
+\index{RtPauseTravel@{RtPauseTravel}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtPauseTravel()}{RtPauseTravel()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a38aceb71bc0501d0be4f69ec876a3036} 
+void ARace\+Manager\+::\+Rt\+Pause\+Travel (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a005379160c77dcdfbf1c6e2fe24e5b6b}\index{ARaceManager@{ARaceManager}!RtRefreshRace@{RtRefreshRace}}
+\index{RtRefreshRace@{RtRefreshRace}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtRefreshRace()}{RtRefreshRace()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a005379160c77dcdfbf1c6e2fe24e5b6b} 
+void ARace\+Manager\+::\+Rt\+Refresh\+Race (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a5c20826e85338e79e9c07eebc6296391}\index{ARaceManager@{ARaceManager}!RtRemoveTeamFromGroup@{RtRemoveTeamFromGroup}}
+\index{RtRemoveTeamFromGroup@{RtRemoveTeamFromGroup}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtRemoveTeamFromGroup()}{RtRemoveTeamFromGroup()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a5c20826e85338e79e9c07eebc6296391} 
+void ARace\+Manager\+::\+Rt\+Remove\+Team\+From\+Group (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{int64}]{Group\+ID}{, }\item[{int64}]{Team\+ID}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_ac1d8b4a29000ccbd2021b5758cff001d}\index{ARaceManager@{ARaceManager}!RtSaveMainUrl@{RtSaveMainUrl}}
+\index{RtSaveMainUrl@{RtSaveMainUrl}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtSaveMainUrl()}{RtSaveMainUrl()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ac1d8b4a29000ccbd2021b5758cff001d} 
+void ARace\+Manager\+::\+Rt\+Save\+Main\+Url (\begin{DoxyParamCaption}\item[{FString}]{New\+Url}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a628596e3a8be19fa3e60bbb3c75c6e3c}\index{ARaceManager@{ARaceManager}!RtStartTravelBkd@{RtStartTravelBkd}}
+\index{RtStartTravelBkd@{RtStartTravelBkd}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtStartTravelBkd()}{RtStartTravelBkd()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a628596e3a8be19fa3e60bbb3c75c6e3c} 
+void ARace\+Manager\+::\+Rt\+Start\+Travel\+Bkd (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_ad8d43dfc3af0a6f7963fad0a912c81b1}\index{ARaceManager@{ARaceManager}!RtStartTravelFwd@{RtStartTravelFwd}}
+\index{RtStartTravelFwd@{RtStartTravelFwd}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtStartTravelFwd()}{RtStartTravelFwd()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ad8d43dfc3af0a6f7963fad0a912c81b1} 
+void ARace\+Manager\+::\+Rt\+Start\+Travel\+Fwd (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_adac963870aaf942b3929caf4a40c156e}\index{ARaceManager@{ARaceManager}!RtStopAnimCheckpoint@{RtStopAnimCheckpoint}}
+\index{RtStopAnimCheckpoint@{RtStopAnimCheckpoint}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtStopAnimCheckpoint()}{RtStopAnimCheckpoint()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_adac963870aaf942b3929caf4a40c156e} 
+void ARace\+Manager\+::\+Rt\+Stop\+Anim\+Checkpoint (\begin{DoxyParamCaption}\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a693d235225a6a1d0076b7b9551f12138}\index{ARaceManager@{ARaceManager}!RtStopAnimPoi@{RtStopAnimPoi}}
+\index{RtStopAnimPoi@{RtStopAnimPoi}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtStopAnimPoi()}{RtStopAnimPoi()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a693d235225a6a1d0076b7b9551f12138} 
+void ARace\+Manager\+::\+Rt\+Stop\+Anim\+Poi (\begin{DoxyParamCaption}\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_ad11813936b905dbcbb3298a7e0fb7113}\index{ARaceManager@{ARaceManager}!RtStopAnimTeam@{RtStopAnimTeam}}
+\index{RtStopAnimTeam@{RtStopAnimTeam}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtStopAnimTeam()}{RtStopAnimTeam()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ad11813936b905dbcbb3298a7e0fb7113} 
+void ARace\+Manager\+::\+Rt\+Stop\+Anim\+Team (\begin{DoxyParamCaption}\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a40f21cc6cb03614985c731c7c4a8f9a7}\index{ARaceManager@{ARaceManager}!RtStopTravel@{RtStopTravel}}
+\index{RtStopTravel@{RtStopTravel}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtStopTravel()}{RtStopTravel()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a40f21cc6cb03614985c731c7c4a8f9a7} 
+void ARace\+Manager\+::\+Rt\+Stop\+Travel (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_aba9f13d4f837f937492383a722fa0f6f}\index{ARaceManager@{ARaceManager}!RtTeleportToCheckpoint@{RtTeleportToCheckpoint}}
+\index{RtTeleportToCheckpoint@{RtTeleportToCheckpoint}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtTeleportToCheckpoint()}{RtTeleportToCheckpoint()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aba9f13d4f837f937492383a722fa0f6f} 
+void ARace\+Manager\+::\+Rt\+Teleport\+To\+Checkpoint (\begin{DoxyParamCaption}\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a5e7565fd0b2367634558b20f7e4f21f0}\index{ARaceManager@{ARaceManager}!RtTeleportToPoi@{RtTeleportToPoi}}
+\index{RtTeleportToPoi@{RtTeleportToPoi}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtTeleportToPoi()}{RtTeleportToPoi()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a5e7565fd0b2367634558b20f7e4f21f0} 
+void ARace\+Manager\+::\+Rt\+Teleport\+To\+Poi (\begin{DoxyParamCaption}\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a42ee6c6cfce289c5cee17bb3be5c1538}\index{ARaceManager@{ARaceManager}!RtTeleportToTeam@{RtTeleportToTeam}}
+\index{RtTeleportToTeam@{RtTeleportToTeam}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtTeleportToTeam()}{RtTeleportToTeam()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a42ee6c6cfce289c5cee17bb3be5c1538} 
+void ARace\+Manager\+::\+Rt\+Teleport\+To\+Team (\begin{DoxyParamCaption}\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_ad8c035e1b362ec65ff188bf135042cea}\index{ARaceManager@{ARaceManager}!RtToggleCheckpoint@{RtToggleCheckpoint}}
+\index{RtToggleCheckpoint@{RtToggleCheckpoint}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtToggleCheckpoint()}{RtToggleCheckpoint()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ad8c035e1b362ec65ff188bf135042cea} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Checkpoint (\begin{DoxyParamCaption}\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a9da7b4e960b2be90ee041c1990885961}\index{ARaceManager@{ARaceManager}!RtToggleCheckpoints@{RtToggleCheckpoints}}
+\index{RtToggleCheckpoints@{RtToggleCheckpoints}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtToggleCheckpoints()}{RtToggleCheckpoints()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a9da7b4e960b2be90ee041c1990885961} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Checkpoints (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a91df00a82651b77e20ae2ccf7d283716}\index{ARaceManager@{ARaceManager}!RtToggleCheckpointWeather@{RtToggleCheckpointWeather}}
+\index{RtToggleCheckpointWeather@{RtToggleCheckpointWeather}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtToggleCheckpointWeather()}{RtToggleCheckpointWeather()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a91df00a82651b77e20ae2ccf7d283716} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Checkpoint\+Weather (\begin{DoxyParamCaption}\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_ae7ab6a7d38ccd42549b3b9c634e4e942}\index{ARaceManager@{ARaceManager}!RtToggleClub@{RtToggleClub}}
+\index{RtToggleClub@{RtToggleClub}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtToggleClub()}{RtToggleClub()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ae7ab6a7d38ccd42549b3b9c634e4e942} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Club (\begin{DoxyParamCaption}\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a55085299a0fd525ec15b7f47ef273982}\index{ARaceManager@{ARaceManager}!RtToggleFlag@{RtToggleFlag}}
+\index{RtToggleFlag@{RtToggleFlag}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtToggleFlag()}{RtToggleFlag()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a55085299a0fd525ec15b7f47ef273982} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Flag (\begin{DoxyParamCaption}\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a3a2f714348c9d6a13f90d820322caa2d}\index{ARaceManager@{ARaceManager}!RtToggleGroup@{RtToggleGroup}}
+\index{RtToggleGroup@{RtToggleGroup}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtToggleGroup()}{RtToggleGroup()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a3a2f714348c9d6a13f90d820322caa2d} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Group (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{int64}]{Group\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_ab0ad37714eae5695fe4df48a3926c396}\index{ARaceManager@{ARaceManager}!RtToggleKms@{RtToggleKms}}
+\index{RtToggleKms@{RtToggleKms}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtToggleKms()}{RtToggleKms()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ab0ad37714eae5695fe4df48a3926c396} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Kms (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a6deb046af600e28f5af3ae1b5f18edd6}\index{ARaceManager@{ARaceManager}!RtTogglePath@{RtTogglePath}}
+\index{RtTogglePath@{RtTogglePath}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtTogglePath()}{RtTogglePath()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a6deb046af600e28f5af3ae1b5f18edd6} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Path (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a62a6fdf4daef00510fed538160564853}\index{ARaceManager@{ARaceManager}!RtTogglePhoto@{RtTogglePhoto}}
+\index{RtTogglePhoto@{RtTogglePhoto}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtTogglePhoto()}{RtTogglePhoto()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a62a6fdf4daef00510fed538160564853} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Photo (\begin{DoxyParamCaption}\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a5139cfa4c17a4927f8a75863c1a5d3f6}\index{ARaceManager@{ARaceManager}!RtTogglePoi@{RtTogglePoi}}
+\index{RtTogglePoi@{RtTogglePoi}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtTogglePoi()}{RtTogglePoi()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a5139cfa4c17a4927f8a75863c1a5d3f6} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Poi (\begin{DoxyParamCaption}\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a3086addc3a0bc3ce8093843890699c9b}\index{ARaceManager@{ARaceManager}!RtTogglePois@{RtTogglePois}}
+\index{RtTogglePois@{RtTogglePois}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtTogglePois()}{RtTogglePois()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a3086addc3a0bc3ce8093843890699c9b} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Pois (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a74ea9ee040c8a80aced072e1c9c34d03}\index{ARaceManager@{ARaceManager}!RtTogglePoiWeather@{RtTogglePoiWeather}}
+\index{RtTogglePoiWeather@{RtTogglePoiWeather}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtTogglePoiWeather()}{RtTogglePoiWeather()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a74ea9ee040c8a80aced072e1c9c34d03} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Poi\+Weather (\begin{DoxyParamCaption}\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a6f1347cdb5399e9315d9c07473ba9d3a}\index{ARaceManager@{ARaceManager}!RtTogglePulse@{RtTogglePulse}}
+\index{RtTogglePulse@{RtTogglePulse}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtTogglePulse()}{RtTogglePulse()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a6f1347cdb5399e9315d9c07473ba9d3a} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Pulse (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_af76c108b091ba14a60f1f25215ac3956}\index{ARaceManager@{ARaceManager}!RtToggleRace@{RtToggleRace}}
+\index{RtToggleRace@{RtToggleRace}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtToggleRace()}{RtToggleRace()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_af76c108b091ba14a60f1f25215ac3956} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Race (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a314e932b9a1e09b7fa12e5d31c95e8f8}\index{ARaceManager@{ARaceManager}!RtToggleSlope@{RtToggleSlope}}
+\index{RtToggleSlope@{RtToggleSlope}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtToggleSlope()}{RtToggleSlope()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a314e932b9a1e09b7fa12e5d31c95e8f8} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Slope (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_ae69df62a230135badd0844db4a49967a}\index{ARaceManager@{ARaceManager}!RtToggleTeam@{RtToggleTeam}}
+\index{RtToggleTeam@{RtToggleTeam}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtToggleTeam()}{RtToggleTeam()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ae69df62a230135badd0844db4a49967a} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Team (\begin{DoxyParamCaption}\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a8f85a737a933addc4d399bb53465e1dd}\index{ARaceManager@{ARaceManager}!RtToggleTeams@{RtToggleTeams}}
+\index{RtToggleTeams@{RtToggleTeams}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtToggleTeams()}{RtToggleTeams()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a8f85a737a933addc4d399bb53465e1dd} 
+void ARace\+Manager\+::\+Rt\+Toggle\+Teams (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_ababbcd09e8b86e2bf458dfe8ad504cf5}\index{ARaceManager@{ARaceManager}!RtUpdateFetchFrequency@{RtUpdateFetchFrequency}}
+\index{RtUpdateFetchFrequency@{RtUpdateFetchFrequency}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtUpdateFetchFrequency()}{RtUpdateFetchFrequency()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ababbcd09e8b86e2bf458dfe8ad504cf5} 
+void ARace\+Manager\+::\+Rt\+Update\+Fetch\+Frequency (\begin{DoxyParamCaption}\item[{float}]{Fetch\+Value}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a9391df99eaa36e06d7dcda440bd57f92}\index{ARaceManager@{ARaceManager}!RtUpdateGlowIntensity@{RtUpdateGlowIntensity}}
+\index{RtUpdateGlowIntensity@{RtUpdateGlowIntensity}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtUpdateGlowIntensity()}{RtUpdateGlowIntensity()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a9391df99eaa36e06d7dcda440bd57f92} 
+void ARace\+Manager\+::\+Rt\+Update\+Glow\+Intensity (\begin{DoxyParamCaption}\item[{float}]{Glowvalue}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a439c46072766872dd48d428810cd0aa8}\index{ARaceManager@{ARaceManager}!RtUpdateMainUrl@{RtUpdateMainUrl}}
+\index{RtUpdateMainUrl@{RtUpdateMainUrl}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtUpdateMainUrl()}{RtUpdateMainUrl()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a439c46072766872dd48d428810cd0aa8} 
+void ARace\+Manager\+::\+Rt\+Update\+Main\+Url (\begin{DoxyParamCaption}\item[{FString}]{New\+Url}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a7ba1f2fc78803603d3a60437effb7493}\index{ARaceManager@{ARaceManager}!RtUpdateMinMax@{RtUpdateMinMax}}
+\index{RtUpdateMinMax@{RtUpdateMinMax}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtUpdateMinMax()}{RtUpdateMinMax()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a7ba1f2fc78803603d3a60437effb7493} 
+void ARace\+Manager\+::\+Rt\+Update\+Min\+Max (\begin{DoxyParamCaption}\item[{float}]{Min\+Value}{, }\item[{float}]{Max\+Value}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a1b3621127f0704ff56b4569b7a0979c9}\index{ARaceManager@{ARaceManager}!RtUpdateNearFar@{RtUpdateNearFar}}
+\index{RtUpdateNearFar@{RtUpdateNearFar}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtUpdateNearFar()}{RtUpdateNearFar()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a1b3621127f0704ff56b4569b7a0979c9} 
+void ARace\+Manager\+::\+Rt\+Update\+Near\+Far (\begin{DoxyParamCaption}\item[{float}]{Near\+Value}{, }\item[{float}]{Far\+Value}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_abcb13527b120dd398f0b32da1e4dcf50}\index{ARaceManager@{ARaceManager}!RtUpdatePulseFrequency@{RtUpdatePulseFrequency}}
+\index{RtUpdatePulseFrequency@{RtUpdatePulseFrequency}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtUpdatePulseFrequency()}{RtUpdatePulseFrequency()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_abcb13527b120dd398f0b32da1e4dcf50} 
+void ARace\+Manager\+::\+Rt\+Update\+Pulse\+Frequency (\begin{DoxyParamCaption}\item[{float}]{Glowvalue}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a34f04f24bf80598da9502783bfc5b81e}\index{ARaceManager@{ARaceManager}!RtUpdateRaceUrlByID@{RtUpdateRaceUrlByID}}
+\index{RtUpdateRaceUrlByID@{RtUpdateRaceUrlByID}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RtUpdateRaceUrlByID()}{RtUpdateRaceUrlByID()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a34f04f24bf80598da9502783bfc5b81e} 
+void ARace\+Manager\+::\+Rt\+Update\+Race\+Url\+By\+ID (\begin{DoxyParamCaption}\item[{FString}]{url}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_acbe29932f1f258cb7066248627b6ee3d}\index{ARaceManager@{ARaceManager}!SaveGeorefLocation@{SaveGeorefLocation}}
+\index{SaveGeorefLocation@{SaveGeorefLocation}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{SaveGeorefLocation()}{SaveGeorefLocation()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_acbe29932f1f258cb7066248627b6ee3d} 
+void ARace\+Manager\+::\+Save\+Georef\+Location (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{FVector}]{Georef\+Location}{}\end{DoxyParamCaption})}
+
+
+
+Keeps track of the Georef locations for each Race. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Georef\+Location} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_aa254366baf40f39806df9589b17ddfb3}\index{ARaceManager@{ARaceManager}!SaveMainUrl\_Internal@{SaveMainUrl\_Internal}}
+\index{SaveMainUrl\_Internal@{SaveMainUrl\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{SaveMainUrl\_Internal()}{SaveMainUrl\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aa254366baf40f39806df9589b17ddfb3} 
+void ARace\+Manager\+::\+Save\+Main\+Url\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{FString}]{New\+Main\+Url}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_aceacf806ae9c17d6647dc8cc07eaca29}\index{ARaceManager@{ARaceManager}!StartTravelBkd\_Internal@{StartTravelBkd\_Internal}}
+\index{StartTravelBkd\_Internal@{StartTravelBkd\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{StartTravelBkd\_Internal()}{StartTravelBkd\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aceacf806ae9c17d6647dc8cc07eaca29} 
+void ARace\+Manager\+::\+Start\+Travel\+Bkd\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a03baec6045eb42872c2a84b7ef4c95e8}\index{ARaceManager@{ARaceManager}!StartTravelFwd\_Internal@{StartTravelFwd\_Internal}}
+\index{StartTravelFwd\_Internal@{StartTravelFwd\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{StartTravelFwd\_Internal()}{StartTravelFwd\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a03baec6045eb42872c2a84b7ef4c95e8} 
+void ARace\+Manager\+::\+Start\+Travel\+Fwd\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Starting/\+Stoping the Travel. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_ac3135c08014ef76809466f88ba0dab64}\index{ARaceManager@{ARaceManager}!StopAnimCheckpoint\_Internal@{StopAnimCheckpoint\_Internal}}
+\index{StopAnimCheckpoint\_Internal@{StopAnimCheckpoint\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{StopAnimCheckpoint\_Internal()}{StopAnimCheckpoint\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ac3135c08014ef76809466f88ba0dab64} 
+void ARace\+Manager\+::\+Stop\+Anim\+Checkpoint\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a8c7f4382bf8a0c7f418f177b13b069ef}\index{ARaceManager@{ARaceManager}!StopAnimPoi\_Internal@{StopAnimPoi\_Internal}}
+\index{StopAnimPoi\_Internal@{StopAnimPoi\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{StopAnimPoi\_Internal()}{StopAnimPoi\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a8c7f4382bf8a0c7f418f177b13b069ef} 
+void ARace\+Manager\+::\+Stop\+Anim\+Poi\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_race_manager_a3c6fdd85c9eff849eac7a294e7ac2acb}\index{ARaceManager@{ARaceManager}!StopAnimTeam\_Internal@{StopAnimTeam\_Internal}}
+\index{StopAnimTeam\_Internal@{StopAnimTeam\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{StopAnimTeam\_Internal()}{StopAnimTeam\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a3c6fdd85c9eff849eac7a294e7ac2acb} 
+void ARace\+Manager\+::\+Stop\+Anim\+Team\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Ending the Team animation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Team\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a2c33463ebe83378000ab23d280eced38}\index{ARaceManager@{ARaceManager}!StopTravel\_Internal@{StopTravel\_Internal}}
+\index{StopTravel\_Internal@{StopTravel\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{StopTravel\_Internal()}{StopTravel\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a2c33463ebe83378000ab23d280eced38} 
+void ARace\+Manager\+::\+Stop\+Travel\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a8bc8d3cbc52ae5b789a3e17471e4ce02}\index{ARaceManager@{ARaceManager}!TeleportToCheckpoint\_Internal@{TeleportToCheckpoint\_Internal}}
+\index{TeleportToCheckpoint\_Internal@{TeleportToCheckpoint\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TeleportToCheckpoint\_Internal()}{TeleportToCheckpoint\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a8bc8d3cbc52ae5b789a3e17471e4ce02} 
+void ARace\+Manager\+::\+Teleport\+To\+Checkpoint\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Teleport to Checkpoint. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Checkpoint\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_ac231cc0772e461ca7df64ec1fc07459e}\index{ARaceManager@{ARaceManager}!TeleportToPoi\_Internal@{TeleportToPoi\_Internal}}
+\index{TeleportToPoi\_Internal@{TeleportToPoi\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TeleportToPoi\_Internal()}{TeleportToPoi\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ac231cc0772e461ca7df64ec1fc07459e} 
+void ARace\+Manager\+::\+Teleport\+To\+Poi\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Teleport to Poi. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Poi\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_af52bb8509d7c1cae21016fb9520b2439}\index{ARaceManager@{ARaceManager}!TeleportToTeam\_Internal@{TeleportToTeam\_Internal}}
+\index{TeleportToTeam\_Internal@{TeleportToTeam\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TeleportToTeam\_Internal()}{TeleportToTeam\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_af52bb8509d7c1cae21016fb9520b2439} 
+void ARace\+Manager\+::\+Teleport\+To\+Team\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Moving the Pawn to the Team location. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Team\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a1525d2861aee893fcc940e5732ad497d}\index{ARaceManager@{ARaceManager}!Tick@{Tick}}
+\index{Tick@{Tick}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{Tick()}{Tick()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a1525d2861aee893fcc940e5732ad497d} 
+void ARace\+Manager\+::\+Tick (\begin{DoxyParamCaption}\item[{float}]{Delta\+Time}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_a_race_manager_a3fdb86f54ba4f55080a71f5b23ad0697}\index{ARaceManager@{ARaceManager}!ToggleCheckpoint\_Internal@{ToggleCheckpoint\_Internal}}
+\index{ToggleCheckpoint\_Internal@{ToggleCheckpoint\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{ToggleCheckpoint\_Internal()}{ToggleCheckpoint\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a3fdb86f54ba4f55080a71f5b23ad0697} 
+void ARace\+Manager\+::\+Toggle\+Checkpoint\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+
+
+Show/\+Hide Checkpoint. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Checkpoint\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+{\em b\+Display} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_ac250d17bc47567b80d734fbcb5c4f861}\index{ARaceManager@{ARaceManager}!ToggleCheckpoints\_Internal@{ToggleCheckpoints\_Internal}}
+\index{ToggleCheckpoints\_Internal@{ToggleCheckpoints\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{ToggleCheckpoints\_Internal()}{ToggleCheckpoints\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ac250d17bc47567b80d734fbcb5c4f861} 
+void ARace\+Manager\+::\+Toggle\+Checkpoints\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption}) const}
+
+
+
+Show/\+Hide all Checkpoints. 
+
+CHECKPOINTS 
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a0b70bc64e82cb7021589c35547780471}\index{ARaceManager@{ARaceManager}!ToggleCheckpointWeather\_Internal@{ToggleCheckpointWeather\_Internal}}
+\index{ToggleCheckpointWeather\_Internal@{ToggleCheckpointWeather\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{ToggleCheckpointWeather\_Internal()}{ToggleCheckpointWeather\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a0b70bc64e82cb7021589c35547780471} 
+void ARace\+Manager\+::\+Toggle\+Checkpoint\+Weather\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+
+
+Show/\+Hide Weather. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Checkpoint\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+{\em b\+Display} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_adfab05c5a48bebcd72fea56f50d6f5fe}\index{ARaceManager@{ARaceManager}!ToggleClub\_Internal@{ToggleClub\_Internal}}
+\index{ToggleClub\_Internal@{ToggleClub\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{ToggleClub\_Internal()}{ToggleClub\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_adfab05c5a48bebcd72fea56f50d6f5fe} 
+void ARace\+Manager\+::\+Toggle\+Club\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+
+
+Toggle Team club display. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Team\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+{\em b\+Display} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_aa1274b2e8ba7ba67a11691af209e2e09}\index{ARaceManager@{ARaceManager}!ToggleFlag\_Internal@{ToggleFlag\_Internal}}
+\index{ToggleFlag\_Internal@{ToggleFlag\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{ToggleFlag\_Internal()}{ToggleFlag\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aa1274b2e8ba7ba67a11691af209e2e09} 
+void ARace\+Manager\+::\+Toggle\+Flag\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+
+
+Toggle Team flag display. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Team\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+{\em b\+Display} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_ac1bd79bbeedf5566f5df054c8cb1123a}\index{ARaceManager@{ARaceManager}!ToggleGroup\_Internal@{ToggleGroup\_Internal}}
+\index{ToggleGroup\_Internal@{ToggleGroup\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{ToggleGroup\_Internal()}{ToggleGroup\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ac1bd79bbeedf5566f5df054c8cb1123a} 
+void ARace\+Manager\+::\+Toggle\+Group\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{int64}]{Group\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+
+
+Show/\+Hide a whole Group. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Group\+ID} & \\
+\hline
+{\em b\+Display} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_ad913faf0dcb389b6cae02d8d68082b7f}\index{ARaceManager@{ARaceManager}!ToggleKms\_Internal@{ToggleKms\_Internal}}
+\index{ToggleKms\_Internal@{ToggleKms\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{ToggleKms\_Internal()}{ToggleKms\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ad913faf0dcb389b6cae02d8d68082b7f} 
+void ARace\+Manager\+::\+Toggle\+Kms\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption}) const}
+
+
+
+Show/\+Hide Km. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_ad05ce120bd71b2d91e06b9bbef29e893}\index{ARaceManager@{ARaceManager}!TogglePath\_Internal@{TogglePath\_Internal}}
+\index{TogglePath\_Internal@{TogglePath\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TogglePath\_Internal()}{TogglePath\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ad05ce120bd71b2d91e06b9bbef29e893} 
+void ARace\+Manager\+::\+Toggle\+Path\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption}) const}
+
+
+
+Show/\+Hide Path. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a439f0091652e39f8d52cb5cc87c93764}\index{ARaceManager@{ARaceManager}!TogglePhoto\_Internal@{TogglePhoto\_Internal}}
+\index{TogglePhoto\_Internal@{TogglePhoto\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TogglePhoto\_Internal()}{TogglePhoto\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a439f0091652e39f8d52cb5cc87c93764} 
+void ARace\+Manager\+::\+Toggle\+Photo\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+
+
+Toggle Team photo display. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Team\+ID} & \texorpdfstring{$\ast$}{*} \\
+\hline
+{\em Race\+ID} & \\
+\hline
+{\em b\+Display} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a9bc9609cea0fc375cdc346696b8e345a}\index{ARaceManager@{ARaceManager}!TogglePoi\_Internal@{TogglePoi\_Internal}}
+\index{TogglePoi\_Internal@{TogglePoi\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TogglePoi\_Internal()}{TogglePoi\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a9bc9609cea0fc375cdc346696b8e345a} 
+void ARace\+Manager\+::\+Toggle\+Poi\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+
+
+Show/\+Hide Poi. 
+
+POI 
+\begin{DoxyParams}{Parameters}
+{\em Poi\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+{\em b\+Display} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a0d6db43e9ac23d3168cec91ae2027bf8}\index{ARaceManager@{ARaceManager}!TogglePois\_Internal@{TogglePois\_Internal}}
+\index{TogglePois\_Internal@{TogglePois\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TogglePois\_Internal()}{TogglePois\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a0d6db43e9ac23d3168cec91ae2027bf8} 
+void ARace\+Manager\+::\+Toggle\+Pois\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption}) const}
+
+
+
+Show/\+Hide all Pois. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a21ab6177ff0d321731f7316aace79824}\index{ARaceManager@{ARaceManager}!TogglePoiWeather\_Internal@{TogglePoiWeather\_Internal}}
+\index{TogglePoiWeather\_Internal@{TogglePoiWeather\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TogglePoiWeather\_Internal()}{TogglePoiWeather\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a21ab6177ff0d321731f7316aace79824} 
+void ARace\+Manager\+::\+Toggle\+Poi\+Weather\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+
+
+Show/\+Hide Weather. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Poi\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+{\em b\+Display} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a7fca2f0bac1c4211a98b72eab127e9f8}\index{ARaceManager@{ARaceManager}!TogglePulse\_Internal@{TogglePulse\_Internal}}
+\index{TogglePulse\_Internal@{TogglePulse\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TogglePulse\_Internal()}{TogglePulse\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a7fca2f0bac1c4211a98b72eab127e9f8} 
+void ARace\+Manager\+::\+Toggle\+Pulse\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a5a815cbdcf2f55f08b4313b5be34b88d}\index{ARaceManager@{ARaceManager}!ToggleRace\_Internal@{ToggleRace\_Internal}}
+\index{ToggleRace\_Internal@{ToggleRace\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{ToggleRace\_Internal()}{ToggleRace\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a5a815cbdcf2f55f08b4313b5be34b88d} 
+void ARace\+Manager\+::\+Toggle\+Race\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption}) const}
+
+
+
+Show/\+Hide Race with all children. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a3627d1225ce810c37d63aa68c62afb12}\index{ARaceManager@{ARaceManager}!ToggleRunners\_Internal@{ToggleRunners\_Internal}}
+\index{ToggleRunners\_Internal@{ToggleRunners\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{ToggleRunners\_Internal()}{ToggleRunners\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a3627d1225ce810c37d63aa68c62afb12} 
+void ARace\+Manager\+::\+Toggle\+Runners\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption}) const}
+
+
+
+Hiding Runners without testing Teams. 
+
+TEAMS 
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a29a456d46a4a37a574144258cb5df946}\index{ARaceManager@{ARaceManager}!ToggleSlope\_Internal@{ToggleSlope\_Internal}}
+\index{ToggleSlope\_Internal@{ToggleSlope\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{ToggleSlope\_Internal()}{ToggleSlope\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a29a456d46a4a37a574144258cb5df946} 
+void ARace\+Manager\+::\+Toggle\+Slope\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption}) const}
+
+
+
+Show/\+Hide Slope. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_aaeb41196075a5cb8ef95ab68bbea8b96}\index{ARaceManager@{ARaceManager}!ToggleTeam\_Internal@{ToggleTeam\_Internal}}
+\index{ToggleTeam\_Internal@{ToggleTeam\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{ToggleTeam\_Internal()}{ToggleTeam\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aaeb41196075a5cb8ef95ab68bbea8b96} 
+void ARace\+Manager\+::\+Toggle\+Team\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+
+
+Show/\+Hide Team. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Team\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+{\em b\+Display} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_ac011477a4cf009e6c0cc435ce2080381}\index{ARaceManager@{ARaceManager}!ToggleTeams\_Internal@{ToggleTeams\_Internal}}
+\index{ToggleTeams\_Internal@{ToggleTeams\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{ToggleTeams\_Internal()}{ToggleTeams\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ac011477a4cf009e6c0cc435ce2080381} 
+void ARace\+Manager\+::\+Toggle\+Teams\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Display}{}\end{DoxyParamCaption}) const}
+
+
+
+Toggle Teams by Race\+ID. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em b\+Display} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_aec48ab43bb5d7dfa87114b4f21870451}\index{ARaceManager@{ARaceManager}!UpdateFetchFrequency\_Internal@{UpdateFetchFrequency\_Internal}}
+\index{UpdateFetchFrequency\_Internal@{UpdateFetchFrequency\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{UpdateFetchFrequency\_Internal()}{UpdateFetchFrequency\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aec48ab43bb5d7dfa87114b4f21870451} 
+void ARace\+Manager\+::\+Update\+Fetch\+Frequency\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{float}]{Fetch\+Value}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Updating the fetch frequency. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Fetch\+Value} & float \\
+\hline
+{\em Race\+ID} & int64 \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a61b5a78b2f0adef3d2d840567d9aaace}\index{ARaceManager@{ARaceManager}!UpdateGlowIntensity\_Internal@{UpdateGlowIntensity\_Internal}}
+\index{UpdateGlowIntensity\_Internal@{UpdateGlowIntensity\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{UpdateGlowIntensity\_Internal()}{UpdateGlowIntensity\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a61b5a78b2f0adef3d2d840567d9aaace} 
+void ARace\+Manager\+::\+Update\+Glow\+Intensity\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{float}]{Glow\+Value}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Updating Glow intensity. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Glow\+Value} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_af928021d0bb30cfed4291f3e98e64afe}\index{ARaceManager@{ARaceManager}!UpdateMainUrl\_Internal@{UpdateMainUrl\_Internal}}
+\index{UpdateMainUrl\_Internal@{UpdateMainUrl\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{UpdateMainUrl\_Internal()}{UpdateMainUrl\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_af928021d0bb30cfed4291f3e98e64afe} 
+void ARace\+Manager\+::\+Update\+Main\+Url\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{FString}]{url}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_race_manager_a6b016641300822b5392096bfce1a616b}\index{ARaceManager@{ARaceManager}!UpdateMinMax\_Internal@{UpdateMinMax\_Internal}}
+\index{UpdateMinMax\_Internal@{UpdateMinMax\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{UpdateMinMax\_Internal()}{UpdateMinMax\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a6b016641300822b5392096bfce1a616b} 
+void ARace\+Manager\+::\+Update\+Min\+Max\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{FVector}]{Min\+Value}{, }\item[{FVector}]{Max\+Value}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Updating the Min \& Max size of a Team. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Min\+Value} & \\
+\hline
+{\em Max\+Value} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_a1f0d09f0366b6482878b06a0920c0cf4}\index{ARaceManager@{ARaceManager}!UpdateNearFar\_Internal@{UpdateNearFar\_Internal}}
+\index{UpdateNearFar\_Internal@{UpdateNearFar\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{UpdateNearFar\_Internal()}{UpdateNearFar\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a1f0d09f0366b6482878b06a0920c0cf4} 
+void ARace\+Manager\+::\+Update\+Near\+Far\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{float}]{Near\+Value}{, }\item[{float}]{Far\+Value}{}\end{DoxyParamCaption}) const}
+
+
+
+Updating the Near \& Far distance for scale. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Near\+Value} & \\
+\hline
+{\em Far\+Value} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_abd3b82bc2384ca98a7557c8546939e11}\index{ARaceManager@{ARaceManager}!UpdatePulseFrequency\_Internal@{UpdatePulseFrequency\_Internal}}
+\index{UpdatePulseFrequency\_Internal@{UpdatePulseFrequency\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{UpdatePulseFrequency\_Internal()}{UpdatePulseFrequency\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_abd3b82bc2384ca98a7557c8546939e11} 
+void ARace\+Manager\+::\+Update\+Pulse\+Frequency\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{float}]{Pulse\+Speed}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Updating the Pulse speed. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Pulse\+Speed} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_race_manager_ab602017d0c689435a1eb76eac0629e27}\index{ARaceManager@{ARaceManager}!UpdateRaceUrlByID\_Internal@{UpdateRaceUrlByID\_Internal}}
+\index{UpdateRaceUrlByID\_Internal@{UpdateRaceUrlByID\_Internal}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{UpdateRaceUrlByID\_Internal()}{UpdateRaceUrlByID\_Internal()}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ab602017d0c689435a1eb76eac0629e27} 
+void ARace\+Manager\+::\+Update\+Race\+Url\+By\+ID\+\_\+\+Internal (\begin{DoxyParamCaption}\item[{FString}]{url}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Updating the Url for a race. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em url} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-variable-members}
+\Hypertarget{class_a_race_manager_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_a_race_manager_ae3890048964902fee63a7b6d8b3edbac}\index{ARaceManager@{ARaceManager}!bAfficher@{bAfficher}}
+\index{bAfficher@{bAfficher}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{bAfficher}{bAfficher}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ae3890048964902fee63a7b6d8b3edbac} 
+bool ARace\+Manager\+::b\+Afficher = true}
+
+\Hypertarget{class_a_race_manager_aca0207854a674c71328942dd2e9b03c0}\index{ARaceManager@{ARaceManager}!CheckpointSubsystem@{CheckpointSubsystem}}
+\index{CheckpointSubsystem@{CheckpointSubsystem}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{CheckpointSubsystem}{CheckpointSubsystem}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aca0207854a674c71328942dd2e9b03c0} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_checkpoint_subsystem}{UCheckpoint\+Subsystem}}$>$ ARace\+Manager\+::\+Checkpoint\+Subsystem\hspace{0.3cm}{\ttfamily [mutable]}}
+
+\Hypertarget{class_a_race_manager_a8de0aa0efb08da17b83b9560c6a8cfd9}\index{ARaceManager@{ARaceManager}!HttpGatewaySubsystem@{HttpGatewaySubsystem}}
+\index{HttpGatewaySubsystem@{HttpGatewaySubsystem}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{HttpGatewaySubsystem}{HttpGatewaySubsystem}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a8de0aa0efb08da17b83b9560c6a8cfd9} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_http_gateway_subsystem}{UHttp\+Gateway\+Subsystem}}$>$ ARace\+Manager\+::\+Http\+Gateway\+Subsystem\hspace{0.3cm}{\ttfamily [mutable]}}
+
+\Hypertarget{class_a_race_manager_a02096d9e430cb6ef173ca96de8a51c82}\index{ARaceManager@{ARaceManager}!LoadingSubsystem@{LoadingSubsystem}}
+\index{LoadingSubsystem@{LoadingSubsystem}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{LoadingSubsystem}{LoadingSubsystem}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a02096d9e430cb6ef173ca96de8a51c82} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_loading_status_subsystem}{ULoading\+Status\+Subsystem}}$>$ ARace\+Manager\+::\+Loading\+Subsystem\hspace{0.3cm}{\ttfamily [mutable]}}
+
+\Hypertarget{class_a_race_manager_ae141a10fc0ea54be84435fe59bb3e6b0}\index{ARaceManager@{ARaceManager}!OnChangeDestination@{OnChangeDestination}}
+\index{OnChangeDestination@{OnChangeDestination}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{OnChangeDestination}{OnChangeDestination}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ae141a10fc0ea54be84435fe59bb3e6b0} 
+FOn\+Change\+Destination ARace\+Manager\+::\+On\+Change\+Destination}
+
+\Hypertarget{class_a_race_manager_a346cdd14d106fd4d0fad1a4247124707}\index{ARaceManager@{ARaceManager}!PathSubsystem@{PathSubsystem}}
+\index{PathSubsystem@{PathSubsystem}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{PathSubsystem}{PathSubsystem}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a346cdd14d106fd4d0fad1a4247124707} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_path_subsystem}{UPath\+Subsystem}}$>$ ARace\+Manager\+::\+Path\+Subsystem\hspace{0.3cm}{\ttfamily [mutable]}}
+
+\doxylink{class_subsystems}{Subsystems} \Hypertarget{class_a_race_manager_ae7486e56511ec8358882db416e95dd98}\index{ARaceManager@{ARaceManager}!PoiSubsystem@{PoiSubsystem}}
+\index{PoiSubsystem@{PoiSubsystem}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{PoiSubsystem}{PoiSubsystem}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ae7486e56511ec8358882db416e95dd98} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_poi_subsystem}{UPoi\+Subsystem}}$>$ ARace\+Manager\+::\+Poi\+Subsystem\hspace{0.3cm}{\ttfamily [mutable]}}
+
+\Hypertarget{class_a_race_manager_ae87b296768e8d5b58f25bfffe1fc3cc7}\index{ARaceManager@{ARaceManager}!RaceSubsystem@{RaceSubsystem}}
+\index{RaceSubsystem@{RaceSubsystem}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RaceSubsystem}{RaceSubsystem}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ae87b296768e8d5b58f25bfffe1fc3cc7} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_race_subsystem}{URace\+Subsystem}}$>$ ARace\+Manager\+::\+Race\+Subsystem\hspace{0.3cm}{\ttfamily [mutable]}}
+
+\Hypertarget{class_a_race_manager_aad7b8c513a6e8bd1372cd169a23c1230}\index{ARaceManager@{ARaceManager}!RunnerSubsystem@{RunnerSubsystem}}
+\index{RunnerSubsystem@{RunnerSubsystem}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{RunnerSubsystem}{RunnerSubsystem}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aad7b8c513a6e8bd1372cd169a23c1230} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_runner_subsystem}{URunner\+Subsystem}}$>$ ARace\+Manager\+::\+Runner\+Subsystem\hspace{0.3cm}{\ttfamily [mutable]}}
+
+\Hypertarget{class_a_race_manager_aebd820d3e42f4d5fe139a980bef4f09f}\index{ARaceManager@{ARaceManager}!ScaleSubsystem@{ScaleSubsystem}}
+\index{ScaleSubsystem@{ScaleSubsystem}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{ScaleSubsystem}{ScaleSubsystem}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aebd820d3e42f4d5fe139a980bef4f09f} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_scale_subsystem}{UScale\+Subsystem}}$>$ ARace\+Manager\+::\+Scale\+Subsystem\hspace{0.3cm}{\ttfamily [mutable]}}
+
+\Hypertarget{class_a_race_manager_ad91b1ee9131ddf9e2550e7a7d4f9125d}\index{ARaceManager@{ARaceManager}!SettingsSubsystem@{SettingsSubsystem}}
+\index{SettingsSubsystem@{SettingsSubsystem}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{SettingsSubsystem}{SettingsSubsystem}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ad91b1ee9131ddf9e2550e7a7d4f9125d} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_settings_subsystem}{USettings\+Subsystem}}$>$ ARace\+Manager\+::\+Settings\+Subsystem\hspace{0.3cm}{\ttfamily [mutable]}}
+
+\Hypertarget{class_a_race_manager_a4076261190d82b6f790cd67b1930ff6e}\index{ARaceManager@{ARaceManager}!TeamGroupSubsystem@{TeamGroupSubsystem}}
+\index{TeamGroupSubsystem@{TeamGroupSubsystem}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TeamGroupSubsystem}{TeamGroupSubsystem}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a4076261190d82b6f790cd67b1930ff6e} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_team_group_subsystem}{UTeam\+Group\+Subsystem}}$>$ ARace\+Manager\+::\+Team\+Group\+Subsystem\hspace{0.3cm}{\ttfamily [mutable]}}
+
+\Hypertarget{class_a_race_manager_a406a029f5f8ca8903728bc304ab8527e}\index{ARaceManager@{ARaceManager}!TeamSubsystem@{TeamSubsystem}}
+\index{TeamSubsystem@{TeamSubsystem}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TeamSubsystem}{TeamSubsystem}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a406a029f5f8ca8903728bc304ab8527e} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_team_subsystem}{UTeam\+Subsystem}}$>$ ARace\+Manager\+::\+Team\+Subsystem\hspace{0.3cm}{\ttfamily [mutable]}}
+
+\Hypertarget{class_a_race_manager_a2c6fd7838652db58479ce0e10961490c}\index{ARaceManager@{ARaceManager}!TestCheckpointID@{TestCheckpointID}}
+\index{TestCheckpointID@{TestCheckpointID}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TestCheckpointID}{TestCheckpointID}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a2c6fd7838652db58479ce0e10961490c} 
+int64 ARace\+Manager\+::\+Test\+Checkpoint\+ID = 4086211504}
+
+\Hypertarget{class_a_race_manager_a268a97ce385e0a4464e0aacd8791cd5a}\index{ARaceManager@{ARaceManager}!TestFarDist@{TestFarDist}}
+\index{TestFarDist@{TestFarDist}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TestFarDist}{TestFarDist}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a268a97ce385e0a4464e0aacd8791cd5a} 
+float ARace\+Manager\+::\+Test\+Far\+Dist = 1000000.f}
+
+\Hypertarget{class_a_race_manager_aea8db229c0d4669ee2db2e2bbd3088f0}\index{ARaceManager@{ARaceManager}!TestFetch@{TestFetch}}
+\index{TestFetch@{TestFetch}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TestFetch}{TestFetch}}
+{\footnotesize\ttfamily \label{class_a_race_manager_aea8db229c0d4669ee2db2e2bbd3088f0} 
+float ARace\+Manager\+::\+Test\+Fetch = 1.f}
+
+\Hypertarget{class_a_race_manager_ad2ffe67655f777a8ed00cca04a3532a3}\index{ARaceManager@{ARaceManager}!TestGlow@{TestGlow}}
+\index{TestGlow@{TestGlow}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TestGlow}{TestGlow}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ad2ffe67655f777a8ed00cca04a3532a3} 
+float ARace\+Manager\+::\+Test\+Glow = 50.f}
+
+\Hypertarget{class_a_race_manager_a16a76ad7bda125f9d32a7b37af083f84}\index{ARaceManager@{ARaceManager}!TestGroupID@{TestGroupID}}
+\index{TestGroupID@{TestGroupID}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TestGroupID}{TestGroupID}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a16a76ad7bda125f9d32a7b37af083f84} 
+int64 ARace\+Manager\+::\+Test\+Group\+ID}
+
+\Hypertarget{class_a_race_manager_ab6aabe562e34b3bbac843cf4a892d0ce}\index{ARaceManager@{ARaceManager}!TestMaxScale@{TestMaxScale}}
+\index{TestMaxScale@{TestMaxScale}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TestMaxScale}{TestMaxScale}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ab6aabe562e34b3bbac843cf4a892d0ce} 
+float ARace\+Manager\+::\+Test\+Max\+Scale = 300.f}
+
+\Hypertarget{class_a_race_manager_af586648d9e5ecf5f3c57592dd80df13f}\index{ARaceManager@{ARaceManager}!TestMinScale@{TestMinScale}}
+\index{TestMinScale@{TestMinScale}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TestMinScale}{TestMinScale}}
+{\footnotesize\ttfamily \label{class_a_race_manager_af586648d9e5ecf5f3c57592dd80df13f} 
+float ARace\+Manager\+::\+Test\+Min\+Scale = 100.f}
+
+\Hypertarget{class_a_race_manager_ae1a2bf22987447750a2fb576230fe7a8}\index{ARaceManager@{ARaceManager}!TestNearDist@{TestNearDist}}
+\index{TestNearDist@{TestNearDist}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TestNearDist}{TestNearDist}}
+{\footnotesize\ttfamily \label{class_a_race_manager_ae1a2bf22987447750a2fb576230fe7a8} 
+float ARace\+Manager\+::\+Test\+Near\+Dist = 50000.f}
+
+\Hypertarget{class_a_race_manager_a41a86860b6b30e280247f8b19440531d}\index{ARaceManager@{ARaceManager}!TestPoiID@{TestPoiID}}
+\index{TestPoiID@{TestPoiID}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TestPoiID}{TestPoiID}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a41a86860b6b30e280247f8b19440531d} 
+int64 ARace\+Manager\+::\+Test\+Poi\+ID = 792472354}
+
+\Hypertarget{class_a_race_manager_a36289467f044188ad870ada66616fd0e}\index{ARaceManager@{ARaceManager}!TestPulse@{TestPulse}}
+\index{TestPulse@{TestPulse}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TestPulse}{TestPulse}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a36289467f044188ad870ada66616fd0e} 
+float ARace\+Manager\+::\+Test\+Pulse = 1.f}
+
+\Hypertarget{class_a_race_manager_af3cba806b4339c7bfc39796330b15ec5}\index{ARaceManager@{ARaceManager}!TestRaceID@{TestRaceID}}
+\index{TestRaceID@{TestRaceID}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TestRaceID}{TestRaceID}}
+{\footnotesize\ttfamily \label{class_a_race_manager_af3cba806b4339c7bfc39796330b15ec5} 
+int64 ARace\+Manager\+::\+Test\+Race\+ID = 1}
+
+\Hypertarget{class_a_race_manager_adf67a71228d721372397c7f6392cb212}\index{ARaceManager@{ARaceManager}!TestTeamID@{TestTeamID}}
+\index{TestTeamID@{TestTeamID}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TestTeamID}{TestTeamID}}
+{\footnotesize\ttfamily \label{class_a_race_manager_adf67a71228d721372397c7f6392cb212} 
+int64 ARace\+Manager\+::\+Test\+Team\+ID = 3675699636}
+
+\Hypertarget{class_a_race_manager_a4920ebba5265d8d6490144d3ed63a8fa}\index{ARaceManager@{ARaceManager}!TestUrl@{TestUrl}}
+\index{TestUrl@{TestUrl}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TestUrl}{TestUrl}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a4920ebba5265d8d6490144d3ed63a8fa} 
+FString ARace\+Manager\+::\+Test\+Url = FString("{}https\+://simulacre.\+ltvprod.\+cc/"{})}
+
+\Hypertarget{class_a_race_manager_a1f2a108bac76eb7e764baaffb94b441b}\index{ARaceManager@{ARaceManager}!TestZOffset@{TestZOffset}}
+\index{TestZOffset@{TestZOffset}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TestZOffset}{TestZOffset}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a1f2a108bac76eb7e764baaffb94b441b} 
+float ARace\+Manager\+::\+Test\+ZOffset = 100.f}
+
+\Hypertarget{class_a_race_manager_a9303601c8b39f09394039babdb8de920}\index{ARaceManager@{ARaceManager}!TrailsSubsystem@{TrailsSubsystem}}
+\index{TrailsSubsystem@{TrailsSubsystem}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{TrailsSubsystem}{TrailsSubsystem}}
+{\footnotesize\ttfamily \label{class_a_race_manager_a9303601c8b39f09394039babdb8de920} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_trails_subsystem}{UTrails\+Subsystem}}$>$ ARace\+Manager\+::\+Trails\+Subsystem\hspace{0.3cm}{\ttfamily [mutable]}}
+
+\Hypertarget{class_a_race_manager_acfcb7ebc46944912f43c92a23c70a113}\index{ARaceManager@{ARaceManager}!WeatherSubsystem@{WeatherSubsystem}}
+\index{WeatherSubsystem@{WeatherSubsystem}!ARaceManager@{ARaceManager}}
+\doxysubsubsection{\texorpdfstring{WeatherSubsystem}{WeatherSubsystem}}
+{\footnotesize\ttfamily \label{class_a_race_manager_acfcb7ebc46944912f43c92a23c70a113} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_weather_subsystem}{UWeather\+Subsystem}}$>$ ARace\+Manager\+::\+Weather\+Subsystem\hspace{0.3cm}{\ttfamily [mutable]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Trail\+Simulator/\+Public/\mbox{\hyperlink{_race_manager_8h}{Race\+Manager.\+h}}\item 
+Source/\+Trail\+Simulator/\+Private/\mbox{\hyperlink{_race_manager_8cpp}{Race\+Manager.\+cpp}}\end{DoxyCompactItemize}

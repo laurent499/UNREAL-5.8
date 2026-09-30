@@ -1,0 +1,85 @@
+\doxysection{IPoi\+Interface Class Reference}
+\hypertarget{class_i_poi_interface}{}\label{class_i_poi_interface}\index{IPoiInterface@{IPoiInterface}}
+
+
+{\ttfamily \#include $<$Poi\+Interface.\+h$>$}
+
+Inheritance diagram for IPoi\+Interface\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_i_poi_interface}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_i_poi_interface_a68cee66335848f7d31e3a0e6500e9847}{Update\+Poi}} (\mbox{\hyperlink{struct_f_race_p_o_i}{FRace\+POI}} Poi\+Data, \mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}} Race\+Setup)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_poi_interface_ab4cfcf255ea8c46db5d125084330cccf}{Update\+Poi\+Weather}} (\mbox{\hyperlink{struct_f_open_weather_response}{FOpen\+Weather\+Response}} Weather\+Datas)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_poi_interface_ac6e383dc046440477f3cbb0fe91f45a7}{Toggle\+Poi\+Weather}} (bool b\+Show)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_poi_interface_a4ef7897c141f1f2dd64849396c8b8edd}{Start\+Animation}} (float Rotation\+Speed)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_poi_interface_a176feb5a9de721f5649b8133252fb65e}{Stop\+Animation}} ()=0
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{class_i_poi_interface_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_i_poi_interface_a4ef7897c141f1f2dd64849396c8b8edd}\index{IPoiInterface@{IPoiInterface}!StartAnimation@{StartAnimation}}
+\index{StartAnimation@{StartAnimation}!IPoiInterface@{IPoiInterface}}
+\doxysubsubsection{\texorpdfstring{StartAnimation()}{StartAnimation()}}
+{\footnotesize\ttfamily \label{class_i_poi_interface_a4ef7897c141f1f2dd64849396c8b8edd} 
+virtual void IPoi\+Interface\+::\+Start\+Animation (\begin{DoxyParamCaption}\item[{float}]{Rotation\+Speed}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_poi_abfc4199fc960e3069cc281e449000472}{APoi}}, \mbox{\hyperlink{class_a_poi___generic_a1c9d7f9cfc8e468b2229400bfa0be237}{APoi\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_poi___g_t_w_s_a0829621c36f401448a972acaacf2e8fa}{APoi\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_poi___u_t_m_b_a9f30246f9c5d1b38f85267cda8599c36}{APoi\+\_\+\+UTMB}}.
+
+\Hypertarget{class_i_poi_interface_a176feb5a9de721f5649b8133252fb65e}\index{IPoiInterface@{IPoiInterface}!StopAnimation@{StopAnimation}}
+\index{StopAnimation@{StopAnimation}!IPoiInterface@{IPoiInterface}}
+\doxysubsubsection{\texorpdfstring{StopAnimation()}{StopAnimation()}}
+{\footnotesize\ttfamily \label{class_i_poi_interface_a176feb5a9de721f5649b8133252fb65e} 
+virtual void IPoi\+Interface\+::\+Stop\+Animation (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_poi_a6d993a159c5c6cbd1713b645079b91e0}{APoi}}, \mbox{\hyperlink{class_a_poi___generic_ab84e4b18443372a135eb5af4a26ce67e}{APoi\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_poi___g_t_w_s_a06bba4ec9a9932953558628f0fee6e56}{APoi\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_poi___u_t_m_b_a659fac73b34e0e5125158ac8341daf4c}{APoi\+\_\+\+UTMB}}.
+
+\Hypertarget{class_i_poi_interface_ac6e383dc046440477f3cbb0fe91f45a7}\index{IPoiInterface@{IPoiInterface}!TogglePoiWeather@{TogglePoiWeather}}
+\index{TogglePoiWeather@{TogglePoiWeather}!IPoiInterface@{IPoiInterface}}
+\doxysubsubsection{\texorpdfstring{TogglePoiWeather()}{TogglePoiWeather()}}
+{\footnotesize\ttfamily \label{class_i_poi_interface_ac6e383dc046440477f3cbb0fe91f45a7} 
+virtual void IPoi\+Interface\+::\+Toggle\+Poi\+Weather (\begin{DoxyParamCaption}\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_poi_a61eef27848a565699baed69da6123d3d}{APoi}}, \mbox{\hyperlink{class_a_poi___generic_a2bdba58ff71a2e8287988b5cc64b2190}{APoi\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_poi___g_t_w_s_aeb1910e9b20bf649d8c8dd3f290328ce}{APoi\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_poi___u_t_m_b_aba1d3f20287c3714431e76dd742850ed}{APoi\+\_\+\+UTMB}}.
+
+\Hypertarget{class_i_poi_interface_a68cee66335848f7d31e3a0e6500e9847}\index{IPoiInterface@{IPoiInterface}!UpdatePoi@{UpdatePoi}}
+\index{UpdatePoi@{UpdatePoi}!IPoiInterface@{IPoiInterface}}
+\doxysubsubsection{\texorpdfstring{UpdatePoi()}{UpdatePoi()}}
+{\footnotesize\ttfamily \label{class_i_poi_interface_a68cee66335848f7d31e3a0e6500e9847} 
+virtual void IPoi\+Interface\+::\+Update\+Poi (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_race_p_o_i}{FRace\+POI}}}]{Poi\+Data}{, }\item[{\mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}}}]{Race\+Setup}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_poi_a2105d1c3e7d24abf558db7429970c455}{APoi}}, \mbox{\hyperlink{class_a_poi___generic_aaf6b9d49b8c9ae79c298d0d4a797d414}{APoi\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_poi___g_t_w_s_a603ecbd32bbf4826248f59520bc50a75}{APoi\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_poi___u_t_m_b_ae18f2ca98223e6f9d7212df598412157}{APoi\+\_\+\+UTMB}}.
+
+\Hypertarget{class_i_poi_interface_ab4cfcf255ea8c46db5d125084330cccf}\index{IPoiInterface@{IPoiInterface}!UpdatePoiWeather@{UpdatePoiWeather}}
+\index{UpdatePoiWeather@{UpdatePoiWeather}!IPoiInterface@{IPoiInterface}}
+\doxysubsubsection{\texorpdfstring{UpdatePoiWeather()}{UpdatePoiWeather()}}
+{\footnotesize\ttfamily \label{class_i_poi_interface_ab4cfcf255ea8c46db5d125084330cccf} 
+virtual void IPoi\+Interface\+::\+Update\+Poi\+Weather (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_open_weather_response}{FOpen\+Weather\+Response}}}]{Weather\+Datas}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_poi_a52c237f9885928e0dbaf4e051f2e55dc}{APoi}}, \mbox{\hyperlink{class_a_poi___generic_a81a8b067c083a1215f66fb621887e4cf}{APoi\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_poi___g_t_w_s_a4f6821cf9da1f5b9f91dc144e569fccd}{APoi\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_poi___u_t_m_b_ab50be200a8d1ea7c70913acc4dccfd1f}{APoi\+\_\+\+UTMB}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Trail\+Interfaces/\+Public/\mbox{\hyperlink{_poi_interface_8h}{Poi\+Interface.\+h}}\end{DoxyCompactItemize}

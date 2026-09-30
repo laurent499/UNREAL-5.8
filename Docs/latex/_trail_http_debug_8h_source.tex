@@ -1,0 +1,38 @@
+\doxysection{Trail\+Http\+Debug.\+h}
+\hypertarget{_trail_http_debug_8h_source}{}\label{_trail_http_debug_8h_source}\index{Source/Subsystems/Public/TrailHttpDebug.h@{Source/Subsystems/Public/TrailHttpDebug.h}}
+\mbox{\hyperlink{_trail_http_debug_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}Http.h"{}}\ \textcolor{comment}{//\ FHttpRequestPtr\ /\ FHttpResponsePtr}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_f_trail_http_debug_options}{FTrailHttpDebugOptions}}}
+\DoxyCodeLine{00007\ \{}
+\DoxyCodeLine{00008\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_f_trail_http_debug_options_a6605decd8c2940b9d089ed226922f7af}{bLogHeaders}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_f_trail_http_debug_options_af4588d3d387902759381e6810e87a641}{bLogBody}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{comment}{//\ Evite\ de\ spam\ si\ le\ body\ est\ énorme}}
+\DoxyCodeLine{00012\ \ \ \ \ int32\ \mbox{\hyperlink{struct_f_trail_http_debug_options_af3ccd0999e54568e18b4017bf5220558}{MaxBodyChars}}\ =\ 2000;}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{comment}{//\ Si\ tu\ télécharges\ des\ images/binaire,\ évite\ de\ log\ le\ body\ en\ string}}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_f_trail_http_debug_options_a7692ed1310d1117c0861706d4c23a70a}{bSkipBodyIfBinary}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00016\ \};}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_f_trail_http_debug}{FTrailHttpDebug}}}
+\DoxyCodeLine{00019\ \{}
+\DoxyCodeLine{00020\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{comment}{//\ Retourne\ "{}succès"{}\ au\ sens:\ transport\ OK\ +\ code\ HTTP\ 2xx}}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_f_trail_http_debug_a33340e3b138d3bb4bdb3765fed9066a0}{LogAndIsSuccess}}(}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ TCHAR*\ Context,}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ FHttpRequestPtr\&\ Request,}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ FHttpResponsePtr\&\ Response,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ bWasSuccessful,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_f_trail_http_debug_options}{FTrailHttpDebugOptions}}\&\ Options\ =\ \mbox{\hyperlink{struct_f_trail_http_debug_options}{FTrailHttpDebugOptions}}(),}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ int32*\ OutCode\ =\ \textcolor{keyword}{nullptr}}
+\DoxyCodeLine{00029\ \ \ \ \ );}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_f_trail_http_debug_a7801b5b8c0a0acc7869f8ec1f44a4d62}{LogStart}}(\textcolor{keyword}{const}\ TCHAR*\ Context,\ \textcolor{keyword}{const}\ FHttpRequestPtr\&\ Request);}
+\DoxyCodeLine{00032\ \};}
+
+\end{DoxyCode}

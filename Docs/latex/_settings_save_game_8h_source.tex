@@ -1,0 +1,26 @@
+\doxysection{Settings\+Save\+Game.\+h}
+\hypertarget{_settings_save_game_8h_source}{}\label{_settings_save_game_8h_source}\index{Source/Subsystems/Public/SettingsSaveGame.h@{Source/Subsystems/Public/SettingsSaveGame.h}}
+\mbox{\hyperlink{_settings_save_game_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Fill\ out\ your\ copyright\ notice\ in\ the\ Description\ page\ of\ Project\ Settings.}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}GameFramework/SaveGame.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}SettingsSaveGame.generated.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00013\ UCLASS()}
+\DoxyCodeLine{00014\ class\ SUBSYSTEMS\_API\ \mbox{\hyperlink{class_u_settings_save_game}{USettingsSaveGame}}\ :\ public\ USaveGame}
+\DoxyCodeLine{00015\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00017\ \ \ \ \ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00019\ \ \ \ \ UPROPERTY(VisibleAnywhere,\ SaveGame)}
+\DoxyCodeLine{00020\ \ \ \ \ TMap<int64,\ \mbox{\hyperlink{struct_f_settings}{FSettings}}>\ \mbox{\hyperlink{class_u_settings_save_game_a861975d29097225058a2af1ea4b53c69}{SettingsMap}};}
+\DoxyCodeLine{00021\ \ \ \ \ UPROPERTY(VisibleAnywhere,\ SaveGame)}
+\DoxyCodeLine{00022\ \ \ \ \ FString\ \mbox{\hyperlink{class_u_settings_save_game_a6c00ad1722233594b077edcd3b6bdd23}{MainURL}};}
+\DoxyCodeLine{00023\ \};}
+
+\end{DoxyCode}

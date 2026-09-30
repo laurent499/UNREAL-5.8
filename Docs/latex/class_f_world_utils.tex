@@ -1,0 +1,131 @@
+\doxysection{FWorld\+Utils Class Reference}
+\hypertarget{class_f_world_utils}{}\label{class_f_world_utils}\index{FWorldUtils@{FWorldUtils}}
+
+
+{\ttfamily \#include $<$World\+Utils.\+h$>$}
+
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static UWorld \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_f_world_utils_adc11def0a54c600da5f171e2784614d0}{Get\+World}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object)
+\item 
+static UWorld \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_f_world_utils_a8b4c7f23784f0938b50b21515c6d3b59}{Get\+World\+Checked}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object)
+\item 
+static UWorld \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_f_world_utils_a9822e7b2abdb1607bdbecf774ce7b6c6}{Get\+Runtime\+World\+Fallback}} ()
+\item 
+static bool \mbox{\hyperlink{class_f_world_utils_ac5f7274f99c631146524a0fc6f77257c}{Is\+PIE}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object)
+\item 
+static bool \mbox{\hyperlink{class_f_world_utils_a3dbd872d8af746dc45d1bc1567224e93}{Is\+Game\+World}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object)
+\item 
+static UGame\+Instance \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_f_world_utils_ae9a77d179d8b2a8e4e16d0be66aab3cd}{Get\+Game\+Instance}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object)
+\item 
+static UGame\+Instance \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_f_world_utils_a7f82cc61658bc8411d5c0f1dd8aa018f}{Get\+Game\+Instance\+Checked}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object)
+\item 
+{\footnotesize template$<$typename TSubsystem$>$ }\\static TSubsystem \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_f_world_utils_acb8c97b1f9e24b4eb5c05821bff86b0e}{Get\+GISubsystem}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object)
+\item 
+{\footnotesize template$<$typename TSubsystem$>$ }\\static TSubsystem \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_f_world_utils_a9e96e2d7595bcdd4d79f33c8d6070d69}{Get\+GISubsystem\+Checked}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object)
+\item 
+{\footnotesize template$<$typename TSubsystem$>$ }\\static TSubsystem \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_f_world_utils_a2a4c8da0c5f05fa3ec0c245408f69948}{Get\+GISubsystem\+Or\+Log}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object, const TCHAR \texorpdfstring{$\ast$}{*}Debug\+Context, bool b\+Log\+Once=true)
+\item 
+{\footnotesize template$<$typename TSubsystem$>$ }\\static TSubsystem \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_f_world_utils_aaa52638273612524f000419b78e8af2c}{Get\+World\+Subsystem}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object)
+\item 
+{\footnotesize template$<$typename TSubsystem$>$ }\\static TSubsystem \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_f_world_utils_a33300505d0866f2e88a5487aad0bbeb0}{Get\+World\+Subsystem\+Checked}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object)
+\item 
+{\footnotesize template$<$typename TSubsystem$>$ }\\static TSubsystem \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_f_world_utils_a31f65b4082e854fee76c26e9edab4d3e}{Get\+World\+Subsystem\+Or\+Log}} (const UObject \texorpdfstring{$\ast$}{*}World\+Context\+Object, const TCHAR \texorpdfstring{$\ast$}{*}Debug\+Context, bool b\+Log\+Once=true)
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{class_f_world_utils_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_f_world_utils_ae9a77d179d8b2a8e4e16d0be66aab3cd}\index{FWorldUtils@{FWorldUtils}!GetGameInstance@{GetGameInstance}}
+\index{GetGameInstance@{GetGameInstance}!FWorldUtils@{FWorldUtils}}
+\doxysubsubsection{\texorpdfstring{GetGameInstance()}{GetGameInstance()}}
+{\footnotesize\ttfamily \label{class_f_world_utils_ae9a77d179d8b2a8e4e16d0be66aab3cd} 
+UGame\+Instance \texorpdfstring{$\ast$}{*} FWorld\+Utils\+::\+Get\+Game\+Instance (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_f_world_utils_a7f82cc61658bc8411d5c0f1dd8aa018f}\index{FWorldUtils@{FWorldUtils}!GetGameInstanceChecked@{GetGameInstanceChecked}}
+\index{GetGameInstanceChecked@{GetGameInstanceChecked}!FWorldUtils@{FWorldUtils}}
+\doxysubsubsection{\texorpdfstring{GetGameInstanceChecked()}{GetGameInstanceChecked()}}
+{\footnotesize\ttfamily \label{class_f_world_utils_a7f82cc61658bc8411d5c0f1dd8aa018f} 
+UGame\+Instance \texorpdfstring{$\ast$}{*} FWorld\+Utils\+::\+Get\+Game\+Instance\+Checked (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_f_world_utils_acb8c97b1f9e24b4eb5c05821bff86b0e}\index{FWorldUtils@{FWorldUtils}!GetGISubsystem@{GetGISubsystem}}
+\index{GetGISubsystem@{GetGISubsystem}!FWorldUtils@{FWorldUtils}}
+\doxysubsubsection{\texorpdfstring{GetGISubsystem()}{GetGISubsystem()}}
+{\footnotesize\ttfamily \label{class_f_world_utils_acb8c97b1f9e24b4eb5c05821bff86b0e} 
+template$<$typename TSubsystem$>$ \\
+TSubsystem \texorpdfstring{$\ast$}{*} FWorld\+Utils\+::\+Get\+GISubsystem (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_f_world_utils_a9e96e2d7595bcdd4d79f33c8d6070d69}\index{FWorldUtils@{FWorldUtils}!GetGISubsystemChecked@{GetGISubsystemChecked}}
+\index{GetGISubsystemChecked@{GetGISubsystemChecked}!FWorldUtils@{FWorldUtils}}
+\doxysubsubsection{\texorpdfstring{GetGISubsystemChecked()}{GetGISubsystemChecked()}}
+{\footnotesize\ttfamily \label{class_f_world_utils_a9e96e2d7595bcdd4d79f33c8d6070d69} 
+template$<$typename TSubsystem$>$ \\
+TSubsystem \texorpdfstring{$\ast$}{*} FWorld\+Utils\+::\+Get\+GISubsystem\+Checked (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_f_world_utils_a2a4c8da0c5f05fa3ec0c245408f69948}\index{FWorldUtils@{FWorldUtils}!GetGISubsystemOrLog@{GetGISubsystemOrLog}}
+\index{GetGISubsystemOrLog@{GetGISubsystemOrLog}!FWorldUtils@{FWorldUtils}}
+\doxysubsubsection{\texorpdfstring{GetGISubsystemOrLog()}{GetGISubsystemOrLog()}}
+{\footnotesize\ttfamily \label{class_f_world_utils_a2a4c8da0c5f05fa3ec0c245408f69948} 
+template$<$typename TSubsystem$>$ \\
+TSubsystem \texorpdfstring{$\ast$}{*} FWorld\+Utils\+::\+Get\+GISubsystem\+Or\+Log (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{, }\item[{const TCHAR \texorpdfstring{$\ast$}{*}}]{Debug\+Context}{, }\item[{bool}]{b\+Log\+Once}{ = {\ttfamily true}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_f_world_utils_a9822e7b2abdb1607bdbecf774ce7b6c6}\index{FWorldUtils@{FWorldUtils}!GetRuntimeWorldFallback@{GetRuntimeWorldFallback}}
+\index{GetRuntimeWorldFallback@{GetRuntimeWorldFallback}!FWorldUtils@{FWorldUtils}}
+\doxysubsubsection{\texorpdfstring{GetRuntimeWorldFallback()}{GetRuntimeWorldFallback()}}
+{\footnotesize\ttfamily \label{class_f_world_utils_a9822e7b2abdb1607bdbecf774ce7b6c6} 
+UWorld \texorpdfstring{$\ast$}{*} FWorld\+Utils\+::\+Get\+Runtime\+World\+Fallback (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_f_world_utils_adc11def0a54c600da5f171e2784614d0}\index{FWorldUtils@{FWorldUtils}!GetWorld@{GetWorld}}
+\index{GetWorld@{GetWorld}!FWorldUtils@{FWorldUtils}}
+\doxysubsubsection{\texorpdfstring{GetWorld()}{GetWorld()}}
+{\footnotesize\ttfamily \label{class_f_world_utils_adc11def0a54c600da5f171e2784614d0} 
+UWorld \texorpdfstring{$\ast$}{*} FWorld\+Utils\+::\+Get\+World (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_f_world_utils_a8b4c7f23784f0938b50b21515c6d3b59}\index{FWorldUtils@{FWorldUtils}!GetWorldChecked@{GetWorldChecked}}
+\index{GetWorldChecked@{GetWorldChecked}!FWorldUtils@{FWorldUtils}}
+\doxysubsubsection{\texorpdfstring{GetWorldChecked()}{GetWorldChecked()}}
+{\footnotesize\ttfamily \label{class_f_world_utils_a8b4c7f23784f0938b50b21515c6d3b59} 
+UWorld \texorpdfstring{$\ast$}{*} FWorld\+Utils\+::\+Get\+World\+Checked (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_f_world_utils_aaa52638273612524f000419b78e8af2c}\index{FWorldUtils@{FWorldUtils}!GetWorldSubsystem@{GetWorldSubsystem}}
+\index{GetWorldSubsystem@{GetWorldSubsystem}!FWorldUtils@{FWorldUtils}}
+\doxysubsubsection{\texorpdfstring{GetWorldSubsystem()}{GetWorldSubsystem()}}
+{\footnotesize\ttfamily \label{class_f_world_utils_aaa52638273612524f000419b78e8af2c} 
+template$<$typename TSubsystem$>$ \\
+TSubsystem \texorpdfstring{$\ast$}{*} FWorld\+Utils\+::\+Get\+World\+Subsystem (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_f_world_utils_a33300505d0866f2e88a5487aad0bbeb0}\index{FWorldUtils@{FWorldUtils}!GetWorldSubsystemChecked@{GetWorldSubsystemChecked}}
+\index{GetWorldSubsystemChecked@{GetWorldSubsystemChecked}!FWorldUtils@{FWorldUtils}}
+\doxysubsubsection{\texorpdfstring{GetWorldSubsystemChecked()}{GetWorldSubsystemChecked()}}
+{\footnotesize\ttfamily \label{class_f_world_utils_a33300505d0866f2e88a5487aad0bbeb0} 
+template$<$typename TSubsystem$>$ \\
+TSubsystem \texorpdfstring{$\ast$}{*} FWorld\+Utils\+::\+Get\+World\+Subsystem\+Checked (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_f_world_utils_a31f65b4082e854fee76c26e9edab4d3e}\index{FWorldUtils@{FWorldUtils}!GetWorldSubsystemOrLog@{GetWorldSubsystemOrLog}}
+\index{GetWorldSubsystemOrLog@{GetWorldSubsystemOrLog}!FWorldUtils@{FWorldUtils}}
+\doxysubsubsection{\texorpdfstring{GetWorldSubsystemOrLog()}{GetWorldSubsystemOrLog()}}
+{\footnotesize\ttfamily \label{class_f_world_utils_a31f65b4082e854fee76c26e9edab4d3e} 
+template$<$typename TSubsystem$>$ \\
+TSubsystem \texorpdfstring{$\ast$}{*} FWorld\+Utils\+::\+Get\+World\+Subsystem\+Or\+Log (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{, }\item[{const TCHAR \texorpdfstring{$\ast$}{*}}]{Debug\+Context}{, }\item[{bool}]{b\+Log\+Once}{ = {\ttfamily true}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_f_world_utils_a3dbd872d8af746dc45d1bc1567224e93}\index{FWorldUtils@{FWorldUtils}!IsGameWorld@{IsGameWorld}}
+\index{IsGameWorld@{IsGameWorld}!FWorldUtils@{FWorldUtils}}
+\doxysubsubsection{\texorpdfstring{IsGameWorld()}{IsGameWorld()}}
+{\footnotesize\ttfamily \label{class_f_world_utils_a3dbd872d8af746dc45d1bc1567224e93} 
+bool FWorld\+Utils\+::\+Is\+Game\+World (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_f_world_utils_ac5f7274f99c631146524a0fc6f77257c}\index{FWorldUtils@{FWorldUtils}!IsPIE@{IsPIE}}
+\index{IsPIE@{IsPIE}!FWorldUtils@{FWorldUtils}}
+\doxysubsubsection{\texorpdfstring{IsPIE()}{IsPIE()}}
+{\footnotesize\ttfamily \label{class_f_world_utils_ac5f7274f99c631146524a0fc6f77257c} 
+bool FWorld\+Utils\+::\+Is\+PIE (\begin{DoxyParamCaption}\item[{const UObject \texorpdfstring{$\ast$}{*}}]{World\+Context\+Object}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Trail\+Utils/\+Public/\mbox{\hyperlink{_world_utils_8h}{World\+Utils.\+h}}\item 
+Source/\+Trail\+Utils/\+Private/\mbox{\hyperlink{_world_utils_8cpp}{World\+Utils.\+cpp}}\item 
+Source/\+Trail\+Utils/\+Public/\mbox{\hyperlink{_world_utils_8inl}{World\+Utils.\+inl}}\end{DoxyCompactItemize}

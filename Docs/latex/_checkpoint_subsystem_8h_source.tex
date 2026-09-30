@@ -1,0 +1,94 @@
+\doxysection{Checkpoint\+Subsystem.\+h}
+\hypertarget{_checkpoint_subsystem_8h_source}{}\label{_checkpoint_subsystem_8h_source}\index{Source/Subsystems/Public/CheckpointSubsystem.h@{Source/Subsystems/Public/CheckpointSubsystem.h}}
+\mbox{\hyperlink{_checkpoint_subsystem_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}Subsystems/GameInstanceSubsystem.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}Interfaces/IHttpRequest.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}CheckpointSubsystem.generated.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \mbox{\hyperlink{_checkpoint_subsystem_8h_a2a07910a2b7fdbf65814aa78a7c38b56}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}(}
+\DoxyCodeLine{00012\ \ \ \ \ FOnCheckpointsDatasGathered,}
+\DoxyCodeLine{00013\ \ \ \ \ int64,}
+\DoxyCodeLine{00014\ \ \ \ \ RaceID,}
+\DoxyCodeLine{00015\ \ \ \ \ \mbox{\hyperlink{struct_f_checkpoints}{FCheckpoints}},}
+\DoxyCodeLine{00016\ \ \ \ \ AllCheckpoints);}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \mbox{\hyperlink{_checkpoint_subsystem_8h_afccc6ec37fdc2dfdcceef7d30e4d38f7}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_ThreeParams}}(}
+\DoxyCodeLine{00019\ \ \ \ \ FOnCheckpointDatasGathered,}
+\DoxyCodeLine{00020\ \ \ \ \ \mbox{\hyperlink{struct_f_race_checkpoint}{FRaceCheckpoint}},}
+\DoxyCodeLine{00021\ \ \ \ \ OneCheckpoint,}
+\DoxyCodeLine{00022\ \ \ \ \ int64,}
+\DoxyCodeLine{00023\ \ \ \ \ RaceID,}
+\DoxyCodeLine{00024\ \ \ \ \ int64,}
+\DoxyCodeLine{00025\ \ \ \ \ CheckpointID);}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ UCLASS()}
+\DoxyCodeLine{00028\ class\ SUBSYSTEMS\_API\ \mbox{\hyperlink{class_u_checkpoint_subsystem}{UCheckpointSubsystem}}\ :\ public\ UGameInstanceSubsystem}
+\DoxyCodeLine{00029\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_checkpoint_subsystem_a7847ede4c5d832504a6f65e42871d703}{Initialize}}(FSubsystemCollectionBase\&\ Collection)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_checkpoint_subsystem_ab2667d0ea9a089d1250a162cdceab55e}{Deinitialize}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00035\ \ \ \ \ }
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{struct_f_checkpoints}{FCheckpoints}}*\ \mbox{\hyperlink{class_u_checkpoint_subsystem_a72b4771bbcec45d8fc0860c57f8c235f}{GetCheckpointsByRaceId}}(int64\ RaceID);}
+\DoxyCodeLine{00038\ \ \ \ \ \mbox{\hyperlink{struct_f_race_checkpoint}{FRaceCheckpoint}}\ \mbox{\hyperlink{class_u_checkpoint_subsystem_a798029523e86b2df5cc2dc43e01f0067}{GetCheckpointByChkIdRaceId}}(int64\ RaceID,\ int64\ ChkID);}
+\DoxyCodeLine{00039\ \ \ \ \ }
+\DoxyCodeLine{00045\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_checkpoint_subsystem_a888ac449f64055b09682ded8e3b0a44a}{PerformHttpRequestForCheckpoints}}(int64\ RaceID,\ \textcolor{keyword}{const}\ FString\&\ CheckpointsEndpoint);}
+\DoxyCodeLine{00047\ \ \ \ \ UPROPERTY(BlueprintAssignable,\ Category=\textcolor{stringliteral}{"{}Race|Events"{}})}
+\DoxyCodeLine{00048\ \ \ \ \ FOnCheckpointsDatasGathered\ \mbox{\hyperlink{class_u_checkpoint_subsystem_a1f6b53f8f1f4993991cb41a7fed436b4}{OnCheckpointsDatasGathered}};}
+\DoxyCodeLine{00049\ \ \ \ \ }
+\DoxyCodeLine{00050\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00051\ \ \ \ \ AActor*\ \mbox{\hyperlink{class_u_checkpoint_subsystem_a6216698d42cbe504401a9ad024eb6e16}{SpawnCheckpointActor}}(}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ int64\ RaceID,}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ int64\ CheckpointID,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ UWorld*\ World,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_t_subclass_of}{TSubclassOf}}<AActor>\ PathClass,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ const\ FTransform\&\ SpawnTransform}
+\DoxyCodeLine{00057\ \ \ \ \ );}
+\DoxyCodeLine{00058\ \ \ \ \ }
+\DoxyCodeLine{00059\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_u_checkpoint_subsystem_a564516d17c01dcf829b5fbd7cb25d946}{DoesChkBelongsToRace}}(int64\ ChkID,\ int64\ RaceID);}
+\DoxyCodeLine{00061\ \ \ \ \ }
+\DoxyCodeLine{00062\ \ \ \ \ }
+\DoxyCodeLine{00063\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_checkpoint_subsystem_a21874893c86b577644d3f6b73850b1d9}{SetRaceSetup}}(int64\ RaceID,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ NewCurrentRaceSetup);}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ TObjectPtr<AActor>\ \mbox{\hyperlink{class_u_checkpoint_subsystem_a1260c770772277361749107e5fe688c5}{GetCheckpointActor}}(int64\ RaceID,\ int64\ CheckpointID);}
+\DoxyCodeLine{00067\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_checkpoint_subsystem_a3f756e24b95e1a286a9f1db8c661cc87}{ToggleCheckpoints}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00069\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_checkpoint_subsystem_a06adbaec620e95f4bf1be5e0d4d718fa}{ToggleCheckpoint}}(int64\ RaceID,\ int64\ CheckpointID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00071\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_checkpoint_subsystem_a78bd7d69e581751b26b3117d20194a58}{ToggleWeather}}(int64\ RaceID,\ int64\ CheckpointID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00073\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_checkpoint_subsystem_a8c7242dbdef5d73386f9d23a80def9c2}{Teleport}}(int64\ CheckpointID,\ int64\ RaceID);}
+\DoxyCodeLine{00075\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_checkpoint_subsystem_a9106250a60340fb114875bb8d386b18d}{Animation}}(int64\ CheckpointID,\ int64\ IdRace);}
+\DoxyCodeLine{00077\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_checkpoint_subsystem_aa526feb07be3193818030c0c74007b4c}{StopAnimation}}(int64\ CheckpointID,\ int64\ RaceID);}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ private:}
+\DoxyCodeLine{00081\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00082\ \ \ \ \ \mbox{\hyperlink{struct_f_checkpoints}{FCheckpoints}}\ Checkpoints;}
+\DoxyCodeLine{00083\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00084\ \ \ \ \ \mbox{\hyperlink{struct_f_race_checkpoint}{FRaceCheckpoint}}\ Checkpoint;}
+\DoxyCodeLine{00085\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00086\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_race_subsystem}{URaceSubsystem}}>\ RaceSubsystem;}
+\DoxyCodeLine{00087\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00088\ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ CurrentRaceSetup;}
+\DoxyCodeLine{00089\ \ \ \ \ }
+\DoxyCodeLine{00090\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00091\ \ \ \ \ TMap<int64,\ \mbox{\hyperlink{struct_f_checkpoints}{FCheckpoints}}>\ CheckpointsMap;}
+\DoxyCodeLine{00092\ \ \ \ \ TMap<int64,\ TMap<int64,\ TObjectPtr<AActor>>>\ CheckpointActorMap;}
+\DoxyCodeLine{00093\ \ \ \ \ TMap<int64,\ TSharedPtr<IHttpRequest,\ ESPMode::ThreadSafe>>\ ActiveCheckpointRequests;}
+\DoxyCodeLine{00094\ \};}
+
+\end{DoxyCode}

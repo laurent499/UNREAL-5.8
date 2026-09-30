@@ -1,0 +1,153 @@
+\doxysection{Settings\+Subsystem.\+h}
+\hypertarget{_settings_subsystem_8h_source}{}\label{_settings_subsystem_8h_source}\index{Source/Subsystems/Public/SettingsSubsystem.h@{Source/Subsystems/Public/SettingsSubsystem.h}}
+\mbox{\hyperlink{_settings_subsystem_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Subsystems/GameInstanceSubsystem.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_settings_save_game_8h}{SettingsSaveGame.h}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}SettingsSubsystem.generated.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \mbox{\hyperlink{_settings_subsystem_8h_a12888e60341bc9d9184d3840c26cb12a}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}(}
+\DoxyCodeLine{00012\ \ \ \ \ FOnFetchUpdate,}
+\DoxyCodeLine{00013\ \ \ \ \ int64,}
+\DoxyCodeLine{00014\ \ \ \ \ RaceID,}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keywordtype}{float},}
+\DoxyCodeLine{00016\ \ \ \ \ FetchValue);}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \mbox{\hyperlink{_settings_subsystem_8h_a12888e60341bc9d9184d3840c26cb12a}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}(}
+\DoxyCodeLine{00019\ \ \ \ \ FOnZOffsetUpdate,}
+\DoxyCodeLine{00020\ \ \ \ \ int64,}
+\DoxyCodeLine{00021\ \ \ \ \ RaceID,}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{float},}
+\DoxyCodeLine{00023\ \ \ \ \ NewZOffset);}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \mbox{\hyperlink{_settings_subsystem_8h_a12888e60341bc9d9184d3840c26cb12a}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}(}
+\DoxyCodeLine{00026\ \ \ \ \ FOnPathGlowUpdate,}
+\DoxyCodeLine{00027\ \ \ \ \ int64,}
+\DoxyCodeLine{00028\ \ \ \ \ RaceID,}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{float},}
+\DoxyCodeLine{00030\ \ \ \ \ GlowIntensity);}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \mbox{\hyperlink{_settings_subsystem_8h_aee6ebc3734e8dfa5a98c0eddb18d14a4}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_OneParam}}(}
+\DoxyCodeLine{00033\ \ \ \ \ FOnPulseFrequencyUpdate,}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{float},}
+\DoxyCodeLine{00035\ \ \ \ \ PulseFrequency);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \mbox{\hyperlink{_settings_subsystem_8h_a12888e60341bc9d9184d3840c26cb12a}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}(}
+\DoxyCodeLine{00038\ \ \ \ \ FOnMinMaxSet,}
+\DoxyCodeLine{00039\ \ \ \ \ int64,}
+\DoxyCodeLine{00040\ \ \ \ \ RaceID,}
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{struct_f_min_max}{FMinMax}},}
+\DoxyCodeLine{00042\ \ \ \ \ MinMax);}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \mbox{\hyperlink{_settings_subsystem_8h_a12888e60341bc9d9184d3840c26cb12a}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}(}
+\DoxyCodeLine{00045\ \ \ \ \ FOnTrailUrlUpdate,}
+\DoxyCodeLine{00046\ \ \ \ \ int64,}
+\DoxyCodeLine{00047\ \ \ \ \ RaceID,}
+\DoxyCodeLine{00048\ \ \ \ \ FString,}
+\DoxyCodeLine{00049\ \ \ \ \ NewURL);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00055\ UCLASS()}
+\DoxyCodeLine{00056\ class\ SUBSYSTEMS\_API\ \mbox{\hyperlink{class_u_settings_subsystem}{USettingsSubsystem}}\ :\ public\ UGameInstanceSubsystem}
+\DoxyCodeLine{00057\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00061\ \ \ \ \ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_settings_subsystem_a283f8d3ceb9188c39d0b9256e00137cd}{Initialize}}(FSubsystemCollectionBase\&\ Collection)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00063\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_u_settings_subsystem_a14710438dbf31397852942caf53772a5}{GetWeatherFrequency}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00065\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_settings_subsystem_a10c9c334e97613b66c3fda754a946d9a}{CreateTrailSettingsById}}(int64\ NewRaceID,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_f_settings}{FSettings}}\&\ NewTrailSettings);}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_u_settings_subsystem_acc0b48a57188c48c96b02283cb9cd48c}{DoesSettingsExist}}(int64\ RaceID);}
+\DoxyCodeLine{00068\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00069\ \ \ \ \ \mbox{\hyperlink{struct_f_settings}{FSettings}}\ \mbox{\hyperlink{class_u_settings_subsystem_afdb2ff090b1c391bb1a991b6daaf5c61}{GetTrailSettingsById}}(int64\ RaceID)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00076\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}Settings"{}},\ meta\ =\ (BlueprintInternalMethod))}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_settings_subsystem_af73ae849f8ab8e8b042dbcdb32917b94}{SetFetchById}}(\textcolor{keywordtype}{float}\ FetchValue,\ int64\ RaceID);}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_u_settings_subsystem_a9525e67d3a30ce0e96a7979029cc52dc}{GetFetchById}}(int64\ RaceID)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00079\ \ \ \ \ FORCEINLINE\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_u_settings_subsystem_a97f004a1118f70c701b4ed163a5749f7}{GetFetchFrequency}}()\textcolor{keyword}{\ const}\{\ \textcolor{keywordflow}{return}\ 1.0f;\};\ \textcolor{comment}{//\ temp\ property}}
+\DoxyCodeLine{00080\ \ \ \ \ FOnFetchUpdate\ \mbox{\hyperlink{class_u_settings_subsystem_add7d8b5924e59fba42fa0fea3727fe54}{OnFetchUpdate}};}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00087\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}Settings"{}},\ meta\ =\ (BlueprintInternalMethod))}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_settings_subsystem_a9dfc67c74ef904d5557d274779fcf2ef}{SetZOffsetById}}(\textcolor{keywordtype}{float}\ ZOffset,\ int64\ IdRace);}
+\DoxyCodeLine{00089\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}Settings"{}},\ meta\ =\ (BlueprintInternalMethod))}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_u_settings_subsystem_af59fca873ea79d3dca037bf7fa08ace0}{GetZOffsetById}}(int64\ RaceID)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00091\ \ \ \ \ FOnZOffsetUpdate\ \mbox{\hyperlink{class_u_settings_subsystem_ad3d3bdc2c5479b3dbe1e65558461074f}{OnZOffsetUpdate}};}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00099\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}Settings"{}},\ meta\ =\ (BlueprintInternalMethod))}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_settings_subsystem_a12179d2f76ef679fef9ca66edfb83365}{SetGlowById}}(\textcolor{keywordtype}{float}\ GlowValue,\ int64\ IdRace);}
+\DoxyCodeLine{00101\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}Settings"{}},\ meta\ =\ (BlueprintInternalMethod))}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_u_settings_subsystem_aa329762510bb90acb26e021c855aad5d}{GetGlowById}}(int64\ RaceID)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00103\ \ \ \ \ FOnPathGlowUpdate\ \mbox{\hyperlink{class_u_settings_subsystem_abbc52538fcf5b3d4184a63427540f3b0}{OnPathGlowUpdate}};}
+\DoxyCodeLine{00104\ \ \ \ \ }
+\DoxyCodeLine{00110\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}Settings"{}},\ meta\ =\ (BlueprintInternalMethod))}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_settings_subsystem_aec5a2e0678d10109be28b0062aeca165}{SetPulseById}}(\textcolor{keywordtype}{float}\ PulseFrequency,\ int64\ IdRace);}
+\DoxyCodeLine{00112\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}Settings"{}},\ meta\ =\ (BlueprintInternalMethod))}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_u_settings_subsystem_ad0e206c33944a3001a736ce3935ceb96}{GetPulseById}}(int64\ RaceID)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00114\ \ \ \ \ FOnPulseFrequencyUpdate\ \mbox{\hyperlink{class_u_settings_subsystem_a3c38071faf7a0956942a8183458c0235}{OnPulseFrequencyUpdate}};}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00122\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}Settings"{}},\ meta\ =\ (BlueprintInternalMethod))}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_settings_subsystem_acc8793c592a5ade770ebbb657bb9d2cc}{SetMinMaxById}}(FVector\ SizeMin,\ FVector\ SizeMax,\ int64\ IdRace);}
+\DoxyCodeLine{00124\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}Settings"{}},\ meta\ =\ (BlueprintInternalMethod))}
+\DoxyCodeLine{00125\ \ \ \ \ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}\ \mbox{\hyperlink{class_u_settings_subsystem_a6f49d8274baf8895b9d188ef7bdb5328}{GetMinMaxById}}(int64\ RaceID)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00126\ \ \ \ \ FOnMinMaxSet\ \mbox{\hyperlink{class_u_settings_subsystem_a8db16f52b1e1123ea06de60d13ecf1f5}{OnMinMaxSet}};}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00132\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}Settings"{}},\ meta\ =\ (BlueprintInternalMethod))}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_settings_subsystem_a14fa7b9df7cf4e5f52d4b6bf14013d1d}{SetRaceUrlById}}(FString\ NewMainURL,\ int64\ RaceID);}
+\DoxyCodeLine{00134\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}Settings"{}},\ meta\ =\ (BlueprintInternalMethod))}
+\DoxyCodeLine{00135\ \ \ \ \ FString\ \mbox{\hyperlink{class_u_settings_subsystem_adcc49e0dcb3c101f5aea3567ee12bdf0}{GetRaceUrlById}}(int64\ RaceID)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00136\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}Settings"{}},\ meta\ =\ (BlueprintInternalMethod))}
+\DoxyCodeLine{00137\ \ \ \ \ FORCEINLINE\ FString\ \mbox{\hyperlink{class_u_settings_subsystem_a686e7aa3709c854c029dce18b69078f2}{GetMainURL}}()\textcolor{keyword}{\ const}\{\ \textcolor{keywordflow}{return}\ TrailMainURL;\};}
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keywordtype}{void}\ SetMainURL(FString\ NewUrl);}
+\DoxyCodeLine{00139\ \ \ \ \ FOnTrailUrlUpdate\ \mbox{\hyperlink{class_u_settings_subsystem_ace3737cc841a77bf355955ed5c08fbe9}{OnTrailUrlUpdate}};}
+\DoxyCodeLine{00140\ \ \ \ \ }
+\DoxyCodeLine{00141\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00142\ \ \ \ \ float\ \mbox{\hyperlink{class_u_settings_subsystem_a23e554a6509847f303ba3713885f0237}{GetUpdateIntervalSeconds}}()\ const;}
+\DoxyCodeLine{00143\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_u_settings_subsystem_aaea16f10c23b612bf0dd670407a5c372}{GetInterpSpeed}}()\ const;}
+\DoxyCodeLine{00145\ \ \ \ \ }
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{comment}{//\ Save}}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_u_settings_subsystem_a27a48b8ed493b376f32e1ed0eaa9e983}{Save}}();}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_u_settings_subsystem_ac1b223b3891e6234d0dc43823055801d}{Load}}();}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ private:}
+\DoxyCodeLine{00151\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00152\ \ \ \ \ int64\ RaceId;}
+\DoxyCodeLine{00153\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00154\ \ \ \ \ \mbox{\hyperlink{struct_f_settings}{FSettings}}\ TrailSettings;}
+\DoxyCodeLine{00155\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00156\ \ \ \ \ FString\ TrailMainURL\ =\ TEXT(\textcolor{stringliteral}{"{}https://simulacre.ltvprod.cc/"{}});}
+\DoxyCodeLine{00157\ \ \ \ \ }
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{comment}{//\ Setting\ by\ RaceID}}
+\DoxyCodeLine{00159\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00160\ \ \ \ \ TMap<int64,\ \mbox{\hyperlink{struct_f_settings}{FSettings}}>\ TrailSettingsMap;}
+\DoxyCodeLine{00161\ \ \ \ \ }
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{comment}{//\ LookAt}}
+\DoxyCodeLine{00163\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordtype}{float}\ LookAtIntervalSeconds;}
+\DoxyCodeLine{00165\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordtype}{float}\ LookAtInterpSpeed;}
+\DoxyCodeLine{00167\ \ \ \ \ }
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{comment}{//\ UI}}
+\DoxyCodeLine{00169\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordtype}{float}\ UpdateIntervalSeconds;\ \ \ \ }
+\DoxyCodeLine{00171\ \ \ \ \ }
+\DoxyCodeLine{00172\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{keywordtype}{float}\ WeatherFrequency;}
+\DoxyCodeLine{00174\ \ \ \ \ }
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{comment}{//\ Save}}
+\DoxyCodeLine{00176\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00177\ \ \ \ \ TObjectPtr<\mbox{\hyperlink{class_u_settings_save_game}{USettingsSaveGame}}>\ CachedSave;}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ static\ constexpr\ int32\ UserIndex\ =\ 0;}
+\DoxyCodeLine{00180\ \ \ \ \ inline\ static\ const\ FString\ SlotName\ =\ TEXT(\textcolor{stringliteral}{"{}TrailSimulator\_Settings"{}});}
+\DoxyCodeLine{00181\ \};}
+
+\end{DoxyCode}

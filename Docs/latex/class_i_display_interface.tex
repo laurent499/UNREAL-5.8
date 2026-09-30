@@ -1,0 +1,73 @@
+\doxysection{IDisplay\+Interface Class Reference}
+\hypertarget{class_i_display_interface}{}\label{class_i_display_interface}\index{IDisplayInterface@{IDisplayInterface}}
+
+
+{\ttfamily \#include $<$Display\+Interface.\+h$>$}
+
+Inheritance diagram for IDisplay\+Interface\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_i_display_interface}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_i_display_interface_a9c5c68e5e3596ab285ca40ea47da664f}{Display}} (int64 Id, int64 Id\+Race, int32 b\+Display)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_display_interface_aa4dbd3e8fb428655c1f0294cd721fd84}{Display\+Weather}} (int64 Id, int64 Id\+Race, int32 b\+Display)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_display_interface_a742d7bd7b2a3ab4944383418742b401d}{Teleport}} (int64 Id, int64 Id\+Race)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_display_interface_aa3a21bf32b781433d0b777bde078e86f}{Animation}} (int64 Id, int64 Id\+Race)=0
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{class_i_display_interface_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_i_display_interface_aa3a21bf32b781433d0b777bde078e86f}\index{IDisplayInterface@{IDisplayInterface}!Animation@{Animation}}
+\index{Animation@{Animation}!IDisplayInterface@{IDisplayInterface}}
+\doxysubsubsection{\texorpdfstring{Animation()}{Animation()}}
+{\footnotesize\ttfamily \label{class_i_display_interface_aa3a21bf32b781433d0b777bde078e86f} 
+virtual void IDisplay\+Interface\+::\+Animation (\begin{DoxyParamCaption}\item[{int64}]{Id}{, }\item[{int64}]{Id\+Race}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_u_checkpoint_subsystem_ae9e34d7ce0a8711713ebf0de52c7fa23}{UCheckpoint\+Subsystem}}, \mbox{\hyperlink{class_u_poi_subsystem_aaa3621d644373354f18d81de46a78557}{UPoi\+Subsystem}}, and \mbox{\hyperlink{class_u_runner_subsystem_aa54cd65e34cb8dee7696dfb4ad081072}{URunner\+Subsystem}}.
+
+\Hypertarget{class_i_display_interface_a9c5c68e5e3596ab285ca40ea47da664f}\index{IDisplayInterface@{IDisplayInterface}!Display@{Display}}
+\index{Display@{Display}!IDisplayInterface@{IDisplayInterface}}
+\doxysubsubsection{\texorpdfstring{Display()}{Display()}}
+{\footnotesize\ttfamily \label{class_i_display_interface_a9c5c68e5e3596ab285ca40ea47da664f} 
+virtual void IDisplay\+Interface\+::\+Display (\begin{DoxyParamCaption}\item[{int64}]{Id}{, }\item[{int64}]{Id\+Race}{, }\item[{int32}]{b\+Display}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_u_checkpoint_subsystem_a60346480a6c969eba5333eacbcf68fc4}{UCheckpoint\+Subsystem}}, \mbox{\hyperlink{class_u_poi_subsystem_a92841acf41f71662a3ed07ca85decf34}{UPoi\+Subsystem}}, and \mbox{\hyperlink{class_u_runner_subsystem_a1898ce663583e2f1130a5f26f6ec073c}{URunner\+Subsystem}}.
+
+\Hypertarget{class_i_display_interface_aa4dbd3e8fb428655c1f0294cd721fd84}\index{IDisplayInterface@{IDisplayInterface}!DisplayWeather@{DisplayWeather}}
+\index{DisplayWeather@{DisplayWeather}!IDisplayInterface@{IDisplayInterface}}
+\doxysubsubsection{\texorpdfstring{DisplayWeather()}{DisplayWeather()}}
+{\footnotesize\ttfamily \label{class_i_display_interface_aa4dbd3e8fb428655c1f0294cd721fd84} 
+virtual void IDisplay\+Interface\+::\+Display\+Weather (\begin{DoxyParamCaption}\item[{int64}]{Id}{, }\item[{int64}]{Id\+Race}{, }\item[{int32}]{b\+Display}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_u_checkpoint_subsystem_aa935038ef81a6fab01dff8d88693b6f4}{UCheckpoint\+Subsystem}}, \mbox{\hyperlink{class_u_poi_subsystem_a8bb1a6318fd3b46a465e1be0487e8a12}{UPoi\+Subsystem}}, and \mbox{\hyperlink{class_u_runner_subsystem_a5d0a6a16217da24379abaeb99efb8692}{URunner\+Subsystem}}.
+
+\Hypertarget{class_i_display_interface_a742d7bd7b2a3ab4944383418742b401d}\index{IDisplayInterface@{IDisplayInterface}!Teleport@{Teleport}}
+\index{Teleport@{Teleport}!IDisplayInterface@{IDisplayInterface}}
+\doxysubsubsection{\texorpdfstring{Teleport()}{Teleport()}}
+{\footnotesize\ttfamily \label{class_i_display_interface_a742d7bd7b2a3ab4944383418742b401d} 
+virtual void IDisplay\+Interface\+::\+Teleport (\begin{DoxyParamCaption}\item[{int64}]{Id}{, }\item[{int64}]{Id\+Race}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_u_checkpoint_subsystem_aa95d689588171135c53441cd264a2d72}{UCheckpoint\+Subsystem}}, \mbox{\hyperlink{class_u_poi_subsystem_ad05cace20d6abac9652e7fd897054a99}{UPoi\+Subsystem}}, and \mbox{\hyperlink{class_u_runner_subsystem_afa78bf2ad85fad1256af925a34b24e6f}{URunner\+Subsystem}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Subsystems/\+Public/\mbox{\hyperlink{_display_interface_8h}{Display\+Interface.\+h}}\end{DoxyCompactItemize}

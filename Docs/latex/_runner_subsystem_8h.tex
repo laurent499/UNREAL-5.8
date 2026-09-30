@@ -1,0 +1,44 @@
+\doxysection{Source/\+Subsystems/\+Public/\+Runner\+Subsystem.h File Reference}
+\hypertarget{_runner_subsystem_8h}{}\label{_runner_subsystem_8h}\index{Source/Subsystems/Public/RunnerSubsystem.h@{Source/Subsystems/Public/RunnerSubsystem.h}}
+{\ttfamily \#include "{}Core\+Minimal.\+h"{}}\newline
+{\ttfamily \#include "{}Subsystems/\+Game\+Instance\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Trail\+Shared\+Types.\+h"{}}\newline
+{\ttfamily \#include "{}Interfaces/\+IHttp\+Request.\+h"{}}\newline
+{\ttfamily \#include "{}Runner\+Subsystem.\+generated.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_u_runner_subsystem}{URunner\+Subsystem}}
+\begin{DoxyCompactList}\small\item\em Subsystem de gestion/récupération/update des datas des Runners. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_runner_subsystem_8h_a65f18feb7c249a84628af897dcd2b565}{DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Runners\+Datas\+Gathered, int64, Race\+ID, \mbox{\hyperlink{struct_f_runners}{FRunners}}, Runners\+Datas)
+\item 
+\mbox{\hyperlink{_runner_subsystem_8h_a05be3ee7d40125b1a0ee585ec2474597}{DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Runners\+Update\+Datas, int64, Race\+ID, \mbox{\hyperlink{struct_f_runners}{FRunners}}, Runners\+Datas)
+\item 
+\mbox{\hyperlink{_runner_subsystem_8h_a628e2498da96eb88fc9c6afb7669cb26}{DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Runner\+Datas\+Gathered, int64, Race\+ID, \mbox{\hyperlink{struct_f_runner_struct}{FRunner\+Struct}}, Runner)
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{_runner_subsystem_8h_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{_runner_subsystem_8h_a628e2498da96eb88fc9c6afb7669cb26}\index{RunnerSubsystem.h@{RunnerSubsystem.h}!DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}!RunnerSubsystem.h@{RunnerSubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{_runner_subsystem_8h_a628e2498da96eb88fc9c6afb7669cb26} 
+DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Runner\+Datas\+Gathered}]{}{, }\item[{int64}]{}{, }\item[{Race\+ID}]{}{, }\item[{\mbox{\hyperlink{struct_f_runner_struct}{FRunner\+Struct}}}]{}{, }\item[{Runner}]{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_runner_subsystem_8h_a65f18feb7c249a84628af897dcd2b565}\index{RunnerSubsystem.h@{RunnerSubsystem.h}!DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}!RunnerSubsystem.h@{RunnerSubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{_runner_subsystem_8h_a65f18feb7c249a84628af897dcd2b565} 
+DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Runners\+Datas\+Gathered}]{}{, }\item[{int64}]{}{, }\item[{Race\+ID}]{}{, }\item[{\mbox{\hyperlink{struct_f_runners}{FRunners}}}]{}{, }\item[{Runners\+Datas}]{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_runner_subsystem_8h_a05be3ee7d40125b1a0ee585ec2474597}\index{RunnerSubsystem.h@{RunnerSubsystem.h}!DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}!RunnerSubsystem.h@{RunnerSubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{_runner_subsystem_8h_a05be3ee7d40125b1a0ee585ec2474597} 
+DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Runners\+Update\+Datas}]{}{, }\item[{int64}]{}{, }\item[{Race\+ID}]{}{, }\item[{\mbox{\hyperlink{struct_f_runners}{FRunners}}}]{}{, }\item[{Runners\+Datas}]{}{}\end{DoxyParamCaption})}
+

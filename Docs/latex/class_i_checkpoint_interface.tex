@@ -1,0 +1,85 @@
+\doxysection{ICheckpoint\+Interface Class Reference}
+\hypertarget{class_i_checkpoint_interface}{}\label{class_i_checkpoint_interface}\index{ICheckpointInterface@{ICheckpointInterface}}
+
+
+{\ttfamily \#include $<$Checkpoint\+Interface.\+h$>$}
+
+Inheritance diagram for ICheckpoint\+Interface\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_i_checkpoint_interface}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_i_checkpoint_interface_a99e147fa85de67cb1d109aa90f284cbe}{Update\+Checkpoint}} (\mbox{\hyperlink{struct_f_race_checkpoint}{FRace\+Checkpoint}} Checkpoint\+Datas, \mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}} Race\+Setup)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_checkpoint_interface_a515b932307fe7e74a14249baeae515cc}{Update\+Checkpoint\+Weather}} (\mbox{\hyperlink{struct_f_open_weather_response}{FOpen\+Weather\+Response}} Weather\+Datas)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_checkpoint_interface_a662baa724510241a608ce93e3d50c261}{Toggle\+Checkpoint\+Weather}} (bool b\+Show)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_checkpoint_interface_a4f676b569831e1115f3ecdc6764d54a7}{Start\+Animation}} (float Rotation\+Speed)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_checkpoint_interface_aac99d9ece94c8574c19814a1df632144}{Stop\+Animation}} ()=0
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{class_i_checkpoint_interface_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_i_checkpoint_interface_a4f676b569831e1115f3ecdc6764d54a7}\index{ICheckpointInterface@{ICheckpointInterface}!StartAnimation@{StartAnimation}}
+\index{StartAnimation@{StartAnimation}!ICheckpointInterface@{ICheckpointInterface}}
+\doxysubsubsection{\texorpdfstring{StartAnimation()}{StartAnimation()}}
+{\footnotesize\ttfamily \label{class_i_checkpoint_interface_a4f676b569831e1115f3ecdc6764d54a7} 
+virtual void ICheckpoint\+Interface\+::\+Start\+Animation (\begin{DoxyParamCaption}\item[{float}]{Rotation\+Speed}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_checkpoint_a8c03c0705b7000b66da6fc98f851627a}{ACheckpoint}}, \mbox{\hyperlink{class_a_checkpoint___generic_abbcef05716136aa9bea18658414f7ff0}{ACheckpoint\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_checkpoint___g_t_w_s_aa7dfd15b5ebe6ed7ce1fab93456b6197}{ACheckpoint\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_checkpoint___u_t_m_b_a0caf3ee579590bdfa9d297c5c28529c6}{ACheckpoint\+\_\+\+UTMB}}.
+
+\Hypertarget{class_i_checkpoint_interface_aac99d9ece94c8574c19814a1df632144}\index{ICheckpointInterface@{ICheckpointInterface}!StopAnimation@{StopAnimation}}
+\index{StopAnimation@{StopAnimation}!ICheckpointInterface@{ICheckpointInterface}}
+\doxysubsubsection{\texorpdfstring{StopAnimation()}{StopAnimation()}}
+{\footnotesize\ttfamily \label{class_i_checkpoint_interface_aac99d9ece94c8574c19814a1df632144} 
+virtual void ICheckpoint\+Interface\+::\+Stop\+Animation (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_checkpoint_a780912be3d1bcef935a59854448c07e4}{ACheckpoint}}, \mbox{\hyperlink{class_a_checkpoint___generic_afe5cb742ddc0ec8126cd0cdffeb8576c}{ACheckpoint\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_checkpoint___g_t_w_s_a9f92a279a59b1560cae1f54c5a3d2867}{ACheckpoint\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_checkpoint___u_t_m_b_a31a4feceacf4ca53358cf698788e97dd}{ACheckpoint\+\_\+\+UTMB}}.
+
+\Hypertarget{class_i_checkpoint_interface_a662baa724510241a608ce93e3d50c261}\index{ICheckpointInterface@{ICheckpointInterface}!ToggleCheckpointWeather@{ToggleCheckpointWeather}}
+\index{ToggleCheckpointWeather@{ToggleCheckpointWeather}!ICheckpointInterface@{ICheckpointInterface}}
+\doxysubsubsection{\texorpdfstring{ToggleCheckpointWeather()}{ToggleCheckpointWeather()}}
+{\footnotesize\ttfamily \label{class_i_checkpoint_interface_a662baa724510241a608ce93e3d50c261} 
+virtual void ICheckpoint\+Interface\+::\+Toggle\+Checkpoint\+Weather (\begin{DoxyParamCaption}\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_checkpoint_a49a79d12124b72436f55f0bc200653d9}{ACheckpoint}}, \mbox{\hyperlink{class_a_checkpoint___generic_a72e2a90076b75ecae7d85e292b14063f}{ACheckpoint\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_checkpoint___g_t_w_s_a6fe81a7af290ef7165c34795f1e43823}{ACheckpoint\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_checkpoint___u_t_m_b_accfc61b4254cca26ba647a83cea81557}{ACheckpoint\+\_\+\+UTMB}}.
+
+\Hypertarget{class_i_checkpoint_interface_a99e147fa85de67cb1d109aa90f284cbe}\index{ICheckpointInterface@{ICheckpointInterface}!UpdateCheckpoint@{UpdateCheckpoint}}
+\index{UpdateCheckpoint@{UpdateCheckpoint}!ICheckpointInterface@{ICheckpointInterface}}
+\doxysubsubsection{\texorpdfstring{UpdateCheckpoint()}{UpdateCheckpoint()}}
+{\footnotesize\ttfamily \label{class_i_checkpoint_interface_a99e147fa85de67cb1d109aa90f284cbe} 
+virtual void ICheckpoint\+Interface\+::\+Update\+Checkpoint (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_race_checkpoint}{FRace\+Checkpoint}}}]{Checkpoint\+Datas}{, }\item[{\mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}}}]{Race\+Setup}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_checkpoint_a4697d5e03d7195557845764eb505feec}{ACheckpoint}}, \mbox{\hyperlink{class_a_checkpoint___generic_a3b8577f9ee577a6399736eecd7377162}{ACheckpoint\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_checkpoint___g_t_w_s_a884ee7602ba7776200267729d33aa659}{ACheckpoint\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_checkpoint___u_t_m_b_a7565a476b36481b891b2867cf2f2cb82}{ACheckpoint\+\_\+\+UTMB}}.
+
+\Hypertarget{class_i_checkpoint_interface_a515b932307fe7e74a14249baeae515cc}\index{ICheckpointInterface@{ICheckpointInterface}!UpdateCheckpointWeather@{UpdateCheckpointWeather}}
+\index{UpdateCheckpointWeather@{UpdateCheckpointWeather}!ICheckpointInterface@{ICheckpointInterface}}
+\doxysubsubsection{\texorpdfstring{UpdateCheckpointWeather()}{UpdateCheckpointWeather()}}
+{\footnotesize\ttfamily \label{class_i_checkpoint_interface_a515b932307fe7e74a14249baeae515cc} 
+virtual void ICheckpoint\+Interface\+::\+Update\+Checkpoint\+Weather (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_open_weather_response}{FOpen\+Weather\+Response}}}]{Weather\+Datas}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_checkpoint_a1c55551b45641dd176cad80092cdf68b}{ACheckpoint}}, \mbox{\hyperlink{class_a_checkpoint___generic_a8296d6497ecc6f8a5cfc394014130eb3}{ACheckpoint\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_checkpoint___g_t_w_s_a983315f459ae9f41d852a1301dfc0c2b}{ACheckpoint\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_checkpoint___u_t_m_b_ad587d3a7047dedb7810b77e20877b1ad}{ACheckpoint\+\_\+\+UTMB}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Trail\+Interfaces/\+Public/\mbox{\hyperlink{_checkpoint_interface_8h}{Checkpoint\+Interface.\+h}}\end{DoxyCompactItemize}

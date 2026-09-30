@@ -1,0 +1,270 @@
+\doxysection{URunner\+Subsystem Class Reference}
+\hypertarget{class_u_runner_subsystem}{}\label{class_u_runner_subsystem}\index{URunnerSubsystem@{URunnerSubsystem}}
+
+
+Subsystem de gestion/récupération/update des datas des Runners.  
+
+
+
+
+{\ttfamily \#include $<$Runner\+Subsystem.\+h$>$}
+
+Inheritance diagram for URunner\+Subsystem\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_u_runner_subsystem}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_u_runner_subsystem_a4a9b65e796b6709dbe414159679b9d40}{Initialize}} (FSubsystem\+Collection\+Base \&Collection) override
+\item 
+virtual void \mbox{\hyperlink{class_u_runner_subsystem_ae7963209dde32b85881acd8a995d3afb}{Deinitialize}} () override
+\item 
+\mbox{\hyperlink{struct_f_runners}{FRunners}} \mbox{\hyperlink{class_u_runner_subsystem_a83166d75eace55515d0bf687a1d7eba8}{Get\+Runners\+By\+Race\+Id}} (int64 Race\+ID)
+\item 
+TObject\+Ptr$<$ AActor $>$ \mbox{\hyperlink{class_u_runner_subsystem_a4f399dcb5b2353335f0266cca95542af}{Get\+Runner\+Actor}} (int64 Race\+ID, int64 Runner\+ID)
+\item 
+void \mbox{\hyperlink{class_u_runner_subsystem_a799da3aaab7e052c412c27cf130dcaa6}{Perform\+Http\+Request\+For\+Runners}} (int64 Race\+ID, const FString \&Runners\+End\+Point, bool b\+Startup)
+\begin{DoxyCompactList}\small\item\em Triggers the request to the API for all Runners. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_runner_subsystem_a6803bf11568039a273aadda1ae42136b}{Perform\+Http\+Request\+For\+Runner}} (int64 Race\+ID, const FString \&Runner\+End\+Point, int64 Runner\+Id)
+\begin{DoxyCompactList}\small\item\em Triggers the request to the API for one Runner. \end{DoxyCompactList}\item 
+AActor \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_u_runner_subsystem_a8ef8f0ec5c6c301276ca17d2a21d1daf}{Spawn\+Runner\+Actor}} (int64 Race\+ID, \mbox{\hyperlink{struct_f_runner_struct}{FRunner\+Struct}} Runner, UWorld \texorpdfstring{$\ast$}{*}World, \mbox{\hyperlink{class_t_subclass_of}{TSubclass\+Of}}$<$ AActor $>$ Runner\+Class, const FTransform \&Spawn\+Transform)
+\begin{DoxyCompactList}\small\item\em Spawn one runner. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_u_runner_subsystem_a42322d47da28358ef30ffd14e2d3fba7}{Does\+Runner\+Belongs\+To\+Race}} (int64 Runner\+ID, int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_u_runner_subsystem_a15923da922b06af11ef0608e49d3a723}{Toggle\+Runners}} (int64 Race\+ID, bool b\+Show)
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Runners. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_runner_subsystem_a965f7449d0a5dff8cac0a1dc0e52e77c}{Toggle\+Runner}} (int64 Race\+ID, int64 Runner\+ID, bool b\+Show)
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Runner. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_runner_subsystem_affb560e17da744d811603c69f73df6d5}{Animation}} (int64 Runner\+ID, int64 Race\+ID)
+\begin{DoxyCompactList}\small\item\em Start/\+Stop Poi animation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_runner_subsystem_af637131120d13af4f8fae07e6b752816}{Stop\+Animation}} (int64 Runner\+ID, int64 Race\+ID)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+FOn\+Runners\+Datas\+Gathered \mbox{\hyperlink{class_u_runner_subsystem_a43c5386cf213202f96f57bd41d0e7013}{On\+Runners\+Datas\+Gathered}}
+\item 
+FOn\+Runners\+Update\+Datas \mbox{\hyperlink{class_u_runner_subsystem_a0d17f039f6ffb040c2dccfa76c5cdd8f}{On\+Runners\+Update\+Datas}}
+\item 
+FOn\+Runner\+Datas\+Gathered \mbox{\hyperlink{class_u_runner_subsystem_a60705fe7bfdcd5dbafe97e386272aad2}{On\+Runner\+Datas\+Gathered}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Subsystem de gestion/récupération/update des datas des Runners. 
+
+\label{doc-func-members}
+\Hypertarget{class_u_runner_subsystem_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_u_runner_subsystem_affb560e17da744d811603c69f73df6d5}\index{URunnerSubsystem@{URunnerSubsystem}!Animation@{Animation}}
+\index{Animation@{Animation}!URunnerSubsystem@{URunnerSubsystem}}
+\doxysubsubsection{\texorpdfstring{Animation()}{Animation()}}
+{\footnotesize\ttfamily \label{class_u_runner_subsystem_affb560e17da744d811603c69f73df6d5} 
+void URunner\+Subsystem\+::\+Animation (\begin{DoxyParamCaption}\item[{int64}]{Runner\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Start/\+Stop Poi animation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Runner\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+WIP 
+\end{DoxyNote}
+\Hypertarget{class_u_runner_subsystem_ae7963209dde32b85881acd8a995d3afb}\index{URunnerSubsystem@{URunnerSubsystem}!Deinitialize@{Deinitialize}}
+\index{Deinitialize@{Deinitialize}!URunnerSubsystem@{URunnerSubsystem}}
+\doxysubsubsection{\texorpdfstring{Deinitialize()}{Deinitialize()}}
+{\footnotesize\ttfamily \label{class_u_runner_subsystem_ae7963209dde32b85881acd8a995d3afb} 
+void URunner\+Subsystem\+::\+Deinitialize (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_runner_subsystem_a42322d47da28358ef30ffd14e2d3fba7}\index{URunnerSubsystem@{URunnerSubsystem}!DoesRunnerBelongsToRace@{DoesRunnerBelongsToRace}}
+\index{DoesRunnerBelongsToRace@{DoesRunnerBelongsToRace}!URunnerSubsystem@{URunnerSubsystem}}
+\doxysubsubsection{\texorpdfstring{DoesRunnerBelongsToRace()}{DoesRunnerBelongsToRace()}}
+{\footnotesize\ttfamily \label{class_u_runner_subsystem_a42322d47da28358ef30ffd14e2d3fba7} 
+bool URunner\+Subsystem\+::\+Does\+Runner\+Belongs\+To\+Race (\begin{DoxyParamCaption}\item[{int64}]{Runner\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_runner_subsystem_a4f399dcb5b2353335f0266cca95542af}\index{URunnerSubsystem@{URunnerSubsystem}!GetRunnerActor@{GetRunnerActor}}
+\index{GetRunnerActor@{GetRunnerActor}!URunnerSubsystem@{URunnerSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetRunnerActor()}{GetRunnerActor()}}
+{\footnotesize\ttfamily \label{class_u_runner_subsystem_a4f399dcb5b2353335f0266cca95542af} 
+TObject\+Ptr$<$ AActor $>$ URunner\+Subsystem\+::\+Get\+Runner\+Actor (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{int64}]{Runner\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_runner_subsystem_a83166d75eace55515d0bf687a1d7eba8}\index{URunnerSubsystem@{URunnerSubsystem}!GetRunnersByRaceId@{GetRunnersByRaceId}}
+\index{GetRunnersByRaceId@{GetRunnersByRaceId}!URunnerSubsystem@{URunnerSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetRunnersByRaceId()}{GetRunnersByRaceId()}}
+{\footnotesize\ttfamily \label{class_u_runner_subsystem_a83166d75eace55515d0bf687a1d7eba8} 
+\mbox{\hyperlink{struct_f_runners}{FRunners}} URunner\+Subsystem\+::\+Get\+Runners\+By\+Race\+Id (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_runner_subsystem_a4a9b65e796b6709dbe414159679b9d40}\index{URunnerSubsystem@{URunnerSubsystem}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!URunnerSubsystem@{URunnerSubsystem}}
+\doxysubsubsection{\texorpdfstring{Initialize()}{Initialize()}}
+{\footnotesize\ttfamily \label{class_u_runner_subsystem_a4a9b65e796b6709dbe414159679b9d40} 
+void URunner\+Subsystem\+::\+Initialize (\begin{DoxyParamCaption}\item[{FSubsystem\+Collection\+Base \&}]{Collection}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_runner_subsystem_a6803bf11568039a273aadda1ae42136b}\index{URunnerSubsystem@{URunnerSubsystem}!PerformHttpRequestForRunner@{PerformHttpRequestForRunner}}
+\index{PerformHttpRequestForRunner@{PerformHttpRequestForRunner}!URunnerSubsystem@{URunnerSubsystem}}
+\doxysubsubsection{\texorpdfstring{PerformHttpRequestForRunner()}{PerformHttpRequestForRunner()}}
+{\footnotesize\ttfamily \label{class_u_runner_subsystem_a6803bf11568039a273aadda1ae42136b} 
+void URunner\+Subsystem\+::\+Perform\+Http\+Request\+For\+Runner (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{const FString \&}]{Runner\+Endpoint}{, }\item[{int64}]{Runner\+Id}{}\end{DoxyParamCaption})}
+
+
+
+Triggers the request to the API for one Runner. 
+
+Request datas for one Runner.
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Runner\+End\+Point} & \\
+\hline
+{\em Runner\+Id} & \\
+\hline
+{\em Runner\+Endpoint} & \\
+\hline
+{\em Runner\+Id} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_runner_subsystem_a799da3aaab7e052c412c27cf130dcaa6}\index{URunnerSubsystem@{URunnerSubsystem}!PerformHttpRequestForRunners@{PerformHttpRequestForRunners}}
+\index{PerformHttpRequestForRunners@{PerformHttpRequestForRunners}!URunnerSubsystem@{URunnerSubsystem}}
+\doxysubsubsection{\texorpdfstring{PerformHttpRequestForRunners()}{PerformHttpRequestForRunners()}}
+{\footnotesize\ttfamily \label{class_u_runner_subsystem_a799da3aaab7e052c412c27cf130dcaa6} 
+void URunner\+Subsystem\+::\+Perform\+Http\+Request\+For\+Runners (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{const FString \&}]{Runners\+Endpoint}{, }\item[{bool}]{b\+Startup}{}\end{DoxyParamCaption})}
+
+
+
+Triggers the request to the API for all Runners. 
+
+Request datas for all Runners at startup.
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Runners\+End\+Point} & \\
+\hline
+{\em Runners\+Endpoint} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_runner_subsystem_a8ef8f0ec5c6c301276ca17d2a21d1daf}\index{URunnerSubsystem@{URunnerSubsystem}!SpawnRunnerActor@{SpawnRunnerActor}}
+\index{SpawnRunnerActor@{SpawnRunnerActor}!URunnerSubsystem@{URunnerSubsystem}}
+\doxysubsubsection{\texorpdfstring{SpawnRunnerActor()}{SpawnRunnerActor()}}
+{\footnotesize\ttfamily \label{class_u_runner_subsystem_a8ef8f0ec5c6c301276ca17d2a21d1daf} 
+AActor \texorpdfstring{$\ast$}{*} URunner\+Subsystem\+::\+Spawn\+Runner\+Actor (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{\mbox{\hyperlink{struct_f_runner_struct}{FRunner\+Struct}}}]{Runner\+Struct}{, }\item[{UWorld \texorpdfstring{$\ast$}{*}}]{World}{, }\item[{\mbox{\hyperlink{class_t_subclass_of}{TSubclass\+Of}}$<$ AActor $>$}]{Runner\+Class}{, }\item[{const FTransform \&}]{Spawn\+Transform}{}\end{DoxyParamCaption})}
+
+
+
+Spawn one runner. 
+
+Spawn un runner et le place.
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em World} & \\
+\hline
+{\em Runner\+Class} & \\
+\hline
+{\em Spawn\+Transform} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Runner\+Struct} & \\
+\hline
+{\em World} & \\
+\hline
+{\em Runner\+Class} & \\
+\hline
+{\em Spawn\+Transform} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_u_runner_subsystem_af637131120d13af4f8fae07e6b752816}\index{URunnerSubsystem@{URunnerSubsystem}!StopAnimation@{StopAnimation}}
+\index{StopAnimation@{StopAnimation}!URunnerSubsystem@{URunnerSubsystem}}
+\doxysubsubsection{\texorpdfstring{StopAnimation()}{StopAnimation()}}
+{\footnotesize\ttfamily \label{class_u_runner_subsystem_af637131120d13af4f8fae07e6b752816} 
+void URunner\+Subsystem\+::\+Stop\+Animation (\begin{DoxyParamCaption}\item[{int64}]{Runner\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_runner_subsystem_a965f7449d0a5dff8cac0a1dc0e52e77c}\index{URunnerSubsystem@{URunnerSubsystem}!ToggleRunner@{ToggleRunner}}
+\index{ToggleRunner@{ToggleRunner}!URunnerSubsystem@{URunnerSubsystem}}
+\doxysubsubsection{\texorpdfstring{ToggleRunner()}{ToggleRunner()}}
+{\footnotesize\ttfamily \label{class_u_runner_subsystem_a965f7449d0a5dff8cac0a1dc0e52e77c} 
+void URunner\+Subsystem\+::\+Toggle\+Runner (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{int64}]{Runner\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+
+
+Show/\+Hide Runner. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Runner\+ID} & \\
+\hline
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_runner_subsystem_a15923da922b06af11ef0608e49d3a723}\index{URunnerSubsystem@{URunnerSubsystem}!ToggleRunners@{ToggleRunners}}
+\index{ToggleRunners@{ToggleRunners}!URunnerSubsystem@{URunnerSubsystem}}
+\doxysubsubsection{\texorpdfstring{ToggleRunners()}{ToggleRunners()}}
+{\footnotesize\ttfamily \label{class_u_runner_subsystem_a15923da922b06af11ef0608e49d3a723} 
+void URunner\+Subsystem\+::\+Toggle\+Runners (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+
+
+Show/\+Hide Runners. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-variable-members}
+\Hypertarget{class_u_runner_subsystem_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_u_runner_subsystem_a60705fe7bfdcd5dbafe97e386272aad2}\index{URunnerSubsystem@{URunnerSubsystem}!OnRunnerDatasGathered@{OnRunnerDatasGathered}}
+\index{OnRunnerDatasGathered@{OnRunnerDatasGathered}!URunnerSubsystem@{URunnerSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnRunnerDatasGathered}{OnRunnerDatasGathered}}
+{\footnotesize\ttfamily \label{class_u_runner_subsystem_a60705fe7bfdcd5dbafe97e386272aad2} 
+FOn\+Runner\+Datas\+Gathered URunner\+Subsystem\+::\+On\+Runner\+Datas\+Gathered}
+
+\Hypertarget{class_u_runner_subsystem_a43c5386cf213202f96f57bd41d0e7013}\index{URunnerSubsystem@{URunnerSubsystem}!OnRunnersDatasGathered@{OnRunnersDatasGathered}}
+\index{OnRunnersDatasGathered@{OnRunnersDatasGathered}!URunnerSubsystem@{URunnerSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnRunnersDatasGathered}{OnRunnersDatasGathered}}
+{\footnotesize\ttfamily \label{class_u_runner_subsystem_a43c5386cf213202f96f57bd41d0e7013} 
+FOn\+Runners\+Datas\+Gathered URunner\+Subsystem\+::\+On\+Runners\+Datas\+Gathered}
+
+\Hypertarget{class_u_runner_subsystem_a0d17f039f6ffb040c2dccfa76c5cdd8f}\index{URunnerSubsystem@{URunnerSubsystem}!OnRunnersUpdateDatas@{OnRunnersUpdateDatas}}
+\index{OnRunnersUpdateDatas@{OnRunnersUpdateDatas}!URunnerSubsystem@{URunnerSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnRunnersUpdateDatas}{OnRunnersUpdateDatas}}
+{\footnotesize\ttfamily \label{class_u_runner_subsystem_a0d17f039f6ffb040c2dccfa76c5cdd8f} 
+FOn\+Runners\+Update\+Datas URunner\+Subsystem\+::\+On\+Runners\+Update\+Datas}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Subsystems/\+Public/\mbox{\hyperlink{_runner_subsystem_8h}{Runner\+Subsystem.\+h}}\item 
+Source/\+Subsystems/\+Private/\mbox{\hyperlink{_runner_subsystem_8cpp}{Runner\+Subsystem.\+cpp}}\end{DoxyCompactItemize}

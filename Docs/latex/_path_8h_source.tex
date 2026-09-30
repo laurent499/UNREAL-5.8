@@ -1,0 +1,196 @@
+\doxysection{Path.\+h}
+\hypertarget{_path_8h_source}{}\label{_path_8h_source}\index{Source/TrailSimulator/Public/Actors/Path.h@{Source/TrailSimulator/Public/Actors/Path.h}}
+\mbox{\hyperlink{_path_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}GameFramework/Actor.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_path_interface_8h}{PathInterface.h}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}Path.generated.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \mbox{\hyperlink{_path_8h_a763cf99db55a2ffeb68bec13e20e4e4f}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_OneParam}}(}
+\DoxyCodeLine{00012\ \ \ \ \ FOnPathEndDrawing,}
+\DoxyCodeLine{00013\ \ \ \ \ int64,}
+\DoxyCodeLine{00014\ \ \ \ \ RaceID);}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \mbox{\hyperlink{_path_8h_aa8ddace691cba0d3dd6f7da3f3978a3a}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}(}
+\DoxyCodeLine{00017\ \ \ \ \ FOnGeoRefLocation,}
+\DoxyCodeLine{00018\ \ \ \ \ int64,}
+\DoxyCodeLine{00019\ \ \ \ \ RaceID,}
+\DoxyCodeLine{00020\ \ \ \ \ FVector,}
+\DoxyCodeLine{00021\ \ \ \ \ GeorefLocation);}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ UCLASS()}
+\DoxyCodeLine{00024\ class\ TRAILSIMULATOR\_API\ \mbox{\hyperlink{class_a_path_a8ea8f2c7dcc66535ac47575a7377feea}{APath}}\ :\ public\ AActor,\ public\ \mbox{\hyperlink{class_i_path_interface}{IPathInterface}}}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{class_a_path_a8ea8f2c7dcc66535ac47575a7377feea}{APath}}();}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_path_a29024bf0e1bf35d328f9e4933e513452}{Tick}}(\textcolor{keywordtype}{float}\ DeltaTime)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_path_a15f2e17768cdc172a77c9212416c7783}{BeginPlay}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_path_a34fd42a77569082b3f29eec93c1c17c2}{SetRacePath}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_f_race_path}{FRacePath}}\&\ RacePath);}
+\DoxyCodeLine{00037\ \ \ \ \ }
+\DoxyCodeLine{00038\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_path_adcb6ca2acf7361160a63be61c24bc0e8}{StartPulse}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00040\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_path_a5e085bf71369e6d90c361d878508fd4a}{StopPulse}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00042\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_path_ac3ebc13327c84c6b320f469de2c996c7}{UpdatePulseSpeed}}(\textcolor{keywordtype}{float}\ NewSpeed);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_path_abda57b13be7ae6e6d3a6e3a2359661bf}{ChangePathVisibility}}(\textcolor{keywordtype}{bool}\ bShowPath)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00047\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_path_a7f0a4b8bbc1305ef7ca4e4357161f18f}{ChangeSlopeVisibility}}(\textcolor{keywordtype}{bool}\ bShowPath)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00049\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_path_aa6053ff47dae4ea29f1d1dae2b47561a}{UpdatePathGlow}}(\textcolor{keywordtype}{float}\ NewGlow,\ int64\ RaceID);}
+\DoxyCodeLine{00051\ \ \ \ \ }
+\DoxyCodeLine{00052\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_path_aef6be0dd54dd34ec3e1ab6990f3ee5d4}{ChangeKmsVisibility}}(\textcolor{keywordtype}{bool}\ bShowKm);}
+\DoxyCodeLine{00054\ \ \ \ \ }
+\DoxyCodeLine{00055\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{virtual}\ FVector\ \mbox{\hyperlink{class_a_path_ae0dbf32dc3fa012019b4d915815f35b9}{GetClosestSplineLocation}}(FVector\ RunnerLocation)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00057\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{virtual}\ FVector\ \mbox{\hyperlink{class_a_path_a4d2d8a98bde0ed19acbac3e57f0e29e9}{GetLocationAtDistance}}(\textcolor{keywordtype}{float}\ Distance)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00059\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_path_a50d8c2edf71113d20369a0146cefe2fe}{GetDistanceAlongSpline}}(FVector\ RunnerLocation)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00061\ \ \ \ \ }
+\DoxyCodeLine{00062\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_path_abfb7535ec1c4f090e22bd70cc0bdc3b7}{StartTravelForward}}();}
+\DoxyCodeLine{00064\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_path_ad2499b71d21a164ef4abc64ae1cce305}{StartTravelBackward}}();}
+\DoxyCodeLine{00066\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_path_a0b9f47e79590ce9f023f0d6e199e4e1e}{StopTravel}}();}
+\DoxyCodeLine{00068\ \ \ \ \ }
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_path_a11b92c52bf70d9558f6181ac14efbd80}{DrawPath}}(int64\ RaceID,\ \mbox{\hyperlink{struct_f_race_path}{FRacePath}}\ RacePathDatas);}
+\DoxyCodeLine{00073\ \ \ \ \ FOnPathEndDrawing\ \mbox{\hyperlink{class_a_path_a3b3137be5cd2737f9c1ba559bca6973d}{OnPathEndDrawing}};}
+\DoxyCodeLine{00074\ \ \ \ \ FOnGeoRefLocation\ \mbox{\hyperlink{class_a_path_aab7bcce77b6d9247e91683c465f1126a}{OnGeoRefLocation}};}
+\DoxyCodeLine{00075\ \ \ \ \ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{comment}{//\ Checkpoints}}
+\DoxyCodeLine{00077\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00078\ \ \ \ \ void\ \mbox{\hyperlink{class_a_path_a1dd21836c5ddd606ebacd6c09649cd46}{HandleCheckpointsDatasGathered}}(int64\ RaceID,\ \mbox{\hyperlink{struct_f_checkpoints}{FCheckpoints}}\ CheckpointsDatas);}
+\DoxyCodeLine{00079\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00080\ \ \ \ \ int32\ \mbox{\hyperlink{class_a_path_ad2d3cd51361034413f938e637141d0a0}{NbCheckpoints}};}
+\DoxyCodeLine{00081\ \ \ \ \ }
+\DoxyCodeLine{00082\ \ \ \ \ }
+\DoxyCodeLine{00083\ private:}
+\DoxyCodeLine{00084\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00085\ \ \ \ \ TObjectPtr<class\ USceneComponent>\ Root;}
+\DoxyCodeLine{00086\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00087\ \ \ \ \ TObjectPtr<class\ USplineComponent>\ SplinePath;}
+\DoxyCodeLine{00088\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00089\ \ \ \ \ TObjectPtr<class\ USplineComponent>\ SlopePath;}
+\DoxyCodeLine{00090\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00091\ \ \ \ \ TObjectPtr<class\ USplineComponent>\ TravelPath;}
+\DoxyCodeLine{00092\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00093\ \ \ \ \ TObjectPtr<class\ UCesiumGlobeAnchorComponent>\ GlobeAnchorComponent;}
+\DoxyCodeLine{00094\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00095\ \ \ \ \ TSoftObjectPtr<class\ ACesiumGeoreference>\ Georeference;}
+\DoxyCodeLine{00096\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00097\ \ \ \ \ TObjectPtr<class\ UStaticMesh>\ SplineStaticMesh;}
+\DoxyCodeLine{00098\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00099\ \ \ \ \ TObjectPtr<class\ USpringArmComponent>\ SpringArmComponent;}
+\DoxyCodeLine{00100\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00101\ \ \ \ \ TObjectPtr<class\ UCineCameraComponent>\ CameraComponent;}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00103\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00104\ \ \ \ \ UMaterialInstanceDynamic*\ TrailHaloMID;}
+\DoxyCodeLine{00105\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00106\ \ \ \ \ UMaterialInstanceDynamic*\ TrailMID;}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ }
+\DoxyCodeLine{00109\ \ \ \ \ }
+\DoxyCodeLine{00110\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00111\ \ \ \ \ UMaterialInstanceDynamic*\ GreenMat;}
+\DoxyCodeLine{00112\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00113\ \ \ \ \ UMaterialInstanceDynamic*\ GreenHaloMat;}
+\DoxyCodeLine{00114\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00115\ \ \ \ \ UMaterialInstanceDynamic*\ YellowMat;}
+\DoxyCodeLine{00116\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00117\ \ \ \ \ UMaterialInstanceDynamic*\ YellowHaloMat;}
+\DoxyCodeLine{00118\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00119\ \ \ \ \ UMaterialInstanceDynamic*\ OrangeMat;}
+\DoxyCodeLine{00120\ \ \ \ \ UPROPERTY(Transient)\ }
+\DoxyCodeLine{00121\ \ \ \ \ UMaterialInstanceDynamic*\ OrangeHaloMat;}
+\DoxyCodeLine{00122\ \ \ \ \ UPROPERTY(Transient)\ }
+\DoxyCodeLine{00123\ \ \ \ \ UMaterialInstanceDynamic*\ RedMat;}
+\DoxyCodeLine{00124\ \ \ \ \ UPROPERTY(Transient)\ }
+\DoxyCodeLine{00125\ \ \ \ \ UMaterialInstanceDynamic*\ RedHaloMat;}
+\DoxyCodeLine{00126\ \ \ \ \ UPROPERTY(Transient)\ }
+\DoxyCodeLine{00127\ \ \ \ \ UMaterialInstanceDynamic*\ PurpleMat;}
+\DoxyCodeLine{00128\ \ \ \ \ UPROPERTY(Transient)\ }
+\DoxyCodeLine{00129\ \ \ \ \ UMaterialInstanceDynamic*\ PurpleHaloMat;}
+\DoxyCodeLine{00130\ \ \ \ \ UPROPERTY(Transient)\ }
+\DoxyCodeLine{00131\ \ \ \ \ UMaterialInstanceDynamic*\ GreyMat;}
+\DoxyCodeLine{00132\ \ \ \ \ UPROPERTY(Transient)\ }
+\DoxyCodeLine{00133\ \ \ \ \ UMaterialInstanceDynamic*\ GreyHaloMat;}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00135\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordtype}{float}\ ZOffset;}
+\DoxyCodeLine{00137\ \ \ \ \ }
+\DoxyCodeLine{00138\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00139\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_loading_status_subsystem}{ULoadingStatusSubsystem}}>\ LoadingSubsystem;}
+\DoxyCodeLine{00140\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00141\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_settings_subsystem}{USettingsSubsystem}}>\ SettingsSubsystem;}
+\DoxyCodeLine{00142\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00143\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_race_subsystem}{URaceSubsystem}}>\ RaceSubsystem;}
+\DoxyCodeLine{00144\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00145\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_checkpoint_subsystem}{UCheckpointSubsystem}}>\ CheckpointSubsystem;}
+\DoxyCodeLine{00146\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00147\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_weather_subsystem}{UWeatherSubsystem}}>\ WeatherSubsystem;}
+\DoxyCodeLine{00148\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00149\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_path_subsystem}{UPathSubsystem}}>\ PathSubsystem;}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00151\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordtype}{void}\ RebuildPathSplineMeshes(int64\ RaceID);}
+\DoxyCodeLine{00153\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keywordtype}{void}\ RebuildSlopeSplineMeshes(int64\ RaceID);}
+\DoxyCodeLine{00155\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keywordtype}{bool}\ BuildKms(int64\ RaceID);}
+\DoxyCodeLine{00157\ \ \ \ \ }
+\DoxyCodeLine{00158\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00159\ \ \ \ \ TArray<FVector>\ QueryLLH;\ \ \ \textcolor{comment}{//\ sampling\ path\ points}}
+\DoxyCodeLine{00160\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00161\ \ \ \ \ TArray<FVector>\ KmLLH;\ \ \textcolor{comment}{//\ sampling\ path\ points}}
+\DoxyCodeLine{00162\ \ \ \ \ }
+\DoxyCodeLine{00163\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00164\ \ \ \ \ int64\ RaceId;}
+\DoxyCodeLine{00165\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00166\ \ \ \ \ \mbox{\hyperlink{struct_f_race_path}{FRacePath}}\ RacePath;}
+\DoxyCodeLine{00167\ \ \ \ \ UPROPERTY()\ }
+\DoxyCodeLine{00168\ \ \ \ \ TArray<TObjectPtr<class\ \mbox{\hyperlink{class_a_km}{AKm}}>>\ KmsArray;}
+\DoxyCodeLine{00169\ \ \ \ \ TMap<int64,\ TArray<TObjectPtr<class\ \mbox{\hyperlink{class_a_km}{AKm}}>>>\ Kms;}
+\DoxyCodeLine{00170\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00171\ \ \ \ \ TArray<TObjectPtr<class\ USplineMeshComponent>>\ PathSplineMeshes;}
+\DoxyCodeLine{00172\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00173\ \ \ \ \ TArray<TObjectPtr<class\ USplineMeshComponent>>\ SlopeSplineMeshes;}
+\DoxyCodeLine{00174\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00175\ \ \ \ \ TArray<FVector>\ LockedPoints;}
+\DoxyCodeLine{00176\ \ \ \ \ }
+\DoxyCodeLine{00177\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keywordtype}{float}\ ToleranceMeters\ =\ 150.f;}
+\DoxyCodeLine{00179\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keywordtype}{float}\ SampleStepMeters\ =\ 20.f;}
+\DoxyCodeLine{00181\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordtype}{float}\ SpeedMetersPerSec\ =\ 100.f;}
+\DoxyCodeLine{00183\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keywordtype}{float}\ DistanceCm\ =\ 0.f;}
+\DoxyCodeLine{00185\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00186\ \ \ \ \ FTimerHandle\ TravelHandle;}
+\DoxyCodeLine{00187\ \ \ \ \ }
+\DoxyCodeLine{00188\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keywordtype}{bool}\ bForward\ =\ true;}
+\DoxyCodeLine{00190\ \ \ \ \ }
+\DoxyCodeLine{00191\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00192\ \ \ \ \ TSoftObjectPtr<class\ UMaterialParameterCollection>\ PulseMPC;}
+\DoxyCodeLine{00193\ \};}
+
+\end{DoxyCode}

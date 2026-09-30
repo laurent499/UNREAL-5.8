@@ -1,0 +1,38 @@
+\doxysection{Poi\+\_\+\+Generic.\+h}
+\hypertarget{_poi___generic_8h_source}{}\label{_poi___generic_8h_source}\index{Source/TrailSimulator/Public/Actors/Generic/Poi\_Generic.h@{Source/TrailSimulator/Public/Actors/Generic/Poi\_Generic.h}}
+\mbox{\hyperlink{_poi___generic_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Fill\ out\ your\ copyright\ notice\ in\ the\ Description\ page\ of\ Project\ Settings.}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_poi_8h}{Actors/Poi.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}Poi\_Generic.generated.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ UCLASS()}
+\DoxyCodeLine{00010\ class\ TRAILSIMULATOR\_API\ \mbox{\hyperlink{class_a_poi___generic_a2d58b6f7854198a650a75057b0cec52e}{APoi\_Generic}}\ :\ public\ \mbox{\hyperlink{class_a_poi_ae1bad8b53e053c980df18e87a09560d6}{APoi}}}
+\DoxyCodeLine{00011\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00015\ \ \ \ \ \mbox{\hyperlink{class_a_poi___generic_a2d58b6f7854198a650a75057b0cec52e}{APoi\_Generic}}();}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_poi___generic_aaf6b9d49b8c9ae79c298d0d4a797d414}{UpdatePoi}}(\mbox{\hyperlink{struct_f_race_p_o_i}{FRacePOI}}\ PoiData,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ RaceSetup)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_poi___generic_a81a8b067c083a1215f66fb621887e4cf}{UpdatePoiWeather}}(\mbox{\hyperlink{struct_f_open_weather_response}{FOpenWeatherResponse}}\ WeatherDatas)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_poi___generic_a2bdba58ff71a2e8287988b5cc64b2190}{TogglePoiWeather}}(\textcolor{keywordtype}{bool}\ bShow)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_poi___generic_a1c9d7f9cfc8e468b2229400bfa0be237}{StartAnimation}}(\textcolor{keywordtype}{float}\ RotationSpeed)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_poi___generic_ab84e4b18443372a135eb5af4a26ce67e}{StopAnimation}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00021\ \ \ \ \ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_poi___generic_a050c49fd4d3928c9c6ab767fed166633}{BeginPlay}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_poi___generic_af78aa5e339cf30a1e1cf7538db485c25}{EndPlay}}(\textcolor{keyword}{const}\ EEndPlayReason::Type\ EndPlayReason)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00025\ \ \ \ \ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00027\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00028\ \ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ NameLeftComponent;}
+\DoxyCodeLine{00029\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00030\ \ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ NameRightComponent;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \};}
+
+\end{DoxyCode}

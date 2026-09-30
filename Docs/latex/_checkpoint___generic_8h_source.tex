@@ -1,0 +1,43 @@
+\doxysection{Checkpoint\+\_\+\+Generic.\+h}
+\hypertarget{_checkpoint___generic_8h_source}{}\label{_checkpoint___generic_8h_source}\index{Source/TrailSimulator/Public/Actors/Generic/Checkpoint\_Generic.h@{Source/TrailSimulator/Public/Actors/Generic/Checkpoint\_Generic.h}}
+\mbox{\hyperlink{_checkpoint___generic_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Fill\ out\ your\ copyright\ notice\ in\ the\ Description\ page\ of\ Project\ Settings.}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_checkpoint_8h}{Actors/Checkpoint.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}Checkpoint\_Generic.generated.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ UCLASS()}
+\DoxyCodeLine{00010\ class\ TRAILSIMULATOR\_API\ \mbox{\hyperlink{class_a_checkpoint___generic_a0571abcf2068daa1f3a64d6e6a282397}{ACheckpoint\_Generic}}\ :\ public\ \mbox{\hyperlink{class_a_checkpoint_a07e07ee216792f192fed56454d19b7d1}{ACheckpoint}}}
+\DoxyCodeLine{00011\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00015\ \ \ \ \ \mbox{\hyperlink{class_a_checkpoint___generic_a0571abcf2068daa1f3a64d6e6a282397}{ACheckpoint\_Generic}}();}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint___generic_abd45fd81a2131717c44e69ebe59c85af}{Tick}}(\ \textcolor{keywordtype}{float}\ DeltaTime\ )\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00017\ \ \ \ \ }
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint___generic_a3b8577f9ee577a6399736eecd7377162}{UpdateCheckpoint}}(\mbox{\hyperlink{struct_f_race_checkpoint}{FRaceCheckpoint}}\ NewCheckpointDatas,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ NewRaceSetup)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint___generic_a8296d6497ecc6f8a5cfc394014130eb3}{UpdateCheckpointWeather}}(\mbox{\hyperlink{struct_f_open_weather_response}{FOpenWeatherResponse}}\ WeatherDatas)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint___generic_a72e2a90076b75ecae7d85e292b14063f}{ToggleCheckpointWeather}}(\textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint___generic_abbcef05716136aa9bea18658414f7ff0}{StartAnimation}}(\textcolor{keywordtype}{float}\ RotationSpeed)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint___generic_afe5cb742ddc0ec8126cd0cdffeb8576c}{StopAnimation}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00024\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint___generic_a0f1644f14e8e2cfd43a6269bd2b41087}{BeginPlay}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint___generic_a794d6ebb5c87a70cc7d12bf627b2d710}{EndPlay}}(\textcolor{keyword}{const}\ EEndPlayReason::Type\ EndPlayReason)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00027\ \ \ \ \ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00029\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00030\ \ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ NameLeftComponent;}
+\DoxyCodeLine{00031\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00032\ \ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ NameRightComponent;}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{/*UPROPERTY(EditDefaultsOnly)}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ Line1RightComponent;}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ \ \ \ UPROPERTY(EditDefaultsOnly)}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ Line1LeftComponent;*/}}
+\DoxyCodeLine{00037\ \};}
+
+\end{DoxyCode}

@@ -1,0 +1,286 @@
+\doxysection{ACheckpoint\+\_\+\+UTMB Class Reference}
+\hypertarget{class_a_checkpoint___u_t_m_b}{}\label{class_a_checkpoint___u_t_m_b}\index{ACheckpoint\_UTMB@{ACheckpoint\_UTMB}}
+
+
+{\ttfamily \#include $<$Checkpoint\+\_\+\+UTMB.\+h$>$}
+
+Inheritance diagram for ACheckpoint\+\_\+\+UTMB\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_a_checkpoint___u_t_m_b}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_a_checkpoint___u_t_m_b_a1bee329ab401dbc35e2f3a823c6e8ec7}{ACheckpoint\+\_\+\+UTMB}} ()
+\item 
+virtual void \mbox{\hyperlink{class_a_checkpoint___u_t_m_b_a1f17e4cdca771712b1543d3b0f0ad4dc}{Tick}} (float Delta\+Time) override
+\item 
+virtual void \mbox{\hyperlink{class_a_checkpoint___u_t_m_b_a7565a476b36481b891b2867cf2f2cb82}{Update\+Checkpoint}} (\mbox{\hyperlink{struct_f_race_checkpoint}{FRace\+Checkpoint}} New\+Checkpoint\+Datas, \mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}} New\+Race\+Setup) override
+\begin{DoxyCompactList}\small\item\em Updating the Checkpoint visuals \& datas. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_a_checkpoint___u_t_m_b_ad587d3a7047dedb7810b77e20877b1ad}{Update\+Checkpoint\+Weather}} (\mbox{\hyperlink{struct_f_open_weather_response}{FOpen\+Weather\+Response}} Weather\+Datas) override
+\begin{DoxyCompactList}\small\item\em Updating the Weather visuals \& datas. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_a_checkpoint___u_t_m_b_accfc61b4254cca26ba647a83cea81557}{Toggle\+Checkpoint\+Weather}} (bool b\+Show) override
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Weather components \& requesting Weather datas. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_a_checkpoint___u_t_m_b_a0caf3ee579590bdfa9d297c5c28529c6}{Start\+Animation}} (float Rotation\+Speed) override
+\begin{DoxyCompactList}\small\item\em Playing orbit animation. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_a_checkpoint___u_t_m_b_a31a4feceacf4ca53358cf698788e97dd}{Stop\+Animation}} () override
+\begin{DoxyCompactList}\small\item\em Stop orbit animation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_a_checkpoint}{ACheckpoint}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_a_checkpoint_a07e07ee216792f192fed56454d19b7d1}{ACheckpoint}} ()
+\item 
+void \mbox{\hyperlink{class_a_checkpoint_a9d9c4e0ca9805da8cfab29f9c2eea719}{On\+Look\+At\+Timer\+Tick}} ()
+\begin{DoxyCompactList}\small\item\em Look\+At tick. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_checkpoint_aa3485766c42b4010bb810d3310812c6a}{Set\+Min\+Max}} (int64 Race\+ID, \mbox{\hyperlink{struct_f_min_max}{FMin\+Max}} New\+Min\+Max)
+\begin{DoxyCompactList}\small\item\em Updating the Min\+Max. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_f_min_max}{FMin\+Max}} \mbox{\hyperlink{class_a_checkpoint_a99a0d50a4d3071d318ea00324d4857d7}{Get\+Min\+Max}} () const
+\item 
+FString \mbox{\hyperlink{class_a_checkpoint_a20b96a2bc125f1b804a1e1e122d59320}{Capitalize\+First}} (const FString \&In)
+\begin{DoxyCompactList}\small\item\em Capitalizing the first letter of a string. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_a_checkpoint_a5100ce8ce896047353376d99d421ce97}{Update\+Globe\+Anchor}} ()
+\begin{DoxyCompactList}\small\item\em Aligning the Globe Anchor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_a_checkpoint___u_t_m_b_acf3c8ac7db1f2a42151cc5d1c2cd182e}{Begin\+Play}} () override
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions inherited from \mbox{\hyperlink{class_a_checkpoint}{ACheckpoint}}}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_a_checkpoint_a10e3f325268eca8c7fc36a57ef20beb1}{Fetch\+Weather}} ()
+\begin{DoxyCompactList}\small\item\em Fetching Weather Datas. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_a_checkpoint_af4ae1c22d848294b37dc6d4a3d95c577}{End\+Play}} (const EEnd\+Play\+Reason\+::\+Type End\+Play\+Reason) override
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Static Public Member Functions inherited from \mbox{\hyperlink{class_a_checkpoint}{ACheckpoint}}}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{class_a_checkpoint_ac8c2765218aba9ed65a854a1e6a18293}{Get\+Bounds\+Location}} (class UScene\+Component \texorpdfstring{$\ast$}{*}Comp, class USpline\+Component \texorpdfstring{$\ast$}{*}Spline\+Support, FVector \&Start\+Location, FVector \&End\+Location)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes inherited from \mbox{\hyperlink{class_a_checkpoint}{ACheckpoint}}}
+\begin{DoxyCompactItemize}
+\item 
+TObject\+Ptr$<$ class USpring\+Arm\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_a29592c9313420e1d13dca3c996870714}{Spring\+Arm\+Component}}
+\item 
+TObject\+Ptr$<$ class UCine\+Camera\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_a007bfb9fa5f4cbfe4fd630c238fb6ea9}{Camera\+Component}}
+\item 
+TObject\+Ptr$<$ class UOWLCapture\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_a7cf4816bbb080047e2cac4582611a9dc}{OWLCapture\+Component}}
+\item 
+FTimer\+Handle \mbox{\hyperlink{class_a_checkpoint_a4be4e95b7dd8552e44371f9c5669f44a}{Rot\+Handle}}
+\item 
+TObject\+Ptr$<$ class UTexture\+Render\+Target $>$ \mbox{\hyperlink{class_a_checkpoint_a8b6de264e217a6833ce489fb68ce49ee}{Render\+Target}}
+\item 
+float \mbox{\hyperlink{class_a_checkpoint_a27b60457ea1af1ff3e2a9061852a92a3}{Orbit\+Yaw}} = 0.f
+\item 
+float \mbox{\hyperlink{class_a_checkpoint_a274e63dabcba475756ae5647c8e5e138}{Base\+Arm\+Pitch}} = 0.f
+\item 
+float \mbox{\hyperlink{class_a_checkpoint_a52b5998d732c8636ddc98ce92ed9d396}{Base\+Arm\+Roll}} = 0.f
+\item 
+float \mbox{\hyperlink{class_a_checkpoint_a8a83f79429e8eb92504a16d15aef0aa7}{Orbit\+Speed\+Deg\+Per\+Sec}} = 12.f
+\item 
+bool \mbox{\hyperlink{class_a_checkpoint_a5ee4df45339d5c4aeebb5d4458e059fd}{b\+Orbit\+Enabled}} = false
+\item 
+float \mbox{\hyperlink{class_a_checkpoint_a70a6adf2ec1d4307464ba338658ff8c0}{Orbit\+Elapsed}} = 0.f
+\item 
+float \mbox{\hyperlink{class_a_checkpoint_aae3e223d5f270a5fe0b3b833a8f02cc6}{Start\+Yaw}}
+\item 
+bool \mbox{\hyperlink{class_a_checkpoint_a72c87265e963dadd1ed3e2707fb1562e}{b\+Look\+At\+Enabled}} = true
+\item 
+AActor \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_a_checkpoint_ab3dc623d212c8d13cfe60bb0b903b934}{Original\+View\+Target}} = nullptr
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_a_checkpoint}{ACheckpoint}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_f_race_checkpoint}{FRace\+Checkpoint}} \mbox{\hyperlink{class_a_checkpoint_a001405920b1561ffc18259b42ec736e0}{Checkpoint\+Datas}}
+\item 
+\mbox{\hyperlink{struct_f_open_weather_response}{FOpen\+Weather\+Response}} \mbox{\hyperlink{class_a_checkpoint_a6ae5806a60d3105e6602e9fa6784ee85}{Checkpoint\+Weather\+Datas}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_checkpoint_subsystem}{UCheckpoint\+Subsystem}} $>$ \mbox{\hyperlink{class_a_checkpoint_af1704f982a8f5692f2f9796910c094d2}{Checkpoint\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_race_subsystem}{URace\+Subsystem}} $>$ \mbox{\hyperlink{class_a_checkpoint_aa3e0c44d86e6de1bd48ed0ce9ac0b482}{Race\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_weather_subsystem}{UWeather\+Subsystem}} $>$ \mbox{\hyperlink{class_a_checkpoint_a735a4a71c90cb3142c895b7d04cce258}{Weather\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_settings_subsystem}{USettings\+Subsystem}} $>$ \mbox{\hyperlink{class_a_checkpoint_a3877de9d8c5fea8d9887a1ddbd2f075b}{Settings\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_scale_subsystem}{UScale\+Subsystem}} $>$ \mbox{\hyperlink{class_a_checkpoint_a697ed2ff9ccaae4c05dfaf6511294934}{Scale\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class UScene\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_ab142bb3a296cc62cbc95cf19f40b7d1f}{Main\+Root}}
+\item 
+TObject\+Ptr$<$ class UStatic\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_aa31180fd137cc40ee358211d5addb87c}{Foot\+Component}}
+\item 
+TObject\+Ptr$<$ class UScene\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_a93678422e70d838346150bd8601b12b0}{Foot\+Hook}}
+\item 
+TObject\+Ptr$<$ class UScene\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_af6d646b8a0e0c4f5a71b38e52a7bb292}{Spline\+Hook}}
+\item 
+TObject\+Ptr$<$ class USpline\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_a83c2015e7746a538fb61fabec4e12715}{Spline\+Component}}
+\item 
+TObject\+Ptr$<$ class USpline\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_aaba5ab3146e607f6b26954e117f68d18}{Name\+Bkg\+Component}}
+\item 
+TObject\+Ptr$<$ class USpline\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_a61c44f8939068a4669e39f9fcfd3f362}{Infos\+Bkg\+Component}}
+\item 
+TObject\+Ptr$<$ class USpline\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_aba74c8b854061730345801408e877b49}{Weather\+Bkg\+Component}}
+\item 
+TObject\+Ptr$<$ class USpline\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_a8a503ea10d1c7c72f7fed2748cb575b7}{Line1\+Component}}
+\item 
+TObject\+Ptr$<$ class USpline\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_a7e64c1b209da7b35f2241e6a58323281}{Line2\+Component}}
+\item 
+TObject\+Ptr$<$ class UText\+Render\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_a6473c2f91fea8d421c46858ef3079d32}{Name\+Text}}
+\item 
+TObject\+Ptr$<$ class UText\+Render\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_a5bae451ca2e3e72d13cd35d0296fe5ec}{Dist\+Text}}
+\item 
+TObject\+Ptr$<$ class UText\+Render\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_a62afa01702854703418617ab0239e38c}{Alt\+Text}}
+\item 
+TObject\+Ptr$<$ class UText\+Render\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_aca06f8f644d8df5ff17758da1e96c949}{Temp\+Text}}
+\item 
+TObject\+Ptr$<$ class UText\+Render\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_a4c38f4902e226573d059f6d730a2d99f}{Weather1\+Text}}
+\item 
+TObject\+Ptr$<$ class UText\+Render\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_a5cbe33b84ca3f6854d23d49fba58429d}{Weather2\+Text}}
+\item 
+TObject\+Ptr$<$ class UText\+Render\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_a222df5bec5d9fc7c20492408ad48be62}{Weather3\+Text}}
+\item 
+TObject\+Ptr$<$ class UStatic\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_aca9f3ac37a4fdf806cf8c27ada1a8347}{Main\+Picto}}
+\item 
+TObject\+Ptr$<$ class UStatic\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_a587ec2b6f80dc7c214e1b6cb14cff3ba}{Dist\+Picto}}
+\item 
+TObject\+Ptr$<$ class UStatic\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_aefb533952beb5da0f3656267fee6d672}{Alt\+Picto}}
+\item 
+TObject\+Ptr$<$ class UStatic\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_checkpoint_ac545313b39f6fea533bbc8f514395e9f}{Weather\+Picto}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_a_checkpoint___u_t_m_b_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_a_checkpoint___u_t_m_b_a1bee329ab401dbc35e2f3a823c6e8ec7}\index{ACheckpoint\_UTMB@{ACheckpoint\_UTMB}!ACheckpoint\_UTMB@{ACheckpoint\_UTMB}}
+\index{ACheckpoint\_UTMB@{ACheckpoint\_UTMB}!ACheckpoint\_UTMB@{ACheckpoint\_UTMB}}
+\doxysubsubsection{\texorpdfstring{ACheckpoint\_UTMB()}{ACheckpoint\_UTMB()}}
+{\footnotesize\ttfamily \label{class_a_checkpoint___u_t_m_b_a1bee329ab401dbc35e2f3a823c6e8ec7} 
+ACheckpoint\+\_\+\+UTMB\+::\+ACheckpoint\+\_\+\+UTMB (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_a_checkpoint___u_t_m_b_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_a_checkpoint___u_t_m_b_acf3c8ac7db1f2a42151cc5d1c2cd182e}\index{ACheckpoint\_UTMB@{ACheckpoint\_UTMB}!BeginPlay@{BeginPlay}}
+\index{BeginPlay@{BeginPlay}!ACheckpoint\_UTMB@{ACheckpoint\_UTMB}}
+\doxysubsubsection{\texorpdfstring{BeginPlay()}{BeginPlay()}}
+{\footnotesize\ttfamily \label{class_a_checkpoint___u_t_m_b_acf3c8ac7db1f2a42151cc5d1c2cd182e} 
+void ACheckpoint\+\_\+\+UTMB\+::\+Begin\+Play (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_a_checkpoint_a443764308c5d8d18d603802ad78683cb}{ACheckpoint}}.
+
+\Hypertarget{class_a_checkpoint___u_t_m_b_a0caf3ee579590bdfa9d297c5c28529c6}\index{ACheckpoint\_UTMB@{ACheckpoint\_UTMB}!StartAnimation@{StartAnimation}}
+\index{StartAnimation@{StartAnimation}!ACheckpoint\_UTMB@{ACheckpoint\_UTMB}}
+\doxysubsubsection{\texorpdfstring{StartAnimation()}{StartAnimation()}}
+{\footnotesize\ttfamily \label{class_a_checkpoint___u_t_m_b_a0caf3ee579590bdfa9d297c5c28529c6} 
+void ACheckpoint\+\_\+\+UTMB\+::\+Start\+Animation (\begin{DoxyParamCaption}\item[{float}]{Rotation\+Speed}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Playing orbit animation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Rotation\+Speed} & \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \mbox{\hyperlink{class_a_checkpoint_a8c03c0705b7000b66da6fc98f851627a}{ACheckpoint}}.
+
+\Hypertarget{class_a_checkpoint___u_t_m_b_a31a4feceacf4ca53358cf698788e97dd}\index{ACheckpoint\_UTMB@{ACheckpoint\_UTMB}!StopAnimation@{StopAnimation}}
+\index{StopAnimation@{StopAnimation}!ACheckpoint\_UTMB@{ACheckpoint\_UTMB}}
+\doxysubsubsection{\texorpdfstring{StopAnimation()}{StopAnimation()}}
+{\footnotesize\ttfamily \label{class_a_checkpoint___u_t_m_b_a31a4feceacf4ca53358cf698788e97dd} 
+void ACheckpoint\+\_\+\+UTMB\+::\+Stop\+Animation (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Stop orbit animation. 
+
+
+
+Reimplemented from \mbox{\hyperlink{class_a_checkpoint_a780912be3d1bcef935a59854448c07e4}{ACheckpoint}}.
+
+\Hypertarget{class_a_checkpoint___u_t_m_b_a1f17e4cdca771712b1543d3b0f0ad4dc}\index{ACheckpoint\_UTMB@{ACheckpoint\_UTMB}!Tick@{Tick}}
+\index{Tick@{Tick}!ACheckpoint\_UTMB@{ACheckpoint\_UTMB}}
+\doxysubsubsection{\texorpdfstring{Tick()}{Tick()}}
+{\footnotesize\ttfamily \label{class_a_checkpoint___u_t_m_b_a1f17e4cdca771712b1543d3b0f0ad4dc} 
+void ACheckpoint\+\_\+\+UTMB\+::\+Tick (\begin{DoxyParamCaption}\item[{float}]{Delta\+Time}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_a_checkpoint_a8e8cd4998a3930de8f41f050b3795bf2}{ACheckpoint}}.
+
+\Hypertarget{class_a_checkpoint___u_t_m_b_accfc61b4254cca26ba647a83cea81557}\index{ACheckpoint\_UTMB@{ACheckpoint\_UTMB}!ToggleCheckpointWeather@{ToggleCheckpointWeather}}
+\index{ToggleCheckpointWeather@{ToggleCheckpointWeather}!ACheckpoint\_UTMB@{ACheckpoint\_UTMB}}
+\doxysubsubsection{\texorpdfstring{ToggleCheckpointWeather()}{ToggleCheckpointWeather()}}
+{\footnotesize\ttfamily \label{class_a_checkpoint___u_t_m_b_accfc61b4254cca26ba647a83cea81557} 
+void ACheckpoint\+\_\+\+UTMB\+::\+Toggle\+Checkpoint\+Weather (\begin{DoxyParamCaption}\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Show/\+Hide Weather components \& requesting Weather datas. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \mbox{\hyperlink{class_a_checkpoint_a49a79d12124b72436f55f0bc200653d9}{ACheckpoint}}.
+
+\Hypertarget{class_a_checkpoint___u_t_m_b_a7565a476b36481b891b2867cf2f2cb82}\index{ACheckpoint\_UTMB@{ACheckpoint\_UTMB}!UpdateCheckpoint@{UpdateCheckpoint}}
+\index{UpdateCheckpoint@{UpdateCheckpoint}!ACheckpoint\_UTMB@{ACheckpoint\_UTMB}}
+\doxysubsubsection{\texorpdfstring{UpdateCheckpoint()}{UpdateCheckpoint()}}
+{\footnotesize\ttfamily \label{class_a_checkpoint___u_t_m_b_a7565a476b36481b891b2867cf2f2cb82} 
+void ACheckpoint\+\_\+\+UTMB\+::\+Update\+Checkpoint (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_race_checkpoint}{FRace\+Checkpoint}}}]{New\+Checkpoint\+Datas}{, }\item[{\mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}}}]{New\+Race\+Setup}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Updating the Checkpoint visuals \& datas. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Checkpoint\+Datas} & \\
+\hline
+{\em Race\+Setup} & \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \mbox{\hyperlink{class_a_checkpoint_a4697d5e03d7195557845764eb505feec}{ACheckpoint}}.
+
+\Hypertarget{class_a_checkpoint___u_t_m_b_ad587d3a7047dedb7810b77e20877b1ad}\index{ACheckpoint\_UTMB@{ACheckpoint\_UTMB}!UpdateCheckpointWeather@{UpdateCheckpointWeather}}
+\index{UpdateCheckpointWeather@{UpdateCheckpointWeather}!ACheckpoint\_UTMB@{ACheckpoint\_UTMB}}
+\doxysubsubsection{\texorpdfstring{UpdateCheckpointWeather()}{UpdateCheckpointWeather()}}
+{\footnotesize\ttfamily \label{class_a_checkpoint___u_t_m_b_ad587d3a7047dedb7810b77e20877b1ad} 
+void ACheckpoint\+\_\+\+UTMB\+::\+Update\+Checkpoint\+Weather (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_open_weather_response}{FOpen\+Weather\+Response}}}]{Weather\+Datas}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Updating the Weather visuals \& datas. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Weather\+Datas} & \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \mbox{\hyperlink{class_a_checkpoint_a1c55551b45641dd176cad80092cdf68b}{ACheckpoint}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Trail\+Simulator/\+Public/\+Actors/\+UTMB/\mbox{\hyperlink{_checkpoint___u_t_m_b_8h}{Checkpoint\+\_\+\+UTMB.\+h}}\item 
+Source/\+Trail\+Simulator/\+Private/\+Actors/\+UTMB/\mbox{\hyperlink{_checkpoint___u_t_m_b_8cpp}{Checkpoint\+\_\+\+UTMB.\+cpp}}\end{DoxyCompactItemize}

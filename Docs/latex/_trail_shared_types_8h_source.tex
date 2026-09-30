@@ -1,0 +1,745 @@
+\doxysection{Trail\+Shared\+Types.\+h}
+\hypertarget{_trail_shared_types_8h_source}{}\label{_trail_shared_types_8h_source}\index{Source/SharedTypes/Public/TrailSharedTypes.h@{Source/SharedTypes/Public/TrailSharedTypes.h}}
+\mbox{\hyperlink{_trail_shared_types_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Source/SharedTypes/Public/TrailSharedTypes.h}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}TrailSharedTypes.generated.h"{}}}
+\DoxyCodeLine{00006\ \ }
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00014\ UENUM(BlueprintType)}
+\DoxyCodeLine{00015\ enum\ class\ \mbox{\hyperlink{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824}{EStackState}}\ :\ uint8\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ ESS\_Unstacked\ \mbox{\hyperlink{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824aa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}Unstacked"{}}),}
+\DoxyCodeLine{00017\ \ \ \ \ ESS\_Stacked\ \mbox{\hyperlink{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824aa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}Stacked"{}})}
+\DoxyCodeLine{00018\ \};}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00023\ UENUM(BlueprintType)}
+\DoxyCodeLine{00024\ enum\ class\ \mbox{\hyperlink{_trail_shared_types_8h_a17951dabd673f2cf34fd310f17ae9372}{ERunnerTemplate}}\ :\ uint8}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ ERT\_UTMB\ \ \ \ \mbox{\hyperlink{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824aa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}UTMB"{}}),}
+\DoxyCodeLine{00027\ \ \ \ \ ERT\_GTWS\ \ \ \ \mbox{\hyperlink{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824aa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}GTWS"{}}),}
+\DoxyCodeLine{00028\ \ \ \ \ ERT\_GEN\ \ \ \ \ \mbox{\hyperlink{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824aa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}}(DisplayName\ =\ \textcolor{stringliteral}{"{}Generic"{}})}
+\DoxyCodeLine{00029\ \};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00032\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_min_max_af64551536bb8fde89a7064afbe859d56}{FMinMax}}}
+\DoxyCodeLine{00033\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00035\ \ \ \ \ }
+\DoxyCodeLine{00036\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ SaveGame)}
+\DoxyCodeLine{00037\ \ \ \ \ FVector\ \mbox{\hyperlink{struct_f_min_max_ac538693a7232585a47c1aca399886586}{Min}}\ =\ FVector();}
+\DoxyCodeLine{00038\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ SaveGame)}
+\DoxyCodeLine{00039\ \ \ \ \ FVector\ \mbox{\hyperlink{struct_f_min_max_a295484e68c58cae8526436d63bc38fa1}{Max}}\ =\ FVector();}
+\DoxyCodeLine{00040\ \ \ \ \ }
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{struct_f_min_max_af64551536bb8fde89a7064afbe859d56}{FMinMax}}()\ =\ default;}
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{struct_f_min_max_af64551536bb8fde89a7064afbe859d56}{FMinMax}}(FVector\ \mbox{\hyperlink{struct_f_min_max_ac538693a7232585a47c1aca399886586}{Min}},\ FVector\ \mbox{\hyperlink{struct_f_min_max_a295484e68c58cae8526436d63bc38fa1}{Max}})\ :\ \mbox{\hyperlink{struct_f_min_max_ac538693a7232585a47c1aca399886586}{Min}}(\mbox{\hyperlink{struct_f_min_max_ac538693a7232585a47c1aca399886586}{Min}}),\ \mbox{\hyperlink{struct_f_min_max_a295484e68c58cae8526436d63bc38fa1}{Max}}(\mbox{\hyperlink{struct_f_min_max_a295484e68c58cae8526436d63bc38fa1}{Max}})\{\}}
+\DoxyCodeLine{00043\ \ \ \ \ }
+\DoxyCodeLine{00044\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_min_max_ab49d468550f98075e183ccd13f51fde2}{ToString}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00045\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ FString::Printf(TEXT(\textcolor{stringliteral}{"{}Min:\ \%s\ -\/\ Max:\ \%s"{}}),\ *\mbox{\hyperlink{struct_f_min_max_ac538693a7232585a47c1aca399886586}{Min}}.ToString(),\ *\mbox{\hyperlink{struct_f_min_max_a295484e68c58cae8526436d63bc38fa1}{Max}}.ToString());}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+\DoxyCodeLine{00048\ \};}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00051\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_settings_a9f0e9bb6f551c3285aad8cd491febb1a}{FSettings}}}
+\DoxyCodeLine{00052\ \{}
+\DoxyCodeLine{00053\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00054\ \ \ \ \ }
+\DoxyCodeLine{00055\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ SaveGame)}
+\DoxyCodeLine{00056\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_settings_ac98c0350e633d9674bf246ae5dd56de5}{RaceID}}\ =\ 0;}
+\DoxyCodeLine{00057\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ SaveGame)}
+\DoxyCodeLine{00058\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_settings_ae874282a19b585eada705bc111a58caf}{RaceURL}}\ =\ TEXT(\textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00059\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ SaveGame)}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_settings_a890d07a02f436c6da521738b16fd97c7}{FetchFrequency}}\ =\ 0.0f;\ \ \ \ \textcolor{comment}{//\ sec}}
+\DoxyCodeLine{00061\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ SaveGame)}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_settings_a1a679d5dafe44d985a69abd1b2df42a9}{ZOffset}}\ =\ 0.0f;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ cm}}
+\DoxyCodeLine{00063\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ SaveGame)}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_settings_a38e7592cfe1e94016d3d585660623977}{PulseFrequency}}\ =\ 0.0f;\ \ \ \ \textcolor{comment}{//\ sec}}
+\DoxyCodeLine{00065\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ SaveGame)}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_settings_a49d52ef1792bf0bd0daf96b93a7ddb3f}{GlowValue}}\ =\ 0.0f;}
+\DoxyCodeLine{00067\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ SaveGame)}
+\DoxyCodeLine{00068\ \ \ \ \ int32\ \mbox{\hyperlink{struct_f_settings_af07e4f5324bb1b314eb8d2831f18c506}{RegieNumber}}\ =\ 0;}
+\DoxyCodeLine{00069\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ SaveGame)}
+\DoxyCodeLine{00070\ \ \ \ \ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}\ \mbox{\hyperlink{struct_f_settings_ae7ead79a44819f1dcd9ab8d53a12ad68}{MinMax}}\ =\ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}();}
+\DoxyCodeLine{00071\ \ \ \ \ }
+\DoxyCodeLine{00072\ \ \ \ \ \mbox{\hyperlink{struct_f_settings_a9f0e9bb6f551c3285aad8cd491febb1a}{FSettings}}()\ =\ default;}
+\DoxyCodeLine{00073\ \ \ \ \ \mbox{\hyperlink{struct_f_settings_a9f0e9bb6f551c3285aad8cd491febb1a}{FSettings}}(int64\ NewRaceID,}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ FString\&\ NewRaceUrl,}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ NewFetchFrequency,}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ NewZOffset,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ NewPulseFrequency,}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ NewGlowValue,}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int32\ NewRegieNumber,}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}\&\ NewMinMax)\ :\ \ \ }
+\DoxyCodeLine{00081\ \ \ \ \ \mbox{\hyperlink{struct_f_settings_ac98c0350e633d9674bf246ae5dd56de5}{RaceID}}(NewRaceID),}
+\DoxyCodeLine{00082\ \ \ \ \ \mbox{\hyperlink{struct_f_settings_ae874282a19b585eada705bc111a58caf}{RaceURL}}(NewRaceUrl),}
+\DoxyCodeLine{00083\ \ \ \ \ \mbox{\hyperlink{struct_f_settings_a890d07a02f436c6da521738b16fd97c7}{FetchFrequency}}(NewFetchFrequency),}
+\DoxyCodeLine{00084\ \ \ \ \ \mbox{\hyperlink{struct_f_settings_a1a679d5dafe44d985a69abd1b2df42a9}{ZOffset}}(NewZOffset),}
+\DoxyCodeLine{00085\ \ \ \ \ \mbox{\hyperlink{struct_f_settings_a38e7592cfe1e94016d3d585660623977}{PulseFrequency}}(NewPulseFrequency),}
+\DoxyCodeLine{00086\ \ \ \ \ \mbox{\hyperlink{struct_f_settings_a49d52ef1792bf0bd0daf96b93a7ddb3f}{GlowValue}}(NewGlowValue),}
+\DoxyCodeLine{00087\ \ \ \ \ \mbox{\hyperlink{struct_f_settings_af07e4f5324bb1b314eb8d2831f18c506}{RegieNumber}}(NewRegieNumber),}
+\DoxyCodeLine{00088\ \ \ \ \ \mbox{\hyperlink{struct_f_settings_ae7ead79a44819f1dcd9ab8d53a12ad68}{MinMax}}(NewMinMax)\{\}}
+\DoxyCodeLine{00089\ \ \ \ \ }
+\DoxyCodeLine{00090\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_settings_a1cd147e81f7e40b3a4e44cd2912a4103}{ToString}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00091\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ FString::Printf(TEXT(\textcolor{stringliteral}{"{}RaceID:\ \%lld\ -\/\ RaceURL:\ \%s\ -\/\ Fetch:\ \%f\ -\/\ ZOffset:\ \%f\ -\/\ Pulse:\ \%f\ -\/\ Glow:\ \%f\ -\/\ Regie:\ \%i\ -\/\ MinMax:\ \%s"{}}),}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_settings_ac98c0350e633d9674bf246ae5dd56de5}{RaceID}},\ *\mbox{\hyperlink{struct_f_settings_ae874282a19b585eada705bc111a58caf}{RaceURL}},\ \mbox{\hyperlink{struct_f_settings_a890d07a02f436c6da521738b16fd97c7}{FetchFrequency}},\ \mbox{\hyperlink{struct_f_settings_a1a679d5dafe44d985a69abd1b2df42a9}{ZOffset}},\ \mbox{\hyperlink{struct_f_settings_a38e7592cfe1e94016d3d585660623977}{PulseFrequency}},\ \mbox{\hyperlink{struct_f_settings_a49d52ef1792bf0bd0daf96b93a7ddb3f}{GlowValue}},\ \mbox{\hyperlink{struct_f_settings_af07e4f5324bb1b314eb8d2831f18c506}{RegieNumber}},\ *\mbox{\hyperlink{struct_f_settings_ae7ead79a44819f1dcd9ab8d53a12ad68}{MinMax}}.ToString());}
+\DoxyCodeLine{00094\ \ \ \ \ \}}
+\DoxyCodeLine{00095\ \};}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00101\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00102\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_race_setup_af60935af7fb371af0bb9fec64dfff268}{FRaceSetup}}}
+\DoxyCodeLine{00103\ \{}
+\DoxyCodeLine{00104\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00105\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}raceId"{}}))}
+\DoxyCodeLine{00106\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_race_setup_acab39f6cd3e4a09319716135cf71b0e3}{raceId}}\ =\ 0;}
+\DoxyCodeLine{00107\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}raceName"{}}))}
+\DoxyCodeLine{00108\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_setup_a29d985080fed38e603499413f4b8cdc9}{raceName}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00109\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}color"{}}))}
+\DoxyCodeLine{00110\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_setup_aebb04292541c88f0dcd801f65b462a91}{color}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00111\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}elevationGain"{}}))}
+\DoxyCodeLine{00112\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_setup_ad6ccc269c1d8237886f13390fd3dda45}{elevationGain}}\ =\ \textcolor{stringliteral}{"{}"{}};\ \textcolor{comment}{//\ "{}6050\ M+\ }}
+\DoxyCodeLine{00113\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}distance"{}}))}
+\DoxyCodeLine{00114\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_setup_a5d00b6788416e59fcaa68465cebc8858}{distance}}=\ \textcolor{stringliteral}{"{}"{}};\ \ \ \ \ \ \textcolor{comment}{//\ "{}176\ KM\ "{}}}
+\DoxyCodeLine{00115\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}description"{}}))}
+\DoxyCodeLine{00116\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_setup_a89810b9b58249540b87d6f258d9c24eb}{description}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00117\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}cat"{}}))}
+\DoxyCodeLine{00118\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_setup_a3357df6218154665bac8a0f6e0ef25f0}{cat}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00119\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}departureCity"{}}))}
+\DoxyCodeLine{00120\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_setup_aa578234091344ffa8b8061a609ae505e}{departureCity}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00121\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}arrivalCity"{}}))}
+\DoxyCodeLine{00122\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_setup_a72eb2ee26ec219eead4530f57e55844b}{arrivalCity}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00123\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}departureCountry"{}}))}
+\DoxyCodeLine{00124\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_setup_a699dcf35f87444ea98575040b1ef6f21}{departureCountry}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00125\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}arrivalCountry"{}}))}
+\DoxyCodeLine{00126\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_setup_aaafc8380da765612bad8f78bcf9e64eb}{arrivalCountry}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00127\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}departureCountryFlag"{}}))}
+\DoxyCodeLine{00128\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_setup_a7f1e067a890cef854fd296b9eb864374}{departureCountryFlag}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00129\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}arrivalCountryFlag"{}}))}
+\DoxyCodeLine{00130\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_setup_a53c17a6b530bda9e2d8f5d7611a5391b}{arrivalCountryFlag}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00131\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}templateName"{}}))}
+\DoxyCodeLine{00132\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_setup_ac8af457d394437dfee9317979dc78293}{templateName}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00133\ \ \ \ \ }
+\DoxyCodeLine{00134\ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_af60935af7fb371af0bb9fec64dfff268}{FRaceSetup}}()\ =\ default;}
+\DoxyCodeLine{00135\ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_af60935af7fb371af0bb9fec64dfff268}{FRaceSetup}}(}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ int64\ NewraceId,}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ FString\ NewraceName,}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ FString\ Newcolor,}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ FString\ NewelevationGain,}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ FString\ Newdistance,}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ FString\ Newdescription,}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ FString\ Newcat,}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ FString\ NewdepartureCity,}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ FString\ NewarrivalCity,}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ FString\ NewdepartureCountry,}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ FString\ NewarrivalCountry,}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ FString\ NewdepartureCountryFlag,}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ FString\ NewarrivalCountryFlag,}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ FString\ NewtemplateName)\ :}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_acab39f6cd3e4a09319716135cf71b0e3}{raceId}}(NewraceId),}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_a29d985080fed38e603499413f4b8cdc9}{raceName}}(NewraceName),}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_aebb04292541c88f0dcd801f65b462a91}{color}}(Newcolor),}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_ad6ccc269c1d8237886f13390fd3dda45}{elevationGain}}(NewelevationGain),}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_a5d00b6788416e59fcaa68465cebc8858}{distance}}(Newdistance),}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_a89810b9b58249540b87d6f258d9c24eb}{description}}(Newdescription),}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_a3357df6218154665bac8a0f6e0ef25f0}{cat}}(Newcat),}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_aa578234091344ffa8b8061a609ae505e}{departureCity}}(NewdepartureCity),}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_a72eb2ee26ec219eead4530f57e55844b}{arrivalCity}}(NewarrivalCity),}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_a699dcf35f87444ea98575040b1ef6f21}{departureCountry}}(NewdepartureCountry),}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_aaafc8380da765612bad8f78bcf9e64eb}{arrivalCountry}}(NewarrivalCountry),}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_a7f1e067a890cef854fd296b9eb864374}{departureCountryFlag}}(NewdepartureCountryFlag),}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_a53c17a6b530bda9e2d8f5d7611a5391b}{arrivalCountryFlag}}(NewarrivalCountryFlag),}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_ac8af457d394437dfee9317979dc78293}{templateName}}(NewtemplateName)\{\}}
+\DoxyCodeLine{00164\ \};}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00167\ struct\ \mbox{\hyperlink{struct_f_race_setup_root_aa6c00b81a31056230f2fb40ee8c579d8}{FRaceSetupRoot}}}
+\DoxyCodeLine{00168\ \{}
+\DoxyCodeLine{00169\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00170\ \ \ \ \ UPROPERTY(meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}setup"{}}))}
+\DoxyCodeLine{00171\ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ \mbox{\hyperlink{struct_f_race_setup_root_ac35b48eb2ba899364a0487922f438542}{Setup}}\ =\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}();}
+\DoxyCodeLine{00172\ \ \ \ \ }
+\DoxyCodeLine{00173\ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup_root_aa6c00b81a31056230f2fb40ee8c579d8}{FRaceSetupRoot}}()\ =\ default;}
+\DoxyCodeLine{00174\ \};}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00179\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00180\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_race_p_o_i_a9416cab05e10386a33cc3d82a7a8f81a}{FRacePOI}}}
+\DoxyCodeLine{00181\ \{}
+\DoxyCodeLine{00182\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00183\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}poiId"{}}))}
+\DoxyCodeLine{00184\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_race_p_o_i_a3840299de22558c9cbe375b132061d64}{poiId}}\ =\ 0;}
+\DoxyCodeLine{00185\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00186\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_p_o_i_a548b46e2c87679d77c32b72b4b6599cc}{name}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00187\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}type"{}}))}
+\DoxyCodeLine{00188\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_p_o_i_a06768bb96dd4ff89f6e536cbd83a6c88}{type}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00189\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}lat"{}}))}
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_race_p_o_i_afaec61feefa3a4c3771d5b9902bde9ae}{lat}}\ =\ 0.0;}
+\DoxyCodeLine{00191\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}lon"{}}))}
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_race_p_o_i_adb9c3ca07e74fb7485dfe27f91517ea2}{lon}}\ =\ 0.0;}
+\DoxyCodeLine{00193\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}elevation"{}}))}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_race_p_o_i_aaa43c787f46ac82602e7c9697beec758}{elevation}}\ =\ 0.0;}
+\DoxyCodeLine{00195\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}weather"{}}))}
+\DoxyCodeLine{00196\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_p_o_i_ad3a901fb8eecc753b0ea77dcab4d3aa6}{weather}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00197\ \ \ \ \ }
+\DoxyCodeLine{00198\ \ \ \ \ \mbox{\hyperlink{struct_f_race_p_o_i_a9416cab05e10386a33cc3d82a7a8f81a}{FRacePOI}}()\ =\ default;}
+\DoxyCodeLine{00199\ \ \ \ \ \mbox{\hyperlink{struct_f_race_p_o_i_a9416cab05e10386a33cc3d82a7a8f81a}{FRacePOI}}(int64\ NewpoiId,}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ FString\ Newname,}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ FString\ Newtype,}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Newlat,}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Newlon,}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Newelevation,}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ FString\ Newweather)\ :}
+\DoxyCodeLine{00206\ \ \ \ \ \mbox{\hyperlink{struct_f_race_p_o_i_a3840299de22558c9cbe375b132061d64}{poiId}}(NewpoiId),}
+\DoxyCodeLine{00207\ \ \ \ \ \mbox{\hyperlink{struct_f_race_p_o_i_a548b46e2c87679d77c32b72b4b6599cc}{name}}(Newname),}
+\DoxyCodeLine{00208\ \ \ \ \ \mbox{\hyperlink{struct_f_race_p_o_i_a06768bb96dd4ff89f6e536cbd83a6c88}{type}}(Newtype),}
+\DoxyCodeLine{00209\ \ \ \ \ \mbox{\hyperlink{struct_f_race_p_o_i_afaec61feefa3a4c3771d5b9902bde9ae}{lat}}(Newlat),}
+\DoxyCodeLine{00210\ \ \ \ \ \mbox{\hyperlink{struct_f_race_p_o_i_adb9c3ca07e74fb7485dfe27f91517ea2}{lon}}(Newlon),}
+\DoxyCodeLine{00211\ \ \ \ \ \mbox{\hyperlink{struct_f_race_p_o_i_aaa43c787f46ac82602e7c9697beec758}{elevation}}(Newelevation),}
+\DoxyCodeLine{00212\ \ \ \ \ \mbox{\hyperlink{struct_f_race_p_o_i_ad3a901fb8eecc753b0ea77dcab4d3aa6}{weather}}(Newweather)\{\}}
+\DoxyCodeLine{00213\ \ \ \ \ }
+\DoxyCodeLine{00214\ \};}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00219\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00220\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_p_o_is_aed03f4ab0121d01b8fa41f87aa4242e6}{FPOIs}}}
+\DoxyCodeLine{00221\ \{}
+\DoxyCodeLine{00222\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00223\ \ \ \ \ UPROPERTY(BlueprintReadOnly)\ \ \ \ }
+\DoxyCodeLine{00224\ \ \ \ \ TArray<\mbox{\hyperlink{struct_f_race_p_o_i}{FRacePOI}}>\ \mbox{\hyperlink{struct_f_p_o_is_a53daaa19263ef776463d899d190da3e9}{POIs}};}
+\DoxyCodeLine{00225\ \ \ \ \ }
+\DoxyCodeLine{00226\ \ \ \ \ \mbox{\hyperlink{struct_f_p_o_is_aed03f4ab0121d01b8fa41f87aa4242e6}{FPOIs}}()\ =\ default;}
+\DoxyCodeLine{00227\ \};}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00232\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00233\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_race_checkpoint_ab9dd3376f0bce3426d25225572f2ba7d}{FRaceCheckpoint}}}
+\DoxyCodeLine{00234\ \{}
+\DoxyCodeLine{00235\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}checkpointId"{}}))}
+\DoxyCodeLine{00238\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_race_checkpoint_afb6902e573a1954158b98a20cb718821}{checkpointId}}\ =\ 0;}
+\DoxyCodeLine{00239\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00240\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_checkpoint_afa0c72f82222ffb95e92c97433aa3ed0}{name}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00241\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}distance"{}}))}
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_race_checkpoint_a3814fce366bee2e98a64715ec8c4af2f}{distance}}\ =\ 0.0;}
+\DoxyCodeLine{00243\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}elevation"{}}))}
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_race_checkpoint_a4ef2185424f2ed7df53c5df33885791e}{elevation}}\ =\ 0.0;}
+\DoxyCodeLine{00245\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}altitude"{}}))}
+\DoxyCodeLine{00246\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_race_checkpoint_ac6ba6881dc2b2779240ba4c680ce0636}{altitude}}\ =\ 0.0;}
+\DoxyCodeLine{00247\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}type"{}}))}
+\DoxyCodeLine{00248\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_checkpoint_a6a0193955882495cddf8551086a936d3}{type}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00249\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}weather"{}}))}
+\DoxyCodeLine{00250\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_checkpoint_a16060df0d64b3a220291eeb2c2b8d225}{weather}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00251\ \ \ \ \ }
+\DoxyCodeLine{00252\ \ \ \ \ \mbox{\hyperlink{struct_f_race_checkpoint_ab9dd3376f0bce3426d25225572f2ba7d}{FRaceCheckpoint}}()\ =\ default;}
+\DoxyCodeLine{00253\ \ \ \ \ \mbox{\hyperlink{struct_f_race_checkpoint_ab9dd3376f0bce3426d25225572f2ba7d}{FRaceCheckpoint}}(int64\ NewcheckpointId,}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FString\ Newname,}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Newdistance,}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Newelevation,}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Newaltitude,}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FString\ Newtype,}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FString\ Newweather)\ :\ }
+\DoxyCodeLine{00260\ \ \ \ \ \mbox{\hyperlink{struct_f_race_checkpoint_afb6902e573a1954158b98a20cb718821}{checkpointId}}(NewcheckpointId),}
+\DoxyCodeLine{00261\ \ \ \ \ \mbox{\hyperlink{struct_f_race_checkpoint_afa0c72f82222ffb95e92c97433aa3ed0}{name}}(Newname),}
+\DoxyCodeLine{00262\ \ \ \ \ \mbox{\hyperlink{struct_f_race_checkpoint_a3814fce366bee2e98a64715ec8c4af2f}{distance}}(Newdistance),}
+\DoxyCodeLine{00263\ \ \ \ \ \mbox{\hyperlink{struct_f_race_checkpoint_a4ef2185424f2ed7df53c5df33885791e}{elevation}}(Newelevation),}
+\DoxyCodeLine{00264\ \ \ \ \ \mbox{\hyperlink{struct_f_race_checkpoint_ac6ba6881dc2b2779240ba4c680ce0636}{altitude}}(Newaltitude),}
+\DoxyCodeLine{00265\ \ \ \ \ \mbox{\hyperlink{struct_f_race_checkpoint_a6a0193955882495cddf8551086a936d3}{type}}(Newtype),}
+\DoxyCodeLine{00266\ \ \ \ \ \mbox{\hyperlink{struct_f_race_checkpoint_a16060df0d64b3a220291eeb2c2b8d225}{weather}}(Newweather)\{\}}
+\DoxyCodeLine{00267\ \};}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00272\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00273\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_checkpoints_aebf5a48375a511aef557191a670f8132}{FCheckpoints}}}
+\DoxyCodeLine{00274\ \{}
+\DoxyCodeLine{00275\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00276\ \ \ \ \ UPROPERTY(BlueprintReadOnly)\ \ \ \ }
+\DoxyCodeLine{00277\ \ \ \ \ TArray<\mbox{\hyperlink{struct_f_race_checkpoint}{FRaceCheckpoint}}>\ \mbox{\hyperlink{struct_f_checkpoints_ace0b8906a96a42327c5b559630840750}{Checkpoints}};}
+\DoxyCodeLine{00278\ \ \ \ \ \mbox{\hyperlink{struct_f_checkpoints_aebf5a48375a511aef557191a670f8132}{FCheckpoints}}()\ =\ default;}
+\DoxyCodeLine{00279\ \};}
+\DoxyCodeLine{00280\ }
+\DoxyCodeLine{00284\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00285\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_race_path_point_accc0506ff159d2890af9b6dbd2ef9754}{FRacePathPoint}}}
+\DoxyCodeLine{00286\ \{}
+\DoxyCodeLine{00287\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00288\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}ele"{}}))}
+\DoxyCodeLine{00289\ \ \ \ \ float\ \mbox{\hyperlink{struct_f_race_path_point_a4de2fd627fd6f8e193f600c7beedfd97}{ele}}\ =\ 0.0;}
+\DoxyCodeLine{00290\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}lat"{}}))}
+\DoxyCodeLine{00291\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_race_path_point_a870ba67dc450353d30cefca494949ced}{lat}}\ =\ 0.0;}
+\DoxyCodeLine{00292\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}lon"{}}))}
+\DoxyCodeLine{00293\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_race_path_point_ac5f77dbc37af390a1f4146b719bcb912}{lon}}\ =\ 0.0;}
+\DoxyCodeLine{00294\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}datas"{}}))}
+\DoxyCodeLine{00295\ \ \ \ \ \mbox{\hyperlink{struct_f_race_checkpoint}{FRaceCheckpoint}}\ \mbox{\hyperlink{struct_f_race_path_point_a4d6610cf951002ef7110e5992a6e883e}{datas}}\ =\ \mbox{\hyperlink{struct_f_race_checkpoint}{FRaceCheckpoint}}();}
+\DoxyCodeLine{00296\ \ \ \ \ }
+\DoxyCodeLine{00297\ \ \ \ \ \mbox{\hyperlink{struct_f_race_path_point_accc0506ff159d2890af9b6dbd2ef9754}{FRacePathPoint}}()\ =\ default;}
+\DoxyCodeLine{00298\ \ \ \ \ \mbox{\hyperlink{struct_f_race_path_point_accc0506ff159d2890af9b6dbd2ef9754}{FRacePathPoint}}(\textcolor{keywordtype}{float}\ Newele,}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Newlat,}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Newlon,}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_checkpoint}{FRaceCheckpoint}}\ Newdatas)\ :\ }
+\DoxyCodeLine{00302\ \ \ \ \ \mbox{\hyperlink{struct_f_race_path_point_a4de2fd627fd6f8e193f600c7beedfd97}{ele}}(Newele),}
+\DoxyCodeLine{00303\ \ \ \ \ \mbox{\hyperlink{struct_f_race_path_point_a870ba67dc450353d30cefca494949ced}{lat}}(Newlat),}
+\DoxyCodeLine{00304\ \ \ \ \ \mbox{\hyperlink{struct_f_race_path_point_ac5f77dbc37af390a1f4146b719bcb912}{lon}}(Newlon),}
+\DoxyCodeLine{00305\ \ \ \ \ \mbox{\hyperlink{struct_f_race_path_point_a4d6610cf951002ef7110e5992a6e883e}{datas}}(Newdatas)\{\}}
+\DoxyCodeLine{00306\ \};}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00311\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00312\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_race_path_a39bc5ca88f04140ee5d851fdfa41a5e4}{FRacePath}}}
+\DoxyCodeLine{00313\ \{}
+\DoxyCodeLine{00314\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00315\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00316\ \ \ \ \ TArray<\mbox{\hyperlink{struct_f_race_path_point}{FRacePathPoint}}>\ \mbox{\hyperlink{struct_f_race_path_a8080aa805385a9ff14b7e311bb72a7ec}{Points}};}
+\DoxyCodeLine{00317\ \ \ \ \ }
+\DoxyCodeLine{00318\ \ \ \ \ \mbox{\hyperlink{struct_f_race_path_a39bc5ca88f04140ee5d851fdfa41a5e4}{FRacePath}}()\ =\ default;}
+\DoxyCodeLine{00319\ \};}
+\DoxyCodeLine{00320\ }
+\DoxyCodeLine{00325\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00326\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_runner_struct_a4317fe0689b450c91cfd485edee9769d}{FRunnerStruct}}}
+\DoxyCodeLine{00327\ \{}
+\DoxyCodeLine{00328\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00329\ \ \ \ \ }
+\DoxyCodeLine{00330\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}runnerId"{}}))}
+\DoxyCodeLine{00331\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_runner_struct_ac75ff42416e1b3756e445ad6656003b8}{runnerId}}\ =\ 0;}
+\DoxyCodeLine{00332\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}canalId"{}}))}
+\DoxyCodeLine{00333\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_runner_struct_abd00117d11cf8f61707e0e51bed149cd}{canalId}}\ =\ 0;}
+\DoxyCodeLine{00334\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}canal"{}}))}
+\DoxyCodeLine{00335\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_runner_struct_ac3c7a0f4dd08d5af88660250d2bbe4ae}{canal}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00336\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}dossard"{}}))}
+\DoxyCodeLine{00337\ \ \ \ \ int32\ \mbox{\hyperlink{struct_f_runner_struct_ad6143db5e16adabf62c0ad7261a9b049}{dossard}}\ =\ 0;}
+\DoxyCodeLine{00338\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}nom"{}}))}
+\DoxyCodeLine{00339\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_runner_struct_a1df5a1cf32ca8adcc0f8e63990076cd0}{nom}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00340\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}pays"{}}))}
+\DoxyCodeLine{00341\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_runner_struct_ae2ff6e562cd7dd1c8dce85c6ca407f3d}{pays}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00342\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}position"{}}))}
+\DoxyCodeLine{00343\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_runner_struct_a271ac1687503355ad1cbe6a97ccfca2a}{position}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00344\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}indexM"{}}))}
+\DoxyCodeLine{00345\ \ \ \ \ int32\ \mbox{\hyperlink{struct_f_runner_struct_a146fbcfd8223932473ab434d34b4d9bb}{IndexM}}\ =\ 0;}
+\DoxyCodeLine{00346\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}club"{}}))}
+\DoxyCodeLine{00347\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_runner_struct_ae65a1db635473b36c5aa39a0e82cd0a6}{club}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00348\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}photo"{}}))}
+\DoxyCodeLine{00349\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_runner_struct_aa1056d67f561beb5fa492451f6acd19b}{photo}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00350\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}rank"{}}))}
+\DoxyCodeLine{00351\ \ \ \ \ int32\ \mbox{\hyperlink{struct_f_runner_struct_a52be39cdff447705e8182c2084b5398d}{rank}}\ =\ 0;}
+\DoxyCodeLine{00352\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}ranksex"{}}))}
+\DoxyCodeLine{00353\ \ \ \ \ int32\ \mbox{\hyperlink{struct_f_runner_struct_aa0bd1abfbb04318721a9a769ae7bad21}{ranksex}}\ =\ 0;}
+\DoxyCodeLine{00354\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}raceName"{}}))}
+\DoxyCodeLine{00355\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_runner_struct_a16e14881ea8917d943cf3561ea3da3b6}{raceName}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00356\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}lat"{}}))}
+\DoxyCodeLine{00357\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_runner_struct_ae2029ab3c3d8f96ec41df091bc4e25bb}{lat}}=0.f;}
+\DoxyCodeLine{00358\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}lon"{}}))}
+\DoxyCodeLine{00359\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_runner_struct_a72165ac929c6eac53fb2880f0aff2146}{lon}}=0.f;}
+\DoxyCodeLine{00360\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}elevation"{}}))}
+\DoxyCodeLine{00361\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_runner_struct_a6cb38a852bcf5613ea8b49378fad5187}{elevation}}=0.f;}
+\DoxyCodeLine{00362\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}kmActuel"{}}))}
+\DoxyCodeLine{00363\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_runner_struct_aefb4067565e024ce5bc9b0266e53a9d5}{kmActuel}}\ =\ 0.f;}
+\DoxyCodeLine{00364\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta=(JsonProperty\ =\ \textcolor{stringliteral}{"{}speed"{}}))}
+\DoxyCodeLine{00365\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_runner_struct_af16868b68168c4e0d31434909e4b9d6b}{speed}}\ =\ 0.f;}
+\DoxyCodeLine{00366\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00367\ \ \ \ \ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}\ \mbox{\hyperlink{struct_f_runner_struct_ae46a04df02961f3f1fb486ddfe5a80cf}{MinMax}}\ =\ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}();}
+\DoxyCodeLine{00368\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00369\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_runner_struct_a27aeeb61059ce985bdeeeaec6a4eada0}{VDelta}}\ =\ 0.f;}
+\DoxyCodeLine{00370\ \ \ \ \ }
+\DoxyCodeLine{00371\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_a4317fe0689b450c91cfd485edee9769d}{FRunnerStruct}}()\ =\ default;\ \ }
+\DoxyCodeLine{00372\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_a4317fe0689b450c91cfd485edee9769d}{FRunnerStruct}}(\ \ int64\ NewrunnerId,}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int64\ NewcanalId,}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FString\ Newcanal,}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int32\ Newdossard,}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FString\ Newnom,}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FString\ Newpays,}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FString\ Newposition,}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int32\ NewIndexM,}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FString\ Newclub,}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FString\ Newphoto,}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int32\ Newrank,}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int32\ Newranksex,}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FString\ NewraceName,}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Newlat,}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Newlon,}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Newelevation,}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ NewkmActuel,}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Newspeed,}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}\ NewMinMax,}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ NewVDelta)\ :\ }
+\DoxyCodeLine{00392\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_ac75ff42416e1b3756e445ad6656003b8}{runnerId}}(NewrunnerId),}
+\DoxyCodeLine{00393\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_abd00117d11cf8f61707e0e51bed149cd}{canalId}}(NewcanalId),}
+\DoxyCodeLine{00394\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_ac3c7a0f4dd08d5af88660250d2bbe4ae}{canal}}(Newcanal),}
+\DoxyCodeLine{00395\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_ad6143db5e16adabf62c0ad7261a9b049}{dossard}}(Newdossard),}
+\DoxyCodeLine{00396\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_a1df5a1cf32ca8adcc0f8e63990076cd0}{nom}}(Newnom),}
+\DoxyCodeLine{00397\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_ae2ff6e562cd7dd1c8dce85c6ca407f3d}{pays}}(Newpays),}
+\DoxyCodeLine{00398\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_a271ac1687503355ad1cbe6a97ccfca2a}{position}}(Newposition),}
+\DoxyCodeLine{00399\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_a146fbcfd8223932473ab434d34b4d9bb}{IndexM}}(NewIndexM),}
+\DoxyCodeLine{00400\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_ae65a1db635473b36c5aa39a0e82cd0a6}{club}}(Newclub),}
+\DoxyCodeLine{00401\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_aa1056d67f561beb5fa492451f6acd19b}{photo}}(Newphoto),}
+\DoxyCodeLine{00402\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_a52be39cdff447705e8182c2084b5398d}{rank}}(Newrank),}
+\DoxyCodeLine{00403\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_aa0bd1abfbb04318721a9a769ae7bad21}{ranksex}}(Newranksex),}
+\DoxyCodeLine{00404\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_a16e14881ea8917d943cf3561ea3da3b6}{raceName}}(NewraceName),}
+\DoxyCodeLine{00405\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_ae2029ab3c3d8f96ec41df091bc4e25bb}{lat}}(Newlat),}
+\DoxyCodeLine{00406\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_a72165ac929c6eac53fb2880f0aff2146}{lon}}(Newlon),}
+\DoxyCodeLine{00407\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_a6cb38a852bcf5613ea8b49378fad5187}{elevation}}(Newelevation),}
+\DoxyCodeLine{00408\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_aefb4067565e024ce5bc9b0266e53a9d5}{kmActuel}}(NewkmActuel),}
+\DoxyCodeLine{00409\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_af16868b68168c4e0d31434909e4b9d6b}{speed}}(Newspeed),}
+\DoxyCodeLine{00410\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_ae46a04df02961f3f1fb486ddfe5a80cf}{MinMax}}(NewMinMax),}
+\DoxyCodeLine{00411\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct_a27aeeb61059ce985bdeeeaec6a4eada0}{VDelta}}(NewVDelta)\{\}}
+\DoxyCodeLine{00412\ \};}
+\DoxyCodeLine{00413\ }
+\DoxyCodeLine{00417\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00418\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_runners_a9b3cbc1ec9b25771b6129da5803d191e}{FRunners}}}
+\DoxyCodeLine{00419\ \{}
+\DoxyCodeLine{00420\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00421\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00422\ \ \ \ \ TArray<\mbox{\hyperlink{struct_f_runner_struct}{FRunnerStruct}}>\ \mbox{\hyperlink{struct_f_runners_af3fbb2d17dbc1eb54fab0fe20a5b3543}{Runners}};}
+\DoxyCodeLine{00423\ \ \ \ \ }
+\DoxyCodeLine{00424\ \ \ \ \ \mbox{\hyperlink{struct_f_runners_a9b3cbc1ec9b25771b6129da5803d191e}{FRunners}}()\ =\ default;}
+\DoxyCodeLine{00425\ \};}
+\DoxyCodeLine{00426\ }
+\DoxyCodeLine{00430\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00431\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_race_struct_a81b97a3248bfe6ffacdb505bd5d198c8}{FRaceStruct}}}
+\DoxyCodeLine{00432\ \{}
+\DoxyCodeLine{00433\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00434\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00435\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_race_struct_a0159987bc82072085da9d88cf9b4d270}{raceId}}\ =\ 0;}
+\DoxyCodeLine{00436\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}setup"{}}))}
+\DoxyCodeLine{00437\ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ \mbox{\hyperlink{struct_f_race_struct_aa2b59d513ed13764f72958bcf0a40be2}{setup}}\ =\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}();}
+\DoxyCodeLine{00438\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}poi"{}}))}
+\DoxyCodeLine{00439\ \ \ \ \ \mbox{\hyperlink{struct_f_p_o_is}{FPOIs}}\ \mbox{\hyperlink{struct_f_race_struct_ad13ce86320de49c1ff7d3e59720e2f8e}{poi}}\ =\ \mbox{\hyperlink{struct_f_p_o_is}{FPOIs}}();}
+\DoxyCodeLine{00440\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00441\ \ \ \ \ \mbox{\hyperlink{struct_f_checkpoints}{FCheckpoints}}\ \mbox{\hyperlink{struct_f_race_struct_ade2b0ef212adacd70e6690acda1d1da4}{Checkpoints}}\ =\ \mbox{\hyperlink{struct_f_checkpoints}{FCheckpoints}}();}
+\DoxyCodeLine{00442\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00443\ \ \ \ \ \mbox{\hyperlink{struct_f_runners}{FRunners}}\ \mbox{\hyperlink{struct_f_race_struct_a9195d69625114a187e0aafeb23ef6b76}{RaceRunners}}\ =\ \mbox{\hyperlink{struct_f_runners}{FRunners}}();}
+\DoxyCodeLine{00444\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}path"{}}))}
+\DoxyCodeLine{00445\ \ \ \ \ \mbox{\hyperlink{struct_f_race_path}{FRacePath}}\ \mbox{\hyperlink{struct_f_race_struct_a2b5fd57971eb55ef4e5061193d62412f}{path}}\ =\ \mbox{\hyperlink{struct_f_race_path}{FRacePath}}();}
+\DoxyCodeLine{00446\ \ \ \ \ }
+\DoxyCodeLine{00447\ \ \ \ \ \mbox{\hyperlink{struct_f_race_struct_a81b97a3248bfe6ffacdb505bd5d198c8}{FRaceStruct}}()\ =\ default;}
+\DoxyCodeLine{00448\ \ \ \ \ \mbox{\hyperlink{struct_f_race_struct_a81b97a3248bfe6ffacdb505bd5d198c8}{FRaceStruct}}(int64\ NewraceId,}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ Newsetup,}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_p_o_is}{FPOIs}}\ Newpoi,}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_checkpoints}{FCheckpoints}}\ NewCheckpoints,}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_runners}{FRunners}}\ NewRaceRunners,}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_path}{FRacePath}}\ Newpath)\ :}
+\DoxyCodeLine{00454\ \ \ \ \ \mbox{\hyperlink{struct_f_race_struct_a0159987bc82072085da9d88cf9b4d270}{raceId}}(NewraceId),}
+\DoxyCodeLine{00455\ \ \ \ \ \mbox{\hyperlink{struct_f_race_struct_aa2b59d513ed13764f72958bcf0a40be2}{setup}}(Newsetup),}
+\DoxyCodeLine{00456\ \ \ \ \ \mbox{\hyperlink{struct_f_race_struct_ad13ce86320de49c1ff7d3e59720e2f8e}{poi}}(Newpoi),}
+\DoxyCodeLine{00457\ \ \ \ \ \mbox{\hyperlink{struct_f_race_struct_ade2b0ef212adacd70e6690acda1d1da4}{Checkpoints}}(NewCheckpoints),}
+\DoxyCodeLine{00458\ \ \ \ \ \mbox{\hyperlink{struct_f_race_struct_a9195d69625114a187e0aafeb23ef6b76}{RaceRunners}}(NewRaceRunners),}
+\DoxyCodeLine{00459\ \ \ \ \ \mbox{\hyperlink{struct_f_race_struct_a2b5fd57971eb55ef4e5061193d62412f}{path}}(Newpath)\{\}}
+\DoxyCodeLine{00460\ \};}
+\DoxyCodeLine{00461\ }
+\DoxyCodeLine{00462\ \textcolor{comment}{/*\ RaceEntry\ Structure\ */}}
+\DoxyCodeLine{00463\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00464\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_race_entry_aac24c4c7ee24a17d378eefc75070ccee}{FRaceEntry}}}
+\DoxyCodeLine{00465\ \{}
+\DoxyCodeLine{00466\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00467\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}raceId"{}}))}
+\DoxyCodeLine{00468\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_race_entry_af8e1b752685e9365006d0f35f747efbe}{raceId}}\ =\ 0;}
+\DoxyCodeLine{00469\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00470\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_entry_a228039c28ad65cccccabd6a94db20666}{name}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00471\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}templateName"{}}))}
+\DoxyCodeLine{00472\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_entry_a5b566a7643d7a12dc39e2adb11861aa6}{templateName}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00473\ \ \ \ \ }
+\DoxyCodeLine{00474\ \ \ \ \ \mbox{\hyperlink{struct_f_race_entry_aac24c4c7ee24a17d378eefc75070ccee}{FRaceEntry}}()\ =\ default;}
+\DoxyCodeLine{00475\ \ \ \ \ \mbox{\hyperlink{struct_f_race_entry_aac24c4c7ee24a17d378eefc75070ccee}{FRaceEntry}}(\ int64\ \mbox{\hyperlink{struct_f_race_entry_af8e1b752685e9365006d0f35f747efbe}{raceId}},}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_entry_a228039c28ad65cccccabd6a94db20666}{name}},}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_race_entry_a5b566a7643d7a12dc39e2adb11861aa6}{templateName}})\ :\ \mbox{\hyperlink{struct_f_race_entry_af8e1b752685e9365006d0f35f747efbe}{raceId}}(\mbox{\hyperlink{struct_f_race_entry_af8e1b752685e9365006d0f35f747efbe}{raceId}}),\ \mbox{\hyperlink{struct_f_race_entry_a228039c28ad65cccccabd6a94db20666}{name}}(\mbox{\hyperlink{struct_f_race_entry_a228039c28ad65cccccabd6a94db20666}{name}}),\ \mbox{\hyperlink{struct_f_race_entry_a5b566a7643d7a12dc39e2adb11861aa6}{templateName}}(\mbox{\hyperlink{struct_f_race_entry_a5b566a7643d7a12dc39e2adb11861aa6}{templateName}})\{\}}
+\DoxyCodeLine{00478\ \};}
+\DoxyCodeLine{00479\ }
+\DoxyCodeLine{00483\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00484\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_race_entries_af14dde3d6c6a98639354c377477bb365}{FRaceEntries}}}
+\DoxyCodeLine{00485\ \{}
+\DoxyCodeLine{00486\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00487\ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00488\ \ \ \ \ TArray<\mbox{\hyperlink{struct_f_race_entry}{FRaceEntry}}>\ \mbox{\hyperlink{struct_f_race_entries_a753e36623ab81359efe81c300ae1b9d3}{RacesEntries}};}
+\DoxyCodeLine{00489\ \ \ \ \ }
+\DoxyCodeLine{00490\ \ \ \ \ \mbox{\hyperlink{struct_f_race_entries_af14dde3d6c6a98639354c377477bb365}{FRaceEntries}}()\ =\ default;}
+\DoxyCodeLine{00491\ \};}
+\DoxyCodeLine{00492\ }
+\DoxyCodeLine{00496\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00497\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_team_struct_a6e88e4090fced6a7fc8990838c3d8121}{FTeamStruct}}}
+\DoxyCodeLine{00498\ \{}
+\DoxyCodeLine{00499\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00500\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}canalId"{}}))}
+\DoxyCodeLine{00501\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_team_struct_a0e571162e5bb99cebc16b01653c53661}{canalId}}\ =\ 0;}
+\DoxyCodeLine{00502\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}canal"{}}))}
+\DoxyCodeLine{00503\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_team_struct_a15f3a6ec6f53655670573c9770efb41d}{canal}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00504\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}runnerId"{}}))}
+\DoxyCodeLine{00505\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_team_struct_ab95614c6afe32b3375ac508daa5cd0f0}{runnerId}}\ =\ 0;}
+\DoxyCodeLine{00506\ \ \ \ \ UPROPERTY(BLueprintReadOnly)}
+\DoxyCodeLine{00507\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_team_struct_a291bcf8ccfebee0498ff196f2c92bd99}{RaceId}}\ =\ 0;}
+\DoxyCodeLine{00508\ \ \ \ \ }
+\DoxyCodeLine{00509\ \ \ \ \ \mbox{\hyperlink{struct_f_team_struct_a6e88e4090fced6a7fc8990838c3d8121}{FTeamStruct}}()\ =\ default;}
+\DoxyCodeLine{00510\ \ \ \ \ \mbox{\hyperlink{struct_f_team_struct_a6e88e4090fced6a7fc8990838c3d8121}{FTeamStruct}}(int64\ NewcanalId,}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FString\ Newcanal,}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int64\ NewrunnerId,}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int64\ NewRaceId)\ :\ }
+\DoxyCodeLine{00514\ \ \ \ \ \mbox{\hyperlink{struct_f_team_struct_a0e571162e5bb99cebc16b01653c53661}{canalId}}(NewcanalId),}
+\DoxyCodeLine{00515\ \ \ \ \ \mbox{\hyperlink{struct_f_team_struct_a15f3a6ec6f53655670573c9770efb41d}{canal}}(Newcanal),}
+\DoxyCodeLine{00516\ \ \ \ \ \mbox{\hyperlink{struct_f_team_struct_ab95614c6afe32b3375ac508daa5cd0f0}{runnerId}}(NewrunnerId),}
+\DoxyCodeLine{00517\ \ \ \ \ \mbox{\hyperlink{struct_f_team_struct_a291bcf8ccfebee0498ff196f2c92bd99}{RaceId}}(NewRaceId)\{\}}
+\DoxyCodeLine{00518\ \};}
+\DoxyCodeLine{00519\ }
+\DoxyCodeLine{00520\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00521\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_teams_a02f05068527423f4c5652b890cffad78}{FTeams}}}
+\DoxyCodeLine{00522\ \{}
+\DoxyCodeLine{00523\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00524\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00525\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_teams_af84d0259cd758e54316adf09411922d9}{RaceId}}\ =\ 0;}
+\DoxyCodeLine{00526\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00527\ \ \ \ \ TArray<\mbox{\hyperlink{struct_f_team_struct}{FTeamStruct}}>\ \mbox{\hyperlink{struct_f_teams_a38a9946ddcbb32d7bd8b1c2a397f889a}{Teams}};}
+\DoxyCodeLine{00528\ \ \ \ \ }
+\DoxyCodeLine{00529\ \ \ \ \ \mbox{\hyperlink{struct_f_teams_a02f05068527423f4c5652b890cffad78}{FTeams}}()\ =\ default;}
+\DoxyCodeLine{00530\ \};}
+\DoxyCodeLine{00531\ }
+\DoxyCodeLine{00532\ \textcolor{comment}{//\ Préférer\ cette\ struct}}
+\DoxyCodeLine{00533\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00534\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_race_team_runner_index}{FRaceTeamRunnerIndex}}}
+\DoxyCodeLine{00535\ \{}
+\DoxyCodeLine{00536\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00537\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00538\ \ \ \ \ TMap<int64,\ \mbox{\hyperlink{struct_f_runner_struct}{FRunnerStruct}}>\ \mbox{\hyperlink{struct_f_race_team_runner_index_a0b92e90af801a4d812d58dade180410c}{TeamToRunner}};\ \textcolor{comment}{//\ TeamID\ -\/>\ Runner\ struct}}
+\DoxyCodeLine{00539\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00540\ \ \ \ \ TMap<int64,\ int64>\ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_race_team_runner_index_a49676e7ad6db9960dcb5dc3ca4cdae32}{RunnerToTeam}};\ \textcolor{comment}{//\ RunnerID\ -\/>\ TeamID}}
+\DoxyCodeLine{00541\ \};}
+\DoxyCodeLine{00542\ }
+\DoxyCodeLine{00546\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00547\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_team_runner_a88a22e3b92c837fe65080f4b87550a10}{FTeamRunner}}}
+\DoxyCodeLine{00548\ \{}
+\DoxyCodeLine{00549\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00550\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00551\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_team_runner_a27803d41d794594a8113e202aff59b4f}{RunnerId}}\ =\ 0;}
+\DoxyCodeLine{00552\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00553\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_team_runner_a348648cb124850d76de71f72bf58c603}{TeamId}}\ =\ 0;}
+\DoxyCodeLine{00554\ \ \ \ \ }
+\DoxyCodeLine{00555\ \ \ \ \ \mbox{\hyperlink{struct_f_team_runner_a88a22e3b92c837fe65080f4b87550a10}{FTeamRunner}}()\ =\ default;}
+\DoxyCodeLine{00556\ \};}
+\DoxyCodeLine{00557\ }
+\DoxyCodeLine{00558\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00559\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_race_teams_runners_a18ef79c4e8addb271dd19cd4b056b0b0}{FRaceTeamsRunners}}}
+\DoxyCodeLine{00560\ \{}
+\DoxyCodeLine{00561\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00562\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00563\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_race_teams_runners_a2f8bc3582a78b5b85f5212ab5c22b3f7}{RaceId}}\ =\ 0;}
+\DoxyCodeLine{00564\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00565\ \ \ \ \ TArray<\mbox{\hyperlink{struct_f_team_runner}{FTeamRunner}}>\ \mbox{\hyperlink{struct_f_race_teams_runners_aa44e0c6e66b9a601d74e4533d28ea4ae}{TeamRunners}};}
+\DoxyCodeLine{00566\ \ \ \ \ \mbox{\hyperlink{struct_f_race_teams_runners_a18ef79c4e8addb271dd19cd4b056b0b0}{FRaceTeamsRunners}}()\ =\ default;}
+\DoxyCodeLine{00567\ \};}
+\DoxyCodeLine{00568\ \ \ \ \ }
+\DoxyCodeLine{00572\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00573\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_open_weather_condition}{FOpenWeatherCondition}}}
+\DoxyCodeLine{00574\ \{}
+\DoxyCodeLine{00575\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00576\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}id"{}}))}
+\DoxyCodeLine{00577\ \ \ \ \ int32\ \textcolor{keywordtype}{id}\ =\ 0;}
+\DoxyCodeLine{00578\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}main"{}}))}
+\DoxyCodeLine{00579\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_open_weather_condition_a0ae3ef52fde86e3888aaa61863aa0a92}{main}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00580\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}description"{}}))}
+\DoxyCodeLine{00581\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_open_weather_condition_a4e375b21f57b7ebe32062c8f69c65d71}{description}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00582\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}icon"{}}))}
+\DoxyCodeLine{00583\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_open_weather_condition_ab8245c59461491d62002bc8650b222af}{icon}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00584\ \};}
+\DoxyCodeLine{00585\ }
+\DoxyCodeLine{00586\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00587\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_open_weather_current}{FOpenWeatherCurrent}}}
+\DoxyCodeLine{00588\ \{}
+\DoxyCodeLine{00589\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00590\ }
+\DoxyCodeLine{00591\ \ \ \ \ \textcolor{comment}{//\ Timestamp\ Unix\ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ "{}dt"{}))}}
+\DoxyCodeLine{00592\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_open_weather_current_a695230a38ff4bc108dc0646d4f4bf832}{Timestamp}}\ =\ 0;}
+\DoxyCodeLine{00593\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}sunrise"{}}))}
+\DoxyCodeLine{00594\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_open_weather_current_a09f10ec125633d105d3ed4e423b5b9ab}{sunrise}}\ =\ 0;}
+\DoxyCodeLine{00595\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}sunset"{}}))}
+\DoxyCodeLine{00596\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_open_weather_current_a6b0d03f13f047003d1f444222f4622cb}{sunset}}\ =\ 0;}
+\DoxyCodeLine{00597\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}temp"{}}))}
+\DoxyCodeLine{00598\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_open_weather_current_af526af3c37d12f162051723682a03788}{temp}}\ =\ 0.0;}
+\DoxyCodeLine{00599\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}feels\_like"{}}))}
+\DoxyCodeLine{00600\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_open_weather_current_a163c9db5116cec7a64971d3eeaf4ee45}{feels\_like}}\ =\ 0.0;}
+\DoxyCodeLine{00601\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}pressure"{}}))}
+\DoxyCodeLine{00602\ \ \ \ \ int32\ \mbox{\hyperlink{struct_f_open_weather_current_a70aa322d03f470f8090fbe0bab70c6bc}{pressure}}\ =\ 0;}
+\DoxyCodeLine{00603\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}humidity"{}}))}
+\DoxyCodeLine{00604\ \ \ \ \ int32\ \mbox{\hyperlink{struct_f_open_weather_current_a919156335f77b7504463b879da619bdd}{humidity}}\ =\ 0;}
+\DoxyCodeLine{00605\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}dew\_point"{}}))}
+\DoxyCodeLine{00606\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_open_weather_current_a1ef5f65e730da2cdb3f1f0614c3d9ad5}{dew\_point}}\ =\ 0.0;}
+\DoxyCodeLine{00607\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}uvi"{}}))}
+\DoxyCodeLine{00608\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_open_weather_current_a4a9c6a5868b098bdd769eb942058492f}{uvi}}\ =\ 0.0;}
+\DoxyCodeLine{00609\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}clouds"{}}))}
+\DoxyCodeLine{00610\ \ \ \ \ int32\ \mbox{\hyperlink{struct_f_open_weather_current_a2eeea9d5457438716c88d4f1961d16e7}{clouds}}\ =\ 0;}
+\DoxyCodeLine{00611\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}visibility"{}}))}
+\DoxyCodeLine{00612\ \ \ \ \ int32\ \mbox{\hyperlink{struct_f_open_weather_current_a26edd32272a86b1bd9324c7eb5d52081}{visibility}}\ =\ 0;}
+\DoxyCodeLine{00613\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}wind\_speed"{}}))}
+\DoxyCodeLine{00614\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_open_weather_current_a1d6f3fe370994d0f7c8568530a3c0d14}{wind\_speed}}\ =\ 0.0;}
+\DoxyCodeLine{00615\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}wind\_deg"{}}))}
+\DoxyCodeLine{00616\ \ \ \ \ int32\ \mbox{\hyperlink{struct_f_open_weather_current_a4a2c802c13578037367401c4a466050b}{wind\_deg}}\ =\ 0;}
+\DoxyCodeLine{00617\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}weather"{}}))}
+\DoxyCodeLine{00618\ \ \ \ \ TArray<\mbox{\hyperlink{struct_f_open_weather_condition}{FOpenWeatherCondition}}>\ \mbox{\hyperlink{struct_f_open_weather_current_adc7a11d7e880da4e69f6c5b56531f71e}{weather}};}
+\DoxyCodeLine{00619\ \};}
+\DoxyCodeLine{00620\ }
+\DoxyCodeLine{00621\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00622\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_open_weather_response_aa2cac8d659459368ce09db46cf2d60a3}{FOpenWeatherResponse}}}
+\DoxyCodeLine{00623\ \{}
+\DoxyCodeLine{00624\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00625\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}lat"{}}))}
+\DoxyCodeLine{00626\ \ \ \ \ float\ \mbox{\hyperlink{struct_f_open_weather_response_a4273b47e5143119890c212b2753b556c}{lat}}\ =\ 0.0;}
+\DoxyCodeLine{00627\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}lon"{}}))}
+\DoxyCodeLine{00628\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_open_weather_response_a56d1511375ac09cfc217942685ee2886}{lon}}\ =\ 0.0;}
+\DoxyCodeLine{00629\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}timezone"{}}))}
+\DoxyCodeLine{00630\ \ \ \ \ FString\ \mbox{\hyperlink{struct_f_open_weather_response_a96b00e4bf345b825091c58e7b7df6543}{timezone}}\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00631\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}timezone\_offset"{}}))}
+\DoxyCodeLine{00632\ \ \ \ \ int32\ \mbox{\hyperlink{struct_f_open_weather_response_ac578ca8fac47c24c95768a2de2654432}{timezone\_offset}}\ =\ 0;}
+\DoxyCodeLine{00633\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ meta\ =\ (JsonProperty\ =\ \textcolor{stringliteral}{"{}current"{}}))}
+\DoxyCodeLine{00634\ \ \ \ \ \mbox{\hyperlink{struct_f_open_weather_current}{FOpenWeatherCurrent}}\ \mbox{\hyperlink{struct_f_open_weather_response_a0b0ab3b280cd8225de69e6321a1d0302}{current}}\ =\ \mbox{\hyperlink{struct_f_open_weather_current}{FOpenWeatherCurrent}}();}
+\DoxyCodeLine{00635\ \ \ \ \ }
+\DoxyCodeLine{00636\ \ \ \ \ \mbox{\hyperlink{struct_f_open_weather_response_aa2cac8d659459368ce09db46cf2d60a3}{FOpenWeatherResponse}}()\ =\ default;}
+\DoxyCodeLine{00637\ \};}
+\DoxyCodeLine{00638\ }
+\DoxyCodeLine{00642\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00643\ struct\ \mbox{\hyperlink{struct_f_point_index_segment_a6e9ff8ed07561336c2c2ed812107ce81}{FPointIndexSegment}}}
+\DoxyCodeLine{00644\ \{}
+\DoxyCodeLine{00645\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00646\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00647\ \ \ \ \ int32\ \mbox{\hyperlink{struct_f_point_index_segment_a2d7aec720295cf0b9ab21a6d217c713a}{StartIndex}}\ =\ 0;}
+\DoxyCodeLine{00648\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00649\ \ \ \ \ int32\ \mbox{\hyperlink{struct_f_point_index_segment_a1c9fcfe4f774c8312811217eacd65da6}{EndIndex}}\ \ \ =\ 0;}
+\DoxyCodeLine{00650\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00651\ \ \ \ \ TArray<int32>\ \mbox{\hyperlink{struct_f_point_index_segment_a2428e648e71def3ae3cf80e6254627f4}{Indices}};}
+\DoxyCodeLine{00652\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00653\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_point_index_segment_a81bbb99a78a7bcb4c039386531ef7b12}{StartDistanceCm}}\ =\ 0.f;}
+\DoxyCodeLine{00654\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00655\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_point_index_segment_a2834ffa5192d380cd3d335de2e7e2f4c}{EndDistanceCm}}\ \ \ =\ 0.f;}
+\DoxyCodeLine{00656\ \ \ \ \ }
+\DoxyCodeLine{00657\ \ \ \ \ \mbox{\hyperlink{struct_f_point_index_segment_a6e9ff8ed07561336c2c2ed812107ce81}{FPointIndexSegment}}()\ =\ default;}
+\DoxyCodeLine{00658\ \};}
+\DoxyCodeLine{00659\ }
+\DoxyCodeLine{00663\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00664\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_group_struct_a3f7d171673d2ba408e6ab6e0be9e20c0}{FGroupStruct}}}
+\DoxyCodeLine{00665\ \{}
+\DoxyCodeLine{00666\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00667\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00668\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_group_struct_a644ae7145045c356865a225d7313189b}{groupId}}\ =\ 0;}
+\DoxyCodeLine{00669\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00670\ \ \ \ \ TMap<int64,\ \mbox{\hyperlink{struct_f_runner_struct}{FRunnerStruct}}>\ \mbox{\hyperlink{struct_f_group_struct_ad2d931acce29f4c4127dd8ebdf5ed95f}{Teams}};}
+\DoxyCodeLine{00671\ \ \ \ \ }
+\DoxyCodeLine{00672\ \ \ \ \ \mbox{\hyperlink{struct_f_group_struct_a3f7d171673d2ba408e6ab6e0be9e20c0}{FGroupStruct}}()\ =\ default;}
+\DoxyCodeLine{00673\ \};}
+\DoxyCodeLine{00674\ }
+\DoxyCodeLine{00675\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00676\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_groups_a0a443ee5a2ffc07887ecd650025a109a}{FGroups}}}
+\DoxyCodeLine{00677\ \{}
+\DoxyCodeLine{00678\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00679\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00680\ \ \ \ \ int64\ \mbox{\hyperlink{struct_f_groups_a574f4955bc71b26f9fd676989568ab34}{RaceId}}\ =\ 0;}
+\DoxyCodeLine{00681\ \ \ \ \ UPROPERTY(BlueprintReadOnly)}
+\DoxyCodeLine{00682\ \ \ \ \ TArray<\mbox{\hyperlink{struct_f_group_struct}{FGroupStruct}}>\ \mbox{\hyperlink{struct_f_groups_a080cfa1d442f8e5ac0c179255e5f69c2}{Groups}};}
+\DoxyCodeLine{00683\ \ \ \ \ }
+\DoxyCodeLine{00684\ \ \ \ \ \mbox{\hyperlink{struct_f_groups_a0a443ee5a2ffc07887ecd650025a109a}{FGroups}}()\ =\ default;}
+\DoxyCodeLine{00685\ \};}
+\DoxyCodeLine{00686\ }
+\DoxyCodeLine{00687\ \textcolor{comment}{//\ Scale\ }}
+\DoxyCodeLine{00688\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00689\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_distance_scale_config}{FDistanceScaleConfig}}}
+\DoxyCodeLine{00690\ \{}
+\DoxyCodeLine{00691\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00692\ }
+\DoxyCodeLine{00693\ \ \ \ \ \textcolor{comment}{//\ Min/Max\ voulus\ par\ le\ client\ (par\ défaut\ Min=5,\ Max=40)}}
+\DoxyCodeLine{00694\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Scale"{}})}
+\DoxyCodeLine{00695\ \ \ \ \ \textcolor{comment}{//\ FMinMax\ ScaleMinMax\ =\ FMinMax(FVector(10.f),\ FVector(70.f));}}
+\DoxyCodeLine{00696\ \ \ \ \ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}\ \mbox{\hyperlink{struct_f_distance_scale_config_afe36549e944d648aeaebda515e48022b}{ScaleMinMax}}\ =\ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}();}
+\DoxyCodeLine{00697\ }
+\DoxyCodeLine{00698\ \ \ \ \ \textcolor{comment}{//\ Distance\ (cm)\ à\ laquelle\ on\ est\ à\ ScaleMin}}
+\DoxyCodeLine{00699\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Scale"{}},\ meta=(ClampMin=\textcolor{stringliteral}{"{}0.0"{}}))}
+\DoxyCodeLine{00700\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_distance_scale_config_a292d87e3dad03c5fae46900251e6d3c6}{NearDistanceCm}}\ =\ 0.f;}
+\DoxyCodeLine{00701\ }
+\DoxyCodeLine{00702\ \ \ \ \ \textcolor{comment}{//\ Distance\ (cm)\ à\ laquelle\ on\ revient\ à\ ScaleMax}}
+\DoxyCodeLine{00703\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Scale"{}},\ meta=(ClampMin=\textcolor{stringliteral}{"{}0.0"{}}))}
+\DoxyCodeLine{00704\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_distance_scale_config_a5f247bda6ee666c2136dc8adc559ee78}{FarDistanceCm}}\ =\ 0.f;\ }
+\DoxyCodeLine{00705\ }
+\DoxyCodeLine{00706\ \ \ \ \ \textcolor{comment}{//\ Souvent\ préférable\ dans\ un\ monde\ "{}globe"{}\ :\ ne\ considérer\ que\ XY}}
+\DoxyCodeLine{00707\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Scale"{}})}
+\DoxyCodeLine{00708\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_f_distance_scale_config_acd4071abfe3f15ae66b38cae0ed0f760}{bUseXYOnly}}\ =\ true;}
+\DoxyCodeLine{00709\ }
+\DoxyCodeLine{00710\ \ \ \ \ \textcolor{comment}{//\ Courbe\ douce\ (smoothstep)\ au\ lieu\ de\ linéaire}}
+\DoxyCodeLine{00711\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Scale"{}})}
+\DoxyCodeLine{00712\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_f_distance_scale_config_a8b8c0c5d78c7dbfdf84ef976964e9959}{bSmoothStep}}\ =\ true;}
+\DoxyCodeLine{00713\ }
+\DoxyCodeLine{00714\ \ \ \ \ \textcolor{comment}{//\ Utiliser\ le\ scale\ d'origine\ de\ l'actor\ comme\ "{}Max"{}\ (40\ chez\ toi)}}
+\DoxyCodeLine{00715\ \ \ \ \ \textcolor{comment}{//\ Si\ false,\ on\ prendra\ ScaleMinMax.Max}}
+\DoxyCodeLine{00716\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Scale"{}})}
+\DoxyCodeLine{00717\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_f_distance_scale_config_ae1a8a377b1a9e9de6def5d21c8971cc1}{bUseActorOriginalScaleAsMax}}\ =\ true;}
+\DoxyCodeLine{00718\ }
+\DoxyCodeLine{00719\ \ \ \ \ \textcolor{comment}{//\ Optionnel\ :\ lisser\ les\ variations\ (sinon\ "{}snap"{}\ au\ target\ à\ chaque\ update)}}
+\DoxyCodeLine{00720\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Scale"{}})}
+\DoxyCodeLine{00721\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_f_distance_scale_config_ab7df95988f1cfe9c8f58f3ecabdf5423}{bInterp}}\ =\ true;}
+\DoxyCodeLine{00722\ }
+\DoxyCodeLine{00723\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Scale"{}},\ meta=(EditCondition=\textcolor{stringliteral}{"{}bInterp"{}},\ ClampMin=\textcolor{stringliteral}{"{}0.0"{}}))}
+\DoxyCodeLine{00724\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_distance_scale_config_ac2682419905448502414c2a50eddbef3}{InterpSpeed}}\ =\ 8.f;}
+\DoxyCodeLine{00725\ }
+\DoxyCodeLine{00726\ \ \ \ \ \textcolor{comment}{//\ Fréquence\ de\ mise\ à\ jour\ (pas\ de\ tick)}}
+\DoxyCodeLine{00727\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Perf"{}},\ meta=(ClampMin=\textcolor{stringliteral}{"{}0.01"{}}))}
+\DoxyCodeLine{00728\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_distance_scale_config_aba31c27eaa4a656e61aab473b3a38461}{UpdateIntervalSec}}\ =\ 0.015f;}
+\DoxyCodeLine{00729\ }
+\DoxyCodeLine{00730\ \ \ \ \ \textcolor{comment}{//\ Evite\ de\ spam\ SetActorScale3D()\ si\ le\ delta\ est\ microscopique}}
+\DoxyCodeLine{00731\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Perf"{}},\ meta=(ClampMin=\textcolor{stringliteral}{"{}0.0"{}}))}
+\DoxyCodeLine{00732\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_distance_scale_config_a5251db34232826df0192e95ee940d971}{ScaleEpsilon}}\ =\ 0.02f;}
+\DoxyCodeLine{00733\ \};}
+\DoxyCodeLine{00734\ }
+\DoxyCodeLine{00735\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00736\ struct\ SHAREDTYPES\_API\ \mbox{\hyperlink{struct_f_entry}{FEntry}}}
+\DoxyCodeLine{00737\ \{}
+\DoxyCodeLine{00738\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00739\ }
+\DoxyCodeLine{00740\ \ \ \ \ TWeakObjectPtr<AActor>\ \mbox{\hyperlink{struct_f_entry_ad0ec04d2bb25a3bd8c11fb6867f2dbaa}{Actor}};}
+\DoxyCodeLine{00741\ \ \ \ \ FVector\ \mbox{\hyperlink{struct_f_entry_a80e0e43c9d10d75f7968abae039c7ec3}{OriginalScale}}\ =\ FVector(1.f);}
+\DoxyCodeLine{00742\ \ \ \ \ \mbox{\hyperlink{struct_f_distance_scale_config}{FDistanceScaleConfig}}\ \mbox{\hyperlink{struct_f_entry_a79be6797c6152224ce79261a9d3f8eb6}{OverrideConfig}};}
+\DoxyCodeLine{00743\ \ \ \ \ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}\ \mbox{\hyperlink{struct_f_entry_af88a8503434a8c94a874db4de59a8710}{CurrentMinMax}};\ }
+\DoxyCodeLine{00744\ \};}
+\DoxyCodeLine{00745\ }
+\DoxyCodeLine{00746\ \textcolor{comment}{//\ Stacking}}
+\DoxyCodeLine{00747\ USTRUCT(BlueprintType)}
+\DoxyCodeLine{00748\ struct\ \mbox{\hyperlink{struct_f_runner_stacking_config}{FRunnerStackingConfig}}}
+\DoxyCodeLine{00749\ \{}
+\DoxyCodeLine{00750\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00751\ }
+\DoxyCodeLine{00752\ \ \ \ \ \textcolor{comment}{//\ Rayon\ quand\ on\ est\ "{}près"{}\ (scale\ petit)\ =>\ on\ stacke\ moins}}
+\DoxyCodeLine{00753\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Stacking"{}})}
+\DoxyCodeLine{00754\ \ \ \ \ float\ \mbox{\hyperlink{struct_f_runner_stacking_config_acb7033684a249c01620e529a92a8ad4e}{RadiusNearCm}}\ =\ 1.f;\ \textcolor{comment}{//\ 1m}}
+\DoxyCodeLine{00755\ }
+\DoxyCodeLine{00756\ \ \ \ \ \textcolor{comment}{//\ Rayon\ quand\ on\ est\ "{}loin"{}\ (scale\ proche\ du\ scale\ d'origine)\ =>\ on\ stacke\ plus}}
+\DoxyCodeLine{00757\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Stacking"{}})}
+\DoxyCodeLine{00758\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_runner_stacking_config_aedb19d711be2bdd4b6bb53e03da3acee}{RadiusFarCm}}\ =\ 200000.f;\ \textcolor{comment}{//\ 2km}}
+\DoxyCodeLine{00759\ }
+\DoxyCodeLine{00760\ \ \ \ \ \textcolor{comment}{//\ Courbe\ de\ réponse\ :\ 1\ =\ linéaire,\ >1\ =\ transition\ plus\ progressive}}
+\DoxyCodeLine{00761\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Stacking"{}})}
+\DoxyCodeLine{00762\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_runner_stacking_config_ac12aeafb865f43d230079d5d99601bbc}{Gamma}}\ =\ 2.0f;}
+\DoxyCodeLine{00763\ }
+\DoxyCodeLine{00764\ \ \ \ \ \textcolor{comment}{//\ Timer\ du\ subsystem\ (pas\ de\ tick\ par\ runner)}}
+\DoxyCodeLine{00765\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Perf"{}},\ meta=(ClampMin=\textcolor{stringliteral}{"{}0.02"{}}))}
+\DoxyCodeLine{00766\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_runner_stacking_config_a49e1a74907b820590ea5f4e49f3175c7}{UpdateIntervalSec}}\ =\ 0.2f;}
+\DoxyCodeLine{00767\ }
+\DoxyCodeLine{00768\ \ \ \ \ \textcolor{comment}{//\ Hystérésis\ pour\ éviter\ le\ flicker\ autour\ du\ seuil\ (en\ cm)}}
+\DoxyCodeLine{00769\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Stacking"{}},\ meta=(ClampMin=\textcolor{stringliteral}{"{}0.0"{}}))}
+\DoxyCodeLine{00770\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_runner_stacking_config_ade976c2c7268729ba02d81df71e13bc0}{HysteresisCm}}\ =\ 10.f;}
+\DoxyCodeLine{00771\ \};}
+\DoxyCodeLine{00772\ }
+\DoxyCodeLine{00773\ USTRUCT()}
+\DoxyCodeLine{00774\ struct\ \mbox{\hyperlink{struct_f_stack_entry}{FStackEntry}}}
+\DoxyCodeLine{00775\ \{}
+\DoxyCodeLine{00776\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00777\ }
+\DoxyCodeLine{00778\ \ \ \ \ TWeakObjectPtr<AActor>\ \mbox{\hyperlink{struct_f_stack_entry_ae2f922e602246d5a0f49f489295e6c99}{Runner}};}
+\DoxyCodeLine{00779\ }
+\DoxyCodeLine{00780\ \ \ \ \ \textcolor{comment}{//\ Vérité\ "{}track"{}\ (indépendante\ du\ visuel)}}
+\DoxyCodeLine{00781\ \ \ \ \ FTransform\ \mbox{\hyperlink{struct_f_stack_entry_ab0a5d6cd35abe16153b24c4eb32074ac}{TrackTransform}}\ =\ FTransform::Identity;}
+\DoxyCodeLine{00782\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_stack_entry_a34b874bf461fe125c568243226144a5c}{TrackDistanceMeters}}\ =\ 0.f;}
+\DoxyCodeLine{00783\ }
+\DoxyCodeLine{00784\ \ \ \ \ \textcolor{comment}{//\ Pour\ rayon\ dynamique\ via\ scale}}
+\DoxyCodeLine{00785\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_stack_entry_aa98d25e4352f7e6283db5317b8f5c9c5}{OriginalScaleX}}\ =\ 1.f;}
+\DoxyCodeLine{00786\ }
+\DoxyCodeLine{00787\ \ \ \ \ \textcolor{comment}{//\ Hauteur\ du\ pied\ (hook\ au\ sommet)\ en\ cm,\ pour\ empiler}}
+\DoxyCodeLine{00788\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_stack_entry_a49bcb937206d6c2f788e3cc0b3c5e73a}{HookHeightCm}}\ =\ 100.f;}
+\DoxyCodeLine{00789\ \ \ \ \ }
+\DoxyCodeLine{00790\ \ \ \ \ FVector\ \mbox{\hyperlink{struct_f_stack_entry_a6f437038ae602d02a7b56aaa414fb91a}{HookLocalInAttach}};}
+\DoxyCodeLine{00791\ }
+\DoxyCodeLine{00792\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_f_stack_entry_a8925b778345e5af087898a053560be69}{bPhotoVisible}}\ =\ true;}
+\DoxyCodeLine{00793\ \ \ \ \ }
+\DoxyCodeLine{00794\ \ \ \ \ \textcolor{comment}{//\ État\ courant}}
+\DoxyCodeLine{00795\ \ \ \ \ TWeakObjectPtr<AActor>\ \mbox{\hyperlink{struct_f_stack_entry_aae1136715a99240c8e2164ffdcfa0b7e}{CurrentBase}};\ \textcolor{comment}{//\ null\ =>\ pas\ stacké}}
+\DoxyCodeLine{00796\ \ \ \ \ int32\ \mbox{\hyperlink{struct_f_stack_entry_a728487afca9a3ba80820a4eff8676dea}{CurrentOrder}}\ =\ -\/1;\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0..n-\/1\ pour\ les\ enfants\ (ordre\ dans\ le\ stack)}}
+\DoxyCodeLine{00797\ \};}
+
+\end{DoxyCode}

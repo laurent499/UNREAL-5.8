@@ -1,0 +1,154 @@
+\doxysection{ULoading\+Status\+Subsystem Class Reference}
+\hypertarget{class_u_loading_status_subsystem}{}\label{class_u_loading_status_subsystem}\index{ULoadingStatusSubsystem@{ULoadingStatusSubsystem}}
+
+
+Subsystem in charge of the loading screen.  
+
+
+
+
+{\ttfamily \#include $<$Loading\+Status\+Subsystem.\+h$>$}
+
+Inheritance diagram for ULoading\+Status\+Subsystem\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_u_loading_status_subsystem}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_u_loading_status_subsystem_a7e2c29aa174e87e26e58a9526a25b669}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE}} (FOn\+Changed\+Native)
+\item 
+void \mbox{\hyperlink{class_u_loading_status_subsystem_a4c242cbc450de6f7404f35889ee80da4}{Register\+Task}} (FName Id, const FText \&Label)
+\item 
+void \mbox{\hyperlink{class_u_loading_status_subsystem_a74dd9d7d08b2bad254b2f783a4940a50}{Set\+Running}} (FName Id, const FText \&Detail=FText\+::\+Get\+Empty())
+\item 
+void \mbox{\hyperlink{class_u_loading_status_subsystem_a9537e854845fa8b07ed6e95c51ba84fe}{Update}} (FName Id, float Progress01, const FText \&Detail=FText\+::\+Get\+Empty())
+\item 
+void \mbox{\hyperlink{class_u_loading_status_subsystem_a40cb10ad0721013eb21861e0df9e51c3}{Complete}} (FName Id, const FText \&Detail=FText\+::\+Get\+Empty())
+\item 
+void \mbox{\hyperlink{class_u_loading_status_subsystem_aea20a5a96850decbf2ddef72d989729e}{Fail}} (FName Id, const FText \&Detail=FText\+::\+Get\+Empty())
+\item 
+TArray$<$ \mbox{\hyperlink{struct_f_loading_task_info}{FLoading\+Task\+Info}} $>$ \mbox{\hyperlink{class_u_loading_status_subsystem_a8611039bfc38370bdce97c6c3cef9276}{Get\+Snapshot}} () const
+\item 
+float \mbox{\hyperlink{class_u_loading_status_subsystem_a45ee747bf54166cd0a39e97f6c7da562}{Get\+Overall\+Progress01}} () const
+\item 
+bool \mbox{\hyperlink{class_u_loading_status_subsystem_aa8762835b5248077853fdb7b2399eb09}{Are\+All\+Done\+Successfully}} () const
+\item 
+void \mbox{\hyperlink{class_u_loading_status_subsystem_a0845dff53ea5be97dbcbc8f2fa85a4d3}{Mark\+Dirty}} ()
+\item 
+void \mbox{\hyperlink{class_u_loading_status_subsystem_ade1cc4aed08a7d8196f13906c9184664}{Flush}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+FOn\+Changed\+Native \mbox{\hyperlink{class_u_loading_status_subsystem_aab1a36bdbad8d4f72dffda138a1e3765}{On\+Changed}}
+\item 
+bool \mbox{\hyperlink{class_u_loading_status_subsystem_a4538cea37155c41e7cc80266a4ff117b}{b\+Dirty}} = false
+\item 
+FTimer\+Handle \mbox{\hyperlink{class_u_loading_status_subsystem_aafd197118dc0aece457a81b351240d41}{Flush\+Handle}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Subsystem in charge of the loading screen. 
+
+\label{doc-func-members}
+\Hypertarget{class_u_loading_status_subsystem_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_u_loading_status_subsystem_aa8762835b5248077853fdb7b2399eb09}\index{ULoadingStatusSubsystem@{ULoadingStatusSubsystem}!AreAllDoneSuccessfully@{AreAllDoneSuccessfully}}
+\index{AreAllDoneSuccessfully@{AreAllDoneSuccessfully}!ULoadingStatusSubsystem@{ULoadingStatusSubsystem}}
+\doxysubsubsection{\texorpdfstring{AreAllDoneSuccessfully()}{AreAllDoneSuccessfully()}}
+{\footnotesize\ttfamily \label{class_u_loading_status_subsystem_aa8762835b5248077853fdb7b2399eb09} 
+bool ULoading\+Status\+Subsystem\+::\+Are\+All\+Done\+Successfully (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_u_loading_status_subsystem_a40cb10ad0721013eb21861e0df9e51c3}\index{ULoadingStatusSubsystem@{ULoadingStatusSubsystem}!Complete@{Complete}}
+\index{Complete@{Complete}!ULoadingStatusSubsystem@{ULoadingStatusSubsystem}}
+\doxysubsubsection{\texorpdfstring{Complete()}{Complete()}}
+{\footnotesize\ttfamily \label{class_u_loading_status_subsystem_a40cb10ad0721013eb21861e0df9e51c3} 
+void ULoading\+Status\+Subsystem\+::\+Complete (\begin{DoxyParamCaption}\item[{FName}]{Id}{, }\item[{const FText \&}]{Detail}{ = {\ttfamily FText\+:\+:GetEmpty()}}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_loading_status_subsystem_a7e2c29aa174e87e26e58a9526a25b669}\index{ULoadingStatusSubsystem@{ULoadingStatusSubsystem}!DECLARE\_MULTICAST\_DELEGATE@{DECLARE\_MULTICAST\_DELEGATE}}
+\index{DECLARE\_MULTICAST\_DELEGATE@{DECLARE\_MULTICAST\_DELEGATE}!ULoadingStatusSubsystem@{ULoadingStatusSubsystem}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE()}{DECLARE\_MULTICAST\_DELEGATE()}}
+{\footnotesize\ttfamily \label{class_u_loading_status_subsystem_a7e2c29aa174e87e26e58a9526a25b669} 
+ULoading\+Status\+Subsystem\+::\+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE (\begin{DoxyParamCaption}\item[{FOn\+Changed\+Native}]{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_loading_status_subsystem_aea20a5a96850decbf2ddef72d989729e}\index{ULoadingStatusSubsystem@{ULoadingStatusSubsystem}!Fail@{Fail}}
+\index{Fail@{Fail}!ULoadingStatusSubsystem@{ULoadingStatusSubsystem}}
+\doxysubsubsection{\texorpdfstring{Fail()}{Fail()}}
+{\footnotesize\ttfamily \label{class_u_loading_status_subsystem_aea20a5a96850decbf2ddef72d989729e} 
+void ULoading\+Status\+Subsystem\+::\+Fail (\begin{DoxyParamCaption}\item[{FName}]{Id}{, }\item[{const FText \&}]{Detail}{ = {\ttfamily FText\+:\+:GetEmpty()}}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_loading_status_subsystem_ade1cc4aed08a7d8196f13906c9184664}\index{ULoadingStatusSubsystem@{ULoadingStatusSubsystem}!Flush@{Flush}}
+\index{Flush@{Flush}!ULoadingStatusSubsystem@{ULoadingStatusSubsystem}}
+\doxysubsubsection{\texorpdfstring{Flush()}{Flush()}}
+{\footnotesize\ttfamily \label{class_u_loading_status_subsystem_ade1cc4aed08a7d8196f13906c9184664} 
+void ULoading\+Status\+Subsystem\+::\+Flush (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_loading_status_subsystem_a45ee747bf54166cd0a39e97f6c7da562}\index{ULoadingStatusSubsystem@{ULoadingStatusSubsystem}!GetOverallProgress01@{GetOverallProgress01}}
+\index{GetOverallProgress01@{GetOverallProgress01}!ULoadingStatusSubsystem@{ULoadingStatusSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetOverallProgress01()}{GetOverallProgress01()}}
+{\footnotesize\ttfamily \label{class_u_loading_status_subsystem_a45ee747bf54166cd0a39e97f6c7da562} 
+float ULoading\+Status\+Subsystem\+::\+Get\+Overall\+Progress01 (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_u_loading_status_subsystem_a8611039bfc38370bdce97c6c3cef9276}\index{ULoadingStatusSubsystem@{ULoadingStatusSubsystem}!GetSnapshot@{GetSnapshot}}
+\index{GetSnapshot@{GetSnapshot}!ULoadingStatusSubsystem@{ULoadingStatusSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetSnapshot()}{GetSnapshot()}}
+{\footnotesize\ttfamily \label{class_u_loading_status_subsystem_a8611039bfc38370bdce97c6c3cef9276} 
+TArray$<$ \mbox{\hyperlink{struct_f_loading_task_info}{FLoading\+Task\+Info}} $>$ ULoading\+Status\+Subsystem\+::\+Get\+Snapshot (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_u_loading_status_subsystem_a0845dff53ea5be97dbcbc8f2fa85a4d3}\index{ULoadingStatusSubsystem@{ULoadingStatusSubsystem}!MarkDirty@{MarkDirty}}
+\index{MarkDirty@{MarkDirty}!ULoadingStatusSubsystem@{ULoadingStatusSubsystem}}
+\doxysubsubsection{\texorpdfstring{MarkDirty()}{MarkDirty()}}
+{\footnotesize\ttfamily \label{class_u_loading_status_subsystem_a0845dff53ea5be97dbcbc8f2fa85a4d3} 
+void ULoading\+Status\+Subsystem\+::\+Mark\+Dirty (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_loading_status_subsystem_a4c242cbc450de6f7404f35889ee80da4}\index{ULoadingStatusSubsystem@{ULoadingStatusSubsystem}!RegisterTask@{RegisterTask}}
+\index{RegisterTask@{RegisterTask}!ULoadingStatusSubsystem@{ULoadingStatusSubsystem}}
+\doxysubsubsection{\texorpdfstring{RegisterTask()}{RegisterTask()}}
+{\footnotesize\ttfamily \label{class_u_loading_status_subsystem_a4c242cbc450de6f7404f35889ee80da4} 
+void ULoading\+Status\+Subsystem\+::\+Register\+Task (\begin{DoxyParamCaption}\item[{FName}]{Id}{, }\item[{const FText \&}]{Label}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_loading_status_subsystem_a74dd9d7d08b2bad254b2f783a4940a50}\index{ULoadingStatusSubsystem@{ULoadingStatusSubsystem}!SetRunning@{SetRunning}}
+\index{SetRunning@{SetRunning}!ULoadingStatusSubsystem@{ULoadingStatusSubsystem}}
+\doxysubsubsection{\texorpdfstring{SetRunning()}{SetRunning()}}
+{\footnotesize\ttfamily \label{class_u_loading_status_subsystem_a74dd9d7d08b2bad254b2f783a4940a50} 
+void ULoading\+Status\+Subsystem\+::\+Set\+Running (\begin{DoxyParamCaption}\item[{FName}]{Id}{, }\item[{const FText \&}]{Detail}{ = {\ttfamily FText\+:\+:GetEmpty()}}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_loading_status_subsystem_a9537e854845fa8b07ed6e95c51ba84fe}\index{ULoadingStatusSubsystem@{ULoadingStatusSubsystem}!Update@{Update}}
+\index{Update@{Update}!ULoadingStatusSubsystem@{ULoadingStatusSubsystem}}
+\doxysubsubsection{\texorpdfstring{Update()}{Update()}}
+{\footnotesize\ttfamily \label{class_u_loading_status_subsystem_a9537e854845fa8b07ed6e95c51ba84fe} 
+void ULoading\+Status\+Subsystem\+::\+Update (\begin{DoxyParamCaption}\item[{FName}]{Id}{, }\item[{float}]{Progress01}{, }\item[{const FText \&}]{Detail}{ = {\ttfamily FText\+:\+:GetEmpty()}}\end{DoxyParamCaption})}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_u_loading_status_subsystem_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_u_loading_status_subsystem_a4538cea37155c41e7cc80266a4ff117b}\index{ULoadingStatusSubsystem@{ULoadingStatusSubsystem}!bDirty@{bDirty}}
+\index{bDirty@{bDirty}!ULoadingStatusSubsystem@{ULoadingStatusSubsystem}}
+\doxysubsubsection{\texorpdfstring{bDirty}{bDirty}}
+{\footnotesize\ttfamily \label{class_u_loading_status_subsystem_a4538cea37155c41e7cc80266a4ff117b} 
+bool ULoading\+Status\+Subsystem\+::b\+Dirty = false}
+
+\Hypertarget{class_u_loading_status_subsystem_aafd197118dc0aece457a81b351240d41}\index{ULoadingStatusSubsystem@{ULoadingStatusSubsystem}!FlushHandle@{FlushHandle}}
+\index{FlushHandle@{FlushHandle}!ULoadingStatusSubsystem@{ULoadingStatusSubsystem}}
+\doxysubsubsection{\texorpdfstring{FlushHandle}{FlushHandle}}
+{\footnotesize\ttfamily \label{class_u_loading_status_subsystem_aafd197118dc0aece457a81b351240d41} 
+FTimer\+Handle ULoading\+Status\+Subsystem\+::\+Flush\+Handle}
+
+\Hypertarget{class_u_loading_status_subsystem_aab1a36bdbad8d4f72dffda138a1e3765}\index{ULoadingStatusSubsystem@{ULoadingStatusSubsystem}!OnChanged@{OnChanged}}
+\index{OnChanged@{OnChanged}!ULoadingStatusSubsystem@{ULoadingStatusSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnChanged}{OnChanged}}
+{\footnotesize\ttfamily \label{class_u_loading_status_subsystem_aab1a36bdbad8d4f72dffda138a1e3765} 
+FOn\+Changed\+Native ULoading\+Status\+Subsystem\+::\+On\+Changed}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Subsystems/\+Public/\mbox{\hyperlink{_loading_status_subsystem_8h}{Loading\+Status\+Subsystem.\+h}}\item 
+Source/\+Subsystems/\+Private/\mbox{\hyperlink{_loading_status_subsystem_8cpp}{Loading\+Status\+Subsystem.\+cpp}}\end{DoxyCompactItemize}

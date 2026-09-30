@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Fix MSB4018: IncludePath in UE NMake vcxproj exceeds 32767 chars limit.
+       UseEnv=true skips the SetEnv task so MSBuild does not try to write
+       the enormous INCLUDE list into the process environment. UBT manages
+       its own compiler environment at build time. -->
+  <PropertyGroup>
+    <UseEnv>true</UseEnv>
+  </PropertyGroup>
+</Project>

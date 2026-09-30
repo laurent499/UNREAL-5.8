@@ -1,0 +1,130 @@
+\doxysection{UScale\+Subsystem Class Reference}
+\hypertarget{class_u_scale_subsystem}{}\label{class_u_scale_subsystem}\index{UScaleSubsystem@{UScaleSubsystem}}
+
+
+{\ttfamily \#include $<$Scale\+Subsystem.\+h$>$}
+
+Inheritance diagram for UScale\+Subsystem\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_u_scale_subsystem}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_u_scale_subsystem_ad7254a9593b8286db8a120baddfdf1cc}{Initialize}} (FSubsystem\+Collection\+Base \&Collection) override
+\item 
+virtual void \mbox{\hyperlink{class_u_scale_subsystem_ae3d625d1d07249526e0ce2d9fe4c323e}{Deinitialize}} () override
+\item 
+virtual void \mbox{\hyperlink{class_u_scale_subsystem_a1d0a4f75ea154d190328033f83fd0af4}{Tick}} (float Delta\+Time) override
+\item 
+virtual TStat\+Id \mbox{\hyperlink{class_u_scale_subsystem_aeb2ae243d3574a91b383c5627189f279}{Get\+Stat\+Id}} () const override
+\item 
+virtual bool \mbox{\hyperlink{class_u_scale_subsystem_a7db27f19dce6e531e27eef8191285e42}{Is\+Tickable}} () const override
+\item 
+virtual bool \mbox{\hyperlink{class_u_scale_subsystem_a6b7fa95f42682881cbd9c1a7c65acb09}{Is\+Tickable\+In\+Editor}} () const override
+\item 
+void \mbox{\hyperlink{class_u_scale_subsystem_a9cc831d044c1715a560809150c1674f3}{Register\+Scalable\+Actor}} (AActor \texorpdfstring{$\ast$}{*}Actor)
+\item 
+void \mbox{\hyperlink{class_u_scale_subsystem_ac83b8217b42880bceb05b9a301fd0a95}{Unregister\+Scalable\+Actor}} (AActor \texorpdfstring{$\ast$}{*}Actor)
+\item 
+void \mbox{\hyperlink{class_u_scale_subsystem_a557318702405159bb9e3b8b434634948}{Set\+Global\+Config}} (const \mbox{\hyperlink{struct_f_distance_scale_config}{FDistance\+Scale\+Config}} \&New\+Config)
+\item 
+void \mbox{\hyperlink{class_u_scale_subsystem_a9e35350e449796617a05a33c1a019c49}{Set\+Near\+Far}} (float New\+Near, float New\+Far)
+\item 
+void \mbox{\hyperlink{class_u_scale_subsystem_ab93ad647e6788a914886f19af8af494c}{Set\+Actor\+Scale\+Min\+Max}} (AActor \texorpdfstring{$\ast$}{*}Actor, const \mbox{\hyperlink{struct_f_min_max}{FMin\+Max}} \&New\+Min\+Max)
+\item 
+\mbox{\hyperlink{struct_f_distance_scale_config}{FDistance\+Scale\+Config}} \mbox{\hyperlink{class_u_scale_subsystem_af740307375bae6710530fb7375ccb4ad}{Get\+Global\+Config}} () const
+\item 
+int32 \mbox{\hyperlink{class_u_scale_subsystem_a37751c6a6d00b2b547ddf6f6452e24bd}{Get\+Registered\+Count}} () const
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{class_u_scale_subsystem_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_u_scale_subsystem_ae3d625d1d07249526e0ce2d9fe4c323e}\index{UScaleSubsystem@{UScaleSubsystem}!Deinitialize@{Deinitialize}}
+\index{Deinitialize@{Deinitialize}!UScaleSubsystem@{UScaleSubsystem}}
+\doxysubsubsection{\texorpdfstring{Deinitialize()}{Deinitialize()}}
+{\footnotesize\ttfamily \label{class_u_scale_subsystem_ae3d625d1d07249526e0ce2d9fe4c323e} 
+void UScale\+Subsystem\+::\+Deinitialize (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_scale_subsystem_af740307375bae6710530fb7375ccb4ad}\index{UScaleSubsystem@{UScaleSubsystem}!GetGlobalConfig@{GetGlobalConfig}}
+\index{GetGlobalConfig@{GetGlobalConfig}!UScaleSubsystem@{UScaleSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetGlobalConfig()}{GetGlobalConfig()}}
+{\footnotesize\ttfamily \label{class_u_scale_subsystem_af740307375bae6710530fb7375ccb4ad} 
+\mbox{\hyperlink{struct_f_distance_scale_config}{FDistance\+Scale\+Config}} UScale\+Subsystem\+::\+Get\+Global\+Config (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_u_scale_subsystem_a37751c6a6d00b2b547ddf6f6452e24bd}\index{UScaleSubsystem@{UScaleSubsystem}!GetRegisteredCount@{GetRegisteredCount}}
+\index{GetRegisteredCount@{GetRegisteredCount}!UScaleSubsystem@{UScaleSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetRegisteredCount()}{GetRegisteredCount()}}
+{\footnotesize\ttfamily \label{class_u_scale_subsystem_a37751c6a6d00b2b547ddf6f6452e24bd} 
+int32 UScale\+Subsystem\+::\+Get\+Registered\+Count (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_u_scale_subsystem_aeb2ae243d3574a91b383c5627189f279}\index{UScaleSubsystem@{UScaleSubsystem}!GetStatId@{GetStatId}}
+\index{GetStatId@{GetStatId}!UScaleSubsystem@{UScaleSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetStatId()}{GetStatId()}}
+{\footnotesize\ttfamily \label{class_u_scale_subsystem_aeb2ae243d3574a91b383c5627189f279} 
+TStat\+Id UScale\+Subsystem\+::\+Get\+Stat\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_scale_subsystem_ad7254a9593b8286db8a120baddfdf1cc}\index{UScaleSubsystem@{UScaleSubsystem}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!UScaleSubsystem@{UScaleSubsystem}}
+\doxysubsubsection{\texorpdfstring{Initialize()}{Initialize()}}
+{\footnotesize\ttfamily \label{class_u_scale_subsystem_ad7254a9593b8286db8a120baddfdf1cc} 
+void UScale\+Subsystem\+::\+Initialize (\begin{DoxyParamCaption}\item[{FSubsystem\+Collection\+Base \&}]{Collection}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_scale_subsystem_a7db27f19dce6e531e27eef8191285e42}\index{UScaleSubsystem@{UScaleSubsystem}!IsTickable@{IsTickable}}
+\index{IsTickable@{IsTickable}!UScaleSubsystem@{UScaleSubsystem}}
+\doxysubsubsection{\texorpdfstring{IsTickable()}{IsTickable()}}
+{\footnotesize\ttfamily \label{class_u_scale_subsystem_a7db27f19dce6e531e27eef8191285e42} 
+bool UScale\+Subsystem\+::\+Is\+Tickable (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_scale_subsystem_a6b7fa95f42682881cbd9c1a7c65acb09}\index{UScaleSubsystem@{UScaleSubsystem}!IsTickableInEditor@{IsTickableInEditor}}
+\index{IsTickableInEditor@{IsTickableInEditor}!UScaleSubsystem@{UScaleSubsystem}}
+\doxysubsubsection{\texorpdfstring{IsTickableInEditor()}{IsTickableInEditor()}}
+{\footnotesize\ttfamily \label{class_u_scale_subsystem_a6b7fa95f42682881cbd9c1a7c65acb09} 
+virtual bool UScale\+Subsystem\+::\+Is\+Tickable\+In\+Editor (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_scale_subsystem_a9cc831d044c1715a560809150c1674f3}\index{UScaleSubsystem@{UScaleSubsystem}!RegisterScalableActor@{RegisterScalableActor}}
+\index{RegisterScalableActor@{RegisterScalableActor}!UScaleSubsystem@{UScaleSubsystem}}
+\doxysubsubsection{\texorpdfstring{RegisterScalableActor()}{RegisterScalableActor()}}
+{\footnotesize\ttfamily \label{class_u_scale_subsystem_a9cc831d044c1715a560809150c1674f3} 
+void UScale\+Subsystem\+::\+Register\+Scalable\+Actor (\begin{DoxyParamCaption}\item[{AActor \texorpdfstring{$\ast$}{*}}]{Actor}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_scale_subsystem_ab93ad647e6788a914886f19af8af494c}\index{UScaleSubsystem@{UScaleSubsystem}!SetActorScaleMinMax@{SetActorScaleMinMax}}
+\index{SetActorScaleMinMax@{SetActorScaleMinMax}!UScaleSubsystem@{UScaleSubsystem}}
+\doxysubsubsection{\texorpdfstring{SetActorScaleMinMax()}{SetActorScaleMinMax()}}
+{\footnotesize\ttfamily \label{class_u_scale_subsystem_ab93ad647e6788a914886f19af8af494c} 
+void UScale\+Subsystem\+::\+Set\+Actor\+Scale\+Min\+Max (\begin{DoxyParamCaption}\item[{AActor \texorpdfstring{$\ast$}{*}}]{Actor}{, }\item[{const \mbox{\hyperlink{struct_f_min_max}{FMin\+Max}} \&}]{New\+Min\+Max}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_scale_subsystem_a557318702405159bb9e3b8b434634948}\index{UScaleSubsystem@{UScaleSubsystem}!SetGlobalConfig@{SetGlobalConfig}}
+\index{SetGlobalConfig@{SetGlobalConfig}!UScaleSubsystem@{UScaleSubsystem}}
+\doxysubsubsection{\texorpdfstring{SetGlobalConfig()}{SetGlobalConfig()}}
+{\footnotesize\ttfamily \label{class_u_scale_subsystem_a557318702405159bb9e3b8b434634948} 
+void UScale\+Subsystem\+::\+Set\+Global\+Config (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_f_distance_scale_config}{FDistance\+Scale\+Config}} \&}]{New\+Config}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_scale_subsystem_a9e35350e449796617a05a33c1a019c49}\index{UScaleSubsystem@{UScaleSubsystem}!SetNearFar@{SetNearFar}}
+\index{SetNearFar@{SetNearFar}!UScaleSubsystem@{UScaleSubsystem}}
+\doxysubsubsection{\texorpdfstring{SetNearFar()}{SetNearFar()}}
+{\footnotesize\ttfamily \label{class_u_scale_subsystem_a9e35350e449796617a05a33c1a019c49} 
+void UScale\+Subsystem\+::\+Set\+Near\+Far (\begin{DoxyParamCaption}\item[{float}]{New\+Near}{, }\item[{float}]{New\+Far}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_scale_subsystem_a1d0a4f75ea154d190328033f83fd0af4}\index{UScaleSubsystem@{UScaleSubsystem}!Tick@{Tick}}
+\index{Tick@{Tick}!UScaleSubsystem@{UScaleSubsystem}}
+\doxysubsubsection{\texorpdfstring{Tick()}{Tick()}}
+{\footnotesize\ttfamily \label{class_u_scale_subsystem_a1d0a4f75ea154d190328033f83fd0af4} 
+void UScale\+Subsystem\+::\+Tick (\begin{DoxyParamCaption}\item[{float}]{Delta\+Time}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_scale_subsystem_ac83b8217b42880bceb05b9a301fd0a95}\index{UScaleSubsystem@{UScaleSubsystem}!UnregisterScalableActor@{UnregisterScalableActor}}
+\index{UnregisterScalableActor@{UnregisterScalableActor}!UScaleSubsystem@{UScaleSubsystem}}
+\doxysubsubsection{\texorpdfstring{UnregisterScalableActor()}{UnregisterScalableActor()}}
+{\footnotesize\ttfamily \label{class_u_scale_subsystem_ac83b8217b42880bceb05b9a301fd0a95} 
+void UScale\+Subsystem\+::\+Unregister\+Scalable\+Actor (\begin{DoxyParamCaption}\item[{AActor \texorpdfstring{$\ast$}{*}}]{Actor}{}\end{DoxyParamCaption})}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Subsystems/\+Public/\mbox{\hyperlink{_scale_subsystem_8h}{Scale\+Subsystem.\+h}}\item 
+Source/\+Subsystems/\+Private/\mbox{\hyperlink{_scale_subsystem_8cpp}{Scale\+Subsystem.\+cpp}}\end{DoxyCompactItemize}

@@ -1,0 +1,39 @@
+\doxysection{Name\+Component.\+h}
+\hypertarget{_name_component_8h_source}{}\label{_name_component_8h_source}\index{Source/TrailSimulator/Public/Components/NameComponent.h@{Source/TrailSimulator/Public/Components/NameComponent.h}}
+\mbox{\hyperlink{_name_component_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Components/SceneComponent.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}NameComponent.generated.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ UCLASS(ClassGroup=(Custom),\ meta=(BlueprintSpawnableComponent))}
+\DoxyCodeLine{00011\ \textcolor{keyword}{class\ }TRAILSIMULATOR\_API\ UNameComponent\ :\ \textcolor{keyword}{public}\ USceneComponent}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ public:}
+\DoxyCodeLine{00016\ \ \ \ \ UNameComponent(const\ FObjectInitializer\&\ ObjectInitializer);}
+\DoxyCodeLine{00017\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00018\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ UpdateName(const\ FString\&\ RunnerName)\ const;}
+\DoxyCodeLine{00019\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00020\ \ \ \ \ virtual\ \textcolor{keywordtype}{float}\ GetMiddle()\ const;}
+\DoxyCodeLine{00021\ \ \ \ \ }
+\DoxyCodeLine{00022\ protected:}
+\DoxyCodeLine{00023\ \ \ \ \ }
+\DoxyCodeLine{00024\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00025\ \ \ \ \ TObjectPtr<class\ UTextRenderComponent>\ NameTextComponent;}
+\DoxyCodeLine{00026\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00027\ \ \ \ \ TObjectPtr<class\ USplineComponent>\ NameSplineComponent;}
+\DoxyCodeLine{00028\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00029\ \ \ \ \ TObjectPtr<class\ USplineMeshComponent>\ NameBkgComponent;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ TObjectPtr<class\ USplineComponent>\ GetSplineComponent()\ const;}
+\DoxyCodeLine{00032\ \ \ \ \ }
+\DoxyCodeLine{00033\ \};}
+
+\end{DoxyCode}

@@ -1,0 +1,122 @@
+\doxysection{World\+Utils.\+inl}
+\hypertarget{_world_utils_8inl_source}{}\label{_world_utils_8inl_source}\index{Source/TrailUtils/Public/WorldUtils.inl@{Source/TrailUtils/Public/WorldUtils.inl}}
+\mbox{\hyperlink{_world_utils_8inl}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}Engine/World.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}Engine/GameInstance.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_utils_log_8h}{TrailUtilsLog.h}}"{}}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{template}<\textcolor{keyword}{typename}\ TSubsystem>}
+\DoxyCodeLine{00008\ TSubsystem*\ \mbox{\hyperlink{class_f_world_utils_acb8c97b1f9e24b4eb5c05821bff86b0e}{FWorldUtils::GetGISubsystem}}(\textcolor{keyword}{const}\ UObject*\ WorldContextObject)}
+\DoxyCodeLine{00009\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ UGameInstance*\ GI\ =\ \mbox{\hyperlink{class_f_world_utils_ae9a77d179d8b2a8e4e16d0be66aab3cd}{GetGameInstance}}(WorldContextObject);}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keywordflow}{return}\ GI\ ?\ GI-\/>GetSubsystem<TSubsystem>()\ :\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00012\ \}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{template}<\textcolor{keyword}{typename}\ TSubsystem>}
+\DoxyCodeLine{00015\ TSubsystem*\ \mbox{\hyperlink{class_f_world_utils_a9e96e2d7595bcdd4d79f33c8d6070d69}{FWorldUtils::GetGISubsystemChecked}}(\textcolor{keyword}{const}\ UObject*\ WorldContextObject)}
+\DoxyCodeLine{00016\ \{}
+\DoxyCodeLine{00017\ \ \ \ \ UGameInstance*\ GI\ =\ \mbox{\hyperlink{class_f_world_utils_a7f82cc61658bc8411d5c0f1dd8aa018f}{GetGameInstanceChecked}}(WorldContextObject);}
+\DoxyCodeLine{00018\ \ \ \ \ TSubsystem*\ SS\ =\ GI-\/>GetSubsystem<TSubsystem>();}
+\DoxyCodeLine{00019\ \ \ \ \ check(SS);}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordflow}{return}\ SS;}
+\DoxyCodeLine{00021\ \}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{template}<\textcolor{keyword}{typename}\ TSubsystem>}
+\DoxyCodeLine{00024\ TSubsystem*\ \mbox{\hyperlink{class_f_world_utils_aaa52638273612524f000419b78e8af2c}{FWorldUtils::GetWorldSubsystem}}(\textcolor{keyword}{const}\ UObject*\ WorldContextObject)}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ UWorld*\ W\ =\ \mbox{\hyperlink{class_f_world_utils_adc11def0a54c600da5f171e2784614d0}{GetWorld}}(WorldContextObject);}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordflow}{return}\ W\ ?\ W-\/>GetSubsystem<TSubsystem>()\ :\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00028\ \}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{template}<\textcolor{keyword}{typename}\ TSubsystem>}
+\DoxyCodeLine{00031\ TSubsystem*\ \mbox{\hyperlink{class_f_world_utils_a33300505d0866f2e88a5487aad0bbeb0}{FWorldUtils::GetWorldSubsystemChecked}}(\textcolor{keyword}{const}\ UObject*\ WorldContextObject)}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ UWorld*\ W\ =\ \mbox{\hyperlink{class_f_world_utils_a8b4c7f23784f0938b50b21515c6d3b59}{GetWorldChecked}}(WorldContextObject);}
+\DoxyCodeLine{00034\ \ \ \ \ TSubsystem*\ SS\ =\ W-\/>GetSubsystem<TSubsystem>();}
+\DoxyCodeLine{00035\ \ \ \ \ check(SS);}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordflow}{return}\ SS;}
+\DoxyCodeLine{00037\ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{template}<\textcolor{keyword}{typename}\ TSubsystem>}
+\DoxyCodeLine{00043\ TSubsystem*\ \mbox{\hyperlink{class_f_world_utils_a2a4c8da0c5f05fa3ec0c245408f69948}{FWorldUtils::GetGISubsystemOrLog}}(\textcolor{keyword}{const}\ UObject*\ WorldContextObject,\ \textcolor{keyword}{const}\ TCHAR*\ DebugContext,\ \textcolor{keywordtype}{bool}\ bLogOnce)}
+\DoxyCodeLine{00044\ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordflow}{if}\ (TSubsystem*\ SS\ =\ \mbox{\hyperlink{class_f_world_utils_acb8c97b1f9e24b4eb5c05821bff86b0e}{GetGISubsystem<TSubsystem>}}(WorldContextObject))}
+\DoxyCodeLine{00046\ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ SS;}
+\DoxyCodeLine{00048\ \ \ \ \ \}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{comment}{//\ static\ bool\ bDidLog\ =\ false;}}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{comment}{//\ if\ (bLogOnce\ \&\&\ bDidLog)}}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{comment}{//\ \{}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ return\ nullptr;}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{comment}{//\ bDidLog\ =\ true;}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keyword}{const}\ TCHAR*\ Ctx\ =\ (DebugContext\ \&\&\ *DebugContext)\ ?\ DebugContext\ :\ TEXT(\textcolor{stringliteral}{"{}<NoContext>"{}});}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{const}\ FString\ ObjName\ \ =\ WorldContextObject\ ?\ WorldContextObject-\/>GetName()\ :\ TEXT(\textcolor{stringliteral}{"{}<null>"{}});}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keyword}{const}\ FString\ ObjClass\ =\ WorldContextObject\ ?\ WorldContextObject-\/>GetClass()-\/>GetName()\ :\ TEXT(\textcolor{stringliteral}{"{}<null>"{}});}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{const}\ FString\ SSName\ \ \ =\ TSubsystem::StaticClass()\ ?\ TSubsystem::StaticClass()-\/>GetName()\ :\ TEXT(\textcolor{stringliteral}{"{}<UnknownSubsystem>"{}});}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ UWorld*\ W\ =\ \mbox{\hyperlink{class_f_world_utils_adc11def0a54c600da5f171e2784614d0}{GetWorld}}(WorldContextObject);}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordflow}{if}\ (!W)}
+\DoxyCodeLine{00064\ \ \ \ \ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ UE\_LOG(LogTrailUtils,\ Warning,\ TEXT(\textcolor{stringliteral}{"{}[\%s]\ GetGISubsystemOrLog\ failed:\ No\ World.\ Obj=\%s\ (\%s)\ Subsystem=\%s"{}}),}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ Ctx,\ *ObjName,\ *ObjClass,\ *SSName);}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00068\ \ \ \ \ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ UGameInstance*\ GI\ =\ W-\/>GetGameInstance();}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordflow}{if}\ (!GI)}
+\DoxyCodeLine{00072\ \ \ \ \ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ UE\_LOG(LogTrailUtils,\ Warning,\ TEXT(\textcolor{stringliteral}{"{}[\%s]\ GetGISubsystemOrLog\ failed:\ No\ GameInstance.\ WorldType=\%d\ Obj=\%s\ (\%s)\ Subsystem=\%s"{}}),}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ Ctx,\ int32(W-\/>WorldType),\ *ObjName,\ *ObjClass,\ *SSName);}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00076\ \ \ \ \ \}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ UE\_LOG(LogTrailUtils,\ Warning,\ TEXT(\textcolor{stringliteral}{"{}[\%s]\ GetGISubsystemOrLog\ failed:\ GI\ exists\ (\%s)\ but\ subsystem\ is\ null.\ WorldType=\%d\ Subsystem=\%s"{}}),}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ Ctx,\ *GI-\/>GetName(),\ int32(W-\/>WorldType),\ *SSName);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00082\ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{keyword}{template}<\textcolor{keyword}{typename}\ TSubsystem>}
+\DoxyCodeLine{00085\ TSubsystem*\ \mbox{\hyperlink{class_f_world_utils_a31f65b4082e854fee76c26e9edab4d3e}{FWorldUtils::GetWorldSubsystemOrLog}}(\textcolor{keyword}{const}\ UObject*\ WorldContextObject,\ \textcolor{keyword}{const}\ TCHAR*\ DebugContext,\ \textcolor{keywordtype}{bool}\ bLogOnce)}
+\DoxyCodeLine{00086\ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordflow}{if}\ (TSubsystem*\ SS\ =\ \mbox{\hyperlink{class_f_world_utils_aaa52638273612524f000419b78e8af2c}{GetWorldSubsystem<TSubsystem>}}(WorldContextObject))}
+\DoxyCodeLine{00088\ \ \ \ \ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ SS;}
+\DoxyCodeLine{00090\ \ \ \ \ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ bDidLog\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordflow}{if}\ (bLogOnce\ \&\&\ bDidLog)}
+\DoxyCodeLine{00094\ \ \ \ \ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00096\ \ \ \ \ \}}
+\DoxyCodeLine{00097\ \ \ \ \ bDidLog\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keyword}{const}\ TCHAR*\ Ctx\ =\ (DebugContext\ \&\&\ *DebugContext)\ ?\ DebugContext\ :\ TEXT(\textcolor{stringliteral}{"{}<NoContext>"{}});}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keyword}{const}\ FString\ ObjName\ \ =\ WorldContextObject\ ?\ WorldContextObject-\/>GetName()\ :\ TEXT(\textcolor{stringliteral}{"{}<null>"{}});}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keyword}{const}\ FString\ ObjClass\ =\ WorldContextObject\ ?\ WorldContextObject-\/>GetClass()-\/>GetName()\ :\ TEXT(\textcolor{stringliteral}{"{}<null>"{}});}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keyword}{const}\ FString\ SSName\ \ \ =\ TSubsystem::StaticClass()\ ?\ TSubsystem::StaticClass()-\/>GetName()\ :\ TEXT(\textcolor{stringliteral}{"{}<UnknownSubsystem>"{}});}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ UWorld*\ W\ =\ \mbox{\hyperlink{class_f_world_utils_adc11def0a54c600da5f171e2784614d0}{GetWorld}}(WorldContextObject);}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordflow}{if}\ (!W)}
+\DoxyCodeLine{00106\ \ \ \ \ \{}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ UE\_LOG(LogTrailUtils,\ Warning,\ TEXT(\textcolor{stringliteral}{"{}[\%s]\ GetWorldSubsystemOrLog\ failed:\ No\ World.\ Obj=\%s\ (\%s)\ Subsystem=\%s"{}}),}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ Ctx,\ *ObjName,\ *ObjClass,\ *SSName);}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00110\ \ \ \ \ \}}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ UE\_LOG(LogTrailUtils,\ Warning,\ TEXT(\textcolor{stringliteral}{"{}[\%s]\ GetWorldSubsystemOrLog\ failed:\ World\ exists\ (WorldType=\%d)\ but\ subsystem\ is\ null.\ Subsystem=\%s"{}}),}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ Ctx,\ int32(W-\/>WorldType),\ *SSName);}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00116\ \}}
+
+\end{DoxyCode}

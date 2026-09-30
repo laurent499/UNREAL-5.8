@@ -1,0 +1,509 @@
+\doxysection{USettings\+Subsystem Class Reference}
+\hypertarget{class_u_settings_subsystem}{}\label{class_u_settings_subsystem}\index{USettingsSubsystem@{USettingsSubsystem}}
+
+
+Subsystem de gestion des settings.  
+
+
+
+
+{\ttfamily \#include $<$Settings\+Subsystem.\+h$>$}
+
+Inheritance diagram for USettings\+Subsystem\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_u_settings_subsystem}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_u_settings_subsystem_a283f8d3ceb9188c39d0b9256e00137cd}{Initialize}} (FSubsystem\+Collection\+Base \&Collection) override
+\item 
+float \mbox{\hyperlink{class_u_settings_subsystem_a14710438dbf31397852942caf53772a5}{Get\+Weather\+Frequency}} () const
+\begin{DoxyCompactList}\small\item\em Getting the Weather fetch frequency. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_settings_subsystem_a10c9c334e97613b66c3fda754a946d9a}{Create\+Trail\+Settings\+By\+Id}} (int64 New\+Race\+ID, const \mbox{\hyperlink{struct_f_settings}{FSettings}} \&New\+Trail\+Settings)
+\begin{DoxyCompactList}\small\item\em Creating the \doxylink{struct_f_settings}{FSettings} entry for a Race. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_u_settings_subsystem_acc0b48a57188c48c96b02283cb9cd48c}{Does\+Settings\+Exist}} (int64 Race\+ID)
+\item 
+\mbox{\hyperlink{struct_f_settings}{FSettings}} \mbox{\hyperlink{class_u_settings_subsystem_afdb2ff090b1c391bb1a991b6daaf5c61}{Get\+Trail\+Settings\+By\+Id}} (int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Getting the Settings for a Race. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_settings_subsystem_af73ae849f8ab8e8b042dbcdb32917b94}{Set\+Fetch\+By\+Id}} (float Fetch\+Value, int64 Race\+ID)
+\begin{DoxyCompactList}\small\item\em Choix de la fréquence de récupération des datas. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_u_settings_subsystem_a9525e67d3a30ce0e96a7979029cc52dc}{Get\+Fetch\+By\+Id}} (int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Get the Fetch value by Race. \end{DoxyCompactList}\item 
+FORCEINLINE float \mbox{\hyperlink{class_u_settings_subsystem_a97f004a1118f70c701b4ed163a5749f7}{Get\+Fetch\+Frequency}} () const
+\item 
+void \mbox{\hyperlink{class_u_settings_subsystem_a9dfc67c74ef904d5557d274779fcf2ef}{Set\+ZOffset\+By\+Id}} (float ZOffset, int64 Id\+Race)
+\begin{DoxyCompactList}\small\item\em Choix du décalage en Z du tracé de la course. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_u_settings_subsystem_af59fca873ea79d3dca037bf7fa08ace0}{Get\+ZOffset\+By\+Id}} (int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Get the ZOffset value by Race. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_settings_subsystem_a12179d2f76ef679fef9ca66edfb83365}{Set\+Glow\+By\+Id}} (float Glow\+Value, int64 Id\+Race)
+\begin{DoxyCompactList}\small\item\em Choix de la puissance du glow du tracé \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_u_settings_subsystem_aa329762510bb90acb26e021c855aad5d}{Get\+Glow\+By\+Id}} (int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Get the Glow value by Race. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_settings_subsystem_aec5a2e0678d10109be28b0062aeca165}{Set\+Pulse\+By\+Id}} (float Pulse\+Frequency, int64 Id\+Race)
+\begin{DoxyCompactList}\small\item\em Choix de la vitesse du Pulse. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_u_settings_subsystem_ad0e206c33944a3001a736ce3935ceb96}{Get\+Pulse\+By\+Id}} (int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Set the Fetch value by Race. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_settings_subsystem_acc8793c592a5ade770ebbb657bb9d2cc}{Set\+Min\+Max\+By\+Id}} (FVector Size\+Min, FVector Size\+Max, int64 Id\+Race)
+\begin{DoxyCompactList}\small\item\em Choix de la taille min et max d\textquotesingle{}un Runner pour une course donnée. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_f_min_max}{FMin\+Max}} \mbox{\hyperlink{class_u_settings_subsystem_a6f49d8274baf8895b9d188ef7bdb5328}{Get\+Min\+Max\+By\+Id}} (int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Get the Min\+Max value by Race. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_settings_subsystem_a14fa7b9df7cf4e5f52d4b6bf14013d1d}{Set\+Race\+Url\+By\+Id}} (FString New\+Main\+URL, int64 Race\+ID)
+\begin{DoxyCompactList}\small\item\em Setting the requests URL. \end{DoxyCompactList}\item 
+FString \mbox{\hyperlink{class_u_settings_subsystem_adcc49e0dcb3c101f5aea3567ee12bdf0}{Get\+Race\+Url\+By\+Id}} (int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Get the Main\+Url value by Race. \end{DoxyCompactList}\item 
+FORCEINLINE FString \mbox{\hyperlink{class_u_settings_subsystem_a686e7aa3709c854c029dce18b69078f2}{Get\+Main\+URL}} () const
+\item 
+void \mbox{\hyperlink{class_u_settings_subsystem_ad8f4fbf7113742cea66221f47c3fcde1}{Set\+Main\+URL}} (FString New\+Url)
+\item 
+float \mbox{\hyperlink{class_u_settings_subsystem_a23e554a6509847f303ba3713885f0237}{Get\+Update\+Interval\+Seconds}} () const
+\begin{DoxyCompactList}\small\item\em Get the Look\+At interval. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_u_settings_subsystem_aaea16f10c23b612bf0dd670407a5c372}{Get\+Interp\+Speed}} () const
+\begin{DoxyCompactList}\small\item\em Getting the Interp speed. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_u_settings_subsystem_a27a48b8ed493b376f32e1ed0eaa9e983}{Save}} ()
+\item 
+bool \mbox{\hyperlink{class_u_settings_subsystem_ac1b223b3891e6234d0dc43823055801d}{Load}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+FOn\+Fetch\+Update \mbox{\hyperlink{class_u_settings_subsystem_add7d8b5924e59fba42fa0fea3727fe54}{On\+Fetch\+Update}}
+\item 
+FOn\+ZOffset\+Update \mbox{\hyperlink{class_u_settings_subsystem_ad3d3bdc2c5479b3dbe1e65558461074f}{On\+ZOffset\+Update}}
+\item 
+FOn\+Path\+Glow\+Update \mbox{\hyperlink{class_u_settings_subsystem_abbc52538fcf5b3d4184a63427540f3b0}{On\+Path\+Glow\+Update}}
+\item 
+FOn\+Pulse\+Frequency\+Update \mbox{\hyperlink{class_u_settings_subsystem_a3c38071faf7a0956942a8183458c0235}{On\+Pulse\+Frequency\+Update}}
+\item 
+FOn\+Min\+Max\+Set \mbox{\hyperlink{class_u_settings_subsystem_a8db16f52b1e1123ea06de60d13ecf1f5}{On\+Min\+Max\+Set}}
+\item 
+FOn\+Trail\+Url\+Update \mbox{\hyperlink{class_u_settings_subsystem_ace3737cc841a77bf355955ed5c08fbe9}{On\+Trail\+Url\+Update}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Subsystem de gestion des settings. 
+
+\label{doc-func-members}
+\Hypertarget{class_u_settings_subsystem_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_u_settings_subsystem_a10c9c334e97613b66c3fda754a946d9a}\index{USettingsSubsystem@{USettingsSubsystem}!CreateTrailSettingsById@{CreateTrailSettingsById}}
+\index{CreateTrailSettingsById@{CreateTrailSettingsById}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{CreateTrailSettingsById()}{CreateTrailSettingsById()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_a10c9c334e97613b66c3fda754a946d9a} 
+void USettings\+Subsystem\+::\+Create\+Trail\+Settings\+By\+Id (\begin{DoxyParamCaption}\item[{int64}]{New\+Race\+ID}{, }\item[{const \mbox{\hyperlink{struct_f_settings}{FSettings}} \&}]{New\+Trail\+Settings}{}\end{DoxyParamCaption})}
+
+
+
+Creating the \doxylink{struct_f_settings}{FSettings} entry for a Race. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em New\+Race\+ID} & \\
+\hline
+{\em New\+Trail\+Settings} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_settings_subsystem_acc0b48a57188c48c96b02283cb9cd48c}\index{USettingsSubsystem@{USettingsSubsystem}!DoesSettingsExist@{DoesSettingsExist}}
+\index{DoesSettingsExist@{DoesSettingsExist}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{DoesSettingsExist()}{DoesSettingsExist()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_acc0b48a57188c48c96b02283cb9cd48c} 
+bool USettings\+Subsystem\+::\+Does\+Settings\+Exist (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_settings_subsystem_a9525e67d3a30ce0e96a7979029cc52dc}\index{USettingsSubsystem@{USettingsSubsystem}!GetFetchById@{GetFetchById}}
+\index{GetFetchById@{GetFetchById}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetFetchById()}{GetFetchById()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_a9525e67d3a30ce0e96a7979029cc52dc} 
+float USettings\+Subsystem\+::\+Get\+Fetch\+By\+Id (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Get the Fetch value by Race. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_u_settings_subsystem_a97f004a1118f70c701b4ed163a5749f7}\index{USettingsSubsystem@{USettingsSubsystem}!GetFetchFrequency@{GetFetchFrequency}}
+\index{GetFetchFrequency@{GetFetchFrequency}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetFetchFrequency()}{GetFetchFrequency()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_a97f004a1118f70c701b4ed163a5749f7} 
+FORCEINLINE float USettings\+Subsystem\+::\+Get\+Fetch\+Frequency (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_u_settings_subsystem_aa329762510bb90acb26e021c855aad5d}\index{USettingsSubsystem@{USettingsSubsystem}!GetGlowById@{GetGlowById}}
+\index{GetGlowById@{GetGlowById}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetGlowById()}{GetGlowById()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_aa329762510bb90acb26e021c855aad5d} 
+float USettings\+Subsystem\+::\+Get\+Glow\+By\+Id (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Get the Glow value by Race. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_u_settings_subsystem_aaea16f10c23b612bf0dd670407a5c372}\index{USettingsSubsystem@{USettingsSubsystem}!GetInterpSpeed@{GetInterpSpeed}}
+\index{GetInterpSpeed@{GetInterpSpeed}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetInterpSpeed()}{GetInterpSpeed()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_aaea16f10c23b612bf0dd670407a5c372} 
+float USettings\+Subsystem\+::\+Get\+Interp\+Speed (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Getting the Interp speed. 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_u_settings_subsystem_a686e7aa3709c854c029dce18b69078f2}\index{USettingsSubsystem@{USettingsSubsystem}!GetMainURL@{GetMainURL}}
+\index{GetMainURL@{GetMainURL}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetMainURL()}{GetMainURL()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_a686e7aa3709c854c029dce18b69078f2} 
+FORCEINLINE FString USettings\+Subsystem\+::\+Get\+Main\+URL (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_u_settings_subsystem_a6f49d8274baf8895b9d188ef7bdb5328}\index{USettingsSubsystem@{USettingsSubsystem}!GetMinMaxById@{GetMinMaxById}}
+\index{GetMinMaxById@{GetMinMaxById}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetMinMaxById()}{GetMinMaxById()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_a6f49d8274baf8895b9d188ef7bdb5328} 
+\mbox{\hyperlink{struct_f_min_max}{FMin\+Max}} USettings\+Subsystem\+::\+Get\+Min\+Max\+By\+Id (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Get the Min\+Max value by Race. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_u_settings_subsystem_ad0e206c33944a3001a736ce3935ceb96}\index{USettingsSubsystem@{USettingsSubsystem}!GetPulseById@{GetPulseById}}
+\index{GetPulseById@{GetPulseById}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetPulseById()}{GetPulseById()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_ad0e206c33944a3001a736ce3935ceb96} 
+float USettings\+Subsystem\+::\+Get\+Pulse\+By\+Id (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Set the Fetch value by Race. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_u_settings_subsystem_adcc49e0dcb3c101f5aea3567ee12bdf0}\index{USettingsSubsystem@{USettingsSubsystem}!GetRaceUrlById@{GetRaceUrlById}}
+\index{GetRaceUrlById@{GetRaceUrlById}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetRaceUrlById()}{GetRaceUrlById()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_adcc49e0dcb3c101f5aea3567ee12bdf0} 
+FString USettings\+Subsystem\+::\+Get\+Race\+Url\+By\+Id (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Get the Main\+Url value by Race. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_u_settings_subsystem_afdb2ff090b1c391bb1a991b6daaf5c61}\index{USettingsSubsystem@{USettingsSubsystem}!GetTrailSettingsById@{GetTrailSettingsById}}
+\index{GetTrailSettingsById@{GetTrailSettingsById}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetTrailSettingsById()}{GetTrailSettingsById()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_afdb2ff090b1c391bb1a991b6daaf5c61} 
+\mbox{\hyperlink{struct_f_settings}{FSettings}} USettings\+Subsystem\+::\+Get\+Trail\+Settings\+By\+Id (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Getting the Settings for a Race. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_u_settings_subsystem_a23e554a6509847f303ba3713885f0237}\index{USettingsSubsystem@{USettingsSubsystem}!GetUpdateIntervalSeconds@{GetUpdateIntervalSeconds}}
+\index{GetUpdateIntervalSeconds@{GetUpdateIntervalSeconds}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetUpdateIntervalSeconds()}{GetUpdateIntervalSeconds()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_a23e554a6509847f303ba3713885f0237} 
+float USettings\+Subsystem\+::\+Get\+Update\+Interval\+Seconds (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Get the Look\+At interval. 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_u_settings_subsystem_a14710438dbf31397852942caf53772a5}\index{USettingsSubsystem@{USettingsSubsystem}!GetWeatherFrequency@{GetWeatherFrequency}}
+\index{GetWeatherFrequency@{GetWeatherFrequency}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetWeatherFrequency()}{GetWeatherFrequency()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_a14710438dbf31397852942caf53772a5} 
+float USettings\+Subsystem\+::\+Get\+Weather\+Frequency (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Getting the Weather fetch frequency. 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_u_settings_subsystem_af59fca873ea79d3dca037bf7fa08ace0}\index{USettingsSubsystem@{USettingsSubsystem}!GetZOffsetById@{GetZOffsetById}}
+\index{GetZOffsetById@{GetZOffsetById}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetZOffsetById()}{GetZOffsetById()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_af59fca873ea79d3dca037bf7fa08ace0} 
+float USettings\+Subsystem\+::\+Get\+ZOffset\+By\+Id (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Get the ZOffset value by Race. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_u_settings_subsystem_a283f8d3ceb9188c39d0b9256e00137cd}\index{USettingsSubsystem@{USettingsSubsystem}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{Initialize()}{Initialize()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_a283f8d3ceb9188c39d0b9256e00137cd} 
+void USettings\+Subsystem\+::\+Initialize (\begin{DoxyParamCaption}\item[{FSubsystem\+Collection\+Base \&}]{Collection}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_settings_subsystem_ac1b223b3891e6234d0dc43823055801d}\index{USettingsSubsystem@{USettingsSubsystem}!Load@{Load}}
+\index{Load@{Load}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{Load()}{Load()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_ac1b223b3891e6234d0dc43823055801d} 
+bool USettings\+Subsystem\+::\+Load (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_settings_subsystem_a27a48b8ed493b376f32e1ed0eaa9e983}\index{USettingsSubsystem@{USettingsSubsystem}!Save@{Save}}
+\index{Save@{Save}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{Save()}{Save()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_a27a48b8ed493b376f32e1ed0eaa9e983} 
+bool USettings\+Subsystem\+::\+Save (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_settings_subsystem_af73ae849f8ab8e8b042dbcdb32917b94}\index{USettingsSubsystem@{USettingsSubsystem}!SetFetchById@{SetFetchById}}
+\index{SetFetchById@{SetFetchById}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{SetFetchById()}{SetFetchById()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_af73ae849f8ab8e8b042dbcdb32917b94} 
+void USettings\+Subsystem\+::\+Set\+Fetch\+By\+Id (\begin{DoxyParamCaption}\item[{float}]{Fetch\+Value}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Choix de la fréquence de récupération des datas. 
+
+Set the Fetch value by Race.
+
+
+\begin{DoxyParams}{Parameters}
+{\em Fetch\+Value} & Fréquence de récupération \\
+\hline
+{\em Race\+ID} & \\
+\hline
+{\em Fetch\+Value} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_settings_subsystem_a12179d2f76ef679fef9ca66edfb83365}\index{USettingsSubsystem@{USettingsSubsystem}!SetGlowById@{SetGlowById}}
+\index{SetGlowById@{SetGlowById}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{SetGlowById()}{SetGlowById()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_a12179d2f76ef679fef9ca66edfb83365} 
+void USettings\+Subsystem\+::\+Set\+Glow\+By\+Id (\begin{DoxyParamCaption}\item[{float}]{New\+Glow\+Value}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Choix de la puissance du glow du tracé 
+
+Set the Glow value by Race.
+
+
+\begin{DoxyParams}{Parameters}
+{\em Glow\+Value} & Valeur de la puissance \\
+\hline
+{\em Id\+Race} & Id de la course \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+Binded in Path
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em New\+Glow\+Value} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_settings_subsystem_ad8f4fbf7113742cea66221f47c3fcde1}\index{USettingsSubsystem@{USettingsSubsystem}!SetMainURL@{SetMainURL}}
+\index{SetMainURL@{SetMainURL}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{SetMainURL()}{SetMainURL()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_ad8f4fbf7113742cea66221f47c3fcde1} 
+void USettings\+Subsystem\+::\+Set\+Main\+URL (\begin{DoxyParamCaption}\item[{FString}]{New\+Url}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_settings_subsystem_acc8793c592a5ade770ebbb657bb9d2cc}\index{USettingsSubsystem@{USettingsSubsystem}!SetMinMaxById@{SetMinMaxById}}
+\index{SetMinMaxById@{SetMinMaxById}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{SetMinMaxById()}{SetMinMaxById()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_acc8793c592a5ade770ebbb657bb9d2cc} 
+void USettings\+Subsystem\+::\+Set\+Min\+Max\+By\+Id (\begin{DoxyParamCaption}\item[{FVector}]{Min\+Value}{, }\item[{FVector}]{Max\+Value}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Choix de la taille min et max d\textquotesingle{}un Runner pour une course donnée. 
+
+Set the Min\+Max value by Race.
+
+
+\begin{DoxyParams}{Parameters}
+{\em Size\+Min} & FVector \\
+\hline
+{\em Size\+Max} & FVector \\
+\hline
+{\em Id\+Race} & int64\\
+\hline
+{\em Min\+Value} & \\
+\hline
+{\em Max\+Value} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_settings_subsystem_aec5a2e0678d10109be28b0062aeca165}\index{USettingsSubsystem@{USettingsSubsystem}!SetPulseById@{SetPulseById}}
+\index{SetPulseById@{SetPulseById}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{SetPulseById()}{SetPulseById()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_aec5a2e0678d10109be28b0062aeca165} 
+void USettings\+Subsystem\+::\+Set\+Pulse\+By\+Id (\begin{DoxyParamCaption}\item[{float}]{New\+Pulse\+Frequency}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Choix de la vitesse du Pulse. 
+
+Set the Pulse value by Race.
+
+
+\begin{DoxyParams}{Parameters}
+{\em Pulse\+Frequency} & Valeur de la vitesse du pulse \\
+\hline
+{\em Id\+Race} & Id de la course\\
+\hline
+{\em New\+Pulse\+Frequency} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_settings_subsystem_a14fa7b9df7cf4e5f52d4b6bf14013d1d}\index{USettingsSubsystem@{USettingsSubsystem}!SetRaceUrlById@{SetRaceUrlById}}
+\index{SetRaceUrlById@{SetRaceUrlById}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{SetRaceUrlById()}{SetRaceUrlById()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_a14fa7b9df7cf4e5f52d4b6bf14013d1d} 
+void USettings\+Subsystem\+::\+Set\+Race\+Url\+By\+Id (\begin{DoxyParamCaption}\item[{FString}]{New\+Main\+URL}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Setting the requests URL. 
+
+Set the Main\+Url value by Race.
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+\begin{DoxyParams}{Parameters}
+{\em New\+Main\+URL} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_settings_subsystem_a9dfc67c74ef904d5557d274779fcf2ef}\index{USettingsSubsystem@{USettingsSubsystem}!SetZOffsetById@{SetZOffsetById}}
+\index{SetZOffsetById@{SetZOffsetById}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{SetZOffsetById()}{SetZOffsetById()}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_a9dfc67c74ef904d5557d274779fcf2ef} 
+void USettings\+Subsystem\+::\+Set\+ZOffset\+By\+Id (\begin{DoxyParamCaption}\item[{float}]{ZOffset\+Value}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Choix du décalage en Z du tracé de la course. 
+
+Set the ZOffset value by Race.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ZOffset} & Valeur du décalage \\
+\hline
+{\em Id\+Race} & Id de la course\\
+\hline
+{\em ZOffset\+Value} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-variable-members}
+\Hypertarget{class_u_settings_subsystem_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_u_settings_subsystem_add7d8b5924e59fba42fa0fea3727fe54}\index{USettingsSubsystem@{USettingsSubsystem}!OnFetchUpdate@{OnFetchUpdate}}
+\index{OnFetchUpdate@{OnFetchUpdate}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnFetchUpdate}{OnFetchUpdate}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_add7d8b5924e59fba42fa0fea3727fe54} 
+FOn\+Fetch\+Update USettings\+Subsystem\+::\+On\+Fetch\+Update}
+
+\Hypertarget{class_u_settings_subsystem_a8db16f52b1e1123ea06de60d13ecf1f5}\index{USettingsSubsystem@{USettingsSubsystem}!OnMinMaxSet@{OnMinMaxSet}}
+\index{OnMinMaxSet@{OnMinMaxSet}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnMinMaxSet}{OnMinMaxSet}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_a8db16f52b1e1123ea06de60d13ecf1f5} 
+FOn\+Min\+Max\+Set USettings\+Subsystem\+::\+On\+Min\+Max\+Set}
+
+\Hypertarget{class_u_settings_subsystem_abbc52538fcf5b3d4184a63427540f3b0}\index{USettingsSubsystem@{USettingsSubsystem}!OnPathGlowUpdate@{OnPathGlowUpdate}}
+\index{OnPathGlowUpdate@{OnPathGlowUpdate}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnPathGlowUpdate}{OnPathGlowUpdate}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_abbc52538fcf5b3d4184a63427540f3b0} 
+FOn\+Path\+Glow\+Update USettings\+Subsystem\+::\+On\+Path\+Glow\+Update}
+
+\Hypertarget{class_u_settings_subsystem_a3c38071faf7a0956942a8183458c0235}\index{USettingsSubsystem@{USettingsSubsystem}!OnPulseFrequencyUpdate@{OnPulseFrequencyUpdate}}
+\index{OnPulseFrequencyUpdate@{OnPulseFrequencyUpdate}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnPulseFrequencyUpdate}{OnPulseFrequencyUpdate}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_a3c38071faf7a0956942a8183458c0235} 
+FOn\+Pulse\+Frequency\+Update USettings\+Subsystem\+::\+On\+Pulse\+Frequency\+Update}
+
+\Hypertarget{class_u_settings_subsystem_ace3737cc841a77bf355955ed5c08fbe9}\index{USettingsSubsystem@{USettingsSubsystem}!OnTrailUrlUpdate@{OnTrailUrlUpdate}}
+\index{OnTrailUrlUpdate@{OnTrailUrlUpdate}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnTrailUrlUpdate}{OnTrailUrlUpdate}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_ace3737cc841a77bf355955ed5c08fbe9} 
+FOn\+Trail\+Url\+Update USettings\+Subsystem\+::\+On\+Trail\+Url\+Update}
+
+\Hypertarget{class_u_settings_subsystem_ad3d3bdc2c5479b3dbe1e65558461074f}\index{USettingsSubsystem@{USettingsSubsystem}!OnZOffsetUpdate@{OnZOffsetUpdate}}
+\index{OnZOffsetUpdate@{OnZOffsetUpdate}!USettingsSubsystem@{USettingsSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnZOffsetUpdate}{OnZOffsetUpdate}}
+{\footnotesize\ttfamily \label{class_u_settings_subsystem_ad3d3bdc2c5479b3dbe1e65558461074f} 
+FOn\+ZOffset\+Update USettings\+Subsystem\+::\+On\+ZOffset\+Update}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Subsystems/\+Public/\mbox{\hyperlink{_settings_subsystem_8h}{Settings\+Subsystem.\+h}}\item 
+Source/\+Subsystems/\+Private/\mbox{\hyperlink{_settings_subsystem_8cpp}{Settings\+Subsystem.\+cpp}}\end{DoxyCompactItemize}

@@ -1,0 +1,133 @@
+\doxysection{AActors\+Manager Class Reference}
+\hypertarget{class_a_actors_manager}{}\label{class_a_actors_manager}\index{AActorsManager@{AActorsManager}}
+
+
+{\ttfamily \#include $<$Actors\+Manager.\+h$>$}
+
+Inheritance diagram for AActors\+Manager\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_a_actors_manager}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_a_actors_manager_a490cf45fa4f8c0fd540a94d5d2e258c1}{AActors\+Manager}} ()
+\item 
+virtual void \mbox{\hyperlink{class_a_actors_manager_a3eb8c4071286843833f511a966b62f5a}{Tick}} (float Delta\+Time) override
+\item 
+void \mbox{\hyperlink{class_a_actors_manager_ac985fcf31d8a92a76662fa7d923052ad}{Handle\+Path\+Datas\+Gathered}} (\mbox{\hyperlink{struct_f_race_path}{FRace\+Path}} Race\+Path)
+\begin{DoxyCompactList}\small\item\em Called when the Path\+Subsystem has successfully gathered the path datas. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_actors_manager_a6fbb87ac9539b681dc9dd4e0fd47fcc5}{Handle\+Runners\+Datas\+Gathered}} (\mbox{\hyperlink{struct_f_runners}{FRunners}} Runners\+Datas)
+\item 
+void \mbox{\hyperlink{class_a_actors_manager_aba1110946ecde2bb1571c7b5ef3d20f4}{Handle\+Race\+Setup\+Datas\+Gathered}} (\mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}} Race\+Setup\+Datas)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_path_subsystem}{UPath\+Subsystem}} $>$ \mbox{\hyperlink{class_a_actors_manager_a70e55cc5d9dccd9235d32009330d7c1e}{Path\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_runner_subsystem}{URunner\+Subsystem}} $>$ \mbox{\hyperlink{class_a_actors_manager_a946972e57e38a97635ec1c76dad06de9}{Runner\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_team_subsystem}{UTeam\+Subsystem}} $>$ \mbox{\hyperlink{class_a_actors_manager_aef35c31beb83affcb27af606744d6bb4}{Team\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_race_subsystem}{URace\+Subsystem}} $>$ \mbox{\hyperlink{class_a_actors_manager_ae0f41ae5b201c8a98c240d8570f59d76}{Race\+Subsystem}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_a_actors_manager_ae0dfbbee0cb50a37d278e217d7b4c309}{Begin\+Play}} () override
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_a_actors_manager_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_a_actors_manager_a490cf45fa4f8c0fd540a94d5d2e258c1}\index{AActorsManager@{AActorsManager}!AActorsManager@{AActorsManager}}
+\index{AActorsManager@{AActorsManager}!AActorsManager@{AActorsManager}}
+\doxysubsubsection{\texorpdfstring{AActorsManager()}{AActorsManager()}}
+{\footnotesize\ttfamily \label{class_a_actors_manager_a490cf45fa4f8c0fd540a94d5d2e258c1} 
+AActors\+Manager\+::\+AActors\+Manager (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_a_actors_manager_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_a_actors_manager_ae0dfbbee0cb50a37d278e217d7b4c309}\index{AActorsManager@{AActorsManager}!BeginPlay@{BeginPlay}}
+\index{BeginPlay@{BeginPlay}!AActorsManager@{AActorsManager}}
+\doxysubsubsection{\texorpdfstring{BeginPlay()}{BeginPlay()}}
+{\footnotesize\ttfamily \label{class_a_actors_manager_ae0dfbbee0cb50a37d278e217d7b4c309} 
+void AActors\+Manager\+::\+Begin\+Play (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_a_actors_manager_ac985fcf31d8a92a76662fa7d923052ad}\index{AActorsManager@{AActorsManager}!HandlePathDatasGathered@{HandlePathDatasGathered}}
+\index{HandlePathDatasGathered@{HandlePathDatasGathered}!AActorsManager@{AActorsManager}}
+\doxysubsubsection{\texorpdfstring{HandlePathDatasGathered()}{HandlePathDatasGathered()}}
+{\footnotesize\ttfamily \label{class_a_actors_manager_ac985fcf31d8a92a76662fa7d923052ad} 
+void AActors\+Manager\+::\+Handle\+Path\+Datas\+Gathered (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_race_path}{FRace\+Path}}}]{Race\+Path}{}\end{DoxyParamCaption})}
+
+
+
+Called when the Path\+Subsystem has successfully gathered the path datas. 
+
+Request Callbacks
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+Path} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_actors_manager_aba1110946ecde2bb1571c7b5ef3d20f4}\index{AActorsManager@{AActorsManager}!HandleRaceSetupDatasGathered@{HandleRaceSetupDatasGathered}}
+\index{HandleRaceSetupDatasGathered@{HandleRaceSetupDatasGathered}!AActorsManager@{AActorsManager}}
+\doxysubsubsection{\texorpdfstring{HandleRaceSetupDatasGathered()}{HandleRaceSetupDatasGathered()}}
+{\footnotesize\ttfamily \label{class_a_actors_manager_aba1110946ecde2bb1571c7b5ef3d20f4} 
+void AActors\+Manager\+::\+Handle\+Race\+Setup\+Datas\+Gathered (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}}}]{Race\+Setup\+Datas}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_actors_manager_a6fbb87ac9539b681dc9dd4e0fd47fcc5}\index{AActorsManager@{AActorsManager}!HandleRunnersDatasGathered@{HandleRunnersDatasGathered}}
+\index{HandleRunnersDatasGathered@{HandleRunnersDatasGathered}!AActorsManager@{AActorsManager}}
+\doxysubsubsection{\texorpdfstring{HandleRunnersDatasGathered()}{HandleRunnersDatasGathered()}}
+{\footnotesize\ttfamily \label{class_a_actors_manager_a6fbb87ac9539b681dc9dd4e0fd47fcc5} 
+void AActors\+Manager\+::\+Handle\+Runners\+Datas\+Gathered (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_runners}{FRunners}}}]{Runners\+Datas}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_actors_manager_a3eb8c4071286843833f511a966b62f5a}\index{AActorsManager@{AActorsManager}!Tick@{Tick}}
+\index{Tick@{Tick}!AActorsManager@{AActorsManager}}
+\doxysubsubsection{\texorpdfstring{Tick()}{Tick()}}
+{\footnotesize\ttfamily \label{class_a_actors_manager_a3eb8c4071286843833f511a966b62f5a} 
+void AActors\+Manager\+::\+Tick (\begin{DoxyParamCaption}\item[{float}]{Delta\+Time}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_a_actors_manager_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_a_actors_manager_a70e55cc5d9dccd9235d32009330d7c1e}\index{AActorsManager@{AActorsManager}!PathSubsystem@{PathSubsystem}}
+\index{PathSubsystem@{PathSubsystem}!AActorsManager@{AActorsManager}}
+\doxysubsubsection{\texorpdfstring{PathSubsystem}{PathSubsystem}}
+{\footnotesize\ttfamily \label{class_a_actors_manager_a70e55cc5d9dccd9235d32009330d7c1e} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_path_subsystem}{UPath\+Subsystem}}$>$ AActors\+Manager\+::\+Path\+Subsystem}
+
+\doxylink{class_subsystems}{Subsystems} \Hypertarget{class_a_actors_manager_ae0f41ae5b201c8a98c240d8570f59d76}\index{AActorsManager@{AActorsManager}!RaceSubsystem@{RaceSubsystem}}
+\index{RaceSubsystem@{RaceSubsystem}!AActorsManager@{AActorsManager}}
+\doxysubsubsection{\texorpdfstring{RaceSubsystem}{RaceSubsystem}}
+{\footnotesize\ttfamily \label{class_a_actors_manager_ae0f41ae5b201c8a98c240d8570f59d76} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_race_subsystem}{URace\+Subsystem}}$>$ AActors\+Manager\+::\+Race\+Subsystem}
+
+\Hypertarget{class_a_actors_manager_a946972e57e38a97635ec1c76dad06de9}\index{AActorsManager@{AActorsManager}!RunnerSubsystem@{RunnerSubsystem}}
+\index{RunnerSubsystem@{RunnerSubsystem}!AActorsManager@{AActorsManager}}
+\doxysubsubsection{\texorpdfstring{RunnerSubsystem}{RunnerSubsystem}}
+{\footnotesize\ttfamily \label{class_a_actors_manager_a946972e57e38a97635ec1c76dad06de9} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_runner_subsystem}{URunner\+Subsystem}}$>$ AActors\+Manager\+::\+Runner\+Subsystem}
+
+\Hypertarget{class_a_actors_manager_aef35c31beb83affcb27af606744d6bb4}\index{AActorsManager@{AActorsManager}!TeamSubsystem@{TeamSubsystem}}
+\index{TeamSubsystem@{TeamSubsystem}!AActorsManager@{AActorsManager}}
+\doxysubsubsection{\texorpdfstring{TeamSubsystem}{TeamSubsystem}}
+{\footnotesize\ttfamily \label{class_a_actors_manager_aef35c31beb83affcb27af606744d6bb4} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_team_subsystem}{UTeam\+Subsystem}}$>$ AActors\+Manager\+::\+Team\+Subsystem}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Trail\+Simulator/\+Public/\mbox{\hyperlink{_actors_manager_8h}{Actors\+Manager.\+h}}\item 
+Source/\+Trail\+Simulator/\+Private/\mbox{\hyperlink{_actors_manager_8cpp}{Actors\+Manager.\+cpp}}\end{DoxyCompactItemize}

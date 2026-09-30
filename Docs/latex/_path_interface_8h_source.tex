@@ -1,0 +1,34 @@
+\doxysection{Path\+Interface.\+h}
+\hypertarget{_path_interface_8h_source}{}\label{_path_interface_8h_source}\index{Source/TrailInterfaces/Public/PathInterface.h@{Source/TrailInterfaces/Public/PathInterface.h}}
+\mbox{\hyperlink{_path_interface_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}UObject/Interface.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}PathInterface.generated.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ This\ class\ does\ not\ need\ to\ be\ modified.}}
+\DoxyCodeLine{00010\ UINTERFACE()}
+\DoxyCodeLine{00011\ class\ \mbox{\hyperlink{class_u_path_interface}{UPathInterface}}\ :\ public\ UInterface}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00014\ \};}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{class\ }TRAILINTERFACES\_API\ \mbox{\hyperlink{class_i_path_interface}{IPathInterface}}}
+\DoxyCodeLine{00020\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{comment}{//\ virtual\ void\ DrawPath(FRacePath\ RacePath)\ =\ 0;}}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_path_interface_a2b9f39be6ceacadaf19f6ed971691432}{ChangePathVisibility}}(\textcolor{keywordtype}{bool}\ bShow)\ =\ 0;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_path_interface_a375bc41eaf878fe55e7501e66b294ccf}{ChangeSlopeVisibility}}(\textcolor{keywordtype}{bool}\ bShow)\ =\ 0;}
+\DoxyCodeLine{00027\ \ \ \ \ }
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{virtual}\ FVector\ \mbox{\hyperlink{class_i_path_interface_ad15082622c5f6d323b9bd3ddd42c1dfe}{GetClosestSplineLocation}}(FVector\ RunnerLocation)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{virtual}\ FVector\ \mbox{\hyperlink{class_i_path_interface_a0d54351bddd1b9a5362fe1737f2dec14}{GetLocationAtDistance}}(\textcolor{keywordtype}{float}\ Distance)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_i_path_interface_a89ea834f7d16b069dab9e0f003041bee}{GetDistanceAlongSpline}}(FVector\ RunnerLocation)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00031\ \};}
+
+\end{DoxyCode}

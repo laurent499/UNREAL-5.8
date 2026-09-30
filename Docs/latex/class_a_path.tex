@@ -1,0 +1,272 @@
+\doxysection{APath Class Reference}
+\hypertarget{class_a_path}{}\label{class_a_path}\index{APath@{APath}}
+
+
+{\ttfamily \#include $<$Path.\+h$>$}
+
+Inheritance diagram for APath\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_a_path}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_a_path_a8ea8f2c7dcc66535ac47575a7377feea}{APath}} ()
+\item 
+virtual void \mbox{\hyperlink{class_a_path_a29024bf0e1bf35d328f9e4933e513452}{Tick}} (float Delta\+Time) override
+\item 
+virtual void \mbox{\hyperlink{class_a_path_a15f2e17768cdc172a77c9212416c7783}{Begin\+Play}} () override
+\item 
+void \mbox{\hyperlink{class_a_path_a34fd42a77569082b3f29eec93c1c17c2}{Set\+Race\+Path}} (const \mbox{\hyperlink{struct_f_race_path}{FRace\+Path}} \&Race\+Path)
+\item 
+void \mbox{\hyperlink{class_a_path_adcb6ca2acf7361160a63be61c24bc0e8}{Start\+Pulse}} () const
+\begin{DoxyCompactList}\small\item\em Pulse. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_path_a5e085bf71369e6d90c361d878508fd4a}{Stop\+Pulse}} () const
+\item 
+void \mbox{\hyperlink{class_a_path_ac3ebc13327c84c6b320f469de2c996c7}{Update\+Pulse\+Speed}} (float New\+Speed)
+\item 
+virtual void \mbox{\hyperlink{class_a_path_abda57b13be7ae6e6d3a6e3a2359661bf}{Change\+Path\+Visibility}} (bool b\+Show\+Path) override
+\begin{DoxyCompactList}\small\item\em Toggle displays. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_a_path_a7f0a4b8bbc1305ef7ca4e4357161f18f}{Change\+Slope\+Visibility}} (bool b\+Show\+Path) override
+\item 
+void \mbox{\hyperlink{class_a_path_aa6053ff47dae4ea29f1d1dae2b47561a}{Update\+Path\+Glow}} (float New\+Glow, int64 Race\+ID)
+\begin{DoxyCompactList}\small\item\em Updating Glow value. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_path_aef6be0dd54dd34ec3e1ab6990f3ee5d4}{Change\+Kms\+Visibility}} (bool b\+Show\+Km)
+\item 
+virtual FVector \mbox{\hyperlink{class_a_path_ae0dbf32dc3fa012019b4d915815f35b9}{Get\+Closest\+Spline\+Location}} (FVector Runner\+Location) const override
+\item 
+virtual FVector \mbox{\hyperlink{class_a_path_a4d2d8a98bde0ed19acbac3e57f0e29e9}{Get\+Location\+At\+Distance}} (float Distance) const override
+\item 
+virtual float \mbox{\hyperlink{class_a_path_a50d8c2edf71113d20369a0146cefe2fe}{Get\+Distance\+Along\+Spline}} (FVector Runner\+Location) const
+\item 
+void \mbox{\hyperlink{class_a_path_abfb7535ec1c4f090e22bd70cc0bdc3b7}{Start\+Travel\+Forward}} ()
+\begin{DoxyCompactList}\small\item\em Travelling. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_path_ad2499b71d21a164ef4abc64ae1cce305}{Start\+Travel\+Backward}} ()
+\item 
+void \mbox{\hyperlink{class_a_path_a0b9f47e79590ce9f023f0d6e199e4e1e}{Stop\+Travel}} ()
+\item 
+void \mbox{\hyperlink{class_a_path_a11b92c52bf70d9558f6181ac14efbd80}{Draw\+Path}} (int64 Race\+ID, \mbox{\hyperlink{struct_f_race_path}{FRace\+Path}} Race\+Path\+Datas)
+\begin{DoxyCompactList}\small\item\em Draws the Path \& the Slope of the race. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_path_a1dd21836c5ddd606ebacd6c09649cd46}{Handle\+Checkpoints\+Datas\+Gathered}} (int64 Race\+ID, \mbox{\hyperlink{struct_f_checkpoints}{FCheckpoints}} Checkpoints\+Datas)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+FOn\+Path\+End\+Drawing \mbox{\hyperlink{class_a_path_a3b3137be5cd2737f9c1ba559bca6973d}{On\+Path\+End\+Drawing}}
+\item 
+FOn\+Geo\+Ref\+Location \mbox{\hyperlink{class_a_path_aab7bcce77b6d9247e91683c465f1126a}{On\+Geo\+Ref\+Location}}
+\item 
+int32 \mbox{\hyperlink{class_a_path_ad2d3cd51361034413f938e637141d0a0}{Nb\+Checkpoints}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_a_path_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_a_path_a8ea8f2c7dcc66535ac47575a7377feea}\index{APath@{APath}!APath@{APath}}
+\index{APath@{APath}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{APath()}{APath()}}
+{\footnotesize\ttfamily \label{class_a_path_a8ea8f2c7dcc66535ac47575a7377feea} 
+APath\+::\+APath (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_a_path_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_a_path_a15f2e17768cdc172a77c9212416c7783}\index{APath@{APath}!BeginPlay@{BeginPlay}}
+\index{BeginPlay@{BeginPlay}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{BeginPlay()}{BeginPlay()}}
+{\footnotesize\ttfamily \label{class_a_path_a15f2e17768cdc172a77c9212416c7783} 
+void APath\+::\+Begin\+Play (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_a_path_aef6be0dd54dd34ec3e1ab6990f3ee5d4}\index{APath@{APath}!ChangeKmsVisibility@{ChangeKmsVisibility}}
+\index{ChangeKmsVisibility@{ChangeKmsVisibility}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{ChangeKmsVisibility()}{ChangeKmsVisibility()}}
+{\footnotesize\ttfamily \label{class_a_path_aef6be0dd54dd34ec3e1ab6990f3ee5d4} 
+void APath\+::\+Change\+Kms\+Visibility (\begin{DoxyParamCaption}\item[{bool}]{b\+Show\+Km}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_path_abda57b13be7ae6e6d3a6e3a2359661bf}\index{APath@{APath}!ChangePathVisibility@{ChangePathVisibility}}
+\index{ChangePathVisibility@{ChangePathVisibility}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{ChangePathVisibility()}{ChangePathVisibility()}}
+{\footnotesize\ttfamily \label{class_a_path_abda57b13be7ae6e6d3a6e3a2359661bf} 
+void APath\+::\+Change\+Path\+Visibility (\begin{DoxyParamCaption}\item[{bool}]{b\+Show\+Path}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Toggle displays. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em b\+Show\+Path} & \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{class_i_path_interface_a2b9f39be6ceacadaf19f6ed971691432}{IPath\+Interface}}.
+
+\Hypertarget{class_a_path_a7f0a4b8bbc1305ef7ca4e4357161f18f}\index{APath@{APath}!ChangeSlopeVisibility@{ChangeSlopeVisibility}}
+\index{ChangeSlopeVisibility@{ChangeSlopeVisibility}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{ChangeSlopeVisibility()}{ChangeSlopeVisibility()}}
+{\footnotesize\ttfamily \label{class_a_path_a7f0a4b8bbc1305ef7ca4e4357161f18f} 
+void APath\+::\+Change\+Slope\+Visibility (\begin{DoxyParamCaption}\item[{bool}]{b\+Show\+Path}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_i_path_interface_a375bc41eaf878fe55e7501e66b294ccf}{IPath\+Interface}}.
+
+\Hypertarget{class_a_path_a11b92c52bf70d9558f6181ac14efbd80}\index{APath@{APath}!DrawPath@{DrawPath}}
+\index{DrawPath@{DrawPath}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{DrawPath()}{DrawPath()}}
+{\footnotesize\ttfamily \label{class_a_path_a11b92c52bf70d9558f6181ac14efbd80} 
+void APath\+::\+Draw\+Path (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{\mbox{\hyperlink{struct_f_race_path}{FRace\+Path}}}]{Race\+Path\+Datas}{}\end{DoxyParamCaption})}
+
+
+
+Draws the Path \& the Slope of the race. 
+
+Drawing the path.
+
+\begin{DoxyNote}{Note}
+Méthode interne 
+\end{DoxyNote}
+\Hypertarget{class_a_path_ae0dbf32dc3fa012019b4d915815f35b9}\index{APath@{APath}!GetClosestSplineLocation@{GetClosestSplineLocation}}
+\index{GetClosestSplineLocation@{GetClosestSplineLocation}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{GetClosestSplineLocation()}{GetClosestSplineLocation()}}
+{\footnotesize\ttfamily \label{class_a_path_ae0dbf32dc3fa012019b4d915815f35b9} 
+FVector APath\+::\+Get\+Closest\+Spline\+Location (\begin{DoxyParamCaption}\item[{FVector}]{Runner\+Location}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_i_path_interface_ad15082622c5f6d323b9bd3ddd42c1dfe}{IPath\+Interface}}.
+
+\Hypertarget{class_a_path_a50d8c2edf71113d20369a0146cefe2fe}\index{APath@{APath}!GetDistanceAlongSpline@{GetDistanceAlongSpline}}
+\index{GetDistanceAlongSpline@{GetDistanceAlongSpline}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{GetDistanceAlongSpline()}{GetDistanceAlongSpline()}}
+{\footnotesize\ttfamily \label{class_a_path_a50d8c2edf71113d20369a0146cefe2fe} 
+float APath\+::\+Get\+Distance\+Along\+Spline (\begin{DoxyParamCaption}\item[{FVector}]{Runner\+Location}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_i_path_interface_a89ea834f7d16b069dab9e0f003041bee}{IPath\+Interface}}.
+
+\Hypertarget{class_a_path_a4d2d8a98bde0ed19acbac3e57f0e29e9}\index{APath@{APath}!GetLocationAtDistance@{GetLocationAtDistance}}
+\index{GetLocationAtDistance@{GetLocationAtDistance}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{GetLocationAtDistance()}{GetLocationAtDistance()}}
+{\footnotesize\ttfamily \label{class_a_path_a4d2d8a98bde0ed19acbac3e57f0e29e9} 
+FVector APath\+::\+Get\+Location\+At\+Distance (\begin{DoxyParamCaption}\item[{float}]{Distance}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_i_path_interface_a0d54351bddd1b9a5362fe1737f2dec14}{IPath\+Interface}}.
+
+\Hypertarget{class_a_path_a1dd21836c5ddd606ebacd6c09649cd46}\index{APath@{APath}!HandleCheckpointsDatasGathered@{HandleCheckpointsDatasGathered}}
+\index{HandleCheckpointsDatasGathered@{HandleCheckpointsDatasGathered}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{HandleCheckpointsDatasGathered()}{HandleCheckpointsDatasGathered()}}
+{\footnotesize\ttfamily \label{class_a_path_a1dd21836c5ddd606ebacd6c09649cd46} 
+void APath\+::\+Handle\+Checkpoints\+Datas\+Gathered (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{\mbox{\hyperlink{struct_f_checkpoints}{FCheckpoints}}}]{Checkpoints\+Datas}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_path_a34fd42a77569082b3f29eec93c1c17c2}\index{APath@{APath}!SetRacePath@{SetRacePath}}
+\index{SetRacePath@{SetRacePath}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{SetRacePath()}{SetRacePath()}}
+{\footnotesize\ttfamily \label{class_a_path_a34fd42a77569082b3f29eec93c1c17c2} 
+void APath\+::\+Set\+Race\+Path (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_f_race_path}{FRace\+Path}} \&}]{Race\+Path}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_path_adcb6ca2acf7361160a63be61c24bc0e8}\index{APath@{APath}!StartPulse@{StartPulse}}
+\index{StartPulse@{StartPulse}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{StartPulse()}{StartPulse()}}
+{\footnotesize\ttfamily \label{class_a_path_adcb6ca2acf7361160a63be61c24bc0e8} 
+void APath\+::\+Start\+Pulse (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Pulse. 
+
+\Hypertarget{class_a_path_ad2499b71d21a164ef4abc64ae1cce305}\index{APath@{APath}!StartTravelBackward@{StartTravelBackward}}
+\index{StartTravelBackward@{StartTravelBackward}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{StartTravelBackward()}{StartTravelBackward()}}
+{\footnotesize\ttfamily \label{class_a_path_ad2499b71d21a164ef4abc64ae1cce305} 
+void APath\+::\+Start\+Travel\+Backward (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_path_abfb7535ec1c4f090e22bd70cc0bdc3b7}\index{APath@{APath}!StartTravelForward@{StartTravelForward}}
+\index{StartTravelForward@{StartTravelForward}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{StartTravelForward()}{StartTravelForward()}}
+{\footnotesize\ttfamily \label{class_a_path_abfb7535ec1c4f090e22bd70cc0bdc3b7} 
+void APath\+::\+Start\+Travel\+Forward (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Travelling. 
+
+\Hypertarget{class_a_path_a5e085bf71369e6d90c361d878508fd4a}\index{APath@{APath}!StopPulse@{StopPulse}}
+\index{StopPulse@{StopPulse}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{StopPulse()}{StopPulse()}}
+{\footnotesize\ttfamily \label{class_a_path_a5e085bf71369e6d90c361d878508fd4a} 
+void APath\+::\+Stop\+Pulse (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_a_path_a0b9f47e79590ce9f023f0d6e199e4e1e}\index{APath@{APath}!StopTravel@{StopTravel}}
+\index{StopTravel@{StopTravel}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{StopTravel()}{StopTravel()}}
+{\footnotesize\ttfamily \label{class_a_path_a0b9f47e79590ce9f023f0d6e199e4e1e} 
+void APath\+::\+Stop\+Travel (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_path_a29024bf0e1bf35d328f9e4933e513452}\index{APath@{APath}!Tick@{Tick}}
+\index{Tick@{Tick}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{Tick()}{Tick()}}
+{\footnotesize\ttfamily \label{class_a_path_a29024bf0e1bf35d328f9e4933e513452} 
+void APath\+::\+Tick (\begin{DoxyParamCaption}\item[{float}]{Delta\+Time}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_a_path_aa6053ff47dae4ea29f1d1dae2b47561a}\index{APath@{APath}!UpdatePathGlow@{UpdatePathGlow}}
+\index{UpdatePathGlow@{UpdatePathGlow}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{UpdatePathGlow()}{UpdatePathGlow()}}
+{\footnotesize\ttfamily \label{class_a_path_aa6053ff47dae4ea29f1d1dae2b47561a} 
+void APath\+::\+Update\+Path\+Glow (\begin{DoxyParamCaption}\item[{float}]{New\+Glow}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Updating Glow value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em New\+Glow} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_path_ac3ebc13327c84c6b320f469de2c996c7}\index{APath@{APath}!UpdatePulseSpeed@{UpdatePulseSpeed}}
+\index{UpdatePulseSpeed@{UpdatePulseSpeed}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{UpdatePulseSpeed()}{UpdatePulseSpeed()}}
+{\footnotesize\ttfamily \label{class_a_path_ac3ebc13327c84c6b320f469de2c996c7} 
+void APath\+::\+Update\+Pulse\+Speed (\begin{DoxyParamCaption}\item[{float}]{New\+Speed}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_a_path_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_a_path_ad2d3cd51361034413f938e637141d0a0}\index{APath@{APath}!NbCheckpoints@{NbCheckpoints}}
+\index{NbCheckpoints@{NbCheckpoints}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{NbCheckpoints}{NbCheckpoints}}
+{\footnotesize\ttfamily \label{class_a_path_ad2d3cd51361034413f938e637141d0a0} 
+int32 APath\+::\+Nb\+Checkpoints}
+
+\Hypertarget{class_a_path_aab7bcce77b6d9247e91683c465f1126a}\index{APath@{APath}!OnGeoRefLocation@{OnGeoRefLocation}}
+\index{OnGeoRefLocation@{OnGeoRefLocation}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{OnGeoRefLocation}{OnGeoRefLocation}}
+{\footnotesize\ttfamily \label{class_a_path_aab7bcce77b6d9247e91683c465f1126a} 
+FOn\+Geo\+Ref\+Location APath\+::\+On\+Geo\+Ref\+Location}
+
+\Hypertarget{class_a_path_a3b3137be5cd2737f9c1ba559bca6973d}\index{APath@{APath}!OnPathEndDrawing@{OnPathEndDrawing}}
+\index{OnPathEndDrawing@{OnPathEndDrawing}!APath@{APath}}
+\doxysubsubsection{\texorpdfstring{OnPathEndDrawing}{OnPathEndDrawing}}
+{\footnotesize\ttfamily \label{class_a_path_a3b3137be5cd2737f9c1ba559bca6973d} 
+FOn\+Path\+End\+Drawing APath\+::\+On\+Path\+End\+Drawing}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Trail\+Simulator/\+Public/\+Actors/\mbox{\hyperlink{_path_8h}{Path.\+h}}\item 
+Source/\+Trail\+Simulator/\+Private/\+Actors/\mbox{\hyperlink{_path_8cpp}{Path.\+cpp}}\end{DoxyCompactItemize}

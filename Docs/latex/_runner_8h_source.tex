@@ -1,0 +1,185 @@
+\doxysection{Runner.\+h}
+\hypertarget{_runner_8h_source}{}\label{_runner_8h_source}\index{Source/TrailSimulator/Public/Actors/Runner.h@{Source/TrailSimulator/Public/Actors/Runner.h}}
+\mbox{\hyperlink{_runner_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_runner_interface_8h}{RunnerInterface.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_runner_stackable_interface_8h}{RunnerStackableInterface.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_scale_interface_8h}{ScaleInterface.h}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}GameFramework/Actor.h"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}Runner.generated.h"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_f_runner_state}{FRunnerState}}}
+\DoxyCodeLine{00014\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ TWeakObjectPtr<ARunner>\ \mbox{\hyperlink{struct_f_runner_state_ad1a6703d6798b2903e4bc8fdd2d270ab}{Runner}};}
+\DoxyCodeLine{00016\ \ \ \ \ FVector\ \mbox{\hyperlink{struct_f_runner_state_a00e9dcec5332a9660dcc1302643c81fc}{CurrentOffset}}\ =\ FVector::ZeroVector;}
+\DoxyCodeLine{00017\ \ \ \ \ FVector\ \mbox{\hyperlink{struct_f_runner_state_aa47c085783d656a22420c956cf23e5c6}{CurrentScale}}\ \ =\ FVector(1.f);}
+\DoxyCodeLine{00018\ \};}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00023\ UCLASS()}
+\DoxyCodeLine{00024\ class\ TRAILSIMULATOR\_API\ \mbox{\hyperlink{class_a_runner_a2ca6e85da41e4de6a180c26cbc7685db}{ARunner}}\ :\ public\ AActor,\ public\ \mbox{\hyperlink{class_i_runner_interface}{IRunnerInterface}},\ public\ \mbox{\hyperlink{class_i_scale_interface}{IScaleInterface}},\ public\ \mbox{\hyperlink{class_i_runner_stackable_interface}{IRunnerStackableInterface}}}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{class_a_runner_a2ca6e85da41e4de6a180c26cbc7685db}{ARunner}}();}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner_a53034fa695a120c4dcf3c363c607c0c1}{Tick}}(\textcolor{keywordtype}{float}\ DeltaTime)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00031\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner_a828274914ab001440f7734fe824fd7fb}{StartAnimation}}(\textcolor{keywordtype}{float}\ RotationSpeed)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00033\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner_aa04131ba941699e01ec9037e3795f7fd}{StopAnimation}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00035\ \ \ \ \ }
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{comment}{//\ Scale}}
+\DoxyCodeLine{00037\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner_a26ff2c61700f8330fcf629c2383c77a2}{SetMinMax}}(int64\ RaceID,\ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}\ NewMinMax);}
+\DoxyCodeLine{00039\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}\ \mbox{\hyperlink{class_a_runner_ac38b7252f419c216b0d051929b4aaad2}{GetRunnerMinMax}}()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00041\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_runner_a50da82dfdc92422225a291a7ffa822a4}{GetRunnerVDelta}}()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00043\ \ \ \ \ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{comment}{//\ Stacked/Unstacked}}
+\DoxyCodeLine{00045\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{virtual}\ USceneComponent*\ \mbox{\hyperlink{class_a_runner_abef62a1056cd566eb55c1a4c6d84013e}{GetStackHookComponent}}()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00047\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{virtual}\ USceneComponent*\ \mbox{\hyperlink{class_a_runner_ae64859add5ef665e64671370f20828e0}{GetStackAttachComponent}}()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00049\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner_a06974151662a04ffc6828b09de6834c1}{SetIsStacked}}(\textcolor{keywordtype}{bool}\ bInStacked)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00051\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_a_runner_ad7eeee3b67c513bb2f0c0ccad6fe3172}{IsStacked}}()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00053\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00054\ \ \ \ \ bool\ \mbox{\hyperlink{class_a_runner_a8e35c2b9fdac9e4f2f2f3dd869d03481}{bStackedState}};}
+\DoxyCodeLine{00055\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_a_runner_a6b4872b9fd75bdc3302716dc86618bad}{bHasStackChildren}};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00059\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner_a5dc6eb8f5027b8623bca00248304f5d6}{UpdateGlobeAnchor}}();}
+\DoxyCodeLine{00060\ \ \ \ \ }
+\DoxyCodeLine{00061\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00062\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_settings_subsystem}{USettingsSubsystem}}>\ \mbox{\hyperlink{class_a_runner_a8ede53e69cf41134125897ebeb91a697}{SettingsSubsystem}};}
+\DoxyCodeLine{00063\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00064\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_runner_subsystem}{URunnerSubsystem}}>\ \mbox{\hyperlink{class_a_runner_acc379c37b2d51f0d7d028cf29a085f26}{RunnerSubsystem}};}
+\DoxyCodeLine{00065\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00066\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_runner_stacking_subsystem}{URunnerStackingSubsystem}}>\ \mbox{\hyperlink{class_a_runner_ac93982f2f7f1d88aef816a82b9c2f05f}{StackingSubsystem}};}
+\DoxyCodeLine{00067\ \ \ \ \ }
+\DoxyCodeLine{00068\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00069\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner_ae057f6451cbaceecee2908dda952080b}{ToggleClub}}(\textcolor{keywordtype}{bool}\ bDisplay)\ override;}
+\DoxyCodeLine{00070\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00071\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner_aaca1abd0a2bf25f3d215dcae81455b84}{ToggleFlag}}(\textcolor{keywordtype}{bool}\ bDisplay)\ override;}
+\DoxyCodeLine{00072\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00073\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner_a6aeb2bac09dc6b0044e8f7a716492cff}{TogglePhoto}}(\textcolor{keywordtype}{bool}\ bDisplay)\ override;}
+\DoxyCodeLine{00074\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner_ae643f51e2ceb8b3de775a88450633b8d}{UpdateRunnerLocation}}(\mbox{\hyperlink{struct_f_runner_struct}{FRunnerStruct}}\ RunnerStruct,\ TObjectPtr<class\ \mbox{\hyperlink{class_a_path}{APath}}>\ CurrentPath)\ override;}
+\DoxyCodeLine{00075\ \ \ \ \ }
+\DoxyCodeLine{00076\ \ \ \ \ FVector\ \mbox{\hyperlink{class_a_runner_a27d3835589dd7e2b6e20555a7d568e26}{CurrentLocation}};}
+\DoxyCodeLine{00077\ \ \ \ \ }
+\DoxyCodeLine{00078\ \ \ \ \ virtual\ USceneComponent*\ \mbox{\hyperlink{class_a_runner_ac28c8181e8aa08628f822507f4be0476}{GetFootHook}}()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_a_runner_a630b7c1c6cdff8060a4b44b304f8d397}{FootHook}};\ \}}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{virtual}\ UStaticMeshComponent*\ \mbox{\hyperlink{class_a_runner_ade0f88e9956474cc1c0a3bf0fb9d7161}{GetFootMesh}}()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_a_runner_a03002bac0593c06851ce484ddb77a348}{FootComponent}};\ \}}
+\DoxyCodeLine{00080\ \ \ \ \ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{comment}{//\ Orbit}}
+\DoxyCodeLine{00082\ \ \ \ \ UPROPERTY(VisibleAnywhere)}
+\DoxyCodeLine{00083\ \ \ \ \ TObjectPtr<class\ USpringArmComponent>\ \mbox{\hyperlink{class_a_runner_ae3c45e10fefd43f79d2eaae363134130}{SpringArmComponent}};}
+\DoxyCodeLine{00084\ \ \ \ \ UPROPERTY(VisibleAnywhere)}
+\DoxyCodeLine{00085\ \ \ \ \ TObjectPtr<class\ UCineCameraComponent>\ \mbox{\hyperlink{class_a_runner_aadfe042d897d5b9b697dbb0115c15594}{CameraComponent}};}
+\DoxyCodeLine{00086\ \ \ \ \ UPROPERTY(VisibleAnywhere)}
+\DoxyCodeLine{00087\ \ \ \ \ TObjectPtr<class\ UOWLCaptureComponent>\ \mbox{\hyperlink{class_a_runner_a5f45e247dc0d20efc0c2e5cf6e66fad7}{OWLCaptureComponent}};}
+\DoxyCodeLine{00088\ \ \ \ \ UPROPERTY(VisibleAnywhere)}
+\DoxyCodeLine{00089\ \ \ \ \ FTimerHandle\ \mbox{\hyperlink{class_a_runner_af5e63f0c47d7bbfa7c5b359a8b944154}{RotHandle}};}
+\DoxyCodeLine{00090\ \ \ \ \ UPROPERTY(VisibleAnywhere)}
+\DoxyCodeLine{00091\ \ \ \ \ TObjectPtr<class\ UTextureRenderTarget>\ \mbox{\hyperlink{class_a_runner_ac237c1910ce6988ceb61011628f1f53f}{RenderTarget}};}
+\DoxyCodeLine{00092\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_runner_ab5e396237a0db3920ba5f2d6a0ea7ab3}{OrbitYaw}}\ =\ 0.f;}
+\DoxyCodeLine{00094\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_runner_a4a814036a720e92630029908079a560d}{BaseArmPitch}}\ =\ 0.f;}
+\DoxyCodeLine{00096\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_runner_ab4a00a47160d2ba71f18a6ffa7b5b903}{BaseArmRoll}}\ =\ 0.f;}
+\DoxyCodeLine{00098\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_runner_af6b6b13169646f99b7bc625f03e59959}{OrbitSpeedDegPerSec}}\ =\ 12.f;\ \textcolor{comment}{//\ 360/10}}
+\DoxyCodeLine{00100\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_a_runner_a30ef2aa1cf3c9a0239a5a017a4736ba7}{bOrbitEnabled}}\ =\ false;}
+\DoxyCodeLine{00102\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_runner_ada4e50bfbb18c21fe17e47595e5b3569}{OrbitElapsed}}\ =\ 0.f;}
+\DoxyCodeLine{00104\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_runner_ab20c05cf15596ebf38923823b26bbf20}{StartYaw}};}
+\DoxyCodeLine{00106\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})\ }
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_a_runner_abc840852309e4ee45ddcfd60eaf0e33b}{bLookAtEnabled}}\ =\ true;}
+\DoxyCodeLine{00108\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})}
+\DoxyCodeLine{00109\ \ \ \ \ AActor*\ \mbox{\hyperlink{class_a_runner_a9e0a2b0fd5e0efdf5e20d1124e80d49d}{OriginalViewTarget}}\ =\ \textcolor{keywordtype}{nullptr};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ protected:}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner_a957513d5512933cd7d76bc4cf8dc497e}{OnLookAtTimerTick}}();}
+\DoxyCodeLine{00114\ \ \ \ \ }
+\DoxyCodeLine{00115\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner_a5652475c2e32419783b953afb19b68d5}{BeginPlay}}()\ override;}
+\DoxyCodeLine{00116\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner_ace2fd17957efd5803754b321ebe7ea25}{EndPlay}}(const\ EEndPlayReason::Type\ EndPlayReason)\ override;}
+\DoxyCodeLine{00117\ \ \ \ \ }
+\DoxyCodeLine{00118\ \ \ \ \ UPROPERTY(meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00119\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct}{FRunnerStruct}}\ \mbox{\hyperlink{class_a_runner_a080112cf9224232e80f5a57250d6b9b2}{RunnerDatas}};}
+\DoxyCodeLine{00120\ \ \ \ \ }
+\DoxyCodeLine{00121\ \ \ \ \ UFUNCTION(BlueprintCallable)}
+\DoxyCodeLine{00122\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner_af5f11f3b3a923ab34c437227f8bf5428}{AssignRunnerToTeam}}(int32\ IdTeam)\ override;}
+\DoxyCodeLine{00123\ \ \ \ \ UFUNCTION(BlueprintCallable)}
+\DoxyCodeLine{00124\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner_a1ed40c59692f0d124c14381b1c5d3d8a}{UpdateRunner}}(\mbox{\hyperlink{struct_f_runner_struct}{FRunnerStruct}}\ Runner,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ RaceSetup)\ override;}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditDefaultsOnly,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_a_runner_ae06c9ad69c786550dc0e7526acacf554}{bSnapToPath}};}
+\DoxyCodeLine{00128\ \ \ \ \ }
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{comment}{//Components}}
+\DoxyCodeLine{00130\ \ \ \ \ }
+\DoxyCodeLine{00131\ \ \ \ \ }
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{comment}{//\ GobeAnchor}}
+\DoxyCodeLine{00133\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditAnywhere,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00134\ \ \ \ \ TObjectPtr<class\ UCesiumGlobeAnchorComponent>\ \mbox{\hyperlink{class_a_runner_a74bc90ba154d32f6312fd67db6cb4abf}{GlobeAnchorComponent}};}
+\DoxyCodeLine{00135\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00136\ \ \ \ \ TSoftObjectPtr<class\ ACesiumGeoreference>\ \mbox{\hyperlink{class_a_runner_a7359580dab7a0d92216137d2db2a2ffa}{Georeference}};}
+\DoxyCodeLine{00137\ \ \ \ \ }
+\DoxyCodeLine{00138\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditAnywhere,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00139\ \ \ \ \ TObjectPtr<class\ USceneComponent>\ \mbox{\hyperlink{class_a_runner_a8025c04da77d110f0251b41d94f6abf7}{MainRootComponent}};}
+\DoxyCodeLine{00140\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditAnywhere,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00141\ \ \ \ \ TObjectPtr<class\ USceneComponent>\ \mbox{\hyperlink{class_a_runner_a6366e0538c11ae8a573473522b0d7794}{PresentationRoot}};}
+\DoxyCodeLine{00142\ \ \ \ \ }
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{comment}{//\ Foot}}
+\DoxyCodeLine{00144\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditAnywhere,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00145\ \ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ \mbox{\hyperlink{class_a_runner_a03002bac0593c06851ce484ddb77a348}{FootComponent}};}
+\DoxyCodeLine{00146\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditDefaultsOnly,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00147\ \ \ \ \ TObjectPtr<class\ USceneComponent>\ \mbox{\hyperlink{class_a_runner_a630b7c1c6cdff8060a4b44b304f8d397}{FootHook}};}
+\DoxyCodeLine{00148\ \ \ \ \ }
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{comment}{//\ Slash}}
+\DoxyCodeLine{00150\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditDefaultsOnly,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00151\ \ \ \ \ TObjectPtr<class\ USceneComponent>\ \mbox{\hyperlink{class_a_runner_ad4315a84557929a17a050fdda6df9f45}{SlashHook}};}
+\DoxyCodeLine{00152\ \ \ \ \ }
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{comment}{//\ Name\ Hook}}
+\DoxyCodeLine{00154\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditDefaultsOnly,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00155\ \ \ \ \ TObjectPtr<class\ USceneComponent>\ \mbox{\hyperlink{class_a_runner_a06406c3c3da2bc60596e48d892df5fa5}{NameHook}};}
+\DoxyCodeLine{00156\ \ \ \ \ }
+\DoxyCodeLine{00157\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00158\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_race_subsystem}{URaceSubsystem}}>\ \mbox{\hyperlink{class_a_runner_ab21f185ae9262bea68c3b9df7fec6084}{RaceSubsystem}};}
+\DoxyCodeLine{00159\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00160\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_scale_subsystem}{UScaleSubsystem}}>\ \mbox{\hyperlink{class_a_runner_a5f3c3bff78d7fbcc0b23da211023a28c}{ScaleSubsystem}};}
+\DoxyCodeLine{00161\ \ \ \ \ }
+\DoxyCodeLine{00162\ private:}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{comment}{//\ Variables}}
+\DoxyCodeLine{00164\ \ \ \ \ UPROPERTY(meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00165\ \ \ \ \ \mbox{\hyperlink{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824}{EStackState}}\ StackState;}
+\DoxyCodeLine{00166\ \ \ \ \ UPROPERTY(meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keywordtype}{bool}\ ActiveState;}
+\DoxyCodeLine{00168\ \ \ \ \ UPROPERTY(meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00169\ \ \ \ \ int32\ IdTeam;}
+\DoxyCodeLine{00170\ \ \ \ \ UPROPERTY(meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00171\ \ \ \ \ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}\ MinMax;}
+\DoxyCodeLine{00172\ \ \ \ \ }
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{comment}{//Pawn}}
+\DoxyCodeLine{00174\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditAnywhere,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00175\ \ \ \ \ TObjectPtr<APawn>\ DynaPawn;}
+\DoxyCodeLine{00176\ \ \ \ \ }
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{comment}{//\ Timer}}
+\DoxyCodeLine{00178\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditAnywhere,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00179\ \ \ \ \ FTimerHandle\ LookAtTimerHandle;}
+\DoxyCodeLine{00180\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditAnywhere,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00181\ \ \ \ \ FTimerHandle\ UpdateTimerHandle;}
+\DoxyCodeLine{00182\ \};}
+
+\end{DoxyCode}

@@ -1,0 +1,73 @@
+\doxysection{Path\+Subsystem.\+h}
+\hypertarget{_path_subsystem_8h_source}{}\label{_path_subsystem_8h_source}\index{Source/Subsystems/Public/PathSubsystem.h@{Source/Subsystems/Public/PathSubsystem.h}}
+\mbox{\hyperlink{_path_subsystem_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Subsystems/GameInstanceSubsystem.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}Interfaces/IHttpRequest.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}PathSubsystem.generated.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \mbox{\hyperlink{_path_subsystem_8h_a17727e765417b2733e632207f702002a}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}(}
+\DoxyCodeLine{00012\ \ \ \ \ FOnPathDatasGathered,}
+\DoxyCodeLine{00013\ \ \ \ \ int64,}
+\DoxyCodeLine{00014\ \ \ \ \ RaceID,}
+\DoxyCodeLine{00015\ \ \ \ \ \mbox{\hyperlink{struct_f_race_path}{FRacePath}},}
+\DoxyCodeLine{00016\ \ \ \ \ RacePath);}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00021\ UCLASS()}
+\DoxyCodeLine{00022\ class\ SUBSYSTEMS\_API\ \mbox{\hyperlink{class_u_path_subsystem}{UPathSubsystem}}\ :\ public\ UGameInstanceSubsystem}
+\DoxyCodeLine{00023\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00025\ \ \ \ \ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_path_subsystem_a535be43defff68bb997b4c990428011a}{Initialize}}(FSubsystemCollectionBase\&\ Collection)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_path_subsystem_aa8bf90ed1c031480cf362ce50678b4e8}{Deinitialize}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00029\ \ \ \ \ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_path_subsystem_a44ef2764318f5023e48fb0e7e7bfd4ce}{PerformHttpRequestForPath}}(int64\ RaceID,\ \textcolor{keyword}{const}\ FString\&\ PathEndpoint);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ TObjectPtr<AActor>\ \mbox{\hyperlink{class_u_path_subsystem_ac92f8a3b18aea4a12d115d0c2f16732c}{GetPathById}}(int64\ RaceID)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00037\ \ \ \ \ }
+\DoxyCodeLine{00038\ \ \ \ \ TObjectPtr<AActor>\ \mbox{\hyperlink{class_u_path_subsystem_acf54933d4a26e3321e499cbdf70e4e30}{SpawnPathActor}}(}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ int64\ RaceID,\ }
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ UWorld*\ World,}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_t_subclass_of}{TSubclassOf<AActor>}}\ PathClass,}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ FTransform\&\ SpawnTransform}
+\DoxyCodeLine{00043\ \ \ \ \ );}
+\DoxyCodeLine{00044\ \ \ \ \ }
+\DoxyCodeLine{00045\ \ \ \ \ TObjectPtr<AActor>\ \mbox{\hyperlink{class_u_path_subsystem_a0b5c6281cd22b44e3190e24a91352831}{SpawnKmActor}}(UWorld*\ World,\ \mbox{\hyperlink{class_t_subclass_of}{TSubclassOf<AActor>}}\ PathClass,\ \textcolor{keyword}{const}\ FTransform\&\ SpawnTransform);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ UPROPERTY(BlueprintAssignable,\ Category=\textcolor{stringliteral}{"{}Race|Events"{}})}
+\DoxyCodeLine{00048\ \ \ \ \ FOnPathDatasGathered\ \mbox{\hyperlink{class_u_path_subsystem_a14e5ed54bd7247ed3b3fd0bf3e1f0587}{OnPathDatasGathered}};}
+\DoxyCodeLine{00049\ \ \ \ \ }
+\DoxyCodeLine{00050\ \ \ \ \ FORCEINLINE\ \mbox{\hyperlink{struct_f_race_path}{FRacePath}}\ \mbox{\hyperlink{class_u_path_subsystem_a32ad66365612041111a56034bd24712f}{GetRacePath}}()\{\ \textcolor{keywordflow}{return}\ RacePath;\}}
+\DoxyCodeLine{00051\ \ \ \ \ }
+\DoxyCodeLine{00052\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00053\ \ \ \ \ TMap<FString,\ TSharedPtr<IHttpRequest,\ ESPMode::ThreadSafe>>\ ActivePathRequests;}
+\DoxyCodeLine{00054\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00055\ \ \ \ \ \mbox{\hyperlink{struct_f_race_path}{FRacePath}}\ RacePath;}
+\DoxyCodeLine{00056\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00057\ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ CurrentRaceSetup;}
+\DoxyCodeLine{00058\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00059\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_race_subsystem}{URaceSubsystem}}>\ RaceSubsystem;}
+\DoxyCodeLine{00060\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{void}\ SetRaceSetup(int64\ RaceID,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ NewRaceSetup);}
+\DoxyCodeLine{00062\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00063\ \ \ \ \ TMap<int64,\ \mbox{\hyperlink{struct_f_race_path}{FRacePath}}>\ RacePathsMap;}
+\DoxyCodeLine{00064\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00065\ \ \ \ \ TMap<int64,\ TObjectPtr<AActor>>\ MapPaths;}
+\DoxyCodeLine{00066\ \ \ \ \ }
+\DoxyCodeLine{00067\ \ \ \ \ }
+\DoxyCodeLine{00068\ \ \ \ \ }
+\DoxyCodeLine{00069\ \ \ \ \ }
+\DoxyCodeLine{00070\ \ \ \ \ }
+\DoxyCodeLine{00071\ \ \ \ \ }
+\DoxyCodeLine{00072\ \ \ \ \ }
+\DoxyCodeLine{00073\ \ \ \ \ }
+\DoxyCodeLine{00074\ \};}
+
+\end{DoxyCode}

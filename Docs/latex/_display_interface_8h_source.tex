@@ -1,0 +1,32 @@
+\doxysection{Display\+Interface.\+h}
+\hypertarget{_display_interface_8h_source}{}\label{_display_interface_8h_source}\index{Source/Subsystems/Public/DisplayInterface.h@{Source/Subsystems/Public/DisplayInterface.h}}
+\mbox{\hyperlink{_display_interface_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}UObject/Interface.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}DisplayInterface.generated.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ This\ class\ does\ not\ need\ to\ be\ modified.}}
+\DoxyCodeLine{00010\ UINTERFACE()}
+\DoxyCodeLine{00011\ class\ \mbox{\hyperlink{class_u_display_interface}{UDisplayInterface}}\ :\ public\ UInterface}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00014\ \};}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{class\ }SUBSYSTEMS\_API\ \mbox{\hyperlink{class_i_display_interface}{IDisplayInterface}}}
+\DoxyCodeLine{00020\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00024\ \ \ \ \ }
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_display_interface_a9c5c68e5e3596ab285ca40ea47da664f}{Display}}(int64\ Id,\ int64\ IdRace,\ int32\ bDisplay)\ =\ 0;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_display_interface_aa4dbd3e8fb428655c1f0294cd721fd84}{DisplayWeather}}(int64\ Id,\ int64\ IdRace,\ int32\ bDisplay)\ =\ 0;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_display_interface_a742d7bd7b2a3ab4944383418742b401d}{Teleport}}(int64\ Id,\ int64\ IdRace)\ =\ 0;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_display_interface_aa3a21bf32b781433d0b777bde078e86f}{Animation}}(int64\ Id,\ int64\ IdRace)\ =\ 0;}
+\DoxyCodeLine{00029\ \};}
+
+\end{DoxyCode}

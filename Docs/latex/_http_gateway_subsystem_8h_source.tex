@@ -1,0 +1,158 @@
+\doxysection{Http\+Gateway\+Subsystem.\+h}
+\hypertarget{_http_gateway_subsystem_8h_source}{}\label{_http_gateway_subsystem_8h_source}\index{Source/Subsystems/Public/HttpGatewaySubsystem.h@{Source/Subsystems/Public/HttpGatewaySubsystem.h}}
+\mbox{\hyperlink{_http_gateway_subsystem_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ HttpGatewaySubsystem.h}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}Subsystems/GameInstanceSubsystem.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}HttpRouteHandle.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}HttpServerRequest.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}HttpResultCallback.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}HttpGatewaySubsystem.generated.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ Race\ Commands}}
+\DoxyCodeLine{00012\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a7ed1901c21d274b0aefa20c588994a8e}{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}(FOnMoveToRace,\ int64\ RaceID);}
+\DoxyCodeLine{00013\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnDisplayRace,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00014\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnDisplayPath,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00015\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnDisplaySlope,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00016\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnDisplayPulse,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00017\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnDisplayKms,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00018\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a7ed1901c21d274b0aefa20c588994a8e}{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}(FOnSelectRaceTeams,\ int64\ RaceID);}
+\DoxyCodeLine{00019\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a7ed1901c21d274b0aefa20c588994a8e}{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}(FOnDeselectRaceTeams,\ int64\ RaceID);}
+\DoxyCodeLine{00020\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a7ed1901c21d274b0aefa20c588994a8e}{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}(FOnRefreshRace,\ int64\ RaceID);}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ Teams\ Commands}}
+\DoxyCodeLine{00023\ \mbox{\hyperlink{_http_gateway_subsystem_8h_afd119d2d584962c8c703777f4c69d286}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}(FOnDisplayTeam,\ int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00024\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnDisplayTeams,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00025\ \mbox{\hyperlink{_http_gateway_subsystem_8h_afd119d2d584962c8c703777f4c69d286}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}(FOnDisplayFlag,\ int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00026\ \mbox{\hyperlink{_http_gateway_subsystem_8h_afd119d2d584962c8c703777f4c69d286}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}(FOnDisplayClub,\ int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00027\ \mbox{\hyperlink{_http_gateway_subsystem_8h_afd119d2d584962c8c703777f4c69d286}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}(FOnDisplayPhoto,\ int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00028\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnTeleportToTeam,\ int64\ TeamID,\ int64\ RaceID);}
+\DoxyCodeLine{00029\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnFollowTeam,\ int64\ TeamID,\ int64\ RaceID);}
+\DoxyCodeLine{00030\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnTeamAnimation,\ int64\ TeamID,\ int64\ RaceID);}
+\DoxyCodeLine{00031\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnTeamStopAnimation,\ int64\ TeamID,\ int64\ RaceID);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{//\ Teamsgroup\ Commands}}
+\DoxyCodeLine{00034\ \mbox{\hyperlink{_http_gateway_subsystem_8h_afd119d2d584962c8c703777f4c69d286}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}(FOnAddTeamToGroup,\ int64\ TeamID,\ int64\ RaceID,\ int64\ GroupID);}
+\DoxyCodeLine{00035\ \mbox{\hyperlink{_http_gateway_subsystem_8h_afd119d2d584962c8c703777f4c69d286}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}(FOnRemoveTeamFromGroup,\ int64\ RaceID,\ int64\ TeamID,\ int64\ GroupID);}
+\DoxyCodeLine{00036\ \mbox{\hyperlink{_http_gateway_subsystem_8h_afd119d2d584962c8c703777f4c69d286}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}(FOnToggleGroup,\ int64\ RaceID,\ int64\ GroupID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00037\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a7ed1901c21d274b0aefa20c588994a8e}{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}(FOnDeleteRaceTeam,\ int64\ RaceID);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{comment}{//\ Travel}}
+\DoxyCodeLine{00041\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a7ed1901c21d274b0aefa20c588994a8e}{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}(FOnFlyForward,\ int64\ RaceID);}
+\DoxyCodeLine{00042\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a7ed1901c21d274b0aefa20c588994a8e}{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}(FOnFlyStop,\ int64\ RaceID);}
+\DoxyCodeLine{00043\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a7ed1901c21d274b0aefa20c588994a8e}{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}(FOnFlyPause,\ int64\ RaceID);}
+\DoxyCodeLine{00044\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a7ed1901c21d274b0aefa20c588994a8e}{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}(FOnFlyBackward,\ int64\ RaceID);}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{//\ Checkpoints\ Commands}}
+\DoxyCodeLine{00047\ \mbox{\hyperlink{_http_gateway_subsystem_8h_afd119d2d584962c8c703777f4c69d286}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}(FOnDisplayCheckpoint,\ int64\ CheckpointID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00048\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnDisplayCheckpoints,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00049\ \mbox{\hyperlink{_http_gateway_subsystem_8h_afd119d2d584962c8c703777f4c69d286}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}(FOnDisplayCheckpointWeather,\ int64\ CheckpointID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00050\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnCheckpointTeleport,\ int64\ CheckpointID,\ int64\ RaceID);}
+\DoxyCodeLine{00051\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnCheckpointAnimation,\ int64\ CheckpointID,\ int64\ RaceID);}
+\DoxyCodeLine{00052\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnCheckpointStopAnimation,\ int64\ CheckpointID,\ int64\ RaceID);}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{comment}{//\ Pois\ Commands}}
+\DoxyCodeLine{00055\ \mbox{\hyperlink{_http_gateway_subsystem_8h_afd119d2d584962c8c703777f4c69d286}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}(FOnDisplayPoi,\ int64\ PoiID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00056\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnDisplayPois,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00057\ \mbox{\hyperlink{_http_gateway_subsystem_8h_afd119d2d584962c8c703777f4c69d286}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}(FOnDisplayPoiWeather,\ int64\ PoiID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00058\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnPoiTeleport,\ int64\ PoiID,\ int64\ RaceID);}
+\DoxyCodeLine{00059\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnPoiAnimation,\ int64\ PoiID,\ int64\ RaceID);}
+\DoxyCodeLine{00060\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnPoiStopAnimation,\ int64\ PoiID,\ int64\ RaceID);}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{comment}{//\ Settings\ Commands}}
+\DoxyCodeLine{00063\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnUpdateFetch,\ \textcolor{keywordtype}{float}\ FetchValue,\ int64\ RaceID);}
+\DoxyCodeLine{00064\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnUpdateOffset,\ \textcolor{keywordtype}{float}\ OffsetValue,\ int64\ RaceID);}
+\DoxyCodeLine{00065\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnUpdateGlow,\ \textcolor{keywordtype}{float}\ GlowValue,\ int64\ RaceID);}
+\DoxyCodeLine{00066\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnUpdatePulse,\ \textcolor{keywordtype}{float}\ PulseSpeed,\ int64\ RaceID);}
+\DoxyCodeLine{00067\ \mbox{\hyperlink{_http_gateway_subsystem_8h_afd119d2d584962c8c703777f4c69d286}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}(FOnMinMaxUpdate,\ \textcolor{keywordtype}{float}\ MinValue,\ \textcolor{keywordtype}{float}\ MaxValue,\ int64\ RaceID);}
+\DoxyCodeLine{00068\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnNearFarUpdate,\ \textcolor{keywordtype}{float}\ NearValue,\ \textcolor{keywordtype}{float}\ FarValue);}
+\DoxyCodeLine{00069\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}(FOnUrlUpdate,\ FString\ NewUrl,\ int64\ RaceID);}
+\DoxyCodeLine{00070\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a7ed1901c21d274b0aefa20c588994a8e}{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}(FOnMainUrlUpdate,\ FString\ NewUrl);}
+\DoxyCodeLine{00071\ \mbox{\hyperlink{_http_gateway_subsystem_8h_a9c5931b73a40827144a09a6392159ce8}{DECLARE\_MULTICAST\_DELEGATE}}(FOnSaveMainUrl);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00077\ UCLASS()}
+\DoxyCodeLine{00078\ class\ SUBSYSTEMS\_API\ \mbox{\hyperlink{class_u_http_gateway_subsystem}{UHttpGatewaySubsystem}}\ :\ public\ UGameInstanceSubsystem}
+\DoxyCodeLine{00079\ \{}
+\DoxyCodeLine{00080\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_http_gateway_subsystem_ac233355b49ab9cc807b9c7ba64730681}{Initialize}}(FSubsystemCollectionBase\&\ Collection)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_http_gateway_subsystem_aff00c3977a99d4092ab7c2082af9d152}{Deinitialize}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00085\ \ \ \ \ }
+\DoxyCodeLine{00086\ \textcolor{comment}{\ \ \ \ /***\ RACE\ COMMANDS\ ***/}}
+\DoxyCodeLine{00087\ \ \ \ \ FOnMoveToRace\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a058a6fcf38c8468dcfafdfe2b6185e17}{OnMoveToRace}};}
+\DoxyCodeLine{00088\ \ \ \ \ FOnDisplayRace\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a05e86cda3bad57297e2ca5196fedab4e}{OnDisplayRace}};}
+\DoxyCodeLine{00089\ \ \ \ \ FOnDisplayPath\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a26bb88bbd3d8879972c11de9a4573195}{OnDisplayPath}};}
+\DoxyCodeLine{00090\ \ \ \ \ FOnDisplaySlope\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a84c82ff43d6d5643c088f879004d7460}{OnDisplaySlope}};}
+\DoxyCodeLine{00091\ \ \ \ \ FOnDisplayPulse\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a85e5cc6cefff757da8c6b0e2497e09ae}{OnDisplayPulse}};}
+\DoxyCodeLine{00092\ \ \ \ \ FOnDisplayKms\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a032a644647939515a08c623cc557aa33}{OnDisplayKms}};}
+\DoxyCodeLine{00093\ \ \ \ \ FOnSelectRaceTeams\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a9e7e932a547f63a0a268edb09ddf1d6e}{OnSelectRaceTeams}};}
+\DoxyCodeLine{00094\ \ \ \ \ FOnDeselectRaceTeams\ \mbox{\hyperlink{class_u_http_gateway_subsystem_acc4140378065e2e63566ac3ada02edc7}{OnDeselectRaceTeams}};}
+\DoxyCodeLine{00095\ \ \ \ \ FOnRefreshRace\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a037cbc2a98270e993246c123a77c7b59}{OnRefreshRace}};}
+\DoxyCodeLine{00096\ \ \ \ \ FOnDeleteRaceTeam\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a022bc045ca985b3ab527b747549e13d3}{OnDeleteRaceTeam}};}
+\DoxyCodeLine{00097\ \ \ \ \ FOnFlyForward\ \mbox{\hyperlink{class_u_http_gateway_subsystem_acdb966e8b4f2563decd9eaaa0bbdb17f}{OnFlyForward}};}
+\DoxyCodeLine{00098\ \ \ \ \ FOnFlyStop\ \mbox{\hyperlink{class_u_http_gateway_subsystem_ad5a4bce086971e78c7aef5d37e5efa07}{OnFlyStop}};}
+\DoxyCodeLine{00099\ \ \ \ \ FOnFlyPause\ \mbox{\hyperlink{class_u_http_gateway_subsystem_ab293286c812b5b99e7ccfecd71a7f5df}{OnFlyPause}};}
+\DoxyCodeLine{00100\ \ \ \ \ FOnFlyBackward\ \mbox{\hyperlink{class_u_http_gateway_subsystem_aa0159830873ff4fc6bb8cdb6025a7c75}{OnFlyBackward}};}
+\DoxyCodeLine{00101\ \ \ \ \ }
+\DoxyCodeLine{00102\ \textcolor{comment}{\ \ \ \ /***\ TEAMS\ COMMANDS\ ***/}}
+\DoxyCodeLine{00103\ \ \ \ \ FOnDisplayTeam\ \mbox{\hyperlink{class_u_http_gateway_subsystem_abc2c266089393fdb0d94d91d71bfc0bf}{OnDisplayTeam}};}
+\DoxyCodeLine{00104\ \ \ \ \ FOnDisplayFlag\ \mbox{\hyperlink{class_u_http_gateway_subsystem_afb444e420e24a91c13e8980b9593963d}{OnDisplayFlag}};}
+\DoxyCodeLine{00105\ \ \ \ \ FOnDisplayClub\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a3698d2e9bb79c05f4a12cad631f5aafc}{OnDisplayClub}};}
+\DoxyCodeLine{00106\ \ \ \ \ FOnDisplayPhoto\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a791fa522922482f7b8ae673a3448e020}{OnDisplayPhoto}};}
+\DoxyCodeLine{00107\ \ \ \ \ FOnTeleportToTeam\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a2a38ede8f3f7a6bb9f3f0bf6ef08746e}{OnTeleportToTeam}};}
+\DoxyCodeLine{00108\ \ \ \ \ FOnFollowTeam\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a3ec3e1acb0531324f5b6eeb7b49d8d5b}{OnFollowTeam}};\ }
+\DoxyCodeLine{00109\ \ \ \ \ FOnDisplayTeams\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a448cf66b2c3642cf5dd5d3b115fbb1c9}{OnDisplayTeams}};}
+\DoxyCodeLine{00110\ \ \ \ \ FOnTeamAnimation\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a66df4eea8e555e393c01b1af2545e599}{OnTeamAnimation}};}
+\DoxyCodeLine{00111\ \ \ \ \ FOnTeamStopAnimation\ \mbox{\hyperlink{class_u_http_gateway_subsystem_ae312ff6a782477463a57649152183be1}{OnTeamStopAnimation}};}
+\DoxyCodeLine{00112\ \ \ \ \ }
+\DoxyCodeLine{00113\ \textcolor{comment}{\ \ \ \ /***\ TEAMGROUPS\ COMMANDS\ ***/}}
+\DoxyCodeLine{00114\ \ \ \ \ FOnAddTeamToGroup\ \mbox{\hyperlink{class_u_http_gateway_subsystem_acb0efedd62472991f42adc3eabb8e3af}{OnAddTeamToGroup}};}
+\DoxyCodeLine{00115\ \ \ \ \ FOnRemoveTeamFromGroup\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a104688d19a72f11f7b77bdcd3adc7620}{OnRemoveTeamFromGroup}};}
+\DoxyCodeLine{00116\ \ \ \ \ FOnToggleGroup\ \mbox{\hyperlink{class_u_http_gateway_subsystem_af6bbcacc9bd69af0204804cd2044523f}{OnToggleGroup}};}
+\DoxyCodeLine{00117\ \ \ \ \ }
+\DoxyCodeLine{00118\ \textcolor{comment}{\ \ \ \ /***\ CHECKPOINTS\ COMMANDS\ ***/}}
+\DoxyCodeLine{00119\ \ \ \ \ FOnDisplayCheckpoint\ \mbox{\hyperlink{class_u_http_gateway_subsystem_ac850168e657dd48e150d17ed633ad8bb}{OnDisplayCheckpoint}};}
+\DoxyCodeLine{00120\ \ \ \ \ FOnDisplayCheckpoints\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a82fadc2cffb9c3e592cf702e0bc50ac4}{OnDisplayCheckpoints}};}
+\DoxyCodeLine{00121\ \ \ \ \ FOnDisplayCheckpointWeather\ \mbox{\hyperlink{class_u_http_gateway_subsystem_ada439fe27179c182cbe67fe118bc1a5c}{OnDisplayCheckpointWeather}};}
+\DoxyCodeLine{00122\ \ \ \ \ FOnCheckpointTeleport\ \mbox{\hyperlink{class_u_http_gateway_subsystem_acffbf783cbb6a73c40d26b8fcb1f4284}{OnCheckpointTeleport}};}
+\DoxyCodeLine{00123\ \ \ \ \ FOnCheckpointAnimation\ \mbox{\hyperlink{class_u_http_gateway_subsystem_ac4ddf688905235e338abb5050d0016d8}{OnCheckpointAnimation}};}
+\DoxyCodeLine{00124\ \ \ \ \ FOnCheckpointStopAnimation\ \mbox{\hyperlink{class_u_http_gateway_subsystem_ae58a49b5b1ce636a9f46bba8fad6e412}{OnCheckpointStopAnimation}};}
+\DoxyCodeLine{00125\ \ \ \ \ }
+\DoxyCodeLine{00126\ \textcolor{comment}{\ \ \ \ /***\ POIS\ COMMANDS\ ***/}}
+\DoxyCodeLine{00127\ \ \ \ \ FOnDisplayPoi\ \mbox{\hyperlink{class_u_http_gateway_subsystem_ad3c2f973db99613afe8f830505ea38b2}{OnDisplayPoi}};}
+\DoxyCodeLine{00128\ \ \ \ \ FOnDisplayPois\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a80b7c27448371505ca8f459953e88bb0}{OnDisplayPois}};}
+\DoxyCodeLine{00129\ \ \ \ \ FOnDisplayPoiWeather\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a039ad013cd8ac792c392dd4ca148b383}{OnDisplayPoiWeather}};}
+\DoxyCodeLine{00130\ \ \ \ \ FOnPoiTeleport\ \mbox{\hyperlink{class_u_http_gateway_subsystem_af874fdde1d1416efa03a553d460c9ff9}{OnPoiTeleport}};}
+\DoxyCodeLine{00131\ \ \ \ \ FOnPoiAnimation\ \mbox{\hyperlink{class_u_http_gateway_subsystem_adb76e9642e1742414252ece0a0776561}{OnPoiAnimation}};}
+\DoxyCodeLine{00132\ \ \ \ \ FOnPoiStopAnimation\ \mbox{\hyperlink{class_u_http_gateway_subsystem_aaf49aea398a18c5b8798fe1bec74d9a3}{OnPoiStopAnimation}};}
+\DoxyCodeLine{00133\ \ \ \ \ }
+\DoxyCodeLine{00134\ \textcolor{comment}{\ \ \ \ /***\ SETTINGS\ COMMANDS\ ***/}}
+\DoxyCodeLine{00135\ \ \ \ \ FOnUpdateFetch\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a5e215ab40a57f3e2dafc7dac630c95a5}{OnUpdateFetch}};}
+\DoxyCodeLine{00136\ \ \ \ \ FOnUpdateOffset\ \mbox{\hyperlink{class_u_http_gateway_subsystem_ac5138523c427e843dc9f6d31200384ae}{OnUpdateOffset}};}
+\DoxyCodeLine{00137\ \ \ \ \ FOnUpdateGlow\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a376c2da57420bde71af81275a06e02b7}{OnUpdateGlow}};}
+\DoxyCodeLine{00138\ \ \ \ \ FOnUpdatePulse\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a38f6975104710cbf57722d4e8925f98a}{OnUpdatePulse}};}
+\DoxyCodeLine{00139\ \ \ \ \ FOnMinMaxUpdate\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a9d14b8f3bbb1f58416a79a2b47330f10}{OnMinMaxUpdate}};}
+\DoxyCodeLine{00140\ \ \ \ \ FOnNearFarUpdate\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a476e5bafd1c3791bba6a5ba7049d88ad}{OnNearFarUpdate}};}
+\DoxyCodeLine{00141\ \ \ \ \ FOnUrlUpdate\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a9030c9fe6b337f6740bf4144af78ef14}{OnUrlUpdate}};}
+\DoxyCodeLine{00142\ \ \ \ \ FOnMainUrlUpdate\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a1588d843685614182830b060e37bc735}{OnMainUrlUpdate}};}
+\DoxyCodeLine{00143\ \ \ \ \ FOnSaveMainUrl\ \mbox{\hyperlink{class_u_http_gateway_subsystem_a727d509d286e0afa275746990d9c2fa7}{OnSaveMainUrl}};}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00147\ \ \ \ \ FHttpRouteHandle\ CommandRouteHandle;}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keywordtype}{bool}\ HandleCommandRequest(\textcolor{keyword}{const}\ FHttpServerRequest\&\ Request,\ \textcolor{keyword}{const}\ FHttpResultCallback\&\ OnComplete)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00149\ \ \ \ \ }
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{comment}{//\ Router}}
+\DoxyCodeLine{00151\ \ \ \ \ TSharedPtr<class\ IHttpRouter>\ HttpRouter;}
+\DoxyCodeLine{00152\ \ \ \ \ }
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{comment}{//\ Listen\ Port}}
+\DoxyCodeLine{00154\ \ \ \ \ int32\ ListenPort\ =\ 8200;}
+\DoxyCodeLine{00155\ \ \ \ \ }
+\DoxyCodeLine{00156\ \ \ \ \ }
+\DoxyCodeLine{00157\ \};}
+
+\end{DoxyCode}

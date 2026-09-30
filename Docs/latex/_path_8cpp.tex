@@ -1,0 +1,62 @@
+\doxysection{Source/\+Trail\+Simulator/\+Private/\+Actors/\+Path.cpp File Reference}
+\hypertarget{_path_8cpp}{}\label{_path_8cpp}\index{Source/TrailSimulator/Private/Actors/Path.cpp@{Source/TrailSimulator/Private/Actors/Path.cpp}}
+{\ttfamily \#include "{}Trail\+Simulator/\+Public/\+Actors/\+Path.\+h"{}}\newline
+{\ttfamily \#include "{}Cesium\+Fly\+To\+Component.\+h"{}}\newline
+{\ttfamily \#include "{}Cesium\+Georeference.\+h"{}}\newline
+{\ttfamily \#include "{}Cesium\+Globe\+Anchor\+Component.\+h"{}}\newline
+{\ttfamily \#include "{}Settings\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Race\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Checkpoint\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Cine\+Camera\+Component.\+h"{}}\newline
+{\ttfamily \#include "{}Globe\+Aware\+Default\+Pawn.\+h"{}}\newline
+{\ttfamily \#include "{}Loading\+Status\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Weather\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Path\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}World\+Utils.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+Checkpoint.\+h"{}}\newline
+{\ttfamily \#include "{}Components/\+Spline\+Component.\+h"{}}\newline
+{\ttfamily \#include "{}Components/\+Spline\+Mesh\+Component.\+h"{}}\newline
+{\ttfamily \#include "{}Kismet/\+Gameplay\+Statics.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+Km.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+Generic/\+Checkpoint\+\_\+\+Generic.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+GTWS/\+Checkpoint\+\_\+\+GTWS.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+UTMB/\+Checkpoint\+\_\+\+UTMB.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+Generic/\+Km\+\_\+\+Generic.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+GTWS/\+Km\+\_\+\+GTWS.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+UTMB/\+Km\+\_\+\+UTMB.\+h"{}}\newline
+{\ttfamily \#include "{}Camera/\+Camera\+Component.\+h"{}}\newline
+{\ttfamily \#include "{}Game\+Framework/\+Spring\+Arm\+Component.\+h"{}}\newline
+{\ttfamily \#include "{}Materials/\+Material\+Parameter\+Collection.\+h"{}}\newline
+{\ttfamily \#include "{}Materials/\+Material\+Parameter\+Collection\+Instance.\+h"{}}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{_path_8cpp_ae1c668bca6a07b916230c376235df6c2}{ECC\+\_\+\+Cesium\+Channel}}~ECC\+\_\+\+Game\+Trace\+Channel1
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{_path_8cpp_a310d004300f6f6a0b955b7d58661e818}{Build\+Simplified\+Rail\+Locked}} (USpline\+Component \texorpdfstring{$\ast$}{*}Source, USpline\+Component \texorpdfstring{$\ast$}{*}Rail, float Tolerance\+Meters, const TArray$<$ FVector $>$ \&Remarkable\+World\+Points, float Sample\+Step\+Meters=10.f)
+\end{DoxyCompactItemize}
+
+
+\label{doc-define-members}
+\Hypertarget{_path_8cpp_doc-define-members}
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{_path_8cpp_ae1c668bca6a07b916230c376235df6c2}\index{Path.cpp@{Path.cpp}!ECC\_CesiumChannel@{ECC\_CesiumChannel}}
+\index{ECC\_CesiumChannel@{ECC\_CesiumChannel}!Path.cpp@{Path.cpp}}
+\doxysubsubsection{\texorpdfstring{ECC\_CesiumChannel}{ECC\_CesiumChannel}}
+{\footnotesize\ttfamily \label{_path_8cpp_ae1c668bca6a07b916230c376235df6c2} 
+\#define ECC\+\_\+\+Cesium\+Channel~ECC\+\_\+\+Game\+Trace\+Channel1}
+
+
+
+\label{doc-func-members}
+\Hypertarget{_path_8cpp_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{_path_8cpp_a310d004300f6f6a0b955b7d58661e818}\index{Path.cpp@{Path.cpp}!BuildSimplifiedRailLocked@{BuildSimplifiedRailLocked}}
+\index{BuildSimplifiedRailLocked@{BuildSimplifiedRailLocked}!Path.cpp@{Path.cpp}}
+\doxysubsubsection{\texorpdfstring{BuildSimplifiedRailLocked()}{BuildSimplifiedRailLocked()}}
+{\footnotesize\ttfamily \label{_path_8cpp_a310d004300f6f6a0b955b7d58661e818} 
+void Build\+Simplified\+Rail\+Locked (\begin{DoxyParamCaption}\item[{USpline\+Component \texorpdfstring{$\ast$}{*}}]{Source}{, }\item[{USpline\+Component \texorpdfstring{$\ast$}{*}}]{Rail}{, }\item[{float}]{Tolerance\+Meters}{, }\item[{const TArray$<$ FVector $>$ \&}]{Remarkable\+World\+Points}{, }\item[{float}]{Sample\+Step\+Meters}{ = {\ttfamily 10.f}}\end{DoxyParamCaption})}
+

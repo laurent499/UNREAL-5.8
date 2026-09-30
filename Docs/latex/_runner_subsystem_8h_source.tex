@@ -1,0 +1,104 @@
+\doxysection{Runner\+Subsystem.\+h}
+\hypertarget{_runner_subsystem_8h_source}{}\label{_runner_subsystem_8h_source}\index{Source/Subsystems/Public/RunnerSubsystem.h@{Source/Subsystems/Public/RunnerSubsystem.h}}
+\mbox{\hyperlink{_runner_subsystem_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Subsystems/GameInstanceSubsystem.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}Interfaces/IHttpRequest.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}RunnerSubsystem.generated.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \mbox{\hyperlink{_runner_subsystem_8h_a65f18feb7c249a84628af897dcd2b565}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}(}
+\DoxyCodeLine{00012\ \ \ \ \ FOnRunnersDatasGathered,}
+\DoxyCodeLine{00013\ \ \ \ \ int64,}
+\DoxyCodeLine{00014\ \ \ \ \ RaceID,}
+\DoxyCodeLine{00015\ \ \ \ \ \mbox{\hyperlink{struct_f_runners}{FRunners}},}
+\DoxyCodeLine{00016\ \ \ \ \ RunnersDatas);}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \mbox{\hyperlink{_runner_subsystem_8h_a65f18feb7c249a84628af897dcd2b565}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}(}
+\DoxyCodeLine{00019\ \ \ \ \ FOnRunnersUpdateDatas,}
+\DoxyCodeLine{00020\ \ \ \ \ int64,}
+\DoxyCodeLine{00021\ \ \ \ \ RaceID,}
+\DoxyCodeLine{00022\ \ \ \ \ \mbox{\hyperlink{struct_f_runners}{FRunners}},}
+\DoxyCodeLine{00023\ \ \ \ \ RunnersDatas);}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \mbox{\hyperlink{_runner_subsystem_8h_a65f18feb7c249a84628af897dcd2b565}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}(}
+\DoxyCodeLine{00026\ \ \ \ \ FOnRunnerDatasGathered,}
+\DoxyCodeLine{00027\ \ \ \ \ int64,}
+\DoxyCodeLine{00028\ \ \ \ \ RaceID,}
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct}{FRunnerStruct}},}
+\DoxyCodeLine{00030\ \ \ \ \ Runner);}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00035\ UCLASS()}
+\DoxyCodeLine{00036\ class\ SUBSYSTEMS\_API\ \mbox{\hyperlink{class_u_runner_subsystem}{URunnerSubsystem}}\ :\ public\ UGameInstanceSubsystem}
+\DoxyCodeLine{00037\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00039\ \ \ \ \ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{public}:\ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_runner_subsystem_a4a9b65e796b6709dbe414159679b9d40}{Initialize}}(FSubsystemCollectionBase\&\ Collection)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_runner_subsystem_ae7963209dde32b85881acd8a995d3afb}{Deinitialize}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00043\ \ \ \ \ }
+\DoxyCodeLine{00044\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00045\ \ \ \ \ \mbox{\hyperlink{struct_f_runners}{FRunners}}\ \mbox{\hyperlink{class_u_runner_subsystem_a83166d75eace55515d0bf687a1d7eba8}{GetRunnersByRaceId}}(int64\ RaceID);}
+\DoxyCodeLine{00046\ \ \ \ \ TObjectPtr<AActor>\ \mbox{\hyperlink{class_u_runner_subsystem_a4f399dcb5b2353335f0266cca95542af}{GetRunnerActor}}(int64\ RaceID,\ int64\ RunnerID);}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_runner_subsystem_a799da3aaab7e052c412c27cf130dcaa6}{PerformHttpRequestForRunners}}(int64\ RaceID,\ \textcolor{keyword}{const}\ FString\&\ RunnersEndPoint,\ \textcolor{keywordtype}{bool}\ bStartup);}
+\DoxyCodeLine{00054\ \ \ \ \ }
+\DoxyCodeLine{00061\ \ \ \ \ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_runner_subsystem_a6803bf11568039a273aadda1ae42136b}{PerformHttpRequestForRunner}}(int64\ RaceID,\ \textcolor{keyword}{const}\ FString\&\ RunnerEndPoint,\ int64\ RunnerId);}
+\DoxyCodeLine{00071\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00072\ \ \ \ \ AActor*\ \mbox{\hyperlink{class_u_runner_subsystem_a8ef8f0ec5c6c301276ca17d2a21d1daf}{SpawnRunnerActor}}(}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ int64\ RaceID,}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct}{FRunnerStruct}}\ Runner,}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ UWorld*\ World,}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_t_subclass_of}{TSubclassOf<AActor>}}\ RunnerClass,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ FTransform\&\ SpawnTransform);}
+\DoxyCodeLine{00078\ \ \ \ \ }
+\DoxyCodeLine{00079\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_u_runner_subsystem_a42322d47da28358ef30ffd14e2d3fba7}{DoesRunnerBelongsToRace}}(int64\ RunnerID,\ int64\ RaceID);}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_runner_subsystem_a15923da922b06af11ef0608e49d3a723}{ToggleRunners}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00084\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_runner_subsystem_a965f7449d0a5dff8cac0a1dc0e52e77c}{ToggleRunner}}(int64\ RaceID,\ int64\ RunnerID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ UPROPERTY(BlueprintAssignable,\ Category=\textcolor{stringliteral}{"{}Race|Events"{}})}
+\DoxyCodeLine{00088\ \ \ \ \ FOnRunnersDatasGathered\ \mbox{\hyperlink{class_u_runner_subsystem_a43c5386cf213202f96f57bd41d0e7013}{OnRunnersDatasGathered}};}
+\DoxyCodeLine{00089\ \ \ \ \ UPROPERTY(BlueprintAssignable,\ Category=\textcolor{stringliteral}{"{}Race|Events"{}})}
+\DoxyCodeLine{00090\ \ \ \ \ FOnRunnersUpdateDatas\ \mbox{\hyperlink{class_u_runner_subsystem_a0d17f039f6ffb040c2dccfa76c5cdd8f}{OnRunnersUpdateDatas}};}
+\DoxyCodeLine{00091\ \ \ \ \ }
+\DoxyCodeLine{00092\ \ \ \ \ UPROPERTY(BlueprintAssignable,\ Category=\textcolor{stringliteral}{"{}Race|Events"{}})}
+\DoxyCodeLine{00093\ \ \ \ \ FOnRunnerDatasGathered\ \mbox{\hyperlink{class_u_runner_subsystem_a60705fe7bfdcd5dbafe97e386272aad2}{OnRunnerDatasGathered}};}
+\DoxyCodeLine{00094\ \ \ \ \ }
+\DoxyCodeLine{00095\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_runner_subsystem_affb560e17da744d811603c69f73df6d5}{Animation}}(int64\ RunnerID,\ int64\ RaceID);}
+\DoxyCodeLine{00097\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_runner_subsystem_af637131120d13af4f8fae07e6b752816}{StopAnimation}}(int64\ RunnerID,\ int64\ RaceID);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ }
+\DoxyCodeLine{00101\ private:}
+\DoxyCodeLine{00102\ \ \ \ \ TMap<int64,\ TSharedPtr<IHttpRequest,\ ESPMode::ThreadSafe>>\ ActiveRunnerRequests;}
+\DoxyCodeLine{00103\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00104\ \ \ \ \ \mbox{\hyperlink{struct_f_runners}{FRunners}}\ Runners;}
+\DoxyCodeLine{00105\ \ \ \ \ }
+\DoxyCodeLine{00106\ \ \ \ \ TMap<int64,\ \mbox{\hyperlink{struct_f_runners}{FRunners}}>\ RunnersMap;}
+\DoxyCodeLine{00107\ \ \ \ \ }
+\DoxyCodeLine{00108\ \ \ \ \ TMap<int64,\ TMap<int64,\ TObjectPtr<AActor>>>\ RunnersActorsMap;}
+\DoxyCodeLine{00109\ \ \ \ \ }
+\DoxyCodeLine{00110\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00111\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_struct}{FRunnerStruct}}\ RunnerDatas;}
+\DoxyCodeLine{00112\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00113\ \ \ \ \ int64\ CurrentRunnerId;}
+\DoxyCodeLine{00114\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00115\ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ CurrentRaceSetup;}
+\DoxyCodeLine{00116\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00117\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_race_subsystem}{URaceSubsystem}}>\ RaceSubsystem;}
+\DoxyCodeLine{00118\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordtype}{void}\ SetRaceSetup(int64\ RaceID,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ NewRaceSetup);}
+\DoxyCodeLine{00120\ \};}
+
+\end{DoxyCode}

@@ -1,0 +1,482 @@
+\doxysection{Race\+Manager.\+h}
+\hypertarget{_race_manager_8h_source}{}\label{_race_manager_8h_source}\index{Source/TrailSimulator/Public/RaceManager.h@{Source/TrailSimulator/Public/RaceManager.h}}
+\mbox{\hyperlink{_race_manager_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Cesium3DTileset.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}GameFramework/Actor.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}RaceManager.generated.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ UCLASS()}
+\DoxyCodeLine{00012\ class\ TRAILSIMULATOR\_API\ \mbox{\hyperlink{class_a_race_manager_aed4cc09acb3bc0af1f2c0518ae289f14}{ARaceManager}}\ :\ public\ AActor}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00017\ \ \ \ \ \mbox{\hyperlink{class_a_race_manager_aed4cc09acb3bc0af1f2c0518ae289f14}{ARaceManager}}();}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a1525d2861aee893fcc940e5732ad497d}{Tick}}(\textcolor{keywordtype}{float}\ DeltaTime)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00019\ \ \ \ \ }
+\DoxyCodeLine{00020\ \ \ \ \ \mbox{\hyperlink{class_a_race_manager_ad1f7c7e3e04f7614051b4e97df0d8632}{DECLARE\_MULTICAST\_DELEGATE}}(FOnChangeDestination);}
+\DoxyCodeLine{00021\ \ \ \ \ FOnChangeDestination\ \mbox{\hyperlink{class_a_race_manager_ae141a10fc0ea54be84435fe59bb3e6b0}{OnChangeDestination}};}
+\DoxyCodeLine{00022\ \ \ \ \ }
+\DoxyCodeLine{00023\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00024\ \ \ \ \ bool\ \mbox{\hyperlink{class_a_race_manager_ad0ce5d52716d42c23fdc6c697cf65ed0}{RefreshSubsystems}}()\ const;}
+\DoxyCodeLine{00025\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_a_race_manager_a7943b49899815f936822cbf753e4918c}{RefreshSubsystemsFromPIE}}()\ const;}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00029\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00030\ \ \ \ \ mutable\ TObjectPtr<class\ \mbox{\hyperlink{class_u_path_subsystem}{UPathSubsystem}}>\ \mbox{\hyperlink{class_a_race_manager_a346cdd14d106fd4d0fad1a4247124707}{PathSubsystem}};}
+\DoxyCodeLine{00031\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00032\ \ \ \ \ mutable\ TObjectPtr<class\ \mbox{\hyperlink{class_u_runner_subsystem}{URunnerSubsystem}}>\ \mbox{\hyperlink{class_a_race_manager_aad7b8c513a6e8bd1372cd169a23c1230}{RunnerSubsystem}};}
+\DoxyCodeLine{00033\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00034\ \ \ \ \ mutable\ TObjectPtr<class\ \mbox{\hyperlink{class_u_team_subsystem}{UTeamSubsystem}}>\ \mbox{\hyperlink{class_a_race_manager_a406a029f5f8ca8903728bc304ab8527e}{TeamSubsystem}};}
+\DoxyCodeLine{00035\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00036\ \ \ \ \ mutable\ TObjectPtr<class\ \mbox{\hyperlink{class_u_race_subsystem}{URaceSubsystem}}>\ \mbox{\hyperlink{class_a_race_manager_ae87b296768e8d5b58f25bfffe1fc3cc7}{RaceSubsystem}};}
+\DoxyCodeLine{00037\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00038\ \ \ \ \ mutable\ TObjectPtr<class\ \mbox{\hyperlink{class_u_scale_subsystem}{UScaleSubsystem}}>\ \mbox{\hyperlink{class_a_race_manager_aebd820d3e42f4d5fe139a980bef4f09f}{ScaleSubsystem}};}
+\DoxyCodeLine{00039\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00040\ \ \ \ \ mutable\ TObjectPtr<class\ \mbox{\hyperlink{class_u_poi_subsystem}{UPoiSubsystem}}>\ \mbox{\hyperlink{class_a_race_manager_ae7486e56511ec8358882db416e95dd98}{PoiSubsystem}};}
+\DoxyCodeLine{00041\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00042\ \ \ \ \ mutable\ TObjectPtr<class\ \mbox{\hyperlink{class_u_checkpoint_subsystem}{UCheckpointSubsystem}}>\ \mbox{\hyperlink{class_a_race_manager_aca0207854a674c71328942dd2e9b03c0}{CheckpointSubsystem}};}
+\DoxyCodeLine{00043\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00044\ \ \ \ \ mutable\ TObjectPtr<class\ \mbox{\hyperlink{class_u_trails_subsystem}{UTrailsSubsystem}}>\ \mbox{\hyperlink{class_a_race_manager_a9303601c8b39f09394039babdb8de920}{TrailsSubsystem}};}
+\DoxyCodeLine{00045\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00046\ \ \ \ \ mutable\ TObjectPtr<class\ \mbox{\hyperlink{class_u_settings_subsystem}{USettingsSubsystem}}>\ \mbox{\hyperlink{class_a_race_manager_ad91b1ee9131ddf9e2550e7a7d4f9125d}{SettingsSubsystem}};}
+\DoxyCodeLine{00047\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00048\ \ \ \ \ mutable\ TObjectPtr<class\ \mbox{\hyperlink{class_u_weather_subsystem}{UWeatherSubsystem}}>\ \mbox{\hyperlink{class_a_race_manager_acfcb7ebc46944912f43c92a23c70a113}{WeatherSubsystem}};}
+\DoxyCodeLine{00049\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00050\ \ \ \ \ mutable\ TObjectPtr<class\ \mbox{\hyperlink{class_u_loading_status_subsystem}{ULoadingStatusSubsystem}}>\ \mbox{\hyperlink{class_a_race_manager_a02096d9e430cb6ef173ca96de8a51c82}{LoadingSubsystem}};}
+\DoxyCodeLine{00051\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00052\ \ \ \ \ mutable\ TObjectPtr<class\ \mbox{\hyperlink{class_u_http_gateway_subsystem}{UHttpGatewaySubsystem}}>\ \mbox{\hyperlink{class_a_race_manager_a8de0aa0efb08da17b83b9560c6a8cfd9}{HttpGatewaySubsystem}};}
+\DoxyCodeLine{00053\ \ \ \ \ UPROPERTY(Transient)}
+\DoxyCodeLine{00054\ \ \ \ \ mutable\ TObjectPtr<class\ \mbox{\hyperlink{class_u_team_group_subsystem}{UTeamGroupSubsystem}}>\ \mbox{\hyperlink{class_a_race_manager_a4076261190d82b6f790cd67b1930ff6e}{TeamGroupSubsystem}};}
+\DoxyCodeLine{00055\ \ \ \ \ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{comment}{//\ All\ Races}}
+\DoxyCodeLine{00058\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a59fa9c3cae0c27b87d3879ef12375ba7}{HandleRacesDatasGathered}}(\mbox{\hyperlink{struct_f_race_entries}{FRaceEntries}}\ Races);}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{comment}{//\ Path}}
+\DoxyCodeLine{00061\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_add13d46001f9f3c4627b2d878f7a4d74}{HandlePathDatasGathered}}(int64\ RaceID,\ \mbox{\hyperlink{struct_f_race_path}{FRacePath}}\ RacePathDatas);}
+\DoxyCodeLine{00063\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a68e21311f4d80dcc389aa1afb7a88132}{OffsetPath}}(int64\ RaceID);}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{comment}{//\ Race\ setup}}
+\DoxyCodeLine{00066\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a25a94b1221e0b3dca469362bf5991faf}{HandleRaceSetupDatasGathered}}(int64\ RaceID,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ RaceSetupDatas);}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{//\ Pois}}
+\DoxyCodeLine{00069\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a640a1ee5381e1945fc30038e25e14589}{HandleRacePoisDatasGathered}}(int64\ RaceID,\ \mbox{\hyperlink{struct_f_p_o_is}{FPOIs}}\ RacePoisDatas);}
+\DoxyCodeLine{00071\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a7a30ed79dedaa0cd55cb6570bad2d775}{GetPoisDatas}}(int64\ RaceID);}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{comment}{//\ Runners}}
+\DoxyCodeLine{00074\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_accd5f2aa7d3408357e826413e61642b9}{HandleRunnersDatasGathered}}(int64\ RaceID,\ \mbox{\hyperlink{struct_f_runners}{FRunners}}\ RaceRunnersDatas);}
+\DoxyCodeLine{00076\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_af92337100709daf839ecb3a33e4028e7}{HandleUpdateRunners}}(int64\ RaceID,\ \mbox{\hyperlink{struct_f_runners}{FRunners}}\ RunnersDatas);}
+\DoxyCodeLine{00078\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a1fee9d7b592843afa3781a3b0ce3fc92}{GetRunnersDatas}}(int64\ RaceID);}
+\DoxyCodeLine{00080\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a8d306f5214f5f69edaf05a1e9b61ba8e}{GetCheckpointsDatas}}(int64\ RaceID);}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{comment}{//\ Georef}}
+\DoxyCodeLine{00083\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_acbe29932f1f258cb7066248627b6ee3d}{SaveGeorefLocation}}(int64\ RaceID,\ FVector\ GeorefLocation);\ \ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{comment}{//\ Move\ to\ Path}}
+\DoxyCodeLine{00086\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a56de829b26c399b8c5f907c5fedf7630}{MoveToPath\_Internal}}(int64\ RaceID);}
+\DoxyCodeLine{00088\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_aa170809be5dc65927b3b934838ca940d}{RtMoveToPath}}(int64\ RaceID);}
+\DoxyCodeLine{00090\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Race"{}})}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a27e0cbd2e7ad7192237a735a2c74e3e4}{EdMoveToPath}}();}
+\DoxyCodeLine{00092\ \ \ \ \ }
+\DoxyCodeLine{00093\ \textcolor{comment}{\ \ \ \ /***\ INTERNAL\ FUNCTIONS\ */}}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{comment}{//\ Race}}
+\DoxyCodeLine{00095\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ad05ce120bd71b2d91e06b9bbef29e893}{TogglePath\_Internal}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow)\ const;}
+\DoxyCodeLine{00097\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a6deb046af600e28f5af3ae1b5f18edd6}{RtTogglePath}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow)\ const;}
+\DoxyCodeLine{00099\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Race"{}})}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_adce7a0ead7308c48c89e841807bf72c8}{EdTogglePath}}()\ const;}
+\DoxyCodeLine{00101\ \ \ \ \ }
+\DoxyCodeLine{00102\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a00a37e6748233c8db0dabdcd8c2a0a63}{RefreshRace\_Internal}}(int64\ RaceID);}
+\DoxyCodeLine{00104\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Race"{}})}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a256f82530c0f11e5a2b70df9032ae9aa}{EdRefreshRace}}();}
+\DoxyCodeLine{00106\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a005379160c77dcdfbf1c6e2fe24e5b6b}{RtRefreshRace}}(int64\ RaceID);}
+\DoxyCodeLine{00108\ \ \ \ \ }
+\DoxyCodeLine{00109\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a29a456d46a4a37a574144258cb5df946}{ToggleSlope\_Internal}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow)\ const;}
+\DoxyCodeLine{00111\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a314e932b9a1e09b7fa12e5d31c95e8f8}{RtToggleSlope}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow)\ const;}
+\DoxyCodeLine{00113\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Race"{}})}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a262108391ac656c0068e148e18f0bb08}{EdToggleSlope}}()\ const;}
+\DoxyCodeLine{00115\ \ \ \ \ }
+\DoxyCodeLine{00116\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ad913faf0dcb389b6cae02d8d68082b7f}{ToggleKms\_Internal}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow)\ const;}
+\DoxyCodeLine{00118\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ab0ad37714eae5695fe4df48a3926c396}{RtToggleKms}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow)\ const;}
+\DoxyCodeLine{00120\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Race"{}})}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a0487a066c69d66a2361bf5bed181c2eb}{EdToggleKms}}()\ const;}
+\DoxyCodeLine{00122\ \ \ \ \ }
+\DoxyCodeLine{00123\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a7fca2f0bac1c4211a98b72eab127e9f8}{TogglePulse\_Internal}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay);}
+\DoxyCodeLine{00125\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Race"{}})}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a20cafbf7bf0e85c64be6f01b575821a8}{EdTogglePulse}}();}
+\DoxyCodeLine{00127\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a6f1347cdb5399e9315d9c07473ba9d3a}{RtTogglePulse}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay);}
+\DoxyCodeLine{00129\ \ \ \ \ }
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{comment}{//\ Teams}}
+\DoxyCodeLine{00131\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a5a815cbdcf2f55f08b4313b5be34b88d}{ToggleRace\_Internal}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow)\ const;}
+\DoxyCodeLine{00133\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_af76c108b091ba14a60f1f25215ac3956}{RtToggleRace}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow)\ const;}
+\DoxyCodeLine{00135\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Race"{}})}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a2965cad041bfcd61846f622d4fcec3bb}{EdToggleRace}}()\ const;}
+\DoxyCodeLine{00137\ \ \ \ \ }
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a3627d1225ce810c37d63aa68c62afb12}{ToggleRunners\_Internal}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow)\ const;}
+\DoxyCodeLine{00141\ \ \ \ \ }
+\DoxyCodeLine{00142\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_af52bb8509d7c1cae21016fb9520b2439}{TeleportToTeam\_Internal}}(int64\ TeamID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00144\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a42ee6c6cfce289c5cee17bb3be5c1538}{RtTeleportToTeam}}(int64\ TeamID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00146\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Teams"{}})}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a2d3071373a8c6aaf4927146ec440bc0d}{EdTeleportToTeam}}()\ const;}
+\DoxyCodeLine{00148\ \ \ \ \ }
+\DoxyCodeLine{00149\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_aa1274b2e8ba7ba67a11691af209e2e09}{ToggleFlag\_Internal}}(int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00151\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a55085299a0fd525ec15b7f47ef273982}{RtToggleFlag}}(int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00153\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Teams"{}})}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_afd212a3a2575d8446c30b5a0737690b3}{EdToggleFlag}}()\ const;}
+\DoxyCodeLine{00155\ \ \ \ \ }
+\DoxyCodeLine{00156\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a439f0091652e39f8d52cb5cc87c93764}{TogglePhoto\_Internal}}(int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00158\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00159\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a62a6fdf4daef00510fed538160564853}{RtTogglePhoto}}(int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00160\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Teams"{}})}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a4102e9cfb6a1fe741365f9630f0a3f67}{EdTogglePhoto}}()\ const;}
+\DoxyCodeLine{00162\ \ \ \ \ }
+\DoxyCodeLine{00163\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_adfab05c5a48bebcd72fea56f50d6f5fe}{ToggleClub\_Internal}}(int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00165\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ae7ab6a7d38ccd42549b3b9c634e4e942}{RtToggleClub}}(int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00167\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Teams"{}})}
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a17da6ee00d8b2375fe63da7c7941d7fe}{EdToggleClub}}()\ const;}
+\DoxyCodeLine{00169\ \ \ \ \ }
+\DoxyCodeLine{00170\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_aaeb41196075a5cb8ef95ab68bbea8b96}{ToggleTeam\_Internal}}(int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00172\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ae69df62a230135badd0844db4a49967a}{RtToggleTeam}}(int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00174\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Teams"{}})}
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_aa7b12dd174d9d01a6c96b62ff85115bc}{EdToggleTeam}}()\ const;}
+\DoxyCodeLine{00176\ \ \ \ \ }
+\DoxyCodeLine{00177\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ac011477a4cf009e6c0cc435ce2080381}{ToggleTeams\_Internal}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00179\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a8f85a737a933addc4d399bb53465e1dd}{RtToggleTeams}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00181\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Teams"{}})}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a162f186b27a1e4cc054ceb91101b6b86}{EdToggleTeams}}()\ const;}
+\DoxyCodeLine{00183\ \ \ \ \ }
+\DoxyCodeLine{00184\ \ \ \ \ UFUNCTION()\ }
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a8ee40e81e194739b9a89fe8d62e8a8d6}{AnimTeam\_Internal}}(int64\ TeamID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00186\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00187\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a75e67b540bef5bc148355c8e73aa3539}{RtAnimTeam}}(int64\ TeamID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00188\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Teams"{}})}
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a871b131b5bf3080a9cbcb1f0aad3040e}{EdAnimTeam}}()\ const;}
+\DoxyCodeLine{00190\ \ \ \ \ }
+\DoxyCodeLine{00191\ \ \ \ \ UFUNCTION()\ }
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a3c6fdd85c9eff849eac7a294e7ac2acb}{StopAnimTeam\_Internal}}(int64\ TeamID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00193\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ad11813936b905dbcbb3298a7e0fb7113}{RtStopAnimTeam}}(int64\ TeamID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00195\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Teams"{}})}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a9197536d2df2ad0cb808a292830f9f63}{EdStopAnimTeam}}()\ const;}
+\DoxyCodeLine{00197\ \ \ \ \ }
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{comment}{//\ Checkpoints}}
+\DoxyCodeLine{00199\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ac250d17bc47567b80d734fbcb5c4f861}{ToggleCheckpoints\_Internal}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow)\ const;}
+\DoxyCodeLine{00201\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a9da7b4e960b2be90ee041c1990885961}{RtToggleCheckpoints}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow)\ const;}
+\DoxyCodeLine{00203\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Checkpoints"{}})}
+\DoxyCodeLine{00204\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a9329baa026384e5c16b8d602f03291fe}{EdToggleCheckpoints}}()\ const;}
+\DoxyCodeLine{00205\ \ \ \ \ }
+\DoxyCodeLine{00206\ \ \ \ \ UFUNCTION()\ }
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a3fdb86f54ba4f55080a71f5b23ad0697}{ToggleCheckpoint\_Internal}}(int64\ CheckpointID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00208\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ad8c035e1b362ec65ff188bf135042cea}{RtToggleCheckpoint}}(int64\ CheckpointID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00210\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Checkpoints"{}})}
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a6e0fbaddcfec53dbc3bbb09450e838f8}{EdToggleCheckpoint}}()\ const;}
+\DoxyCodeLine{00212\ \ \ \ \ }
+\DoxyCodeLine{00213\ \ \ \ \ UFUNCTION()\ }
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a0b70bc64e82cb7021589c35547780471}{ToggleCheckpointWeather\_Internal}}(int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00215\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00216\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a91df00a82651b77e20ae2ccf7d283716}{RtToggleCheckpointWeather}}(int64\ CheckpointID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00217\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Checkpoints"{}})}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a2d04d02e8fc2be4ec81258a7f8107d1d}{EdToggleCheckpointWeather}}();}
+\DoxyCodeLine{00219\ \ \ \ \ }
+\DoxyCodeLine{00220\ \ \ \ \ UFUNCTION()\ }
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a8bc8d3cbc52ae5b789a3e17471e4ce02}{TeleportToCheckpoint\_Internal}}(int64\ CheckpointID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00222\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_aba9f13d4f837f937492383a722fa0f6f}{RtTeleportToCheckpoint}}(int64\ CheckpointID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00224\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Checkpoints"{}})}
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a26036fa5e2d62332f1bae8f084a5e19b}{EdTeleportToCheckpoint}}()\ const;}
+\DoxyCodeLine{00226\ \ \ \ \ }
+\DoxyCodeLine{00227\ \ \ \ \ UFUNCTION()\ }
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a24c3474c10cd893bbd724b3c085aae13}{AnimCheckpoint\_Internal}}(int64\ CheckpointID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00229\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a2fcd1e7dd2d501a4f92a37bc0b722bf0}{RtAnimCheckpoint}}(int64\ CheckpointID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00231\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Checkpoints"{}})}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a9bbea189561dd3149347e8241cf4d8b0}{EdAnimCheckpoint}}()\ const;}
+\DoxyCodeLine{00233\ \ \ \ \ }
+\DoxyCodeLine{00234\ \ \ \ \ UFUNCTION()\ }
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ac3135c08014ef76809466f88ba0dab64}{StopAnimCheckpoint\_Internal}}(int64\ CheckpointID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00236\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00237\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_adac963870aaf942b3929caf4a40c156e}{RtStopAnimCheckpoint}}(int64\ CheckpointID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00238\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Checkpoints"{}})}
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_aed61365ad90512edb1524949e3fa033b}{EdStopAnimCheckpoint}}()\ const;}
+\DoxyCodeLine{00240\ \ \ \ \ }
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{comment}{//\ Groups}}
+\DoxyCodeLine{00242\ \ \ \ \ UFUNCTION()\ }
+\DoxyCodeLine{00243\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a9b3af55c6ca2e64cc66bc85217becef8}{AddTeamToGroup\_Internal}}(int64\ RaceID,\ int64\ GroupID,\ int64\ TeamID)\ const;}
+\DoxyCodeLine{00244\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00245\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a959795b1b4b3daaf33952299425dc7b0}{RtAddTeamToGroup}}(int64\ RaceID,\ int64\ GroupID,\ int64\ TeamID)\ const;}
+\DoxyCodeLine{00246\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Groups"{}})}
+\DoxyCodeLine{00247\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ad9f450bfa031441b0f6bb3ac6c2051e0}{EdAddTeamToGroup}}()\ const;}
+\DoxyCodeLine{00248\ \ \ \ \ }
+\DoxyCodeLine{00249\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a02163514df2ecb33fdbab7f2f56182a1}{RemoveTeamFromGroup\_Internal}}(int64\ RaceID,\ int64\ GroupID,\ int64\ TeamID)\ const;}
+\DoxyCodeLine{00251\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00252\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a5c20826e85338e79e9c07eebc6296391}{RtRemoveTeamFromGroup}}(int64\ RaceID,\ int64\ GroupID,\ int64\ TeamID)\ const;}
+\DoxyCodeLine{00253\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Groups"{}})}
+\DoxyCodeLine{00254\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ae322b27593538d077decf02dd8c8f1e4}{EdRemoveTeamFromGroup}}()\ const;}
+\DoxyCodeLine{00255\ \ \ \ \ }
+\DoxyCodeLine{00256\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ac1bd79bbeedf5566f5df054c8cb1123a}{ToggleGroup\_Internal}}(int64\ RaceID,\ int64\ GroupID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00258\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a3a2f714348c9d6a13f90d820322caa2d}{RtToggleGroup}}(int64\ RaceID,\ int64\ GroupID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00260\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Groups"{}})}
+\DoxyCodeLine{00261\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ad821d9a0dbfe53bda63faea528284ead}{EdToggleGroup}}()\ const;}
+\DoxyCodeLine{00262\ \ \ \ \ }
+\DoxyCodeLine{00263\ \ \ \ \ \textcolor{comment}{//\ Pois}}
+\DoxyCodeLine{00264\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00265\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a9bc9609cea0fc375cdc346696b8e345a}{TogglePoi\_Internal}}(int64\ PoiID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00266\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00267\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a5139cfa4c17a4927f8a75863c1a5d3f6}{RtTogglePoi}}(int64\ PoiID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00268\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Pois"{}})}
+\DoxyCodeLine{00269\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_af3a08de0fc137d750742a2dcc3d5fc5f}{EdTogglePoi}}()\ const;}
+\DoxyCodeLine{00270\ \ \ \ \ }
+\DoxyCodeLine{00271\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00272\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a0d6db43e9ac23d3168cec91ae2027bf8}{TogglePois\_Internal}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00273\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a3086addc3a0bc3ce8093843890699c9b}{RtTogglePois}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow)\ const;}
+\DoxyCodeLine{00275\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Pois"{}})}
+\DoxyCodeLine{00276\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_afc54a3e7fa30fb75d000ad8c3f022ded}{EdTogglePois}}()\ const;}
+\DoxyCodeLine{00277\ \ \ \ \ }
+\DoxyCodeLine{00278\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00279\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a21ab6177ff0d321731f7316aace79824}{TogglePoiWeather\_Internal}}(int64\ PoiID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ const;}
+\DoxyCodeLine{00280\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00281\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a74ea9ee040c8a80aced072e1c9c34d03}{RtTogglePoiWeather}}(int64\ PoiID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00282\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Pois"{}})}
+\DoxyCodeLine{00283\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ade3c54ac9055dbf24e9751036adbd094}{EdTogglePoiWeather}}();}
+\DoxyCodeLine{00284\ \ \ \ \ }
+\DoxyCodeLine{00285\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00286\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ac231cc0772e461ca7df64ec1fc07459e}{TeleportToPoi\_Internal}}(int64\ PoiID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00287\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00288\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a5e7565fd0b2367634558b20f7e4f21f0}{RtTeleportToPoi}}(int64\ PoiID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00289\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Pois"{}})}
+\DoxyCodeLine{00290\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a0a8f857c6258709297e7fb7ae10ca0db}{EDTeleportToPoi}}()\ const;}
+\DoxyCodeLine{00291\ \ \ \ \ }
+\DoxyCodeLine{00292\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00293\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a17bdc8a04b8c0c829aa93b11fec25e38}{AnimPoi\_Internal}}(int64\ PoiID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00294\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00295\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a3682e7b6d8bd0a02ae11ced18ba52ebd}{RtAnimPoi}}(int64\ PoiID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00296\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Pois"{}})}
+\DoxyCodeLine{00297\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a4559d49adb179a9d9b798be5c88fbda3}{EdAnimPoi}}()\ const;}
+\DoxyCodeLine{00298\ \ \ \ \ }
+\DoxyCodeLine{00299\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00300\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a8c7f4382bf8a0c7f418f177b13b069ef}{StopAnimPoi\_Internal}}(int64\ PoiID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00301\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00302\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a693d235225a6a1d0076b7b9551f12138}{RtStopAnimPoi}}(int64\ PoiID,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00303\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Pois"{}})}
+\DoxyCodeLine{00304\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a27336549db9b99822cf44555647fdb22}{EdStopAnimPoi}}()\ const;}
+\DoxyCodeLine{00305\ \ \ \ \ }
+\DoxyCodeLine{00306\ \ \ \ \ \textcolor{comment}{//\ Settings}}
+\DoxyCodeLine{00307\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Reset"{}})}
+\DoxyCodeLine{00308\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a19dbf6e4883594deae22807c63c9c674}{EdResetSavedDatas}}();}
+\DoxyCodeLine{00309\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_aa254366baf40f39806df9589b17ddfb3}{SaveMainUrl\_Internal}}(FString\ NewMainUrl);}
+\DoxyCodeLine{00310\ }
+\DoxyCodeLine{00311\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ac1d8b4a29000ccbd2021b5758cff001d}{RtSaveMainUrl}}(FString\ NewUrl);}
+\DoxyCodeLine{00312\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_aec48ab43bb5d7dfa87114b4f21870451}{UpdateFetchFrequency\_Internal}}(\textcolor{keywordtype}{float}\ FetchValue,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00314\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00315\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ababbcd09e8b86e2bf458dfe8ad504cf5}{RtUpdateFetchFrequency}}(\textcolor{keywordtype}{float}\ FetchValue,\ int64\ RaceID);}
+\DoxyCodeLine{00316\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Settings"{}})}
+\DoxyCodeLine{00317\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ac32a2bba86bbecebc2a83a205ec32ace}{EdUpdateFetchFrequency}}();}
+\DoxyCodeLine{00318\ \ \ \ \ }
+\DoxyCodeLine{00319\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a571067088159d5d6d2a7326bee1e321d}{ChangePathOffset\_Internal}}(\textcolor{keywordtype}{float}\ OffsetValue,\ int64\ RaceID);}
+\DoxyCodeLine{00321\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00322\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ab05cf59c6954b241e50a7349c84597ce}{RtChangePathOffset}}(\textcolor{keywordtype}{float}\ OffsetValue,\ int64\ RaceID);}
+\DoxyCodeLine{00323\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Settings"{}})}
+\DoxyCodeLine{00324\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a9aa2f97942e2afa9787749ddf4b315fe}{EdChangePathOffset}}();}
+\DoxyCodeLine{00325\ \ \ \ \ }
+\DoxyCodeLine{00326\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00327\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a61b5a78b2f0adef3d2d840567d9aaace}{UpdateGlowIntensity\_Internal}}(\textcolor{keywordtype}{float}\ GlowValue,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00328\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00329\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a9391df99eaa36e06d7dcda440bd57f92}{RtUpdateGlowIntensity}}(\textcolor{keywordtype}{float}\ Glowvalue,\ int64\ RaceID);}
+\DoxyCodeLine{00330\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Settings"{}})}
+\DoxyCodeLine{00331\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a3a661a8bd2b1ed37d543181c2121ee73}{EdUpdateGlowIntensity}}();}
+\DoxyCodeLine{00332\ \ \ \ \ }
+\DoxyCodeLine{00333\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00334\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_abd3b82bc2384ca98a7557c8546939e11}{UpdatePulseFrequency\_Internal}}(\textcolor{keywordtype}{float}\ PulseSpeed,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00335\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00336\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_abcb13527b120dd398f0b32da1e4dcf50}{RtUpdatePulseFrequency}}(\textcolor{keywordtype}{float}\ Glowvalue,\ int64\ RaceID);}
+\DoxyCodeLine{00337\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Settings"{}})}
+\DoxyCodeLine{00338\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ae3768adbe1dc20ea17e434af6719e96d}{EdUpdatePulseFrequency}}();}
+\DoxyCodeLine{00339\ \ \ \ \ }
+\DoxyCodeLine{00340\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00341\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a6b016641300822b5392096bfce1a616b}{UpdateMinMax\_Internal}}(FVector\ MinValue,\ FVector\ MaxValue,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00342\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00343\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a7ba1f2fc78803603d3a60437effb7493}{RtUpdateMinMax}}(\textcolor{keywordtype}{float}\ MinValue,\ \textcolor{keywordtype}{float}\ MaxValue,\ int64\ RaceID);}
+\DoxyCodeLine{00344\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Settings"{}})}
+\DoxyCodeLine{00345\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a2afdcbcfbd91774d90501147425160cb}{EdUpdateMinMax}}();}
+\DoxyCodeLine{00346\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00347\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a1f0d09f0366b6482878b06a0920c0cf4}{UpdateNearFar\_Internal}}(\textcolor{keywordtype}{float}\ NearValue,\ \textcolor{keywordtype}{float}\ FarValue)\ const;}
+\DoxyCodeLine{00348\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00349\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a1b3621127f0704ff56b4569b7a0979c9}{RtUpdateNearFar}}(\textcolor{keywordtype}{float}\ NearValue,\ \textcolor{keywordtype}{float}\ FarValue);}
+\DoxyCodeLine{00350\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Settings"{}})}
+\DoxyCodeLine{00351\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a0b79607356b0c91a88133bd2df049dd6}{EdUpdateNearFar}}();}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00353\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00354\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ab602017d0c689435a1eb76eac0629e27}{UpdateRaceUrlByID\_Internal}}(FString\ url,\ int64\ RaceID)\ const;}
+\DoxyCodeLine{00355\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00356\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a34f04f24bf80598da9502783bfc5b81e}{RtUpdateRaceUrlByID}}(FString\ url,\ int64\ RaceID);}
+\DoxyCodeLine{00357\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Settings"{}})}
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a5fd848478cbf7271fe0ce407526e1eff}{EdUpdateRaceUrlByID}}();}
+\DoxyCodeLine{00359\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00360\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_af928021d0bb30cfed4291f3e98e64afe}{UpdateMainUrl\_Internal}}(FString\ url);}
+\DoxyCodeLine{00361\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Settings"{}})}
+\DoxyCodeLine{00362\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a32d18d3120c6bd58ed1ed0928a1de00a}{EdUpdateMainUrl}}();}
+\DoxyCodeLine{00363\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00364\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a439c46072766872dd48d428810cd0aa8}{RtUpdateMainUrl}}(FString\ NewUrl);}
+\DoxyCodeLine{00365\ }
+\DoxyCodeLine{00366\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ category=\textcolor{stringliteral}{"{}Settings"{}})}
+\DoxyCodeLine{00367\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_race_manager_a36289467f044188ad870ada66616fd0e}{TestPulse}}\ =\ 1.f;}
+\DoxyCodeLine{00368\ \ \ \ \ }
+\DoxyCodeLine{00369\ \ \ \ \ \textcolor{comment}{//\ Travel}}
+\DoxyCodeLine{00370\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00371\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a03baec6045eb42872c2a84b7ef4c95e8}{StartTravelFwd\_Internal}}(int64\ RaceID);}
+\DoxyCodeLine{00372\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Travel"{}})}
+\DoxyCodeLine{00373\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_aab78e01f083296a0248e79d1b34cef94}{EdStartTravelFwd}}();}
+\DoxyCodeLine{00374\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00375\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_ad8d43dfc3af0a6f7963fad0a912c81b1}{RtStartTravelFwd}}(int64\ RaceID);}
+\DoxyCodeLine{00376\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00377\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_aceacf806ae9c17d6647dc8cc07eaca29}{StartTravelBkd\_Internal}}(int64\ RaceID);}
+\DoxyCodeLine{00378\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Travel"{}})}
+\DoxyCodeLine{00379\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_af717e5dfa6e5f51bc15f441d203397ea}{EdStartTravelBkd}}();}
+\DoxyCodeLine{00380\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00381\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a628596e3a8be19fa3e60bbb3c75c6e3c}{RtStartTravelBkd}}(int64\ RaceID);}
+\DoxyCodeLine{00382\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00383\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a2c33463ebe83378000ab23d280eced38}{StopTravel\_Internal}}(int64\ RaceID);}
+\DoxyCodeLine{00384\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Travel"{}})}
+\DoxyCodeLine{00385\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a1d643c0a8ec249818d092e05704ad9f7}{EdStopTravel}}();}
+\DoxyCodeLine{00386\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00387\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a40f21cc6cb03614985c731c7c4a8f9a7}{RtStopTravel}}(int64\ RaceID);}
+\DoxyCodeLine{00388\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00389\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a6e1a7b6bbc6038c29aa9ff3f12cb4fd6}{PauseTravel\_Internal}}(int64\ RaceID);}
+\DoxyCodeLine{00390\ \ \ \ \ UFUNCTION(CallInEditor,\ Category=\textcolor{stringliteral}{"{}Travel"{}})}
+\DoxyCodeLine{00391\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_af012d85559efd8668f300933524d5614}{EdPauseTravel}}();}
+\DoxyCodeLine{00392\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00393\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a38aceb71bc0501d0be4f69ec876a3036}{RtPauseTravel}}(int64\ RaceID);}
+\DoxyCodeLine{00394\ }
+\DoxyCodeLine{00395\ \ \ \ \ \textcolor{comment}{//\ PROPERTIES}}
+\DoxyCodeLine{00396\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ category=\textcolor{stringliteral}{"{}AGeneral"{}})}
+\DoxyCodeLine{00397\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_a_race_manager_ae3890048964902fee63a7b6d8b3edbac}{bAfficher}}\ =\ true;}
+\DoxyCodeLine{00398\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ category=\textcolor{stringliteral}{"{}Race"{}})}
+\DoxyCodeLine{00399\ \ \ \ \ int64\ \mbox{\hyperlink{class_a_race_manager_af3cba806b4339c7bfc39796330b15ec5}{TestRaceID}}\ =\ 1;}
+\DoxyCodeLine{00400\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ category=\textcolor{stringliteral}{"{}Race"{}})}
+\DoxyCodeLine{00401\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_race_manager_af586648d9e5ecf5f3c57592dd80df13f}{TestMinScale}}\ =\ 100.f;}
+\DoxyCodeLine{00402\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ category=\textcolor{stringliteral}{"{}Race"{}})}
+\DoxyCodeLine{00403\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_race_manager_ab6aabe562e34b3bbac843cf4a892d0ce}{TestMaxScale}}\ =\ 300.f;}
+\DoxyCodeLine{00404\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ category=\textcolor{stringliteral}{"{}Race"{}})}
+\DoxyCodeLine{00405\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_race_manager_ae1a2bf22987447750a2fb576230fe7a8}{TestNearDist}}\ =\ 50000.f;}
+\DoxyCodeLine{00406\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ category=\textcolor{stringliteral}{"{}Race"{}})}
+\DoxyCodeLine{00407\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_race_manager_a268a97ce385e0a4464e0aacd8791cd5a}{TestFarDist}}\ =\ 1000000.f;}
+\DoxyCodeLine{00408\ \ \ \ \ }
+\DoxyCodeLine{00409\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ category=\textcolor{stringliteral}{"{}Settings"{}})}
+\DoxyCodeLine{00410\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_race_manager_a1f2a108bac76eb7e764baaffb94b441b}{TestZOffset}}\ =\ 100.f;}
+\DoxyCodeLine{00411\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ category=\textcolor{stringliteral}{"{}Settings"{}})}
+\DoxyCodeLine{00412\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_race_manager_aea8db229c0d4669ee2db2e2bbd3088f0}{TestFetch}}\ =\ 1.f;}
+\DoxyCodeLine{00413\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ category=\textcolor{stringliteral}{"{}Settings"{}})}
+\DoxyCodeLine{00414\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_race_manager_ad2ffe67655f777a8ed00cca04a3532a3}{TestGlow}}\ =\ 50.f;}
+\DoxyCodeLine{00415\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ category=\textcolor{stringliteral}{"{}Settings"{}})}
+\DoxyCodeLine{00416\ \ \ \ \ FString\ \mbox{\hyperlink{class_a_race_manager_a4920ebba5265d8d6490144d3ed63a8fa}{TestUrl}}\ =\ FString(\textcolor{stringliteral}{"{}https://simulacre.ltvprod.cc/"{}});}
+\DoxyCodeLine{00417\ \ \ \ \ }
+\DoxyCodeLine{00418\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ category=\textcolor{stringliteral}{"{}Teams"{}})}
+\DoxyCodeLine{00419\ \ \ \ \ int64\ \mbox{\hyperlink{class_a_race_manager_adf67a71228d721372397c7f6392cb212}{TestTeamID}}\ =\ 3675699636;}
+\DoxyCodeLine{00420\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ category=\textcolor{stringliteral}{"{}Checkpoints"{}})}
+\DoxyCodeLine{00421\ \ \ \ \ int64\ \mbox{\hyperlink{class_a_race_manager_a2c6fd7838652db58479ce0e10961490c}{TestCheckpointID}}\ =\ 4086211504;}
+\DoxyCodeLine{00422\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ category=\textcolor{stringliteral}{"{}Pois"{}})}
+\DoxyCodeLine{00423\ \ \ \ \ int64\ \mbox{\hyperlink{class_a_race_manager_a41a86860b6b30e280247f8b19440531d}{TestPoiID}}\ =\ 792472354;}
+\DoxyCodeLine{00424\ \ \ \ \ UPROPERTY(EditAnywhere,\ BlueprintReadWrite,\ Category=\textcolor{stringliteral}{"{}Groups"{}})}
+\DoxyCodeLine{00425\ \ \ \ \ int64\ \mbox{\hyperlink{class_a_race_manager_a16a76ad7bda125f9d32a7b37af083f84}{TestGroupID}};}
+\DoxyCodeLine{00426\ \ \ \ \ }
+\DoxyCodeLine{00427\ protected:}
+\DoxyCodeLine{00428\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_a650b6914c983afc294fbed265bda5a9d}{BeginPlay}}()\ override;}
+\DoxyCodeLine{00429\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_race_manager_aa6971e024d9e36a582331da7710fee38}{EndPlay}}(const\ EEndPlayReason::Type\ EndPlayReason)\ override;}
+\DoxyCodeLine{00430\ \ \ \ \ }
+\DoxyCodeLine{00431\ private:}
+\DoxyCodeLine{00432\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00433\ \ \ \ \ AActor*\ OriginalViewTarget\ =\ \textcolor{keywordtype}{nullptr};}
+\DoxyCodeLine{00434\ \ \ \ \ }
+\DoxyCodeLine{00435\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00436\ \ \ \ \ TSoftObjectPtr<class\ ACesiumGeoreference>\ Georeference;}
+\DoxyCodeLine{00437\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00438\ \ \ \ \ TMap<int64,\ FVector>\ GeorefLocations;}
+\DoxyCodeLine{00439\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00440\ \ \ \ \ FString\ MainURL;}
+\DoxyCodeLine{00441\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00442\ \ \ \ \ \mbox{\hyperlink{struct_f_race_struct}{FRaceStruct}}\ CurrentRaceStruct;\ \ }
+\DoxyCodeLine{00443\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00444\ \ \ \ \ \mbox{\hyperlink{struct_f_race_entries}{FRaceEntries}}\ AllRaces;}
+\DoxyCodeLine{00445\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00446\ \ \ \ \ \textcolor{keywordtype}{void}\ PerformHttpRequestForRaces();}
+\DoxyCodeLine{00447\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00448\ \ \ \ \ FString\ RunnersEndpoint;\ \ \ \ }
+\DoxyCodeLine{00449\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00450\ \ \ \ \ TMap<int64,\ \mbox{\hyperlink{struct_f_race_path}{FRacePath}}>\ PathsDatas;}
+\DoxyCodeLine{00451\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00452\ \ \ \ \ TMap<int64,\ TObjectPtr<class\ \mbox{\hyperlink{class_a_path}{APath}}>>\ RacePaths;}
+\DoxyCodeLine{00453\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00454\ \ \ \ \ TObjectPtr<\mbox{\hyperlink{class_a_path}{APath}}>\ CurrentRacePath;}
+\DoxyCodeLine{00455\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00456\ \ \ \ \ TMap<int64,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}>\ RaceSetupDatasMap;}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00458\ \ \ \ \ \textcolor{comment}{//\ Timer\ }}
+\DoxyCodeLine{00459\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00460\ \ \ \ \ FTimerHandle\ FetchHandle;}
+\DoxyCodeLine{00461\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00462\ \ \ \ \ \textcolor{keywordtype}{void}\ OnUpdateFetch();}
+\DoxyCodeLine{00463\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00464\ \ \ \ \ \textcolor{keywordtype}{float}\ UpdateIntervalSeconds;}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00466\ \ \ \ \ \textcolor{comment}{//\ Loading\ Screen}}
+\DoxyCodeLine{00467\ \ \ \ \ TSharedPtr<class\ SWidget>\ ViewportContainer;}
+\DoxyCodeLine{00468\ \ \ \ \ TSharedPtr<class\ \mbox{\hyperlink{class_s_loading_overlay}{SLoadingOverlay}}>\ LoadingOverlay;}
+\DoxyCodeLine{00469\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00470\ \ \ \ \ \textcolor{keywordtype}{void}\ ShowLoadingOverlay();}
+\DoxyCodeLine{00471\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00472\ \ \ \ \ \textcolor{keywordtype}{void}\ HideLoadingOverlay();}
+\DoxyCodeLine{00473\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00474\ \ \ \ \ \textcolor{keywordtype}{void}\ StartFetchTimer();}
+\DoxyCodeLine{00475\ \ \ \ \ }
+\DoxyCodeLine{00476\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00477\ \ \ \ \ \textcolor{keywordtype}{bool}\ bOverlayHidden\ =\ false;}
+\DoxyCodeLine{00478\ \};}
+
+\end{DoxyCode}

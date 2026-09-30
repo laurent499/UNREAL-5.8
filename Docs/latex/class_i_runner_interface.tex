@@ -1,0 +1,169 @@
+\doxysection{IRunner\+Interface Class Reference}
+\hypertarget{class_i_runner_interface}{}\label{class_i_runner_interface}\index{IRunnerInterface@{IRunnerInterface}}
+
+
+{\ttfamily \#include $<$Runner\+Interface.\+h$>$}
+
+Inheritance diagram for IRunner\+Interface\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_i_runner_interface}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_i_runner_interface_a0538164d64e94216f983bf31cfecc20b}{Assign\+Runner\+To\+Team}} (int32 Id\+Team)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_runner_interface_a523642f59d951ce1bef29eb5d21eb350}{Update\+Runner}} (\mbox{\hyperlink{struct_f_runner_struct}{FRunner\+Struct}} Runner, \mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}} Race\+Setup)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_runner_interface_a24f78c6730682a6b2e7f38efc8d7ec66}{Toggle\+Flag}} (bool b\+Display)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_runner_interface_affee4fb9ea631c5ebe384a6d0a175d30}{Toggle\+Club}} (bool b\+Display)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_runner_interface_a805aae64ddd8ba1b163e52f7a58223aa}{Toggle\+Photo}} (bool b\+Display)=0
+\item 
+virtual \mbox{\hyperlink{struct_f_min_max}{FMin\+Max}} \mbox{\hyperlink{class_i_runner_interface_a2e712181d90150cf246596638205e81f}{Get\+Runner\+Min\+Max}} () const =0
+\item 
+virtual float \mbox{\hyperlink{class_i_runner_interface_ab697096c51a8d4591824a78adffe61bc}{Get\+Runner\+VDelta}} () const =0
+\item 
+virtual void \mbox{\hyperlink{class_i_runner_interface_a0f6953eb3d23e873730cb291fa501dc6}{Update\+Runner\+Location}} (\mbox{\hyperlink{struct_f_runner_struct}{FRunner\+Struct}} Runner\+Struct, TObject\+Ptr$<$ class \mbox{\hyperlink{class_a_path}{APath}} $>$ Current\+Path)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_runner_interface_a4551f5ed7ad61dd60533f173876c3174}{Start\+Animation}} (float Rotation\+Speed)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_runner_interface_adfc323a88b7d2c8c6e350c0ef9320643}{Stop\+Animation}} ()=0
+\item 
+virtual UScene\+Component \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_i_runner_interface_a883b6d7a0ba5661e73196b28eb1c59df}{Get\+Foot\+Hook}} () const =0
+\item 
+virtual UStatic\+Mesh\+Component \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_i_runner_interface_a3f0f48728bdfb1d83df5b1f688ae10d6}{Get\+Foot\+Mesh}} () const =0
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{class_i_runner_interface_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_i_runner_interface_a0538164d64e94216f983bf31cfecc20b}\index{IRunnerInterface@{IRunnerInterface}!AssignRunnerToTeam@{AssignRunnerToTeam}}
+\index{AssignRunnerToTeam@{AssignRunnerToTeam}!IRunnerInterface@{IRunnerInterface}}
+\doxysubsubsection{\texorpdfstring{AssignRunnerToTeam()}{AssignRunnerToTeam()}}
+{\footnotesize\ttfamily \label{class_i_runner_interface_a0538164d64e94216f983bf31cfecc20b} 
+virtual void IRunner\+Interface\+::\+Assign\+Runner\+To\+Team (\begin{DoxyParamCaption}\item[{int32}]{Id\+Team}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_runner_af5f11f3b3a923ab34c437227f8bf5428}{ARunner}}.
+
+\Hypertarget{class_i_runner_interface_a883b6d7a0ba5661e73196b28eb1c59df}\index{IRunnerInterface@{IRunnerInterface}!GetFootHook@{GetFootHook}}
+\index{GetFootHook@{GetFootHook}!IRunnerInterface@{IRunnerInterface}}
+\doxysubsubsection{\texorpdfstring{GetFootHook()}{GetFootHook()}}
+{\footnotesize\ttfamily \label{class_i_runner_interface_a883b6d7a0ba5661e73196b28eb1c59df} 
+virtual UScene\+Component \texorpdfstring{$\ast$}{*} IRunner\+Interface\+::\+Get\+Foot\+Hook (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_runner_ac28c8181e8aa08628f822507f4be0476}{ARunner}}.
+
+\Hypertarget{class_i_runner_interface_a3f0f48728bdfb1d83df5b1f688ae10d6}\index{IRunnerInterface@{IRunnerInterface}!GetFootMesh@{GetFootMesh}}
+\index{GetFootMesh@{GetFootMesh}!IRunnerInterface@{IRunnerInterface}}
+\doxysubsubsection{\texorpdfstring{GetFootMesh()}{GetFootMesh()}}
+{\footnotesize\ttfamily \label{class_i_runner_interface_a3f0f48728bdfb1d83df5b1f688ae10d6} 
+virtual UStatic\+Mesh\+Component \texorpdfstring{$\ast$}{*} IRunner\+Interface\+::\+Get\+Foot\+Mesh (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_runner_ade0f88e9956474cc1c0a3bf0fb9d7161}{ARunner}}.
+
+\Hypertarget{class_i_runner_interface_a2e712181d90150cf246596638205e81f}\index{IRunnerInterface@{IRunnerInterface}!GetRunnerMinMax@{GetRunnerMinMax}}
+\index{GetRunnerMinMax@{GetRunnerMinMax}!IRunnerInterface@{IRunnerInterface}}
+\doxysubsubsection{\texorpdfstring{GetRunnerMinMax()}{GetRunnerMinMax()}}
+{\footnotesize\ttfamily \label{class_i_runner_interface_a2e712181d90150cf246596638205e81f} 
+virtual \mbox{\hyperlink{struct_f_min_max}{FMin\+Max}} IRunner\+Interface\+::\+Get\+Runner\+Min\+Max (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_runner_ac38b7252f419c216b0d051929b4aaad2}{ARunner}}.
+
+\Hypertarget{class_i_runner_interface_ab697096c51a8d4591824a78adffe61bc}\index{IRunnerInterface@{IRunnerInterface}!GetRunnerVDelta@{GetRunnerVDelta}}
+\index{GetRunnerVDelta@{GetRunnerVDelta}!IRunnerInterface@{IRunnerInterface}}
+\doxysubsubsection{\texorpdfstring{GetRunnerVDelta()}{GetRunnerVDelta()}}
+{\footnotesize\ttfamily \label{class_i_runner_interface_ab697096c51a8d4591824a78adffe61bc} 
+virtual float IRunner\+Interface\+::\+Get\+Runner\+VDelta (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_runner_a50da82dfdc92422225a291a7ffa822a4}{ARunner}}.
+
+\Hypertarget{class_i_runner_interface_a4551f5ed7ad61dd60533f173876c3174}\index{IRunnerInterface@{IRunnerInterface}!StartAnimation@{StartAnimation}}
+\index{StartAnimation@{StartAnimation}!IRunnerInterface@{IRunnerInterface}}
+\doxysubsubsection{\texorpdfstring{StartAnimation()}{StartAnimation()}}
+{\footnotesize\ttfamily \label{class_i_runner_interface_a4551f5ed7ad61dd60533f173876c3174} 
+virtual void IRunner\+Interface\+::\+Start\+Animation (\begin{DoxyParamCaption}\item[{float}]{Rotation\+Speed}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_runner_a828274914ab001440f7734fe824fd7fb}{ARunner}}, \mbox{\hyperlink{class_a_runner___generic_a47da349d2f005611f143359e3f6db652}{ARunner\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_runner___g_t_w_s_acaeb3a921108e16618fd7cd751cbaff1}{ARunner\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_runner___u_t_m_b_a8ac5001a09d41370de3b83ed808555aa}{ARunner\+\_\+\+UTMB}}.
+
+\Hypertarget{class_i_runner_interface_adfc323a88b7d2c8c6e350c0ef9320643}\index{IRunnerInterface@{IRunnerInterface}!StopAnimation@{StopAnimation}}
+\index{StopAnimation@{StopAnimation}!IRunnerInterface@{IRunnerInterface}}
+\doxysubsubsection{\texorpdfstring{StopAnimation()}{StopAnimation()}}
+{\footnotesize\ttfamily \label{class_i_runner_interface_adfc323a88b7d2c8c6e350c0ef9320643} 
+virtual void IRunner\+Interface\+::\+Stop\+Animation (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_runner_aa04131ba941699e01ec9037e3795f7fd}{ARunner}}, \mbox{\hyperlink{class_a_runner___generic_aaffe5d4093da40b3e54e0d2886531554}{ARunner\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_runner___g_t_w_s_a71702c60c6fd7efedd35f088d446b390}{ARunner\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_runner___u_t_m_b_ab4cfa54a0f49d4cbbce29d202aa76ad3}{ARunner\+\_\+\+UTMB}}.
+
+\Hypertarget{class_i_runner_interface_affee4fb9ea631c5ebe384a6d0a175d30}\index{IRunnerInterface@{IRunnerInterface}!ToggleClub@{ToggleClub}}
+\index{ToggleClub@{ToggleClub}!IRunnerInterface@{IRunnerInterface}}
+\doxysubsubsection{\texorpdfstring{ToggleClub()}{ToggleClub()}}
+{\footnotesize\ttfamily \label{class_i_runner_interface_affee4fb9ea631c5ebe384a6d0a175d30} 
+virtual void IRunner\+Interface\+::\+Toggle\+Club (\begin{DoxyParamCaption}\item[{bool}]{b\+Display}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_runner_ae057f6451cbaceecee2908dda952080b}{ARunner}}, \mbox{\hyperlink{class_a_runner___generic_a787ae86238065234e46fb8f88b187515}{ARunner\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_runner___g_t_w_s_aa7d66e66d41c239b7a0c376e12469dc4}{ARunner\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_runner___u_t_m_b_ada3bcd30cfd0c70ae6dfb949e92debf0}{ARunner\+\_\+\+UTMB}}.
+
+\Hypertarget{class_i_runner_interface_a24f78c6730682a6b2e7f38efc8d7ec66}\index{IRunnerInterface@{IRunnerInterface}!ToggleFlag@{ToggleFlag}}
+\index{ToggleFlag@{ToggleFlag}!IRunnerInterface@{IRunnerInterface}}
+\doxysubsubsection{\texorpdfstring{ToggleFlag()}{ToggleFlag()}}
+{\footnotesize\ttfamily \label{class_i_runner_interface_a24f78c6730682a6b2e7f38efc8d7ec66} 
+virtual void IRunner\+Interface\+::\+Toggle\+Flag (\begin{DoxyParamCaption}\item[{bool}]{b\+Display}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_runner_aaca1abd0a2bf25f3d215dcae81455b84}{ARunner}}, \mbox{\hyperlink{class_a_runner___generic_af3264eb8070f75e3aa147ab5a47e8d91}{ARunner\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_runner___g_t_w_s_acd070037b1366e1845337926eb74b074}{ARunner\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_runner___u_t_m_b_a973b90fb30a5e37fa6a81478075a3c2e}{ARunner\+\_\+\+UTMB}}.
+
+\Hypertarget{class_i_runner_interface_a805aae64ddd8ba1b163e52f7a58223aa}\index{IRunnerInterface@{IRunnerInterface}!TogglePhoto@{TogglePhoto}}
+\index{TogglePhoto@{TogglePhoto}!IRunnerInterface@{IRunnerInterface}}
+\doxysubsubsection{\texorpdfstring{TogglePhoto()}{TogglePhoto()}}
+{\footnotesize\ttfamily \label{class_i_runner_interface_a805aae64ddd8ba1b163e52f7a58223aa} 
+virtual void IRunner\+Interface\+::\+Toggle\+Photo (\begin{DoxyParamCaption}\item[{bool}]{b\+Display}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_runner_a6aeb2bac09dc6b0044e8f7a716492cff}{ARunner}}, \mbox{\hyperlink{class_a_runner___generic_a99fbc33a3b702999699b5e230febbdc2}{ARunner\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_runner___g_t_w_s_a7c102c6849aab8a7902b05dd4d0a4a67}{ARunner\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_runner___u_t_m_b_a7b235c104b3b4b14ed7e200e0053e800}{ARunner\+\_\+\+UTMB}}.
+
+\Hypertarget{class_i_runner_interface_a523642f59d951ce1bef29eb5d21eb350}\index{IRunnerInterface@{IRunnerInterface}!UpdateRunner@{UpdateRunner}}
+\index{UpdateRunner@{UpdateRunner}!IRunnerInterface@{IRunnerInterface}}
+\doxysubsubsection{\texorpdfstring{UpdateRunner()}{UpdateRunner()}}
+{\footnotesize\ttfamily \label{class_i_runner_interface_a523642f59d951ce1bef29eb5d21eb350} 
+virtual void IRunner\+Interface\+::\+Update\+Runner (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_runner_struct}{FRunner\+Struct}}}]{Runner}{, }\item[{\mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}}}]{Race\+Setup}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_runner_a1ed40c59692f0d124c14381b1c5d3d8a}{ARunner}}, \mbox{\hyperlink{class_a_runner___generic_a11ea26d62d90712ccba4e7999660fee8}{ARunner\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_runner___g_t_w_s_a481c210a3de3c4524595598ce58ca700}{ARunner\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_runner___u_t_m_b_a995d7bfb0b7fcf4fee9e8d801d37a190}{ARunner\+\_\+\+UTMB}}.
+
+\Hypertarget{class_i_runner_interface_a0f6953eb3d23e873730cb291fa501dc6}\index{IRunnerInterface@{IRunnerInterface}!UpdateRunnerLocation@{UpdateRunnerLocation}}
+\index{UpdateRunnerLocation@{UpdateRunnerLocation}!IRunnerInterface@{IRunnerInterface}}
+\doxysubsubsection{\texorpdfstring{UpdateRunnerLocation()}{UpdateRunnerLocation()}}
+{\footnotesize\ttfamily \label{class_i_runner_interface_a0f6953eb3d23e873730cb291fa501dc6} 
+virtual void IRunner\+Interface\+::\+Update\+Runner\+Location (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_runner_struct}{FRunner\+Struct}}}]{Runner\+Struct}{, }\item[{TObject\+Ptr$<$ class \mbox{\hyperlink{class_a_path}{APath}} $>$}]{Current\+Path}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_runner_ae643f51e2ceb8b3de775a88450633b8d}{ARunner}}, \mbox{\hyperlink{class_a_runner___generic_a02d0730790d09fc5e2bb1c38e4e3ae12}{ARunner\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_runner___g_t_w_s_a63210cc9078985d2fbac47d4bc0b7020}{ARunner\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_runner___u_t_m_b_a9e86b588458f9e17a3f13c5e9422023f}{ARunner\+\_\+\+UTMB}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Trail\+Interfaces/\+Public/\mbox{\hyperlink{_runner_interface_8h}{Runner\+Interface.\+h}}\end{DoxyCompactItemize}

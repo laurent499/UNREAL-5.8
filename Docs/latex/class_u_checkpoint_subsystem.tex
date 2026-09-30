@@ -1,0 +1,257 @@
+\doxysection{UCheckpoint\+Subsystem Class Reference}
+\hypertarget{class_u_checkpoint_subsystem}{}\label{class_u_checkpoint_subsystem}\index{UCheckpointSubsystem@{UCheckpointSubsystem}}
+
+
+{\ttfamily \#include $<$Checkpoint\+Subsystem.\+h$>$}
+
+Inheritance diagram for UCheckpoint\+Subsystem\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_u_checkpoint_subsystem}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_u_checkpoint_subsystem_a7847ede4c5d832504a6f65e42871d703}{Initialize}} (FSubsystem\+Collection\+Base \&Collection) override
+\item 
+virtual void \mbox{\hyperlink{class_u_checkpoint_subsystem_ab2667d0ea9a089d1250a162cdceab55e}{Deinitialize}} () override
+\item 
+\mbox{\hyperlink{struct_f_checkpoints}{FCheckpoints}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_u_checkpoint_subsystem_a72b4771bbcec45d8fc0860c57f8c235f}{Get\+Checkpoints\+By\+Race\+Id}} (int64 Race\+ID)
+\item 
+\mbox{\hyperlink{struct_f_race_checkpoint}{FRace\+Checkpoint}} \mbox{\hyperlink{class_u_checkpoint_subsystem_a798029523e86b2df5cc2dc43e01f0067}{Get\+Checkpoint\+By\+Chk\+Id\+Race\+Id}} (int64 Race\+ID, int64 Chk\+ID)
+\item 
+void \mbox{\hyperlink{class_u_checkpoint_subsystem_a888ac449f64055b09682ded8e3b0a44a}{Perform\+Http\+Request\+For\+Checkpoints}} (int64 Race\+ID, const FString \&Checkpoints\+Endpoint)
+\begin{DoxyCompactList}\small\item\em Triggers the request to the API for all checkpoints. \end{DoxyCompactList}\item 
+AActor \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_u_checkpoint_subsystem_a6216698d42cbe504401a9ad024eb6e16}{Spawn\+Checkpoint\+Actor}} (int64 Race\+ID, int64 Checkpoint\+ID, UWorld \texorpdfstring{$\ast$}{*}World, \mbox{\hyperlink{class_t_subclass_of}{TSubclass\+Of}}$<$ AActor $>$ Path\+Class, const FTransform \&Spawn\+Transform)
+\begin{DoxyCompactList}\small\item\em Spawn Chk Actor. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_u_checkpoint_subsystem_a564516d17c01dcf829b5fbd7cb25d946}{Does\+Chk\+Belongs\+To\+Race}} (int64 Chk\+ID, int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_u_checkpoint_subsystem_a21874893c86b577644d3f6b73850b1d9}{Set\+Race\+Setup}} (int64 Race\+ID, \mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}} New\+Current\+Race\+Setup)
+\item 
+TObject\+Ptr$<$ AActor $>$ \mbox{\hyperlink{class_u_checkpoint_subsystem_a1260c770772277361749107e5fe688c5}{Get\+Checkpoint\+Actor}} (int64 Race\+ID, int64 Checkpoint\+ID)
+\item 
+void \mbox{\hyperlink{class_u_checkpoint_subsystem_a3f756e24b95e1a286a9f1db8c661cc87}{Toggle\+Checkpoints}} (int64 Race\+ID, bool b\+Show)
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Checkpoints. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_checkpoint_subsystem_a06adbaec620e95f4bf1be5e0d4d718fa}{Toggle\+Checkpoint}} (int64 Race\+ID, int64 Checkpoint\+ID, bool b\+Show)
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Poi. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_checkpoint_subsystem_a78bd7d69e581751b26b3117d20194a58}{Toggle\+Weather}} (int64 Race\+ID, int64 Checkpoint\+ID, bool b\+Show)
+\begin{DoxyCompactList}\small\item\em Show/\+Hide the Weather components. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_checkpoint_subsystem_a8c7242dbdef5d73386f9d23a80def9c2}{Teleport}} (int64 Checkpoint\+ID, int64 Race\+ID)
+\begin{DoxyCompactList}\small\item\em Teleport to Poi. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_checkpoint_subsystem_a9106250a60340fb114875bb8d386b18d}{Animation}} (int64 Checkpoint\+ID, int64 Id\+Race)
+\begin{DoxyCompactList}\small\item\em Start/\+Stop Checkpoint animation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_checkpoint_subsystem_aa526feb07be3193818030c0c74007b4c}{Stop\+Animation}} (int64 Checkpoint\+ID, int64 Race\+ID)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+FOn\+Checkpoints\+Datas\+Gathered \mbox{\hyperlink{class_u_checkpoint_subsystem_a1f6b53f8f1f4993991cb41a7fed436b4}{On\+Checkpoints\+Datas\+Gathered}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{class_u_checkpoint_subsystem_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_u_checkpoint_subsystem_a9106250a60340fb114875bb8d386b18d}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!Animation@{Animation}}
+\index{Animation@{Animation}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{Animation()}{Animation()}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_a9106250a60340fb114875bb8d386b18d} 
+void UCheckpoint\+Subsystem\+::\+Animation (\begin{DoxyParamCaption}\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Start/\+Stop Checkpoint animation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Checkpoint\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+WIP 
+\end{DoxyNote}
+\Hypertarget{class_u_checkpoint_subsystem_ab2667d0ea9a089d1250a162cdceab55e}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!Deinitialize@{Deinitialize}}
+\index{Deinitialize@{Deinitialize}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{Deinitialize()}{Deinitialize()}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_ab2667d0ea9a089d1250a162cdceab55e} 
+void UCheckpoint\+Subsystem\+::\+Deinitialize (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_checkpoint_subsystem_a564516d17c01dcf829b5fbd7cb25d946}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!DoesChkBelongsToRace@{DoesChkBelongsToRace}}
+\index{DoesChkBelongsToRace@{DoesChkBelongsToRace}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{DoesChkBelongsToRace()}{DoesChkBelongsToRace()}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_a564516d17c01dcf829b5fbd7cb25d946} 
+bool UCheckpoint\+Subsystem\+::\+Does\+Chk\+Belongs\+To\+Race (\begin{DoxyParamCaption}\item[{int64}]{Chk\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_checkpoint_subsystem_a1260c770772277361749107e5fe688c5}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!GetCheckpointActor@{GetCheckpointActor}}
+\index{GetCheckpointActor@{GetCheckpointActor}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetCheckpointActor()}{GetCheckpointActor()}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_a1260c770772277361749107e5fe688c5} 
+TObject\+Ptr$<$ AActor $>$ UCheckpoint\+Subsystem\+::\+Get\+Checkpoint\+Actor (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{int64}]{Checkpoint\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_checkpoint_subsystem_a798029523e86b2df5cc2dc43e01f0067}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!GetCheckpointByChkIdRaceId@{GetCheckpointByChkIdRaceId}}
+\index{GetCheckpointByChkIdRaceId@{GetCheckpointByChkIdRaceId}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetCheckpointByChkIdRaceId()}{GetCheckpointByChkIdRaceId()}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_a798029523e86b2df5cc2dc43e01f0067} 
+\mbox{\hyperlink{struct_f_race_checkpoint}{FRace\+Checkpoint}} UCheckpoint\+Subsystem\+::\+Get\+Checkpoint\+By\+Chk\+Id\+Race\+Id (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{int64}]{Chk\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_checkpoint_subsystem_a72b4771bbcec45d8fc0860c57f8c235f}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!GetCheckpointsByRaceId@{GetCheckpointsByRaceId}}
+\index{GetCheckpointsByRaceId@{GetCheckpointsByRaceId}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetCheckpointsByRaceId()}{GetCheckpointsByRaceId()}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_a72b4771bbcec45d8fc0860c57f8c235f} 
+\mbox{\hyperlink{struct_f_checkpoints}{FCheckpoints}} \texorpdfstring{$\ast$}{*} UCheckpoint\+Subsystem\+::\+Get\+Checkpoints\+By\+Race\+Id (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+GETTERS \Hypertarget{class_u_checkpoint_subsystem_a7847ede4c5d832504a6f65e42871d703}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{Initialize()}{Initialize()}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_a7847ede4c5d832504a6f65e42871d703} 
+void UCheckpoint\+Subsystem\+::\+Initialize (\begin{DoxyParamCaption}\item[{FSubsystem\+Collection\+Base \&}]{Collection}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_checkpoint_subsystem_a888ac449f64055b09682ded8e3b0a44a}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!PerformHttpRequestForCheckpoints@{PerformHttpRequestForCheckpoints}}
+\index{PerformHttpRequestForCheckpoints@{PerformHttpRequestForCheckpoints}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{PerformHttpRequestForCheckpoints()}{PerformHttpRequestForCheckpoints()}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_a888ac449f64055b09682ded8e3b0a44a} 
+void UCheckpoint\+Subsystem\+::\+Perform\+Http\+Request\+For\+Checkpoints (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{const FString \&}]{Checkpoints\+Endpoint}{}\end{DoxyParamCaption})}
+
+
+
+Triggers the request to the API for all checkpoints. 
+
+Request datas for all Checkpoints.
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Checkpoints\+Endpoint} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_checkpoint_subsystem_a21874893c86b577644d3f6b73850b1d9}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!SetRaceSetup@{SetRaceSetup}}
+\index{SetRaceSetup@{SetRaceSetup}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{SetRaceSetup()}{SetRaceSetup()}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_a21874893c86b577644d3f6b73850b1d9} 
+void UCheckpoint\+Subsystem\+::\+Set\+Race\+Setup (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{\mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}}}]{New\+Current\+Race\+Setup}{}\end{DoxyParamCaption})}
+
+HELPERS \Hypertarget{class_u_checkpoint_subsystem_a6216698d42cbe504401a9ad024eb6e16}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!SpawnCheckpointActor@{SpawnCheckpointActor}}
+\index{SpawnCheckpointActor@{SpawnCheckpointActor}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{SpawnCheckpointActor()}{SpawnCheckpointActor()}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_a6216698d42cbe504401a9ad024eb6e16} 
+AActor \texorpdfstring{$\ast$}{*} UCheckpoint\+Subsystem\+::\+Spawn\+Checkpoint\+Actor (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{int64}]{Checkpoint\+ID}{, }\item[{UWorld \texorpdfstring{$\ast$}{*}}]{World}{, }\item[{\mbox{\hyperlink{class_t_subclass_of}{TSubclass\+Of}}$<$ AActor $>$}]{Checkpoint\+Class}{, }\item[{const FTransform \&}]{Spawn\+Transform}{}\end{DoxyParamCaption})}
+
+
+
+Spawn Chk Actor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Checkpoint\+ID} & \\
+\hline
+{\em World} & \\
+\hline
+{\em Checkpoint\+Class} & \\
+\hline
+{\em Spawn\+Transform} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_u_checkpoint_subsystem_aa526feb07be3193818030c0c74007b4c}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!StopAnimation@{StopAnimation}}
+\index{StopAnimation@{StopAnimation}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{StopAnimation()}{StopAnimation()}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_aa526feb07be3193818030c0c74007b4c} 
+void UCheckpoint\+Subsystem\+::\+Stop\+Animation (\begin{DoxyParamCaption}\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_checkpoint_subsystem_a8c7242dbdef5d73386f9d23a80def9c2}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!Teleport@{Teleport}}
+\index{Teleport@{Teleport}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{Teleport()}{Teleport()}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_a8c7242dbdef5d73386f9d23a80def9c2} 
+void UCheckpoint\+Subsystem\+::\+Teleport (\begin{DoxyParamCaption}\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Teleport to Poi. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Checkpoint\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_checkpoint_subsystem_a06adbaec620e95f4bf1be5e0d4d718fa}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!ToggleCheckpoint@{ToggleCheckpoint}}
+\index{ToggleCheckpoint@{ToggleCheckpoint}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{ToggleCheckpoint()}{ToggleCheckpoint()}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_a06adbaec620e95f4bf1be5e0d4d718fa} 
+void UCheckpoint\+Subsystem\+::\+Toggle\+Checkpoint (\begin{DoxyParamCaption}\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+
+
+Show/\+Hide Poi. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Checkpoint\+ID} & \\
+\hline
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_checkpoint_subsystem_a3f756e24b95e1a286a9f1db8c661cc87}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!ToggleCheckpoints@{ToggleCheckpoints}}
+\index{ToggleCheckpoints@{ToggleCheckpoints}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{ToggleCheckpoints()}{ToggleCheckpoints()}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_a3f756e24b95e1a286a9f1db8c661cc87} 
+void UCheckpoint\+Subsystem\+::\+Toggle\+Checkpoints (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+
+
+Show/\+Hide Checkpoints. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_checkpoint_subsystem_a78bd7d69e581751b26b3117d20194a58}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!ToggleWeather@{ToggleWeather}}
+\index{ToggleWeather@{ToggleWeather}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{ToggleWeather()}{ToggleWeather()}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_a78bd7d69e581751b26b3117d20194a58} 
+void UCheckpoint\+Subsystem\+::\+Toggle\+Weather (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{int64}]{Checkpoint\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+
+
+Show/\+Hide the Weather components. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Checkpoint\+ID} & \\
+\hline
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-variable-members}
+\Hypertarget{class_u_checkpoint_subsystem_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_u_checkpoint_subsystem_a1f6b53f8f1f4993991cb41a7fed436b4}\index{UCheckpointSubsystem@{UCheckpointSubsystem}!OnCheckpointsDatasGathered@{OnCheckpointsDatasGathered}}
+\index{OnCheckpointsDatasGathered@{OnCheckpointsDatasGathered}!UCheckpointSubsystem@{UCheckpointSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnCheckpointsDatasGathered}{OnCheckpointsDatasGathered}}
+{\footnotesize\ttfamily \label{class_u_checkpoint_subsystem_a1f6b53f8f1f4993991cb41a7fed436b4} 
+FOn\+Checkpoints\+Datas\+Gathered UCheckpoint\+Subsystem\+::\+On\+Checkpoints\+Datas\+Gathered}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Subsystems/\+Public/\mbox{\hyperlink{_checkpoint_subsystem_8h}{Checkpoint\+Subsystem.\+h}}\item 
+Source/\+Subsystems/\+Private/\mbox{\hyperlink{_checkpoint_subsystem_8cpp}{Checkpoint\+Subsystem.\+cpp}}\end{DoxyCompactItemize}

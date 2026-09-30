@@ -1,0 +1,58 @@
+\doxysection{Source/\+Trail\+Simulator/\+Private/\+Race\+Manager.cpp File Reference}
+\hypertarget{_race_manager_8cpp}{}\label{_race_manager_8cpp}\index{Source/TrailSimulator/Private/RaceManager.cpp@{Source/TrailSimulator/Private/RaceManager.cpp}}
+{\ttfamily \#include "{}Race\+Manager.\+h"{}}\newline
+{\ttfamily \#include "{}Cesium\+Fly\+To\+Component.\+h"{}}\newline
+{\ttfamily \#include "{}Cesium\+Georeference.\+h"{}}\newline
+{\ttfamily \#include "{}Checkpoint\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Path\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Poi\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Http\+Gateway\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Loading\+Status\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Runner\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Race\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Scale\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Team\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Settings\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Slate\+Notifications\+BFL.\+h"{}}\newline
+{\ttfamily \#include "{}Team\+Group\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Weather\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+Path.\+h"{}}\newline
+{\ttfamily \#include "{}Trails\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Trail\+Shared\+Types.\+h"{}}\newline
+{\ttfamily \#include "{}World\+Utils.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+Runner.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+Poi.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+Generic/\+Poi\+\_\+\+Generic.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+Generic/\+Runner\+\_\+\+Generic.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+GTWS/\+Poi\+\_\+\+GTWS.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+GTWS/\+Runner\+\_\+\+GTWS.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+UTMB/\+Poi\+\_\+\+UTMB.\+h"{}}\newline
+{\ttfamily \#include "{}Actors/\+UTMB/\+Runner\+\_\+\+UTMB.\+h"{}}\newline
+{\ttfamily \#include "{}Kismet/\+Gameplay\+Statics.\+h"{}}\newline
+{\ttfamily \#include "{}UI/\+SLoading\+Overlay.\+h"{}}\newline
+{\ttfamily \#include "{}Widgets/\+SWeak\+Widget.\+h"{}}\newline
+{\ttfamily \#include "{}Engine/\+Engine\+Types.\+h"{}}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{_race_manager_8cpp_ae1c668bca6a07b916230c376235df6c2}{ECC\+\_\+\+Cesium\+Channel}}~ECC\+\_\+\+Game\+Trace\+Channel1
+\item 
+\#define \mbox{\hyperlink{_race_manager_8cpp_a9ffaeb6385a84a87f37322b6945f3408}{ECC\+\_\+\+Cesium\+Object}}~ECC\+\_\+\+Game\+Trace\+Channel2
+\end{DoxyCompactItemize}
+
+
+\label{doc-define-members}
+\Hypertarget{_race_manager_8cpp_doc-define-members}
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{_race_manager_8cpp_ae1c668bca6a07b916230c376235df6c2}\index{RaceManager.cpp@{RaceManager.cpp}!ECC\_CesiumChannel@{ECC\_CesiumChannel}}
+\index{ECC\_CesiumChannel@{ECC\_CesiumChannel}!RaceManager.cpp@{RaceManager.cpp}}
+\doxysubsubsection{\texorpdfstring{ECC\_CesiumChannel}{ECC\_CesiumChannel}}
+{\footnotesize\ttfamily \label{_race_manager_8cpp_ae1c668bca6a07b916230c376235df6c2} 
+\#define ECC\+\_\+\+Cesium\+Channel~ECC\+\_\+\+Game\+Trace\+Channel1}
+
+\Hypertarget{_race_manager_8cpp_a9ffaeb6385a84a87f37322b6945f3408}\index{RaceManager.cpp@{RaceManager.cpp}!ECC\_CesiumObject@{ECC\_CesiumObject}}
+\index{ECC\_CesiumObject@{ECC\_CesiumObject}!RaceManager.cpp@{RaceManager.cpp}}
+\doxysubsubsection{\texorpdfstring{ECC\_CesiumObject}{ECC\_CesiumObject}}
+{\footnotesize\ttfamily \label{_race_manager_8cpp_a9ffaeb6385a84a87f37322b6945f3408} 
+\#define ECC\+\_\+\+Cesium\+Object~ECC\+\_\+\+Game\+Trace\+Channel2}
+

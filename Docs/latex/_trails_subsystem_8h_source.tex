@@ -1,0 +1,47 @@
+\doxysection{Trails\+Subsystem.\+h}
+\hypertarget{_trails_subsystem_8h_source}{}\label{_trails_subsystem_8h_source}\index{Source/Subsystems/Public/TrailsSubsystem.h@{Source/Subsystems/Public/TrailsSubsystem.h}}
+\mbox{\hyperlink{_trails_subsystem_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Subsystems/GameInstanceSubsystem.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}TrailsSubsystem.generated.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \mbox{\hyperlink{_trails_subsystem_8h_a96138d09a0900764605a4cda9009b9fb}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_OneParam}}(}
+\DoxyCodeLine{00011\ \ \ \ \ FOnRacesDatasGathered,}
+\DoxyCodeLine{00012\ \ \ \ \ \mbox{\hyperlink{struct_f_race_entries}{FRaceEntries}},}
+\DoxyCodeLine{00013\ \ \ \ \ RacesDatas);}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00018\ UCLASS()}
+\DoxyCodeLine{00019\ class\ SUBSYSTEMS\_API\ \mbox{\hyperlink{class_u_trails_subsystem}{UTrailsSubsystem}}\ :\ public\ UGameInstanceSubsystem}
+\DoxyCodeLine{00020\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_trails_subsystem_aa2d98c9b55ba84798c75873413edb530}{Initialize}}(FSubsystemCollectionBase\&\ Collection)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_trails_subsystem_af3b510b020bc4829634068dc092958c7}{Deinitialize}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00026\ \ \ \ \ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_trails_subsystem_a82843e6cbefd639420d9e48c79bb8ed2}{PerformHttpRequestForRaces}}(\textcolor{keyword}{const}\ FString\&\ RacesEndpoint);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00034\ \ \ \ \ FOnRacesDatasGathered\ \mbox{\hyperlink{class_u_trails_subsystem_a0e1835cf8825db6e3c817d1fb5c26439}{OnRacesDatasGathered}};}
+\DoxyCodeLine{00035\ \ \ \ \ }
+\DoxyCodeLine{00036\ private:}
+\DoxyCodeLine{00037\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00038\ \ \ \ \ \mbox{\hyperlink{struct_f_race_entries}{FRaceEntries}}\ RacesArray;}
+\DoxyCodeLine{00039\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ CurrentRaceSetup;}
+\DoxyCodeLine{00041\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00042\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_race_subsystem}{URaceSubsystem}}>\ RaceSubsystem;}
+\DoxyCodeLine{00043\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{void}\ SetRaceSetup(int64\ RaceID,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ NewRaceSetup);}
+\DoxyCodeLine{00045\ \ \ \ \ }
+\DoxyCodeLine{00046\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00047\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_loading_status_subsystem}{ULoadingStatusSubsystem}}>\ LoadingSubsystem;}
+\DoxyCodeLine{00048\ \};}
+
+\end{DoxyCode}

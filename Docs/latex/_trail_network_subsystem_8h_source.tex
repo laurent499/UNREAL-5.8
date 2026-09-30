@@ -1,0 +1,46 @@
+\doxysection{Trail\+Network\+Subsystem.\+h}
+\hypertarget{_trail_network_subsystem_8h_source}{}\label{_trail_network_subsystem_8h_source}\index{Source/Subsystems/Public/TrailNetworkSubsystem.h@{Source/Subsystems/Public/TrailNetworkSubsystem.h}}
+\mbox{\hyperlink{_trail_network_subsystem_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Subsystems/GameInstanceSubsystem.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}TrailNetworkSubsystem.generated.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ UCLASS()}
+\DoxyCodeLine{00015\ class\ SUBSYSTEMS\_API\ \mbox{\hyperlink{class_u_trail_network_subsystem}{UTrailNetworkSubsystem}}\ :\ public\ UGameInstanceSubsystem\ }
+\DoxyCodeLine{00016\ \{}
+\DoxyCodeLine{00017\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00018\ \ \ \ \ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00020\ \ \ \ \ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_trail_network_subsystem_adf49273f98d51abd8ebc3e512cfea260}{Initialize}}(FSubsystemCollectionBase\&\ Collection)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_trail_network_subsystem_aac6be53985decdd217ef38213496c11b}{Deinitialize}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00023\ \ \ \ \ }
+\DoxyCodeLine{00028\ \ \ \ \ UFUNCTION(BlueprintCallable,\ Category\ =\ \textcolor{stringliteral}{"{}Trail\ Network\ Subsystem"{}})}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_trail_network_subsystem_a15555f1c1e9a77ff4505e239c4c39845}{RequestEndpoint}}(\textcolor{keyword}{const}\ FString\&\ CalledEndpoint)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00030\ \ \ \ \ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00036\ \ \ \ \ FString\ Endpoint;}
+\DoxyCodeLine{00037\ \ \ \ \ }
+\DoxyCodeLine{00038\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_u_trails_subsystem}{UTrailsSubsystem}}*\ TrailsSubsystem;}
+\DoxyCodeLine{00040\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_u_race_subsystem}{URaceSubsystem}}*\ RaceSubsystem;}
+\DoxyCodeLine{00042\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_u_path_subsystem}{UPathSubsystem}}*\ PathSubsystem;}
+\DoxyCodeLine{00044\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_u_checkpoint_subsystem}{UCheckpointSubsystem}}*\ CheckpointSubsystem;}
+\DoxyCodeLine{00046\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_u_poi_subsystem}{UPoiSubsystem}}*\ PoiSubsystem;}
+\DoxyCodeLine{00048\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_u_runner_subsystem}{URunnerSubsystem}}*\ RunnerSubsystem;}
+\DoxyCodeLine{00050\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_u_weather_subsystem}{UWeatherSubsystem}}*\ WeatherSubsystem;}
+\DoxyCodeLine{00052\ \};}
+
+\end{DoxyCode}

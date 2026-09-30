@@ -1,0 +1,64 @@
+\doxysection{Scale\+Subsystem.\+h}
+\hypertarget{_scale_subsystem_8h_source}{}\label{_scale_subsystem_8h_source}\index{Source/Subsystems/Public/ScaleSubsystem.h@{Source/Subsystems/Public/ScaleSubsystem.h}}
+\mbox{\hyperlink{_scale_subsystem_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Fill\ out\ your\ copyright\ notice\ in\ the\ Description\ page\ of\ Project\ Settings.}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Subsystems/WorldSubsystem.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_scale_interface_8h}{ScaleInterface.h}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}ScaleSubsystem.generated.h"{}}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ UCLASS()}
+\DoxyCodeLine{00013\ class\ SUBSYSTEMS\_API\ \mbox{\hyperlink{class_u_scale_subsystem}{UScaleSubsystem}}\ :\ public\ UTickableWorldSubsystem}
+\DoxyCodeLine{00014\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00016\ \ \ \ \ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/\ UWorldRickableSubsystem}}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_scale_subsystem_ad7254a9593b8286db8a120baddfdf1cc}{Initialize}}(FSubsystemCollectionBase\&\ Collection)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_scale_subsystem_ae3d625d1d07249526e0ce2d9fe4c323e}{Deinitialize}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_scale_subsystem_a1d0a4f75ea154d190328033f83fd0af4}{Tick}}(\textcolor{keywordtype}{float}\ DeltaTime)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{virtual}\ TStatId\ \mbox{\hyperlink{class_u_scale_subsystem_aeb2ae243d3574a91b383c5627189f279}{GetStatId}}()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_u_scale_subsystem_a7db27f19dce6e531e27eef8191285e42}{IsTickable}}()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_u_scale_subsystem_a6b7fa95f42682881cbd9c1a7c65acb09}{IsTickableInEditor}}()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ \}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/\ API}}
+\DoxyCodeLine{00027\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00028\ \ \ \ \ void\ RegisterScalableActor(AActor*\ Actor);}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{//\ UFUNCTION()}}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{comment}{//\ void\ RegisterScalableActorWithConfig(AActor*\ Actor,\ const\ FDistanceScaleConfig\&\ OverrideConfig);}}
+\DoxyCodeLine{00031\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{void}\ UnregisterScalableActor(AActor*\ Actor);}
+\DoxyCodeLine{00033\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{void}\ SetGlobalConfig(const\ \mbox{\hyperlink{struct_f_distance_scale_config}{FDistanceScaleConfig}}\&\ NewConfig);}
+\DoxyCodeLine{00035\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{void}\ SetNearFar(\textcolor{keywordtype}{float}\ NewNear,\ \textcolor{keywordtype}{float}\ NewFar);}
+\DoxyCodeLine{00037\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{void}\ SetActorScaleMinMax(AActor*\ Actor,\ const\ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}\&\ NewMinMax);}
+\DoxyCodeLine{00039\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00040\ \ \ \ \ \mbox{\hyperlink{struct_f_distance_scale_config}{FDistanceScaleConfig}}\ \mbox{\hyperlink{class_u_scale_subsystem_af740307375bae6710530fb7375ccb4ad}{GetGlobalConfig}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ GlobalConfig;\ \}}
+\DoxyCodeLine{00041\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00042\ \ \ \ \ int32\ \mbox{\hyperlink{class_u_scale_subsystem_a37751c6a6d00b2b547ddf6f6452e24bd}{GetRegisteredCount}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ Entries.Num();\ \}\ \ }
+\DoxyCodeLine{00043\ \ \ \ \ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00045\ \ \ \ \ }
+\DoxyCodeLine{00046\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00047\ \ \ \ \ \mbox{\hyperlink{struct_f_distance_scale_config}{FDistanceScaleConfig}}\ GlobalConfig;}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00050\ \ \ \ \ TArray<\mbox{\hyperlink{struct_f_entry}{FEntry}}>\ Entries;}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ HandleActorEndPlay(AActor*\ Actor,\ EEndPlayReason::Type\ Reason);}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{bool}\ GetCameraLocation(FVector\&\ OutCamLoc)\ const;}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ FVector\ ComputeTargetScale(const\ \mbox{\hyperlink{struct_f_entry}{FEntry}}\&\ Entry,\ const\ FVector\&\ CamLoc,\ const\ FVector\&\ ActorLoc)\ const;}
+\DoxyCodeLine{00058\ \};}
+
+\end{DoxyCode}

@@ -1,0 +1,128 @@
+\doxysection{Source/\+Shared\+Types/\+Public/\+Trail\+Shared\+Types.h File Reference}
+\hypertarget{_trail_shared_types_8h}{}\label{_trail_shared_types_8h}\index{Source/SharedTypes/Public/TrailSharedTypes.h@{Source/SharedTypes/Public/TrailSharedTypes.h}}
+{\ttfamily \#include "{}Core\+Minimal.\+h"{}}\newline
+{\ttfamily \#include "{}Trail\+Shared\+Types.\+generated.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_f_min_max}{FMin\+Max}}
+\item 
+struct \mbox{\hyperlink{struct_f_settings}{FSettings}}
+\item 
+struct \mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}}
+\begin{DoxyCompactList}\small\item\em Structure du Setup d\textquotesingle{}une course. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_race_setup_root}{FRace\+Setup\+Root}}
+\item 
+struct \mbox{\hyperlink{struct_f_race_p_o_i}{FRace\+POI}}
+\begin{DoxyCompactList}\small\item\em Structure du POI. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_p_o_is}{FPOIs}}
+\begin{DoxyCompactList}\small\item\em Structure du tableau des POIs. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_race_checkpoint}{FRace\+Checkpoint}}
+\begin{DoxyCompactList}\small\item\em Structure du Checkpoint. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_checkpoints}{FCheckpoints}}
+\begin{DoxyCompactList}\small\item\em Structure du tableau de checkpoints. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_race_path_point}{FRace\+Path\+Point}}
+\begin{DoxyCompactList}\small\item\em Structure d\textquotesingle{}un point du tracé \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_race_path}{FRace\+Path}}
+\begin{DoxyCompactList}\small\item\em Structure du tracé \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_runner_struct}{FRunner\+Struct}}
+\begin{DoxyCompactList}\small\item\em Structure d\textquotesingle{}un Runner @endpoint /race/4/runner/\+Id\+Runner. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_runners}{FRunners}}
+\begin{DoxyCompactList}\small\item\em Structure tu tableau des Runners. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_race_struct}{FRace\+Struct}}
+\begin{DoxyCompactList}\small\item\em Structure d\textquotesingle{}une course. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_race_entry}{FRace\+Entry}}
+\item 
+struct \mbox{\hyperlink{struct_f_race_entries}{FRace\+Entries}}
+\begin{DoxyCompactList}\small\item\em Structure du endpoint /races. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_team_struct}{FTeam\+Struct}}
+\begin{DoxyCompactList}\small\item\em Structure d\textquotesingle{}une Team/\+Canal. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_teams}{FTeams}}
+\item 
+struct \mbox{\hyperlink{struct_f_race_team_runner_index}{FRace\+Team\+Runner\+Index}}
+\item 
+struct \mbox{\hyperlink{struct_f_team_runner}{FTeam\+Runner}}
+\begin{DoxyCompactList}\small\item\em Association Team/\+Runner. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_race_teams_runners}{FRace\+Teams\+Runners}}
+\item 
+struct \mbox{\hyperlink{struct_f_open_weather_condition}{FOpen\+Weather\+Condition}}
+\begin{DoxyCompactList}\small\item\em Structures de la météo. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_open_weather_current}{FOpen\+Weather\+Current}}
+\item 
+struct \mbox{\hyperlink{struct_f_open_weather_response}{FOpen\+Weather\+Response}}
+\item 
+struct \mbox{\hyperlink{struct_f_point_index_segment}{FPoint\+Index\+Segment}}
+\begin{DoxyCompactList}\small\item\em Slope segment. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_group_struct}{FGroup\+Struct}}
+\begin{DoxyCompactList}\small\item\em Team\+Groups. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_f_groups}{FGroups}}
+\item 
+struct \mbox{\hyperlink{struct_f_distance_scale_config}{FDistance\+Scale\+Config}}
+\item 
+struct \mbox{\hyperlink{struct_f_entry}{FEntry}}
+\item 
+struct \mbox{\hyperlink{struct_f_runner_stacking_config}{FRunner\+Stacking\+Config}}
+\item 
+struct \mbox{\hyperlink{struct_f_stack_entry}{FStack\+Entry}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824}{EStack\+State}} \+: uint8 \{ \mbox{\hyperlink{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824aa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}} =(Display\+Name = "{}\+Unstacked"{})
+, \mbox{\hyperlink{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824aa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}} =(Display\+Name = "{}\+Stacked"{})
+ \}
+\begin{DoxyCompactList}\small\item\em Types de données utilisés pour décrire les objets JSON. \end{DoxyCompactList}\item 
+enum class \mbox{\hyperlink{_trail_shared_types_8h_a17951dabd673f2cf34fd310f17ae9372}{ERunner\+Template}} \+: uint8 \{ \mbox{\hyperlink{_trail_shared_types_8h_a17951dabd673f2cf34fd310f17ae9372aa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}} =(Display\+Name = "{}\+UTMB"{})
+, \mbox{\hyperlink{_trail_shared_types_8h_a17951dabd673f2cf34fd310f17ae9372aa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}} =(Display\+Name = "{}\+GTWS"{})
+, \mbox{\hyperlink{_trail_shared_types_8h_a17951dabd673f2cf34fd310f17ae9372aa3f80d8f0f1b4ffa8c475f5d60ea5635}{UMETA}} =(Display\+Name = "{}\+Generic"{})
+ \}
+\begin{DoxyCompactList}\small\item\em Template types. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\label{doc-enum-members}
+\Hypertarget{_trail_shared_types_8h_doc-enum-members}
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{_trail_shared_types_8h_a17951dabd673f2cf34fd310f17ae9372}\index{TrailSharedTypes.h@{TrailSharedTypes.h}!ERunnerTemplate@{ERunnerTemplate}}
+\index{ERunnerTemplate@{ERunnerTemplate}!TrailSharedTypes.h@{TrailSharedTypes.h}}
+\doxysubsubsection{\texorpdfstring{ERunnerTemplate}{ERunnerTemplate}}
+{\footnotesize\ttfamily \label{_trail_shared_types_8h_a17951dabd673f2cf34fd310f17ae9372} 
+enum class \mbox{\hyperlink{_trail_shared_types_8h_a17951dabd673f2cf34fd310f17ae9372}{ERunner\+Template}} \+: uint8\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Template types. 
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UMETA@{UMETA}!TrailSharedTypes.h@{TrailSharedTypes.h}}\index{TrailSharedTypes.h@{TrailSharedTypes.h}!UMETA@{UMETA}}}\Hypertarget{_trail_shared_types_8h_a17951dabd673f2cf34fd310f17ae9372aa3f80d8f0f1b4ffa8c475f5d60ea5635}\label{_trail_shared_types_8h_a17951dabd673f2cf34fd310f17ae9372aa3f80d8f0f1b4ffa8c475f5d60ea5635} 
+UMETA&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UMETA@{UMETA}!TrailSharedTypes.h@{TrailSharedTypes.h}}\index{TrailSharedTypes.h@{TrailSharedTypes.h}!UMETA@{UMETA}}}\Hypertarget{_trail_shared_types_8h_a17951dabd673f2cf34fd310f17ae9372aa3f80d8f0f1b4ffa8c475f5d60ea5635}\label{_trail_shared_types_8h_a17951dabd673f2cf34fd310f17ae9372aa3f80d8f0f1b4ffa8c475f5d60ea5635} 
+UMETA&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UMETA@{UMETA}!TrailSharedTypes.h@{TrailSharedTypes.h}}\index{TrailSharedTypes.h@{TrailSharedTypes.h}!UMETA@{UMETA}}}\Hypertarget{_trail_shared_types_8h_a17951dabd673f2cf34fd310f17ae9372aa3f80d8f0f1b4ffa8c475f5d60ea5635}\label{_trail_shared_types_8h_a17951dabd673f2cf34fd310f17ae9372aa3f80d8f0f1b4ffa8c475f5d60ea5635} 
+UMETA&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824}\index{TrailSharedTypes.h@{TrailSharedTypes.h}!EStackState@{EStackState}}
+\index{EStackState@{EStackState}!TrailSharedTypes.h@{TrailSharedTypes.h}}
+\doxysubsubsection{\texorpdfstring{EStackState}{EStackState}}
+{\footnotesize\ttfamily \label{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824} 
+enum class \mbox{\hyperlink{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824}{EStack\+State}} \+: uint8\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Types de données utilisés pour décrire les objets JSON. 
+
+Etat Stacked/\+Unstacked d\textquotesingle{}un runner \begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UMETA@{UMETA}!TrailSharedTypes.h@{TrailSharedTypes.h}}\index{TrailSharedTypes.h@{TrailSharedTypes.h}!UMETA@{UMETA}}}\Hypertarget{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824aa3f80d8f0f1b4ffa8c475f5d60ea5635}\label{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824aa3f80d8f0f1b4ffa8c475f5d60ea5635} 
+UMETA&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UMETA@{UMETA}!TrailSharedTypes.h@{TrailSharedTypes.h}}\index{TrailSharedTypes.h@{TrailSharedTypes.h}!UMETA@{UMETA}}}\Hypertarget{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824aa3f80d8f0f1b4ffa8c475f5d60ea5635}\label{_trail_shared_types_8h_a0cb39157f206681b7a987ba24ce8e824aa3f80d8f0f1b4ffa8c475f5d60ea5635} 
+UMETA&\\
+\hline
+
+\end{DoxyEnumFields}

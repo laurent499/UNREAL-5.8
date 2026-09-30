@@ -1,0 +1,296 @@
+\doxysection{ARunner\+\_\+\+GTWS Class Reference}
+\hypertarget{class_a_runner___g_t_w_s}{}\label{class_a_runner___g_t_w_s}\index{ARunner\_GTWS@{ARunner\_GTWS}}
+
+
+{\ttfamily \#include $<$Runner\+\_\+\+GTWS.\+h$>$}
+
+Inheritance diagram for ARunner\+\_\+\+GTWS\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.485207cm]{class_a_runner___g_t_w_s}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_a_runner___g_t_w_s_a76bc47849e405503d8317b58de56e081}{ARunner\+\_\+\+GTWS}} ()
+\item 
+virtual void \mbox{\hyperlink{class_a_runner___g_t_w_s_a481c210a3de3c4524595598ce58ca700}{Update\+Runner}} (\mbox{\hyperlink{struct_f_runner_struct}{FRunner\+Struct}} Runner, \mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}} Race\+Setup) override
+\item 
+virtual void \mbox{\hyperlink{class_a_runner___g_t_w_s_aa7d66e66d41c239b7a0c376e12469dc4}{Toggle\+Club}} (bool b\+Display) override
+\item 
+virtual void \mbox{\hyperlink{class_a_runner___g_t_w_s_acd070037b1366e1845337926eb74b074}{Toggle\+Flag}} (bool b\+Display) override
+\item 
+virtual void \mbox{\hyperlink{class_a_runner___g_t_w_s_a7c102c6849aab8a7902b05dd4d0a4a67}{Toggle\+Photo}} (bool b\+Display) override
+\item 
+virtual void \mbox{\hyperlink{class_a_runner___g_t_w_s_acaeb3a921108e16618fd7cd751cbaff1}{Start\+Animation}} (float Rotation\+Speed) override
+\item 
+virtual void \mbox{\hyperlink{class_a_runner___g_t_w_s_a71702c60c6fd7efedd35f088d446b390}{Stop\+Animation}} () override
+\item 
+virtual void \mbox{\hyperlink{class_a_runner___g_t_w_s_a63210cc9078985d2fbac47d4bc0b7020}{Update\+Runner\+Location}} (\mbox{\hyperlink{struct_f_runner_struct}{FRunner\+Struct}} Runner\+Struct, TObject\+Ptr$<$ class \mbox{\hyperlink{class_a_path}{APath}} $>$ Current\+Path) override
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_a_runner}{ARunner}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_a_runner_a2ca6e85da41e4de6a180c26cbc7685db}{ARunner}} ()
+\begin{DoxyCompactList}\small\item\em Runner Constructor. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_a_runner_a53034fa695a120c4dcf3c363c607c0c1}{Tick}} (float Delta\+Time) override
+\item 
+void \mbox{\hyperlink{class_a_runner_a26ff2c61700f8330fcf629c2383c77a2}{Set\+Min\+Max}} (int64 Race\+ID, \mbox{\hyperlink{struct_f_min_max}{FMin\+Max}} New\+Min\+Max)
+\begin{DoxyCompactList}\small\item\em Updating the Min\+Max. \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{struct_f_min_max}{FMin\+Max}} \mbox{\hyperlink{class_a_runner_ac38b7252f419c216b0d051929b4aaad2}{Get\+Runner\+Min\+Max}} () const override
+\item 
+virtual float \mbox{\hyperlink{class_a_runner_a50da82dfdc92422225a291a7ffa822a4}{Get\+Runner\+VDelta}} () const override
+\item 
+virtual UScene\+Component \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_a_runner_abef62a1056cd566eb55c1a4c6d84013e}{Get\+Stack\+Hook\+Component}} () const override
+\item 
+virtual UScene\+Component \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_a_runner_ae64859add5ef665e64671370f20828e0}{Get\+Stack\+Attach\+Component}} () const override
+\item 
+virtual void \mbox{\hyperlink{class_a_runner_a06974151662a04ffc6828b09de6834c1}{Set\+Is\+Stacked}} (bool b\+In\+Stacked) override
+\item 
+virtual bool \mbox{\hyperlink{class_a_runner_ad7eeee3b67c513bb2f0c0ccad6fe3172}{Is\+Stacked}} () const override
+\item 
+virtual void \mbox{\hyperlink{class_a_runner_a5dc6eb8f5027b8623bca00248304f5d6}{Update\+Globe\+Anchor}} ()
+\item 
+virtual UScene\+Component \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_a_runner_ac28c8181e8aa08628f822507f4be0476}{Get\+Foot\+Hook}} () const override
+\item 
+virtual UStatic\+Mesh\+Component \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_a_runner_ade0f88e9956474cc1c0a3bf0fb9d7161}{Get\+Foot\+Mesh}} () const override
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+TObject\+Ptr$<$ class UScene\+Component $>$ \mbox{\hyperlink{class_a_runner___g_t_w_s_a9de2e915aae4cb87a9aa1bd914bbcb4d}{Photo\+Hook}}
+\item 
+TObject\+Ptr$<$ class UPhoto\+Component $>$ \mbox{\hyperlink{class_a_runner___g_t_w_s_af927a25330c393fb95f4cb9e6c3ebc91}{Photo\+Component}}
+\item 
+TObject\+Ptr$<$ class UGTWS\+\_\+\+Name\+Component $>$ \mbox{\hyperlink{class_a_runner___g_t_w_s_a16d6d2269e17a8939aee38e04ebeb9f0}{Name\+Component}}
+\item 
+TObject\+Ptr$<$ class UScene\+Component $>$ \mbox{\hyperlink{class_a_runner___g_t_w_s_a9a6270da119ec9695ac6c5f72ad865db}{Flag\+Hook}}
+\item 
+TObject\+Ptr$<$ class UGTWS\+\_\+\+Flag\+Component $>$ \mbox{\hyperlink{class_a_runner___g_t_w_s_a78325f73577ff0944656e7da0625cf7f}{Flag\+Component}}
+\item 
+TObject\+Ptr$<$ class UScene\+Component $>$ \mbox{\hyperlink{class_a_runner___g_t_w_s_a203ea29a745adabfd85ec89d38cc9220}{Club\+Hook}}
+\item 
+TObject\+Ptr$<$ class UClub\+Component $>$ \mbox{\hyperlink{class_a_runner___g_t_w_s_a8fd1423840d9edab4b10cc4ce677408b}{Club\+Component}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_a_runner}{ARunner}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_f_runner_struct}{FRunner\+Struct}} \mbox{\hyperlink{class_a_runner_a080112cf9224232e80f5a57250d6b9b2}{Runner\+Datas}}
+\item 
+bool \mbox{\hyperlink{class_a_runner_ae06c9ad69c786550dc0e7526acacf554}{b\+Snap\+To\+Path}}
+\item 
+TObject\+Ptr$<$ class UCesium\+Globe\+Anchor\+Component $>$ \mbox{\hyperlink{class_a_runner_a74bc90ba154d32f6312fd67db6cb4abf}{Globe\+Anchor\+Component}}
+\item 
+TSoft\+Object\+Ptr$<$ class ACesium\+Georeference $>$ \mbox{\hyperlink{class_a_runner_a7359580dab7a0d92216137d2db2a2ffa}{Georeference}}
+\item 
+TObject\+Ptr$<$ class UScene\+Component $>$ \mbox{\hyperlink{class_a_runner_a8025c04da77d110f0251b41d94f6abf7}{Main\+Root\+Component}}
+\item 
+TObject\+Ptr$<$ class UScene\+Component $>$ \mbox{\hyperlink{class_a_runner_a6366e0538c11ae8a573473522b0d7794}{Presentation\+Root}}
+\item 
+TObject\+Ptr$<$ class UStatic\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_runner_a03002bac0593c06851ce484ddb77a348}{Foot\+Component}}
+\item 
+TObject\+Ptr$<$ class UScene\+Component $>$ \mbox{\hyperlink{class_a_runner_a630b7c1c6cdff8060a4b44b304f8d397}{Foot\+Hook}}
+\item 
+TObject\+Ptr$<$ class UScene\+Component $>$ \mbox{\hyperlink{class_a_runner_ad4315a84557929a17a050fdda6df9f45}{Slash\+Hook}}
+\item 
+TObject\+Ptr$<$ class UScene\+Component $>$ \mbox{\hyperlink{class_a_runner_a06406c3c3da2bc60596e48d892df5fa5}{Name\+Hook}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_race_subsystem}{URace\+Subsystem}} $>$ \mbox{\hyperlink{class_a_runner_ab21f185ae9262bea68c3b9df7fec6084}{Race\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_scale_subsystem}{UScale\+Subsystem}} $>$ \mbox{\hyperlink{class_a_runner_a5f3c3bff78d7fbcc0b23da211023a28c}{Scale\+Subsystem}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Attributes inherited from \mbox{\hyperlink{class_a_runner}{ARunner}}}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_a_runner_a8e35c2b9fdac9e4f2f2f3dd869d03481}{b\+Stacked\+State}}
+\item 
+bool \mbox{\hyperlink{class_a_runner_a6b4872b9fd75bdc3302716dc86618bad}{b\+Has\+Stack\+Children}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_settings_subsystem}{USettings\+Subsystem}} $>$ \mbox{\hyperlink{class_a_runner_a8ede53e69cf41134125897ebeb91a697}{Settings\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_runner_subsystem}{URunner\+Subsystem}} $>$ \mbox{\hyperlink{class_a_runner_acc379c37b2d51f0d7d028cf29a085f26}{Runner\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_runner_stacking_subsystem}{URunner\+Stacking\+Subsystem}} $>$ \mbox{\hyperlink{class_a_runner_ac93982f2f7f1d88aef816a82b9c2f05f}{Stacking\+Subsystem}}
+\item 
+FVector \mbox{\hyperlink{class_a_runner_a27d3835589dd7e2b6e20555a7d568e26}{Current\+Location}}
+\item 
+TObject\+Ptr$<$ class USpring\+Arm\+Component $>$ \mbox{\hyperlink{class_a_runner_ae3c45e10fefd43f79d2eaae363134130}{Spring\+Arm\+Component}}
+\item 
+TObject\+Ptr$<$ class UCine\+Camera\+Component $>$ \mbox{\hyperlink{class_a_runner_aadfe042d897d5b9b697dbb0115c15594}{Camera\+Component}}
+\item 
+TObject\+Ptr$<$ class UOWLCapture\+Component $>$ \mbox{\hyperlink{class_a_runner_a5f45e247dc0d20efc0c2e5cf6e66fad7}{OWLCapture\+Component}}
+\item 
+FTimer\+Handle \mbox{\hyperlink{class_a_runner_af5e63f0c47d7bbfa7c5b359a8b944154}{Rot\+Handle}}
+\item 
+TObject\+Ptr$<$ class UTexture\+Render\+Target $>$ \mbox{\hyperlink{class_a_runner_ac237c1910ce6988ceb61011628f1f53f}{Render\+Target}}
+\item 
+float \mbox{\hyperlink{class_a_runner_ab5e396237a0db3920ba5f2d6a0ea7ab3}{Orbit\+Yaw}} = 0.f
+\item 
+float \mbox{\hyperlink{class_a_runner_a4a814036a720e92630029908079a560d}{Base\+Arm\+Pitch}} = 0.f
+\item 
+float \mbox{\hyperlink{class_a_runner_ab4a00a47160d2ba71f18a6ffa7b5b903}{Base\+Arm\+Roll}} = 0.f
+\item 
+float \mbox{\hyperlink{class_a_runner_af6b6b13169646f99b7bc625f03e59959}{Orbit\+Speed\+Deg\+Per\+Sec}} = 12.f
+\item 
+bool \mbox{\hyperlink{class_a_runner_a30ef2aa1cf3c9a0239a5a017a4736ba7}{b\+Orbit\+Enabled}} = false
+\item 
+float \mbox{\hyperlink{class_a_runner_ada4e50bfbb18c21fe17e47595e5b3569}{Orbit\+Elapsed}} = 0.f
+\item 
+float \mbox{\hyperlink{class_a_runner_ab20c05cf15596ebf38923823b26bbf20}{Start\+Yaw}}
+\item 
+bool \mbox{\hyperlink{class_a_runner_abc840852309e4ee45ddcfd60eaf0e33b}{b\+Look\+At\+Enabled}} = true
+\item 
+AActor \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_a_runner_a9e0a2b0fd5e0efdf5e20d1124e80d49d}{Original\+View\+Target}} = nullptr
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions inherited from \mbox{\hyperlink{class_a_runner}{ARunner}}}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_a_runner_a957513d5512933cd7d76bc4cf8dc497e}{On\+Look\+At\+Timer\+Tick}} ()
+\item 
+virtual void \mbox{\hyperlink{class_a_runner_a5652475c2e32419783b953afb19b68d5}{Begin\+Play}} () override
+\item 
+virtual void \mbox{\hyperlink{class_a_runner_ace2fd17957efd5803754b321ebe7ea25}{End\+Play}} (const EEnd\+Play\+Reason\+::\+Type End\+Play\+Reason) override
+\item 
+virtual void \mbox{\hyperlink{class_a_runner_af5f11f3b3a923ab34c437227f8bf5428}{Assign\+Runner\+To\+Team}} (int32 Id\+Team) override
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_a_runner___g_t_w_s_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_a_runner___g_t_w_s_a76bc47849e405503d8317b58de56e081}\index{ARunner\_GTWS@{ARunner\_GTWS}!ARunner\_GTWS@{ARunner\_GTWS}}
+\index{ARunner\_GTWS@{ARunner\_GTWS}!ARunner\_GTWS@{ARunner\_GTWS}}
+\doxysubsubsection{\texorpdfstring{ARunner\_GTWS()}{ARunner\_GTWS()}}
+{\footnotesize\ttfamily \label{class_a_runner___g_t_w_s_a76bc47849e405503d8317b58de56e081} 
+ARunner\+\_\+\+GTWS\+::\+ARunner\+\_\+\+GTWS (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_a_runner___g_t_w_s_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_a_runner___g_t_w_s_acaeb3a921108e16618fd7cd751cbaff1}\index{ARunner\_GTWS@{ARunner\_GTWS}!StartAnimation@{StartAnimation}}
+\index{StartAnimation@{StartAnimation}!ARunner\_GTWS@{ARunner\_GTWS}}
+\doxysubsubsection{\texorpdfstring{StartAnimation()}{StartAnimation()}}
+{\footnotesize\ttfamily \label{class_a_runner___g_t_w_s_acaeb3a921108e16618fd7cd751cbaff1} 
+void ARunner\+\_\+\+GTWS\+::\+Start\+Animation (\begin{DoxyParamCaption}\item[{float}]{Rotation\+Speed}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_a_runner_a828274914ab001440f7734fe824fd7fb}{ARunner}}.
+
+\Hypertarget{class_a_runner___g_t_w_s_a71702c60c6fd7efedd35f088d446b390}\index{ARunner\_GTWS@{ARunner\_GTWS}!StopAnimation@{StopAnimation}}
+\index{StopAnimation@{StopAnimation}!ARunner\_GTWS@{ARunner\_GTWS}}
+\doxysubsubsection{\texorpdfstring{StopAnimation()}{StopAnimation()}}
+{\footnotesize\ttfamily \label{class_a_runner___g_t_w_s_a71702c60c6fd7efedd35f088d446b390} 
+void ARunner\+\_\+\+GTWS\+::\+Stop\+Animation (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_a_runner_aa04131ba941699e01ec9037e3795f7fd}{ARunner}}.
+
+\Hypertarget{class_a_runner___g_t_w_s_aa7d66e66d41c239b7a0c376e12469dc4}\index{ARunner\_GTWS@{ARunner\_GTWS}!ToggleClub@{ToggleClub}}
+\index{ToggleClub@{ToggleClub}!ARunner\_GTWS@{ARunner\_GTWS}}
+\doxysubsubsection{\texorpdfstring{ToggleClub()}{ToggleClub()}}
+{\footnotesize\ttfamily \label{class_a_runner___g_t_w_s_aa7d66e66d41c239b7a0c376e12469dc4} 
+void ARunner\+\_\+\+GTWS\+::\+Toggle\+Club (\begin{DoxyParamCaption}\item[{bool}]{b\+Display}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_a_runner_ae057f6451cbaceecee2908dda952080b}{ARunner}}.
+
+\Hypertarget{class_a_runner___g_t_w_s_acd070037b1366e1845337926eb74b074}\index{ARunner\_GTWS@{ARunner\_GTWS}!ToggleFlag@{ToggleFlag}}
+\index{ToggleFlag@{ToggleFlag}!ARunner\_GTWS@{ARunner\_GTWS}}
+\doxysubsubsection{\texorpdfstring{ToggleFlag()}{ToggleFlag()}}
+{\footnotesize\ttfamily \label{class_a_runner___g_t_w_s_acd070037b1366e1845337926eb74b074} 
+void ARunner\+\_\+\+GTWS\+::\+Toggle\+Flag (\begin{DoxyParamCaption}\item[{bool}]{b\+Display}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_a_runner_aaca1abd0a2bf25f3d215dcae81455b84}{ARunner}}.
+
+\Hypertarget{class_a_runner___g_t_w_s_a7c102c6849aab8a7902b05dd4d0a4a67}\index{ARunner\_GTWS@{ARunner\_GTWS}!TogglePhoto@{TogglePhoto}}
+\index{TogglePhoto@{TogglePhoto}!ARunner\_GTWS@{ARunner\_GTWS}}
+\doxysubsubsection{\texorpdfstring{TogglePhoto()}{TogglePhoto()}}
+{\footnotesize\ttfamily \label{class_a_runner___g_t_w_s_a7c102c6849aab8a7902b05dd4d0a4a67} 
+void ARunner\+\_\+\+GTWS\+::\+Toggle\+Photo (\begin{DoxyParamCaption}\item[{bool}]{b\+Display}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_a_runner_a6aeb2bac09dc6b0044e8f7a716492cff}{ARunner}}.
+
+\Hypertarget{class_a_runner___g_t_w_s_a481c210a3de3c4524595598ce58ca700}\index{ARunner\_GTWS@{ARunner\_GTWS}!UpdateRunner@{UpdateRunner}}
+\index{UpdateRunner@{UpdateRunner}!ARunner\_GTWS@{ARunner\_GTWS}}
+\doxysubsubsection{\texorpdfstring{UpdateRunner()}{UpdateRunner()}}
+{\footnotesize\ttfamily \label{class_a_runner___g_t_w_s_a481c210a3de3c4524595598ce58ca700} 
+void ARunner\+\_\+\+GTWS\+::\+Update\+Runner (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_runner_struct}{FRunner\+Struct}}}]{Runner}{, }\item[{\mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}}}]{Race\+Setup}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_a_runner_a1ed40c59692f0d124c14381b1c5d3d8a}{ARunner}}.
+
+\Hypertarget{class_a_runner___g_t_w_s_a63210cc9078985d2fbac47d4bc0b7020}\index{ARunner\_GTWS@{ARunner\_GTWS}!UpdateRunnerLocation@{UpdateRunnerLocation}}
+\index{UpdateRunnerLocation@{UpdateRunnerLocation}!ARunner\_GTWS@{ARunner\_GTWS}}
+\doxysubsubsection{\texorpdfstring{UpdateRunnerLocation()}{UpdateRunnerLocation()}}
+{\footnotesize\ttfamily \label{class_a_runner___g_t_w_s_a63210cc9078985d2fbac47d4bc0b7020} 
+void ARunner\+\_\+\+GTWS\+::\+Update\+Runner\+Location (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_runner_struct}{FRunner\+Struct}}}]{Runner\+Struct}{, }\item[{TObject\+Ptr$<$ class \mbox{\hyperlink{class_a_path}{APath}} $>$}]{Current\+Path}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_a_runner_ae643f51e2ceb8b3de775a88450633b8d}{ARunner}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_a_runner___g_t_w_s_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_a_runner___g_t_w_s_a8fd1423840d9edab4b10cc4ce677408b}\index{ARunner\_GTWS@{ARunner\_GTWS}!ClubComponent@{ClubComponent}}
+\index{ClubComponent@{ClubComponent}!ARunner\_GTWS@{ARunner\_GTWS}}
+\doxysubsubsection{\texorpdfstring{ClubComponent}{ClubComponent}}
+{\footnotesize\ttfamily \label{class_a_runner___g_t_w_s_a8fd1423840d9edab4b10cc4ce677408b} 
+TObject\+Ptr$<$class UClub\+Component$>$ ARunner\+\_\+\+GTWS\+::\+Club\+Component\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_runner___g_t_w_s_a203ea29a745adabfd85ec89d38cc9220}\index{ARunner\_GTWS@{ARunner\_GTWS}!ClubHook@{ClubHook}}
+\index{ClubHook@{ClubHook}!ARunner\_GTWS@{ARunner\_GTWS}}
+\doxysubsubsection{\texorpdfstring{ClubHook}{ClubHook}}
+{\footnotesize\ttfamily \label{class_a_runner___g_t_w_s_a203ea29a745adabfd85ec89d38cc9220} 
+TObject\+Ptr$<$class UScene\+Component$>$ ARunner\+\_\+\+GTWS\+::\+Club\+Hook\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_runner___g_t_w_s_a78325f73577ff0944656e7da0625cf7f}\index{ARunner\_GTWS@{ARunner\_GTWS}!FlagComponent@{FlagComponent}}
+\index{FlagComponent@{FlagComponent}!ARunner\_GTWS@{ARunner\_GTWS}}
+\doxysubsubsection{\texorpdfstring{FlagComponent}{FlagComponent}}
+{\footnotesize\ttfamily \label{class_a_runner___g_t_w_s_a78325f73577ff0944656e7da0625cf7f} 
+TObject\+Ptr$<$class UGTWS\+\_\+\+Flag\+Component$>$ ARunner\+\_\+\+GTWS\+::\+Flag\+Component\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_runner___g_t_w_s_a9a6270da119ec9695ac6c5f72ad865db}\index{ARunner\_GTWS@{ARunner\_GTWS}!FlagHook@{FlagHook}}
+\index{FlagHook@{FlagHook}!ARunner\_GTWS@{ARunner\_GTWS}}
+\doxysubsubsection{\texorpdfstring{FlagHook}{FlagHook}}
+{\footnotesize\ttfamily \label{class_a_runner___g_t_w_s_a9a6270da119ec9695ac6c5f72ad865db} 
+TObject\+Ptr$<$class UScene\+Component$>$ ARunner\+\_\+\+GTWS\+::\+Flag\+Hook\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_runner___g_t_w_s_a16d6d2269e17a8939aee38e04ebeb9f0}\index{ARunner\_GTWS@{ARunner\_GTWS}!NameComponent@{NameComponent}}
+\index{NameComponent@{NameComponent}!ARunner\_GTWS@{ARunner\_GTWS}}
+\doxysubsubsection{\texorpdfstring{NameComponent}{NameComponent}}
+{\footnotesize\ttfamily \label{class_a_runner___g_t_w_s_a16d6d2269e17a8939aee38e04ebeb9f0} 
+TObject\+Ptr$<$class UGTWS\+\_\+\+Name\+Component$>$ ARunner\+\_\+\+GTWS\+::\+Name\+Component\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_runner___g_t_w_s_af927a25330c393fb95f4cb9e6c3ebc91}\index{ARunner\_GTWS@{ARunner\_GTWS}!PhotoComponent@{PhotoComponent}}
+\index{PhotoComponent@{PhotoComponent}!ARunner\_GTWS@{ARunner\_GTWS}}
+\doxysubsubsection{\texorpdfstring{PhotoComponent}{PhotoComponent}}
+{\footnotesize\ttfamily \label{class_a_runner___g_t_w_s_af927a25330c393fb95f4cb9e6c3ebc91} 
+TObject\+Ptr$<$class UPhoto\+Component$>$ ARunner\+\_\+\+GTWS\+::\+Photo\+Component\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_runner___g_t_w_s_a9de2e915aae4cb87a9aa1bd914bbcb4d}\index{ARunner\_GTWS@{ARunner\_GTWS}!PhotoHook@{PhotoHook}}
+\index{PhotoHook@{PhotoHook}!ARunner\_GTWS@{ARunner\_GTWS}}
+\doxysubsubsection{\texorpdfstring{PhotoHook}{PhotoHook}}
+{\footnotesize\ttfamily \label{class_a_runner___g_t_w_s_a9de2e915aae4cb87a9aa1bd914bbcb4d} 
+TObject\+Ptr$<$class UScene\+Component$>$ ARunner\+\_\+\+GTWS\+::\+Photo\+Hook\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Trail\+Simulator/\+Public/\+Actors/\+GTWS/\mbox{\hyperlink{_runner___g_t_w_s_8h}{Runner\+\_\+\+GTWS.\+h}}\item 
+Source/\+Trail\+Simulator/\+Private/\+Actors/\+GTWS/\mbox{\hyperlink{_runner___g_t_w_s_8cpp}{Runner\+\_\+\+GTWS.\+cpp}}\end{DoxyCompactItemize}

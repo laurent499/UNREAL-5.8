@@ -1,0 +1,176 @@
+\doxysection{Checkpoint.\+h}
+\hypertarget{_checkpoint_8h_source}{}\label{_checkpoint_8h_source}\index{Source/TrailSimulator/Public/Actors/Checkpoint.h@{Source/TrailSimulator/Public/Actors/Checkpoint.h}}
+\mbox{\hyperlink{_checkpoint_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}GameFramework/Actor.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_checkpoint_interface_8h}{CheckpointInterface.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_scale_interface_8h}{ScaleInterface.h}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{SharedTypes/Public/TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}Checkpoint.generated.h"{}}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ UCLASS()}
+\DoxyCodeLine{00013\ class\ TRAILSIMULATOR\_API\ \mbox{\hyperlink{class_a_checkpoint_a07e07ee216792f192fed56454d19b7d1}{ACheckpoint}}\ :\ public\ AActor,\ public\ \mbox{\hyperlink{class_i_checkpoint_interface}{ICheckpointInterface}},\ public\ \mbox{\hyperlink{class_i_scale_interface}{IScaleInterface}}}
+\DoxyCodeLine{00014\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00018\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint_ac8c2765218aba9ed65a854a1e6a18293}{GetBoundsLocation}}(\textcolor{keyword}{class}\ USceneComponent*\ Comp,\ \textcolor{keyword}{class}\ USplineComponent*\ SplineSupport,\ FVector\&\ StartLocation,}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FVector\&\ EndLocation);}
+\DoxyCodeLine{00021\ \ \ \ \ \mbox{\hyperlink{class_a_checkpoint_a07e07ee216792f192fed56454d19b7d1}{ACheckpoint}}();}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint_a8e8cd4998a3930de8f41f050b3795bf2}{Tick}}(\textcolor{keywordtype}{float}\ DeltaTime)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint_a9d9c4e0ca9805da8cfab29f9c2eea719}{OnLookAtTimerTick}}();}
+\DoxyCodeLine{00024\ \ \ \ \ }
+\DoxyCodeLine{00025\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint_aa3485766c42b4010bb810d3310812c6a}{SetMinMax}}(int64\ RaceID,\ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}\ NewMinMax);}
+\DoxyCodeLine{00027\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00028\ \ \ \ \ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}\ \mbox{\hyperlink{class_a_checkpoint_a99a0d50a4d3071d318ea00324d4857d7}{GetMinMax}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint_a4697d5e03d7195557845764eb505feec}{UpdateCheckpoint}}(\mbox{\hyperlink{struct_f_race_checkpoint}{FRaceCheckpoint}}\ NewCheckpointDatas,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ NewRaceSetup)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00031\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00032\ \ \ \ \ FString\ \mbox{\hyperlink{class_a_checkpoint_a20b96a2bc125f1b804a1e1e122d59320}{CapitalizeFirst}}(\textcolor{keyword}{const}\ FString\&\ In);}
+\DoxyCodeLine{00033\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint_a1c55551b45641dd176cad80092cdf68b}{UpdateCheckpointWeather}}(\mbox{\hyperlink{struct_f_open_weather_response}{FOpenWeatherResponse}}\ WeatherDatas)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00035\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint_a5100ce8ce896047353376d99d421ce97}{UpdateGlobeAnchor}}();}
+\DoxyCodeLine{00037\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint_a49a79d12124b72436f55f0bc200653d9}{ToggleCheckpointWeather}}(\textcolor{keywordtype}{bool}\ bShow)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00039\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint_a8c03c0705b7000b66da6fc98f851627a}{StartAnimation}}(\textcolor{keywordtype}{float}\ RotationSpeed)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00041\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint_a780912be3d1bcef935a59854448c07e4}{StopAnimation}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00043\ \ \ \ \ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{comment}{//\ Orbit}}
+\DoxyCodeLine{00045\ \ \ \ \ UPROPERTY(VisibleAnywhere)}
+\DoxyCodeLine{00046\ \ \ \ \ TObjectPtr<class\ USpringArmComponent>\ \mbox{\hyperlink{class_a_checkpoint_a29592c9313420e1d13dca3c996870714}{SpringArmComponent}};}
+\DoxyCodeLine{00047\ \ \ \ \ UPROPERTY(VisibleAnywhere)}
+\DoxyCodeLine{00048\ \ \ \ \ TObjectPtr<class\ UCineCameraComponent>\ \mbox{\hyperlink{class_a_checkpoint_a007bfb9fa5f4cbfe4fd630c238fb6ea9}{CameraComponent}};}
+\DoxyCodeLine{00049\ \ \ \ \ UPROPERTY(VisibleAnywhere)}
+\DoxyCodeLine{00050\ \ \ \ \ TObjectPtr<class\ UOWLCaptureComponent>\ \mbox{\hyperlink{class_a_checkpoint_a7cf4816bbb080047e2cac4582611a9dc}{OWLCaptureComponent}};}
+\DoxyCodeLine{00051\ \ \ \ \ UPROPERTY(VisibleAnywhere)}
+\DoxyCodeLine{00052\ \ \ \ \ FTimerHandle\ \mbox{\hyperlink{class_a_checkpoint_a4be4e95b7dd8552e44371f9c5669f44a}{RotHandle}};}
+\DoxyCodeLine{00053\ \ \ \ \ UPROPERTY(VisibleAnywhere)}
+\DoxyCodeLine{00054\ \ \ \ \ TObjectPtr<class\ UTextureRenderTarget>\ \mbox{\hyperlink{class_a_checkpoint_a8b6de264e217a6833ce489fb68ce49ee}{RenderTarget}};}
+\DoxyCodeLine{00055\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_checkpoint_a27b60457ea1af1ff3e2a9061852a92a3}{OrbitYaw}}\ =\ 0.f;}
+\DoxyCodeLine{00057\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_checkpoint_a274e63dabcba475756ae5647c8e5e138}{BaseArmPitch}}\ =\ 0.f;}
+\DoxyCodeLine{00059\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_checkpoint_a52b5998d732c8636ddc98ce92ed9d396}{BaseArmRoll}}\ =\ 0.f;}
+\DoxyCodeLine{00061\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_checkpoint_a8a83f79429e8eb92504a16d15aef0aa7}{OrbitSpeedDegPerSec}}\ =\ 12.f;\ \textcolor{comment}{//\ 360/10}}
+\DoxyCodeLine{00063\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_a_checkpoint_a5ee4df45339d5c4aeebb5d4458e059fd}{bOrbitEnabled}}\ =\ false;}
+\DoxyCodeLine{00065\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_checkpoint_a70a6adf2ec1d4307464ba338658ff8c0}{OrbitElapsed}}\ =\ 0.f;}
+\DoxyCodeLine{00067\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_a_checkpoint_aae3e223d5f270a5fe0b3b833a8f02cc6}{StartYaw}};}
+\DoxyCodeLine{00069\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_a_checkpoint_a72c87265e963dadd1ed3e2707fb1562e}{bLookAtEnabled}}\ =\ true;}
+\DoxyCodeLine{00071\ \ \ \ \ UPROPERTY(EditAnywhere,\ Category=\textcolor{stringliteral}{"{}Orbit"{}})}
+\DoxyCodeLine{00072\ \ \ \ \ AActor*\ \mbox{\hyperlink{class_a_checkpoint_ab3dc623d212c8d13cfe60bb0b903b934}{OriginalViewTarget}}\ =\ \textcolor{keywordtype}{nullptr};}
+\DoxyCodeLine{00073\ \ \ \ \ }
+\DoxyCodeLine{00074\ \ \ \ \ }
+\DoxyCodeLine{00075\ protected:}
+\DoxyCodeLine{00076\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint_a443764308c5d8d18d603802ad78683cb}{BeginPlay}}()\ override;}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint_a10e3f325268eca8c7fc36a57ef20beb1}{FetchWeather}}();}
+\DoxyCodeLine{00078\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_checkpoint_af4ae1c22d848294b37dc6d4a3d95c577}{EndPlay}}(const\ EEndPlayReason::Type\ EndPlayReason)\ override;}
+\DoxyCodeLine{00079\ \ \ \ \ }
+\DoxyCodeLine{00080\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00081\ \ \ \ \ \mbox{\hyperlink{struct_f_race_checkpoint}{FRaceCheckpoint}}\ \mbox{\hyperlink{class_a_checkpoint_a001405920b1561ffc18259b42ec736e0}{CheckpointDatas}};}
+\DoxyCodeLine{00082\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00083\ \ \ \ \ \mbox{\hyperlink{struct_f_open_weather_response}{FOpenWeatherResponse}}\ \mbox{\hyperlink{class_a_checkpoint_a6ae5806a60d3105e6602e9fa6784ee85}{CheckpointWeatherDatas}};}
+\DoxyCodeLine{00084\ \ \ \ \ }
+\DoxyCodeLine{00085\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00086\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_checkpoint_subsystem}{UCheckpointSubsystem}}>\ \mbox{\hyperlink{class_a_checkpoint_af1704f982a8f5692f2f9796910c094d2}{CheckpointSubsystem}};}
+\DoxyCodeLine{00087\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00088\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_race_subsystem}{URaceSubsystem}}>\ \mbox{\hyperlink{class_a_checkpoint_aa3e0c44d86e6de1bd48ed0ce9ac0b482}{RaceSubsystem}};}
+\DoxyCodeLine{00089\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00090\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_weather_subsystem}{UWeatherSubsystem}}>\ \mbox{\hyperlink{class_a_checkpoint_a735a4a71c90cb3142c895b7d04cce258}{WeatherSubsystem}};}
+\DoxyCodeLine{00091\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00092\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_settings_subsystem}{USettingsSubsystem}}>\ \mbox{\hyperlink{class_a_checkpoint_a3877de9d8c5fea8d9887a1ddbd2f075b}{SettingsSubsystem}};}
+\DoxyCodeLine{00093\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00094\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_scale_subsystem}{UScaleSubsystem}}>\ \mbox{\hyperlink{class_a_checkpoint_a697ed2ff9ccaae4c05dfaf6511294934}{ScaleSubsystem}};}
+\DoxyCodeLine{00095\ \ \ \ \ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{comment}{//\ Root}}
+\DoxyCodeLine{00097\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00098\ \ \ \ \ TObjectPtr<class\ USceneComponent>\ \mbox{\hyperlink{class_a_checkpoint_ab142bb3a296cc62cbc95cf19f40b7d1f}{MainRoot}};}
+\DoxyCodeLine{00099\ \ \ \ \ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{comment}{//\ Archi}}
+\DoxyCodeLine{00101\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00102\ \ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ \mbox{\hyperlink{class_a_checkpoint_aa31180fd137cc40ee358211d5addb87c}{FootComponent}};}
+\DoxyCodeLine{00103\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00104\ \ \ \ \ TObjectPtr<class\ USceneComponent>\ \mbox{\hyperlink{class_a_checkpoint_a93678422e70d838346150bd8601b12b0}{FootHook}};}
+\DoxyCodeLine{00105\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00106\ \ \ \ \ TObjectPtr<class\ USceneComponent>\ \mbox{\hyperlink{class_a_checkpoint_af6d646b8a0e0c4f5a71b38e52a7bb292}{SplineHook}};}
+\DoxyCodeLine{00107\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00108\ \ \ \ \ TObjectPtr<class\ USplineComponent>\ \mbox{\hyperlink{class_a_checkpoint_a83c2015e7746a538fb61fabec4e12715}{SplineComponent}};}
+\DoxyCodeLine{00109\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00110\ \ \ \ \ TObjectPtr<class\ USplineMeshComponent>\ \mbox{\hyperlink{class_a_checkpoint_aaba5ab3146e607f6b26954e117f68d18}{NameBkgComponent}};}
+\DoxyCodeLine{00111\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00112\ \ \ \ \ TObjectPtr<class\ USplineMeshComponent>\ \mbox{\hyperlink{class_a_checkpoint_a61c44f8939068a4669e39f9fcfd3f362}{InfosBkgComponent}};}
+\DoxyCodeLine{00113\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00114\ \ \ \ \ TObjectPtr<class\ USplineMeshComponent>\ \mbox{\hyperlink{class_a_checkpoint_aba74c8b854061730345801408e877b49}{WeatherBkgComponent}};}
+\DoxyCodeLine{00115\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00116\ \ \ \ \ TObjectPtr<class\ USplineMeshComponent>\ \mbox{\hyperlink{class_a_checkpoint_a8a503ea10d1c7c72f7fed2748cb575b7}{Line1Component}};}
+\DoxyCodeLine{00117\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00118\ \ \ \ \ TObjectPtr<class\ USplineMeshComponent>\ \mbox{\hyperlink{class_a_checkpoint_a7e64c1b209da7b35f2241e6a58323281}{Line2Component}};}
+\DoxyCodeLine{00119\ \ \ \ \ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{comment}{//\ Infos}}
+\DoxyCodeLine{00121\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00122\ \ \ \ \ TObjectPtr<class\ UTextRenderComponent>\ \mbox{\hyperlink{class_a_checkpoint_a6473c2f91fea8d421c46858ef3079d32}{NameText}};}
+\DoxyCodeLine{00123\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00124\ \ \ \ \ TObjectPtr<class\ UTextRenderComponent>\ \mbox{\hyperlink{class_a_checkpoint_a5bae451ca2e3e72d13cd35d0296fe5ec}{DistText}};}
+\DoxyCodeLine{00125\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00126\ \ \ \ \ TObjectPtr<class\ UTextRenderComponent>\ \mbox{\hyperlink{class_a_checkpoint_a62afa01702854703418617ab0239e38c}{AltText}};}
+\DoxyCodeLine{00127\ \ \ \ \ }
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{comment}{//\ Weather}}
+\DoxyCodeLine{00129\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00130\ \ \ \ \ TObjectPtr<class\ UTextRenderComponent>\ \mbox{\hyperlink{class_a_checkpoint_aca06f8f644d8df5ff17758da1e96c949}{TempText}};}
+\DoxyCodeLine{00131\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00132\ \ \ \ \ TObjectPtr<class\ UTextRenderComponent>\ \mbox{\hyperlink{class_a_checkpoint_a4c38f4902e226573d059f6d730a2d99f}{Weather1Text}};}
+\DoxyCodeLine{00133\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00134\ \ \ \ \ TObjectPtr<class\ UTextRenderComponent>\ \mbox{\hyperlink{class_a_checkpoint_a5cbe33b84ca3f6854d23d49fba58429d}{Weather2Text}};}
+\DoxyCodeLine{00135\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00136\ \ \ \ \ TObjectPtr<class\ UTextRenderComponent>\ \mbox{\hyperlink{class_a_checkpoint_a222df5bec5d9fc7c20492408ad48be62}{Weather3Text}};}
+\DoxyCodeLine{00137\ \ \ \ \ }
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{comment}{//\ Pictos}}
+\DoxyCodeLine{00139\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00140\ \ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ \mbox{\hyperlink{class_a_checkpoint_aca9f3ac37a4fdf806cf8c27ada1a8347}{MainPicto}};}
+\DoxyCodeLine{00141\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00142\ \ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ \mbox{\hyperlink{class_a_checkpoint_a587ec2b6f80dc7c214e1b6cb14cff3ba}{DistPicto}};}
+\DoxyCodeLine{00143\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00144\ \ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ \mbox{\hyperlink{class_a_checkpoint_aefb533952beb5da0f3656267fee6d672}{AltPicto}};}
+\DoxyCodeLine{00145\ \ \ \ \ UPROPERTY(EditAnywhere)}
+\DoxyCodeLine{00146\ \ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ \mbox{\hyperlink{class_a_checkpoint_ac545313b39f6fea533bbc8f514395e9f}{WeatherPicto}};}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ private:}
+\DoxyCodeLine{00149\ \ \ \ \ }
+\DoxyCodeLine{00150\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00151\ \ \ \ \ FVector\ InitLocation;}
+\DoxyCodeLine{00152\ \ \ \ \ }
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{comment}{//\ GlobeAnchor}}
+\DoxyCodeLine{00154\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditAnywhere,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00155\ \ \ \ \ TObjectPtr<class\ UCesiumGlobeAnchorComponent>\ GlobeAnchorComponent;}
+\DoxyCodeLine{00156\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00157\ \ \ \ \ TSoftObjectPtr<class\ ACesiumGeoreference>\ Georeference;}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{comment}{//\ Pawn}}
+\DoxyCodeLine{00159\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditAnywhere,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00160\ \ \ \ \ TObjectPtr<APawn>\ DynaPawn;}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{comment}{//\ Timer}}
+\DoxyCodeLine{00162\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditAnywhere,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00163\ \ \ \ \ FTimerHandle\ LookAtTimerHandle;}
+\DoxyCodeLine{00164\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00165\ \ \ \ \ FTimerHandle\ WeatherHandle;}
+\DoxyCodeLine{00166\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keywordtype}{bool}\ bShowWeather\ =\ false;}
+\DoxyCodeLine{00168\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00169\ \ \ \ \ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}\ MinMax;}
+\DoxyCodeLine{00170\ \};}
+
+\end{DoxyCode}

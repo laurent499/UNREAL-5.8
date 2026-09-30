@@ -1,0 +1,43 @@
+\doxysection{Club\+Component.\+h}
+\hypertarget{_club_component_8h_source}{}\label{_club_component_8h_source}\index{Source/TrailSimulator/Public/Components/GTWS/ClubComponent.h@{Source/TrailSimulator/Public/Components/GTWS/ClubComponent.h}}
+\mbox{\hyperlink{_club_component_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Components/SceneComponent.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}ClubComponent.generated.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ UCLASS(ClassGroup=(Custom),\ meta=(BlueprintSpawnableComponent))}
+\DoxyCodeLine{00012\ \textcolor{keyword}{class\ }TRAILSIMULATOR\_API\ UClubComponent\ :\ \textcolor{keyword}{public}\ USceneComponent}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ public:}
+\DoxyCodeLine{00017\ \ \ \ \ UClubComponent();}
+\DoxyCodeLine{00018\ \ \ \ \ }
+\DoxyCodeLine{00019\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00020\ \ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ ClubColor;}
+\DoxyCodeLine{00021\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00022\ \ \ \ \ TObjectPtr<class\ UTextRenderComponent>\ ClubTextComponent;}
+\DoxyCodeLine{00023\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00024\ \ \ \ \ TObjectPtr<class\ USplineComponent>\ ClubSplineComponent;}
+\DoxyCodeLine{00025\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00026\ \ \ \ \ TObjectPtr<class\ USplineMeshComponent>\ ClubBkgComponent;}
+\DoxyCodeLine{00027\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00028\ \ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ SlashLeftComponent;}
+\DoxyCodeLine{00029\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00030\ \ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ SlashRightComponent;}
+\DoxyCodeLine{00031\ \ \ \ \ }
+\DoxyCodeLine{00032\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ UpdateClub(const\ FRunnerStruct\&\ RunnerDatas);}
+\DoxyCodeLine{00033\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ ToggleClub(\textcolor{keywordtype}{bool}\ bShow)\ const;}
+\DoxyCodeLine{00034\ private:}
+\DoxyCodeLine{00035\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00036\ \ \ \ \ TObjectPtr<class\ URaceSubsystem>\ RaceSubsystem;}
+\DoxyCodeLine{00037\ \};}
+
+\end{DoxyCode}

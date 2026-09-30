@@ -1,0 +1,239 @@
+\doxysection{UPoi\+Subsystem Class Reference}
+\hypertarget{class_u_poi_subsystem}{}\label{class_u_poi_subsystem}\index{UPoiSubsystem@{UPoiSubsystem}}
+
+
+Manage POIs.  
+
+
+
+
+{\ttfamily \#include $<$Poi\+Subsystem.\+h$>$}
+
+Inheritance diagram for UPoi\+Subsystem\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_u_poi_subsystem}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_u_poi_subsystem_a042da3df1e076f9ecca6c72fdb89355e}{Initialize}} (FSubsystem\+Collection\+Base \&Collection) override
+\item 
+virtual void \mbox{\hyperlink{class_u_poi_subsystem_a7e59a0fb6f841ad493faf0ce666f1da8}{Deinitialize}} () override
+\item 
+void \mbox{\hyperlink{class_u_poi_subsystem_a6d96d7624e020d7b4968bf1d231e6760}{Toggle\+Pois}} (int64 Race\+ID, bool b\+Show)
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Pois. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_poi_subsystem_ad7d4dabcaefa42b126bcc8b2f40a389c}{Toggle\+Poi}} (int64 Race\+ID, int64 Poi\+ID, bool b\+Show)
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Poi. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_poi_subsystem_a7d813c0becd472ed596e8f871b95d1aa}{Toggle\+Weather}} (int64 Race\+ID, int64 Poi\+ID, bool b\+Show)
+\begin{DoxyCompactList}\small\item\em Show/\+Hide the Weather components. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_poi_subsystem_a16cab186cc3149e60234a8a88e4e853c}{Teleport}} (int64 Poi\+ID, int64 Race\+ID)
+\begin{DoxyCompactList}\small\item\em Teleport to Poi. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_poi_subsystem_a133b63a239e67216568dfaf5cb95bc94}{Animation}} (int64 Poi\+ID, int64 Id\+Race)
+\begin{DoxyCompactList}\small\item\em Start/\+Stop Poi animation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_poi_subsystem_a656e1fb2bb2aa61626d0ce9390d1d4f3}{Stop\+Animation}} (int64 Poi\+ID, int64 Race\+ID)
+\item 
+void \mbox{\hyperlink{class_u_poi_subsystem_a0ebeab76fbd23a1913ce3b4ffbd2d1ff}{Perform\+Http\+Request\+For\+POIs}} (int64 Race\+ID, const FString \&POIs\+Endpoint)
+\begin{DoxyCompactList}\small\item\em Triggers the request to the API for all POIs. \end{DoxyCompactList}\item 
+AActor \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_u_poi_subsystem_a79255ed63ba03ed8eabd31e4415313fa}{Spawn\+Poi}} (int64 Race\+ID, int64 Poi\+ID, UWorld \texorpdfstring{$\ast$}{*}World, \mbox{\hyperlink{class_t_subclass_of}{TSubclass\+Of}}$<$ AActor $>$ Poi\+Class, const FTransform \&Spawn\+Transform)
+\begin{DoxyCompactList}\small\item\em Spawn Poi Actor. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_u_poi_subsystem_aa530367148f3b75546ab792e74fb063a}{Does\+Poi\+Belongs\+To\+Race}} (int64 Poi\+ID, int64 Race\+ID)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+FOn\+Pois\+Datas\+Gathered \mbox{\hyperlink{class_u_poi_subsystem_a75304367308b8ab78c7084e75d07f87e}{On\+Pois\+Datas\+Gathered}}
+\item 
+FOn\+Poi\+Datas\+Gathered \mbox{\hyperlink{class_u_poi_subsystem_aaffb67740efd3e3886369681a3c9168a}{On\+Poi\+Datas\+Gathered}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Manage POIs. 
+
+\label{doc-func-members}
+\Hypertarget{class_u_poi_subsystem_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_u_poi_subsystem_a133b63a239e67216568dfaf5cb95bc94}\index{UPoiSubsystem@{UPoiSubsystem}!Animation@{Animation}}
+\index{Animation@{Animation}!UPoiSubsystem@{UPoiSubsystem}}
+\doxysubsubsection{\texorpdfstring{Animation()}{Animation()}}
+{\footnotesize\ttfamily \label{class_u_poi_subsystem_a133b63a239e67216568dfaf5cb95bc94} 
+void UPoi\+Subsystem\+::\+Animation (\begin{DoxyParamCaption}\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Start/\+Stop Poi animation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Poi\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+WIP 
+\end{DoxyNote}
+\Hypertarget{class_u_poi_subsystem_a7e59a0fb6f841ad493faf0ce666f1da8}\index{UPoiSubsystem@{UPoiSubsystem}!Deinitialize@{Deinitialize}}
+\index{Deinitialize@{Deinitialize}!UPoiSubsystem@{UPoiSubsystem}}
+\doxysubsubsection{\texorpdfstring{Deinitialize()}{Deinitialize()}}
+{\footnotesize\ttfamily \label{class_u_poi_subsystem_a7e59a0fb6f841ad493faf0ce666f1da8} 
+void UPoi\+Subsystem\+::\+Deinitialize (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_poi_subsystem_aa530367148f3b75546ab792e74fb063a}\index{UPoiSubsystem@{UPoiSubsystem}!DoesPoiBelongsToRace@{DoesPoiBelongsToRace}}
+\index{DoesPoiBelongsToRace@{DoesPoiBelongsToRace}!UPoiSubsystem@{UPoiSubsystem}}
+\doxysubsubsection{\texorpdfstring{DoesPoiBelongsToRace()}{DoesPoiBelongsToRace()}}
+{\footnotesize\ttfamily \label{class_u_poi_subsystem_aa530367148f3b75546ab792e74fb063a} 
+bool UPoi\+Subsystem\+::\+Does\+Poi\+Belongs\+To\+Race (\begin{DoxyParamCaption}\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_poi_subsystem_a042da3df1e076f9ecca6c72fdb89355e}\index{UPoiSubsystem@{UPoiSubsystem}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!UPoiSubsystem@{UPoiSubsystem}}
+\doxysubsubsection{\texorpdfstring{Initialize()}{Initialize()}}
+{\footnotesize\ttfamily \label{class_u_poi_subsystem_a042da3df1e076f9ecca6c72fdb89355e} 
+void UPoi\+Subsystem\+::\+Initialize (\begin{DoxyParamCaption}\item[{FSubsystem\+Collection\+Base \&}]{Collection}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_poi_subsystem_a0ebeab76fbd23a1913ce3b4ffbd2d1ff}\index{UPoiSubsystem@{UPoiSubsystem}!PerformHttpRequestForPOIs@{PerformHttpRequestForPOIs}}
+\index{PerformHttpRequestForPOIs@{PerformHttpRequestForPOIs}!UPoiSubsystem@{UPoiSubsystem}}
+\doxysubsubsection{\texorpdfstring{PerformHttpRequestForPOIs()}{PerformHttpRequestForPOIs()}}
+{\footnotesize\ttfamily \label{class_u_poi_subsystem_a0ebeab76fbd23a1913ce3b4ffbd2d1ff} 
+void UPoi\+Subsystem\+::\+Perform\+Http\+Request\+For\+POIs (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{const FString \&}]{POIs\+Endpoint}{}\end{DoxyParamCaption})}
+
+
+
+Triggers the request to the API for all POIs. 
+
+Request datas for all POIs.
+
+
+\begin{DoxyParams}{Parameters}
+{\em POIs\+Endpoint} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_poi_subsystem_a79255ed63ba03ed8eabd31e4415313fa}\index{UPoiSubsystem@{UPoiSubsystem}!SpawnPoi@{SpawnPoi}}
+\index{SpawnPoi@{SpawnPoi}!UPoiSubsystem@{UPoiSubsystem}}
+\doxysubsubsection{\texorpdfstring{SpawnPoi()}{SpawnPoi()}}
+{\footnotesize\ttfamily \label{class_u_poi_subsystem_a79255ed63ba03ed8eabd31e4415313fa} 
+AActor \texorpdfstring{$\ast$}{*} UPoi\+Subsystem\+::\+Spawn\+Poi (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{int64}]{Poi\+ID}{, }\item[{UWorld \texorpdfstring{$\ast$}{*}}]{World}{, }\item[{\mbox{\hyperlink{class_t_subclass_of}{TSubclass\+Of}}$<$ AActor $>$}]{Poi\+Class}{, }\item[{const FTransform \&}]{Spawn\+Transform}{}\end{DoxyParamCaption})}
+
+
+
+Spawn Poi Actor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Poi\+ID} & \\
+\hline
+{\em World} & \\
+\hline
+{\em Poi\+Class} & \\
+\hline
+{\em Spawn\+Transform} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_u_poi_subsystem_a656e1fb2bb2aa61626d0ce9390d1d4f3}\index{UPoiSubsystem@{UPoiSubsystem}!StopAnimation@{StopAnimation}}
+\index{StopAnimation@{StopAnimation}!UPoiSubsystem@{UPoiSubsystem}}
+\doxysubsubsection{\texorpdfstring{StopAnimation()}{StopAnimation()}}
+{\footnotesize\ttfamily \label{class_u_poi_subsystem_a656e1fb2bb2aa61626d0ce9390d1d4f3} 
+void UPoi\+Subsystem\+::\+Stop\+Animation (\begin{DoxyParamCaption}\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_poi_subsystem_a16cab186cc3149e60234a8a88e4e853c}\index{UPoiSubsystem@{UPoiSubsystem}!Teleport@{Teleport}}
+\index{Teleport@{Teleport}!UPoiSubsystem@{UPoiSubsystem}}
+\doxysubsubsection{\texorpdfstring{Teleport()}{Teleport()}}
+{\footnotesize\ttfamily \label{class_u_poi_subsystem_a16cab186cc3149e60234a8a88e4e853c} 
+void UPoi\+Subsystem\+::\+Teleport (\begin{DoxyParamCaption}\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+
+
+Teleport to Poi. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Poi\+ID} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_poi_subsystem_ad7d4dabcaefa42b126bcc8b2f40a389c}\index{UPoiSubsystem@{UPoiSubsystem}!TogglePoi@{TogglePoi}}
+\index{TogglePoi@{TogglePoi}!UPoiSubsystem@{UPoiSubsystem}}
+\doxysubsubsection{\texorpdfstring{TogglePoi()}{TogglePoi()}}
+{\footnotesize\ttfamily \label{class_u_poi_subsystem_ad7d4dabcaefa42b126bcc8b2f40a389c} 
+void UPoi\+Subsystem\+::\+Toggle\+Poi (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{int64}]{Poi\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+
+
+Show/\+Hide Poi. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Poi\+ID} & \\
+\hline
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_poi_subsystem_a6d96d7624e020d7b4968bf1d231e6760}\index{UPoiSubsystem@{UPoiSubsystem}!TogglePois@{TogglePois}}
+\index{TogglePois@{TogglePois}!UPoiSubsystem@{UPoiSubsystem}}
+\doxysubsubsection{\texorpdfstring{TogglePois()}{TogglePois()}}
+{\footnotesize\ttfamily \label{class_u_poi_subsystem_a6d96d7624e020d7b4968bf1d231e6760} 
+void UPoi\+Subsystem\+::\+Toggle\+Pois (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+
+
+Show/\+Hide Pois. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_poi_subsystem_a7d813c0becd472ed596e8f871b95d1aa}\index{UPoiSubsystem@{UPoiSubsystem}!ToggleWeather@{ToggleWeather}}
+\index{ToggleWeather@{ToggleWeather}!UPoiSubsystem@{UPoiSubsystem}}
+\doxysubsubsection{\texorpdfstring{ToggleWeather()}{ToggleWeather()}}
+{\footnotesize\ttfamily \label{class_u_poi_subsystem_a7d813c0becd472ed596e8f871b95d1aa} 
+void UPoi\+Subsystem\+::\+Toggle\+Weather (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{int64}]{Poi\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+
+
+Show/\+Hide the Weather components. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Poi\+ID} & \\
+\hline
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-variable-members}
+\Hypertarget{class_u_poi_subsystem_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_u_poi_subsystem_aaffb67740efd3e3886369681a3c9168a}\index{UPoiSubsystem@{UPoiSubsystem}!OnPoiDatasGathered@{OnPoiDatasGathered}}
+\index{OnPoiDatasGathered@{OnPoiDatasGathered}!UPoiSubsystem@{UPoiSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnPoiDatasGathered}{OnPoiDatasGathered}}
+{\footnotesize\ttfamily \label{class_u_poi_subsystem_aaffb67740efd3e3886369681a3c9168a} 
+FOn\+Poi\+Datas\+Gathered UPoi\+Subsystem\+::\+On\+Poi\+Datas\+Gathered}
+
+\Hypertarget{class_u_poi_subsystem_a75304367308b8ab78c7084e75d07f87e}\index{UPoiSubsystem@{UPoiSubsystem}!OnPoisDatasGathered@{OnPoisDatasGathered}}
+\index{OnPoisDatasGathered@{OnPoisDatasGathered}!UPoiSubsystem@{UPoiSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnPoisDatasGathered}{OnPoisDatasGathered}}
+{\footnotesize\ttfamily \label{class_u_poi_subsystem_a75304367308b8ab78c7084e75d07f87e} 
+FOn\+Pois\+Datas\+Gathered UPoi\+Subsystem\+::\+On\+Pois\+Datas\+Gathered}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Subsystems/\+Public/\mbox{\hyperlink{_poi_subsystem_8h}{Poi\+Subsystem.\+h}}\item 
+Source/\+Subsystems/\+Private/\mbox{\hyperlink{_poi_subsystem_8cpp}{Poi\+Subsystem.\+cpp}}\end{DoxyCompactItemize}

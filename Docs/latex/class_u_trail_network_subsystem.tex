@@ -1,0 +1,64 @@
+\doxysection{UTrail\+Network\+Subsystem Class Reference}
+\hypertarget{class_u_trail_network_subsystem}{}\label{class_u_trail_network_subsystem}\index{UTrailNetworkSubsystem@{UTrailNetworkSubsystem}}
+
+
+{\ttfamily \#include $<$Trail\+Network\+Subsystem.\+h$>$}
+
+Inheritance diagram for UTrail\+Network\+Subsystem\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_u_trail_network_subsystem}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_u_trail_network_subsystem_adf49273f98d51abd8ebc3e512cfea260}{Initialize}} (FSubsystem\+Collection\+Base \&Collection) override
+\item 
+virtual void \mbox{\hyperlink{class_u_trail_network_subsystem_aac6be53985decdd217ef38213496c11b}{Deinitialize}} () override
+\item 
+void \mbox{\hyperlink{class_u_trail_network_subsystem_a15555f1c1e9a77ff4505e239c4c39845}{Request\+Endpoint}} (const FString \&Called\+Endpoint) const
+\begin{DoxyCompactList}\small\item\em Switch between endpoints to call the right Subsystem. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+HTTP Client Manage the outgoing requests to gather the datas 
+
+\label{doc-func-members}
+\Hypertarget{class_u_trail_network_subsystem_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_u_trail_network_subsystem_aac6be53985decdd217ef38213496c11b}\index{UTrailNetworkSubsystem@{UTrailNetworkSubsystem}!Deinitialize@{Deinitialize}}
+\index{Deinitialize@{Deinitialize}!UTrailNetworkSubsystem@{UTrailNetworkSubsystem}}
+\doxysubsubsection{\texorpdfstring{Deinitialize()}{Deinitialize()}}
+{\footnotesize\ttfamily \label{class_u_trail_network_subsystem_aac6be53985decdd217ef38213496c11b} 
+void UTrail\+Network\+Subsystem\+::\+Deinitialize (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_trail_network_subsystem_adf49273f98d51abd8ebc3e512cfea260}\index{UTrailNetworkSubsystem@{UTrailNetworkSubsystem}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!UTrailNetworkSubsystem@{UTrailNetworkSubsystem}}
+\doxysubsubsection{\texorpdfstring{Initialize()}{Initialize()}}
+{\footnotesize\ttfamily \label{class_u_trail_network_subsystem_adf49273f98d51abd8ebc3e512cfea260} 
+void UTrail\+Network\+Subsystem\+::\+Initialize (\begin{DoxyParamCaption}\item[{FSubsystem\+Collection\+Base \&}]{Collection}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_trail_network_subsystem_a15555f1c1e9a77ff4505e239c4c39845}\index{UTrailNetworkSubsystem@{UTrailNetworkSubsystem}!RequestEndpoint@{RequestEndpoint}}
+\index{RequestEndpoint@{RequestEndpoint}!UTrailNetworkSubsystem@{UTrailNetworkSubsystem}}
+\doxysubsubsection{\texorpdfstring{RequestEndpoint()}{RequestEndpoint()}}
+{\footnotesize\ttfamily \label{class_u_trail_network_subsystem_a15555f1c1e9a77ff4505e239c4c39845} 
+void UTrail\+Network\+Subsystem\+::\+Request\+Endpoint (\begin{DoxyParamCaption}\item[{const FString \&}]{Called\+Endpoint}{}\end{DoxyParamCaption}) const}
+
+
+
+Switch between endpoints to call the right Subsystem. 
+
+Calling the Subsystem in charge to trigger the request to API based on the endpoint.
+
+
+\begin{DoxyParams}{Parameters}
+{\em Called\+Endpoint} & \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Subsystems/\+Public/\mbox{\hyperlink{_trail_network_subsystem_8h}{Trail\+Network\+Subsystem.\+h}}\item 
+Source/\+Subsystems/\+Private/\mbox{\hyperlink{_trail_network_subsystem_8cpp}{Trail\+Network\+Subsystem.\+cpp}}\end{DoxyCompactItemize}

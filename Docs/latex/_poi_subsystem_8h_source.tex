@@ -1,0 +1,94 @@
+\doxysection{Poi\+Subsystem.\+h}
+\hypertarget{_poi_subsystem_8h_source}{}\label{_poi_subsystem_8h_source}\index{Source/Subsystems/Public/PoiSubsystem.h@{Source/Subsystems/Public/PoiSubsystem.h}}
+\mbox{\hyperlink{_poi_subsystem_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Subsystems/GameInstanceSubsystem.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}Interfaces/IHttpRequest.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}PoiSubsystem.generated.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \mbox{\hyperlink{_poi_subsystem_8h_a108e252239137b73a7cfb39628f02ab9}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}(}
+\DoxyCodeLine{00012\ \ \ \ \ FOnPoisDatasGathered,}
+\DoxyCodeLine{00013\ \ \ \ \ int64,}
+\DoxyCodeLine{00014\ \ \ \ \ RaceID,}
+\DoxyCodeLine{00015\ \ \ \ \ \mbox{\hyperlink{struct_f_p_o_is}{FPOIs}},}
+\DoxyCodeLine{00016\ \ \ \ \ RacePois);}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \mbox{\hyperlink{_poi_subsystem_8h_a9a4366eac275cf784338c2b68f5450b2}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_ThreeParams}}(}
+\DoxyCodeLine{00019\ \ \ \ \ FOnPoiDatasGathered,}
+\DoxyCodeLine{00020\ \ \ \ \ int64,}
+\DoxyCodeLine{00021\ \ \ \ \ RaceID,}
+\DoxyCodeLine{00022\ \ \ \ \ int64,}
+\DoxyCodeLine{00023\ \ \ \ \ PoiID,}
+\DoxyCodeLine{00024\ \ \ \ \ \mbox{\hyperlink{struct_f_race_p_o_i}{FRacePOI}},}
+\DoxyCodeLine{00025\ \ \ \ \ RacePoi);}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00030\ UCLASS()}
+\DoxyCodeLine{00031\ class\ SUBSYSTEMS\_API\ \mbox{\hyperlink{class_u_poi_subsystem}{UPoiSubsystem}}\ :\ public\ UGameInstanceSubsystem\ }
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_poi_subsystem_a042da3df1e076f9ecca6c72fdb89355e}{Initialize}}(FSubsystemCollectionBase\&\ Collection)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_poi_subsystem_a7e59a0fb6f841ad493faf0ce666f1da8}{Deinitialize}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00038\ \ \ \ \ }
+\DoxyCodeLine{00039\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_poi_subsystem_a6d96d7624e020d7b4968bf1d231e6760}{TogglePois}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00041\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_poi_subsystem_ad7d4dabcaefa42b126bcc8b2f40a389c}{TogglePoi}}(int64\ RaceID,\ int64\ PoiID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00043\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_poi_subsystem_a7d813c0becd472ed596e8f871b95d1aa}{ToggleWeather}}(int64\ RaceID,\ int64\ PoiID,\ \textcolor{keywordtype}{bool}\ bShow);}
+\DoxyCodeLine{00045\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_poi_subsystem_a16cab186cc3149e60234a8a88e4e853c}{Teleport}}(int64\ PoiID,\ int64\ RaceID);}
+\DoxyCodeLine{00047\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_poi_subsystem_a133b63a239e67216568dfaf5cb95bc94}{Animation}}(int64\ PoiID,\ int64\ IdRace);}
+\DoxyCodeLine{00049\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_poi_subsystem_a656e1fb2bb2aa61626d0ce9390d1d4f3}{StopAnimation}}(int64\ PoiID,\ int64\ RaceID);}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_poi_subsystem_a0ebeab76fbd23a1913ce3b4ffbd2d1ff}{PerformHttpRequestForPOIs}}(int64\ RaceID,\ \textcolor{keyword}{const}\ FString\&\ POIsEndpoint);}
+\DoxyCodeLine{00058\ \ \ \ \ }
+\DoxyCodeLine{00059\ \ \ \ \ UPROPERTY(BlueprintAssignable,\ Category=\textcolor{stringliteral}{"{}Race|Events"{}})}
+\DoxyCodeLine{00060\ \ \ \ \ FOnPoisDatasGathered\ \mbox{\hyperlink{class_u_poi_subsystem_a75304367308b8ab78c7084e75d07f87e}{OnPoisDatasGathered}};}
+\DoxyCodeLine{00061\ \ \ \ \ }
+\DoxyCodeLine{00062\ \ \ \ \ UPROPERTY(BlueprintAssignable,\ Category=\textcolor{stringliteral}{"{}Race|Events"{}})}
+\DoxyCodeLine{00063\ \ \ \ \ FOnPoiDatasGathered\ \mbox{\hyperlink{class_u_poi_subsystem_aaffb67740efd3e3886369681a3c9168a}{OnPoiDatasGathered}};}
+\DoxyCodeLine{00064\ \ \ \ \ }
+\DoxyCodeLine{00065\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00066\ \ \ \ \ AActor*\ \mbox{\hyperlink{class_u_poi_subsystem_a79255ed63ba03ed8eabd31e4415313fa}{SpawnPoi}}(}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ int64\ RaceID,}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ int64\ PoiID,}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ UWorld*\ World,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_t_subclass_of}{TSubclassOf}}<AActor>\ PoiClass,}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ const\ FTransform\&\ SpawnTransform);}
+\DoxyCodeLine{00072\ \ \ \ \ }
+\DoxyCodeLine{00073\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_u_poi_subsystem_aa530367148f3b75546ab792e74fb063a}{DoesPoiBelongsToRace}}(int64\ PoiID,\ int64\ RaceID);}
+\DoxyCodeLine{00075\ \ \ \ \ }
+\DoxyCodeLine{00076\ private:}
+\DoxyCodeLine{00077\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{void}\ SetRaceSetup(int64\ RaceID,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ NewRaceSetup);}
+\DoxyCodeLine{00079\ \ \ \ \ TObjectPtr<AActor>\ GetPoiActor(int64\ PoiID,\ int64\ RaceID);}
+\DoxyCodeLine{00080\ \ \ \ \ }
+\DoxyCodeLine{00081\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00082\ \ \ \ \ \mbox{\hyperlink{struct_f_race_p_o_i}{FRacePOI}}\ POI;}
+\DoxyCodeLine{00083\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00084\ \ \ \ \ \mbox{\hyperlink{struct_f_p_o_is}{FPOIs}}\ POIs;}
+\DoxyCodeLine{00085\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00086\ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ CurrentRaceSetup;}
+\DoxyCodeLine{00087\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00088\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_race_subsystem}{URaceSubsystem}}>\ RaceSubsystem;}
+\DoxyCodeLine{00089\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00090\ \ \ \ \ TMap<int64,\ \mbox{\hyperlink{struct_f_p_o_is}{FPOIs}}>\ RacePoisMap;}
+\DoxyCodeLine{00091\ \ \ \ \ }
+\DoxyCodeLine{00092\ \ \ \ \ TMap<int64,\ TMap<int64,\ TObjectPtr<AActor>>>\ PoisActorsMap;}
+\DoxyCodeLine{00093\ \ \ \ \ }
+\DoxyCodeLine{00094\ \ \ \ \ TMap<int64,\ TSharedPtr<IHttpRequest,\ ESPMode::ThreadSafe>>\ ActivePoiRequests;}
+\DoxyCodeLine{00095\ \};}
+
+\end{DoxyCode}

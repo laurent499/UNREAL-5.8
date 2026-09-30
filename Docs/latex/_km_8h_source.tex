@@ -1,0 +1,58 @@
+\doxysection{Km.\+h}
+\hypertarget{_km_8h_source}{}\label{_km_8h_source}\index{Source/TrailSimulator/Public/Actors/Km.h@{Source/TrailSimulator/Public/Actors/Km.h}}
+\mbox{\hyperlink{_km_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Fill\ out\ your\ copyright\ notice\ in\ the\ Description\ page\ of\ Project\ Settings.}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}GameFramework/Actor.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_km_interface_8h}{KmInterface.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}Km.generated.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ UCLASS()}
+\DoxyCodeLine{00011\ class\ TRAILSIMULATOR\_API\ \mbox{\hyperlink{class_a_km_a6dad270e2ab7b58855b19076ee19bbbc}{AKm}}\ :\ public\ AActor,\ public\ \mbox{\hyperlink{class_i_km_interface}{IKmInterface}}}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00016\ \ \ \ \ \mbox{\hyperlink{class_a_km_a6dad270e2ab7b58855b19076ee19bbbc}{AKm}}();}
+\DoxyCodeLine{00017\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_km_a4442c96013303b8caa9555fa081f39c2}{UpdateKm}}(int64\ RaceID,\ \textcolor{keyword}{const}\ FText\&\ NewLabel)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00019\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_km_ae3a3e708dab5ca8ac8e72a7b04f8ca59}{UpdateGlobeAnchor}}();}
+\DoxyCodeLine{00021\ \ \ \ \ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_km_ab1075b31b0711346e3579f7fabb13b54}{BeginPlay}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_km_a5dba1e4b10dd2195b032026826fac4d6}{OnLookAtTimerTick}}();}
+\DoxyCodeLine{00025\ \ \ \ \ }
+\DoxyCodeLine{00026\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00027\ \ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ \mbox{\hyperlink{class_a_km_a80a7a8b0f937d62b4034e10c7209950e}{StaticMeshComp}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ private:}
+\DoxyCodeLine{00030\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00031\ \ \ \ \ TObjectPtr<class\ USceneComponent>\ MainRoot;}
+\DoxyCodeLine{00032\ \ \ \ \ }
+\DoxyCodeLine{00033\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00034\ \ \ \ \ TObjectPtr<class\ UTextRenderComponent>\ LabelComp;}
+\DoxyCodeLine{00035\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00036\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_settings_subsystem}{USettingsSubsystem}}>\ SettingsSubsystem;}
+\DoxyCodeLine{00037\ \ \ \ \ UPROPERTY(EditDefaultsOnly)}
+\DoxyCodeLine{00038\ \ \ \ \ TObjectPtr<class\ \mbox{\hyperlink{class_u_race_subsystem}{URaceSubsystem}}>\ RaceSubsystem;}
+\DoxyCodeLine{00039\ \ \ \ \ }
+\DoxyCodeLine{00040\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00041\ \ \ \ \ TObjectPtr<class\ UCesiumGlobeAnchorComponent>\ GlobeAnchorComponent;}
+\DoxyCodeLine{00042\ \ \ \ \ UPROPERTY(meta=(allowPrivateAccess=true))}
+\DoxyCodeLine{00043\ \ \ \ \ TSoftObjectPtr<class\ ACesiumGeoreference>\ Georeference;}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{comment}{//Pawn}}
+\DoxyCodeLine{00046\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditAnywhere,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00047\ \ \ \ \ TObjectPtr<APawn>\ DynaPawn;}
+\DoxyCodeLine{00048\ \ \ \ \ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{comment}{//\ Timer}}
+\DoxyCodeLine{00050\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditAnywhere,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00051\ \ \ \ \ FTimerHandle\ LookAtTimerHandle;}
+\DoxyCodeLine{00052\ \};}
+
+\end{DoxyCode}

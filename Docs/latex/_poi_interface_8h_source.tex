@@ -1,0 +1,36 @@
+\doxysection{Poi\+Interface.\+h}
+\hypertarget{_poi_interface_8h_source}{}\label{_poi_interface_8h_source}\index{Source/TrailInterfaces/Public/PoiInterface.h@{Source/TrailInterfaces/Public/PoiInterface.h}}
+\mbox{\hyperlink{_poi_interface_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}UObject/Interface.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}PoiInterface.generated.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ This\ class\ does\ not\ need\ to\ be\ modified.}}
+\DoxyCodeLine{00011\ UINTERFACE()}
+\DoxyCodeLine{00012\ class\ \mbox{\hyperlink{class_u_poi_interface}{UPoiInterface}}\ :\ public\ UInterface}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00015\ \};}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{class\ }TRAILINTERFACES\_API\ \mbox{\hyperlink{class_i_poi_interface}{IPoiInterface}}}
+\DoxyCodeLine{00021\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_poi_interface_a68cee66335848f7d31e3a0e6500e9847}{UpdatePoi}}(\mbox{\hyperlink{struct_f_race_p_o_i}{FRacePOI}}\ PoiData,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ RaceSetup)\ =\ 0;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_poi_interface_ab4cfcf255ea8c46db5d125084330cccf}{UpdatePoiWeather}}(\mbox{\hyperlink{struct_f_open_weather_response}{FOpenWeatherResponse}}\ WeatherDatas)\ =\ 0;}
+\DoxyCodeLine{00027\ \ \ \ \ }
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_poi_interface_ac6e383dc046440477f3cbb0fe91f45a7}{TogglePoiWeather}}(\textcolor{keywordtype}{bool}\ bShow)\ =\ 0;}
+\DoxyCodeLine{00029\ \ \ \ \ }
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_poi_interface_a4ef7897c141f1f2dd64849396c8b8edd}{StartAnimation}}(\textcolor{keywordtype}{float}\ RotationSpeed)\ =\ 0;}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_poi_interface_a176feb5a9de721f5649b8133252fb65e}{StopAnimation}}()\ =\ 0;}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \};}
+
+\end{DoxyCode}

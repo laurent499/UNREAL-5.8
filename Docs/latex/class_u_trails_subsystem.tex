@@ -1,0 +1,83 @@
+\doxysection{UTrails\+Subsystem Class Reference}
+\hypertarget{class_u_trails_subsystem}{}\label{class_u_trails_subsystem}\index{UTrailsSubsystem@{UTrailsSubsystem}}
+
+
+Subsystem de gestion des données de toutes les courses.  
+
+
+
+
+{\ttfamily \#include $<$Trails\+Subsystem.\+h$>$}
+
+Inheritance diagram for UTrails\+Subsystem\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_u_trails_subsystem}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_u_trails_subsystem_aa2d98c9b55ba84798c75873413edb530}{Initialize}} (FSubsystem\+Collection\+Base \&Collection) override
+\item 
+virtual void \mbox{\hyperlink{class_u_trails_subsystem_af3b510b020bc4829634068dc092958c7}{Deinitialize}} () override
+\item 
+void \mbox{\hyperlink{class_u_trails_subsystem_a82843e6cbefd639420d9e48c79bb8ed2}{Perform\+Http\+Request\+For\+Races}} (const FString \&Races\+Endpoint)
+\begin{DoxyCompactList}\small\item\em Triggers the request to the API. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+FOn\+Races\+Datas\+Gathered \mbox{\hyperlink{class_u_trails_subsystem_a0e1835cf8825db6e3c817d1fb5c26439}{On\+Races\+Datas\+Gathered}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Subsystem de gestion des données de toutes les courses. 
+
+\label{doc-func-members}
+\Hypertarget{class_u_trails_subsystem_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_u_trails_subsystem_af3b510b020bc4829634068dc092958c7}\index{UTrailsSubsystem@{UTrailsSubsystem}!Deinitialize@{Deinitialize}}
+\index{Deinitialize@{Deinitialize}!UTrailsSubsystem@{UTrailsSubsystem}}
+\doxysubsubsection{\texorpdfstring{Deinitialize()}{Deinitialize()}}
+{\footnotesize\ttfamily \label{class_u_trails_subsystem_af3b510b020bc4829634068dc092958c7} 
+void UTrails\+Subsystem\+::\+Deinitialize (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_trails_subsystem_aa2d98c9b55ba84798c75873413edb530}\index{UTrailsSubsystem@{UTrailsSubsystem}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!UTrailsSubsystem@{UTrailsSubsystem}}
+\doxysubsubsection{\texorpdfstring{Initialize()}{Initialize()}}
+{\footnotesize\ttfamily \label{class_u_trails_subsystem_aa2d98c9b55ba84798c75873413edb530} 
+void UTrails\+Subsystem\+::\+Initialize (\begin{DoxyParamCaption}\item[{FSubsystem\+Collection\+Base \&}]{Collection}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_trails_subsystem_a82843e6cbefd639420d9e48c79bb8ed2}\index{UTrailsSubsystem@{UTrailsSubsystem}!PerformHttpRequestForRaces@{PerformHttpRequestForRaces}}
+\index{PerformHttpRequestForRaces@{PerformHttpRequestForRaces}!UTrailsSubsystem@{UTrailsSubsystem}}
+\doxysubsubsection{\texorpdfstring{PerformHttpRequestForRaces()}{PerformHttpRequestForRaces()}}
+{\footnotesize\ttfamily \label{class_u_trails_subsystem_a82843e6cbefd639420d9e48c79bb8ed2} 
+void UTrails\+Subsystem\+::\+Perform\+Http\+Request\+For\+Races (\begin{DoxyParamCaption}\item[{const FString \&}]{Races\+Endpoint}{}\end{DoxyParamCaption})}
+
+
+
+Triggers the request to the API. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Races\+Endpoint} & \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-variable-members}
+\Hypertarget{class_u_trails_subsystem_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_u_trails_subsystem_a0e1835cf8825db6e3c817d1fb5c26439}\index{UTrailsSubsystem@{UTrailsSubsystem}!OnRacesDatasGathered@{OnRacesDatasGathered}}
+\index{OnRacesDatasGathered@{OnRacesDatasGathered}!UTrailsSubsystem@{UTrailsSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnRacesDatasGathered}{OnRacesDatasGathered}}
+{\footnotesize\ttfamily \label{class_u_trails_subsystem_a0e1835cf8825db6e3c817d1fb5c26439} 
+FOn\+Races\+Datas\+Gathered UTrails\+Subsystem\+::\+On\+Races\+Datas\+Gathered}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Subsystems/\+Public/\mbox{\hyperlink{_trails_subsystem_8h}{Trails\+Subsystem.\+h}}\item 
+Source/\+Subsystems/\+Private/\mbox{\hyperlink{_trails_subsystem_8cpp}{Trails\+Subsystem.\+cpp}}\end{DoxyCompactItemize}

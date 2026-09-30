@@ -1,0 +1,48 @@
+\doxysection{Loading\+Status\+Subsystem.\+h}
+\hypertarget{_loading_status_subsystem_8h_source}{}\label{_loading_status_subsystem_8h_source}\index{Source/Subsystems/Public/LoadingStatusSubsystem.h@{Source/Subsystems/Public/LoadingStatusSubsystem.h}}
+\mbox{\hyperlink{_loading_status_subsystem_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Subsystems/GameInstanceSubsystem.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_loading_tasks_types_8h}{LoadingTasksTypes.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}LoadingStatusSubsystem.generated.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00014\ UCLASS()}
+\DoxyCodeLine{00015\ class\ SUBSYSTEMS\_API\ \mbox{\hyperlink{class_u_loading_status_subsystem}{ULoadingStatusSubsystem}}\ :\ public\ UGameInstanceSubsystem}
+\DoxyCodeLine{00016\ \{}
+\DoxyCodeLine{00017\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00018\ \ \ \ \ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{comment}{//\ Delegate\ "{}Slate-\/friendly"{}\ (non-\/dynamic,\ pas\ Blueprint)}}
+\DoxyCodeLine{00021\ \ \ \ \ \mbox{\hyperlink{class_u_loading_status_subsystem_a7e2c29aa174e87e26e58a9526a25b669}{DECLARE\_MULTICAST\_DELEGATE}}(FOnChangedNative);}
+\DoxyCodeLine{00022\ \ \ \ \ FOnChangedNative\ \mbox{\hyperlink{class_u_loading_status_subsystem_aab1a36bdbad8d4f72dffda138a1e3765}{OnChanged}};}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_loading_status_subsystem_a4c242cbc450de6f7404f35889ee80da4}{RegisterTask}}(FName\ Id,\ \textcolor{keyword}{const}\ FText\&\ Label);}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_loading_status_subsystem_a74dd9d7d08b2bad254b2f783a4940a50}{SetRunning}}(FName\ Id,\ \textcolor{keyword}{const}\ FText\&\ Detail\ =\ FText::GetEmpty());}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_loading_status_subsystem_a9537e854845fa8b07ed6e95c51ba84fe}{Update}}(FName\ Id,\ \textcolor{keywordtype}{float}\ Progress01,\ \textcolor{keyword}{const}\ FText\&\ Detail\ =\ FText::GetEmpty());}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_loading_status_subsystem_a40cb10ad0721013eb21861e0df9e51c3}{Complete}}(FName\ Id,\ \textcolor{keyword}{const}\ FText\&\ Detail\ =\ FText::GetEmpty());}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_loading_status_subsystem_aea20a5a96850decbf2ddef72d989729e}{Fail}}(FName\ Id,\ \textcolor{keyword}{const}\ FText\&\ Detail\ =\ FText::GetEmpty());}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ TArray<FLoadingTaskInfo>\ \mbox{\hyperlink{class_u_loading_status_subsystem_a8611039bfc38370bdce97c6c3cef9276}{GetSnapshot}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_u_loading_status_subsystem_a45ee747bf54166cd0a39e97f6c7da562}{GetOverallProgress01}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_u_loading_status_subsystem_aa8762835b5248077853fdb7b2399eb09}{AreAllDoneSuccessfully}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00033\ \ \ \ \ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_u_loading_status_subsystem_a4538cea37155c41e7cc80266a4ff117b}{bDirty}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00035\ \ \ \ \ FTimerHandle\ \mbox{\hyperlink{class_u_loading_status_subsystem_aafd197118dc0aece457a81b351240d41}{FlushHandle}};}
+\DoxyCodeLine{00036\ \ \ \ \ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_loading_status_subsystem_a0845dff53ea5be97dbcbc8f2fa85a4d3}{MarkDirty}}();}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_loading_status_subsystem_ade1cc4aed08a7d8196f13906c9184664}{Flush}}();}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00041\ \ \ \ \ TMap<FName,\ FLoadingTaskInfo>\ Tasks;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ FORCEINLINE\ \textcolor{keywordtype}{void}\ BroadcastChanged()\ \{\ \mbox{\hyperlink{class_u_loading_status_subsystem_aab1a36bdbad8d4f72dffda138a1e3765}{OnChanged}}.Broadcast();\ \}}
+\DoxyCodeLine{00044\ \ \ \ \ }
+\DoxyCodeLine{00045\ \};}
+
+\end{DoxyCode}

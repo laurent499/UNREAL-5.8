@@ -1,0 +1,165 @@
+\doxysection{UPath\+Subsystem Class Reference}
+\hypertarget{class_u_path_subsystem}{}\label{class_u_path_subsystem}\index{UPathSubsystem@{UPathSubsystem}}
+
+
+Subsystem de gestion des tracés et des bornes kilométriques.  
+
+
+
+
+{\ttfamily \#include $<$Path\+Subsystem.\+h$>$}
+
+Inheritance diagram for UPath\+Subsystem\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_u_path_subsystem}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_u_path_subsystem_a535be43defff68bb997b4c990428011a}{Initialize}} (FSubsystem\+Collection\+Base \&Collection) override
+\item 
+virtual void \mbox{\hyperlink{class_u_path_subsystem_aa8bf90ed1c031480cf362ce50678b4e8}{Deinitialize}} () override
+\item 
+void \mbox{\hyperlink{class_u_path_subsystem_a44ef2764318f5023e48fb0e7e7bfd4ce}{Perform\+Http\+Request\+For\+Path}} (int64 Race\+ID, const FString \&Path\+Endpoint)
+\begin{DoxyCompactList}\small\item\em Triggers the request to the API. \end{DoxyCompactList}\item 
+TObject\+Ptr$<$ AActor $>$ \mbox{\hyperlink{class_u_path_subsystem_ac92f8a3b18aea4a12d115d0c2f16732c}{Get\+Path\+By\+Id}} (int64 Race\+ID) const
+\begin{DoxyCompactList}\small\item\em Returning Path actor by Race ID. \end{DoxyCompactList}\item 
+TObject\+Ptr$<$ AActor $>$ \mbox{\hyperlink{class_u_path_subsystem_acf54933d4a26e3321e499cbdf70e4e30}{Spawn\+Path\+Actor}} (int64 Race\+ID, UWorld \texorpdfstring{$\ast$}{*}World, \mbox{\hyperlink{class_t_subclass_of}{TSubclass\+Of}}$<$ AActor $>$ Path\+Class, const FTransform \&Spawn\+Transform)
+\begin{DoxyCompactList}\small\item\em Spawning the Path Actor. \end{DoxyCompactList}\item 
+TObject\+Ptr$<$ AActor $>$ \mbox{\hyperlink{class_u_path_subsystem_a0b5c6281cd22b44e3190e24a91352831}{Spawn\+Km\+Actor}} (UWorld \texorpdfstring{$\ast$}{*}World, \mbox{\hyperlink{class_t_subclass_of}{TSubclass\+Of}}$<$ AActor $>$ Path\+Class, const FTransform \&Spawn\+Transform)
+\begin{DoxyCompactList}\small\item\em Spawning the Km actor. \end{DoxyCompactList}\item 
+FORCEINLINE \mbox{\hyperlink{struct_f_race_path}{FRace\+Path}} \mbox{\hyperlink{class_u_path_subsystem_a32ad66365612041111a56034bd24712f}{Get\+Race\+Path}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+FOn\+Path\+Datas\+Gathered \mbox{\hyperlink{class_u_path_subsystem_a14e5ed54bd7247ed3b3fd0bf3e1f0587}{On\+Path\+Datas\+Gathered}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Subsystem de gestion des tracés et des bornes kilométriques. 
+
+\label{doc-func-members}
+\Hypertarget{class_u_path_subsystem_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_u_path_subsystem_aa8bf90ed1c031480cf362ce50678b4e8}\index{UPathSubsystem@{UPathSubsystem}!Deinitialize@{Deinitialize}}
+\index{Deinitialize@{Deinitialize}!UPathSubsystem@{UPathSubsystem}}
+\doxysubsubsection{\texorpdfstring{Deinitialize()}{Deinitialize()}}
+{\footnotesize\ttfamily \label{class_u_path_subsystem_aa8bf90ed1c031480cf362ce50678b4e8} 
+void UPath\+Subsystem\+::\+Deinitialize (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_path_subsystem_ac92f8a3b18aea4a12d115d0c2f16732c}\index{UPathSubsystem@{UPathSubsystem}!GetPathById@{GetPathById}}
+\index{GetPathById@{GetPathById}!UPathSubsystem@{UPathSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetPathById()}{GetPathById()}}
+{\footnotesize\ttfamily \label{class_u_path_subsystem_ac92f8a3b18aea4a12d115d0c2f16732c} 
+TObject\+Ptr$<$ AActor $>$ UPath\+Subsystem\+::\+Get\+Path\+By\+Id (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+
+
+Returning Path actor by Race ID. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_u_path_subsystem_a32ad66365612041111a56034bd24712f}\index{UPathSubsystem@{UPathSubsystem}!GetRacePath@{GetRacePath}}
+\index{GetRacePath@{GetRacePath}!UPathSubsystem@{UPathSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetRacePath()}{GetRacePath()}}
+{\footnotesize\ttfamily \label{class_u_path_subsystem_a32ad66365612041111a56034bd24712f} 
+FORCEINLINE \mbox{\hyperlink{struct_f_race_path}{FRace\+Path}} UPath\+Subsystem\+::\+Get\+Race\+Path (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_u_path_subsystem_a535be43defff68bb997b4c990428011a}\index{UPathSubsystem@{UPathSubsystem}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!UPathSubsystem@{UPathSubsystem}}
+\doxysubsubsection{\texorpdfstring{Initialize()}{Initialize()}}
+{\footnotesize\ttfamily \label{class_u_path_subsystem_a535be43defff68bb997b4c990428011a} 
+void UPath\+Subsystem\+::\+Initialize (\begin{DoxyParamCaption}\item[{FSubsystem\+Collection\+Base \&}]{Collection}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_path_subsystem_a44ef2764318f5023e48fb0e7e7bfd4ce}\index{UPathSubsystem@{UPathSubsystem}!PerformHttpRequestForPath@{PerformHttpRequestForPath}}
+\index{PerformHttpRequestForPath@{PerformHttpRequestForPath}!UPathSubsystem@{UPathSubsystem}}
+\doxysubsubsection{\texorpdfstring{PerformHttpRequestForPath()}{PerformHttpRequestForPath()}}
+{\footnotesize\ttfamily \label{class_u_path_subsystem_a44ef2764318f5023e48fb0e7e7bfd4ce} 
+void UPath\+Subsystem\+::\+Perform\+Http\+Request\+For\+Path (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{const FString \&}]{Path\+Endpoint}{}\end{DoxyParamCaption})}
+
+
+
+Triggers the request to the API. 
+
+Getting path datas.
+
+
+\begin{DoxyParams}{Parameters}
+{\em Path\+Endpoint} & \\
+\hline
+{\em Race\+ID} & \\
+\hline
+{\em Path\+Endpoint} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_path_subsystem_a0b5c6281cd22b44e3190e24a91352831}\index{UPathSubsystem@{UPathSubsystem}!SpawnKmActor@{SpawnKmActor}}
+\index{SpawnKmActor@{SpawnKmActor}!UPathSubsystem@{UPathSubsystem}}
+\doxysubsubsection{\texorpdfstring{SpawnKmActor()}{SpawnKmActor()}}
+{\footnotesize\ttfamily \label{class_u_path_subsystem_a0b5c6281cd22b44e3190e24a91352831} 
+TObject\+Ptr$<$ AActor $>$ UPath\+Subsystem\+::\+Spawn\+Km\+Actor (\begin{DoxyParamCaption}\item[{UWorld \texorpdfstring{$\ast$}{*}}]{World}{, }\item[{\mbox{\hyperlink{class_t_subclass_of}{TSubclass\+Of}}$<$ AActor $>$}]{Km\+Class}{, }\item[{const FTransform \&}]{Spawn\+Transform}{}\end{DoxyParamCaption})}
+
+
+
+Spawning the Km actor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em World} & \\
+\hline
+{\em Km\+Class} & \\
+\hline
+{\em Spawn\+Transform} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_u_path_subsystem_acf54933d4a26e3321e499cbdf70e4e30}\index{UPathSubsystem@{UPathSubsystem}!SpawnPathActor@{SpawnPathActor}}
+\index{SpawnPathActor@{SpawnPathActor}!UPathSubsystem@{UPathSubsystem}}
+\doxysubsubsection{\texorpdfstring{SpawnPathActor()}{SpawnPathActor()}}
+{\footnotesize\ttfamily \label{class_u_path_subsystem_acf54933d4a26e3321e499cbdf70e4e30} 
+TObject\+Ptr$<$ AActor $>$ UPath\+Subsystem\+::\+Spawn\+Path\+Actor (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{UWorld \texorpdfstring{$\ast$}{*}}]{World}{, }\item[{\mbox{\hyperlink{class_t_subclass_of}{TSubclass\+Of}}$<$ AActor $>$}]{Path\+Class}{, }\item[{const FTransform \&}]{Spawn\+Transform}{}\end{DoxyParamCaption})}
+
+
+
+Spawning the Path Actor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em World} & \\
+\hline
+{\em Path\+Class} & \\
+\hline
+{\em Spawn\+Transform} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+\label{doc-variable-members}
+\Hypertarget{class_u_path_subsystem_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_u_path_subsystem_a14e5ed54bd7247ed3b3fd0bf3e1f0587}\index{UPathSubsystem@{UPathSubsystem}!OnPathDatasGathered@{OnPathDatasGathered}}
+\index{OnPathDatasGathered@{OnPathDatasGathered}!UPathSubsystem@{UPathSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnPathDatasGathered}{OnPathDatasGathered}}
+{\footnotesize\ttfamily \label{class_u_path_subsystem_a14e5ed54bd7247ed3b3fd0bf3e1f0587} 
+FOn\+Path\+Datas\+Gathered UPath\+Subsystem\+::\+On\+Path\+Datas\+Gathered}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Subsystems/\+Public/\mbox{\hyperlink{_path_subsystem_8h}{Path\+Subsystem.\+h}}\item 
+Source/\+Subsystems/\+Private/\mbox{\hyperlink{_path_subsystem_8cpp}{Path\+Subsystem.\+cpp}}\end{DoxyCompactItemize}

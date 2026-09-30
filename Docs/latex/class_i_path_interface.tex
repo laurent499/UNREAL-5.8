@@ -1,0 +1,85 @@
+\doxysection{IPath\+Interface Class Reference}
+\hypertarget{class_i_path_interface}{}\label{class_i_path_interface}\index{IPathInterface@{IPathInterface}}
+
+
+{\ttfamily \#include $<$Path\+Interface.\+h$>$}
+
+Inheritance diagram for IPath\+Interface\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_i_path_interface}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_i_path_interface_a2b9f39be6ceacadaf19f6ed971691432}{Change\+Path\+Visibility}} (bool b\+Show)=0
+\item 
+virtual void \mbox{\hyperlink{class_i_path_interface_a375bc41eaf878fe55e7501e66b294ccf}{Change\+Slope\+Visibility}} (bool b\+Show)=0
+\item 
+virtual FVector \mbox{\hyperlink{class_i_path_interface_ad15082622c5f6d323b9bd3ddd42c1dfe}{Get\+Closest\+Spline\+Location}} (FVector Runner\+Location) const =0
+\item 
+virtual FVector \mbox{\hyperlink{class_i_path_interface_a0d54351bddd1b9a5362fe1737f2dec14}{Get\+Location\+At\+Distance}} (float Distance) const =0
+\item 
+virtual float \mbox{\hyperlink{class_i_path_interface_a89ea834f7d16b069dab9e0f003041bee}{Get\+Distance\+Along\+Spline}} (FVector Runner\+Location) const =0
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{class_i_path_interface_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_i_path_interface_a2b9f39be6ceacadaf19f6ed971691432}\index{IPathInterface@{IPathInterface}!ChangePathVisibility@{ChangePathVisibility}}
+\index{ChangePathVisibility@{ChangePathVisibility}!IPathInterface@{IPathInterface}}
+\doxysubsubsection{\texorpdfstring{ChangePathVisibility()}{ChangePathVisibility()}}
+{\footnotesize\ttfamily \label{class_i_path_interface_a2b9f39be6ceacadaf19f6ed971691432} 
+virtual void IPath\+Interface\+::\+Change\+Path\+Visibility (\begin{DoxyParamCaption}\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_path_abda57b13be7ae6e6d3a6e3a2359661bf}{APath}}.
+
+\Hypertarget{class_i_path_interface_a375bc41eaf878fe55e7501e66b294ccf}\index{IPathInterface@{IPathInterface}!ChangeSlopeVisibility@{ChangeSlopeVisibility}}
+\index{ChangeSlopeVisibility@{ChangeSlopeVisibility}!IPathInterface@{IPathInterface}}
+\doxysubsubsection{\texorpdfstring{ChangeSlopeVisibility()}{ChangeSlopeVisibility()}}
+{\footnotesize\ttfamily \label{class_i_path_interface_a375bc41eaf878fe55e7501e66b294ccf} 
+virtual void IPath\+Interface\+::\+Change\+Slope\+Visibility (\begin{DoxyParamCaption}\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_path_a7f0a4b8bbc1305ef7ca4e4357161f18f}{APath}}.
+
+\Hypertarget{class_i_path_interface_ad15082622c5f6d323b9bd3ddd42c1dfe}\index{IPathInterface@{IPathInterface}!GetClosestSplineLocation@{GetClosestSplineLocation}}
+\index{GetClosestSplineLocation@{GetClosestSplineLocation}!IPathInterface@{IPathInterface}}
+\doxysubsubsection{\texorpdfstring{GetClosestSplineLocation()}{GetClosestSplineLocation()}}
+{\footnotesize\ttfamily \label{class_i_path_interface_ad15082622c5f6d323b9bd3ddd42c1dfe} 
+virtual FVector IPath\+Interface\+::\+Get\+Closest\+Spline\+Location (\begin{DoxyParamCaption}\item[{FVector}]{Runner\+Location}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_path_ae0dbf32dc3fa012019b4d915815f35b9}{APath}}.
+
+\Hypertarget{class_i_path_interface_a89ea834f7d16b069dab9e0f003041bee}\index{IPathInterface@{IPathInterface}!GetDistanceAlongSpline@{GetDistanceAlongSpline}}
+\index{GetDistanceAlongSpline@{GetDistanceAlongSpline}!IPathInterface@{IPathInterface}}
+\doxysubsubsection{\texorpdfstring{GetDistanceAlongSpline()}{GetDistanceAlongSpline()}}
+{\footnotesize\ttfamily \label{class_i_path_interface_a89ea834f7d16b069dab9e0f003041bee} 
+virtual float IPath\+Interface\+::\+Get\+Distance\+Along\+Spline (\begin{DoxyParamCaption}\item[{FVector}]{Runner\+Location}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_path_a50d8c2edf71113d20369a0146cefe2fe}{APath}}.
+
+\Hypertarget{class_i_path_interface_a0d54351bddd1b9a5362fe1737f2dec14}\index{IPathInterface@{IPathInterface}!GetLocationAtDistance@{GetLocationAtDistance}}
+\index{GetLocationAtDistance@{GetLocationAtDistance}!IPathInterface@{IPathInterface}}
+\doxysubsubsection{\texorpdfstring{GetLocationAtDistance()}{GetLocationAtDistance()}}
+{\footnotesize\ttfamily \label{class_i_path_interface_a0d54351bddd1b9a5362fe1737f2dec14} 
+virtual FVector IPath\+Interface\+::\+Get\+Location\+At\+Distance (\begin{DoxyParamCaption}\item[{float}]{Distance}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_a_path_a4d2d8a98bde0ed19acbac3e57f0e29e9}{APath}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Trail\+Interfaces/\+Public/\mbox{\hyperlink{_path_interface_8h}{Path\+Interface.\+h}}\end{DoxyCompactItemize}

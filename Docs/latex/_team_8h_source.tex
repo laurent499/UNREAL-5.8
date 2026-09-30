@@ -1,0 +1,34 @@
+\doxysection{Team.\+h}
+\hypertarget{_team_8h_source}{}\label{_team_8h_source}\index{Source/TrailSimulator/Public/Actors/Team.h@{Source/TrailSimulator/Public/Actors/Team.h}}
+\mbox{\hyperlink{_team_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}GameFramework/Actor.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_team_interface_8h}{TeamInterface.h}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}Team.generated.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ UCLASS()}
+\DoxyCodeLine{00012\ class\ TRAILSIMULATOR\_API\ \mbox{\hyperlink{class_a_team_a3eef46f69b3f5bf552431ffb25b052d9}{ATeam}}\ :\ public\ AActor,\ public\ \mbox{\hyperlink{class_i_team_interface}{ITeamInterface}}}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00017\ \ \ \ \ \mbox{\hyperlink{class_a_team_a3eef46f69b3f5bf552431ffb25b052d9}{ATeam}}();}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_team_a95495c11d8470ed3f6aa400e724bbc03}{Tick}}(\textcolor{keywordtype}{float}\ DeltaTime)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00019\ \ \ \ \ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_team_a66dff40101c6213dc29033436da99f1a}{BeginPlay}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00022\ \ \ \ \ }
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_team_a0db4ae33f30d38d1aa50a6a26267cbf0}{AssignRunnerToFollow}}(int64\ NewFollowedIdRunner)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00026\ \ \ \ \ \mbox{\hyperlink{struct_f_team_struct}{FTeamStruct}}\ TeamStruct;}
+\DoxyCodeLine{00027\ \ \ \ \ int64\ FollowedIdRunner;}
+\DoxyCodeLine{00028\ \};}
+
+\end{DoxyCode}

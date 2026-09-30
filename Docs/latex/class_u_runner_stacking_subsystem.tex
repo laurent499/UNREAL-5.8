@@ -1,0 +1,106 @@
+\doxysection{URunner\+Stacking\+Subsystem Class Reference}
+\hypertarget{class_u_runner_stacking_subsystem}{}\label{class_u_runner_stacking_subsystem}\index{URunnerStackingSubsystem@{URunnerStackingSubsystem}}
+
+
+{\ttfamily \#include $<$Runner\+Stacking\+Subsystem.\+h$>$}
+
+Inheritance diagram for URunner\+Stacking\+Subsystem\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_u_runner_stacking_subsystem}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_u_runner_stacking_subsystem_a7421464df0ae409453eef5c94de0d94f}{Initialize}} (FSubsystem\+Collection\+Base \&Collection) override
+\item 
+virtual void \mbox{\hyperlink{class_u_runner_stacking_subsystem_af7ef44578005e168e7d7d3f3e1d0da5e}{Deinitialize}} () override
+\item 
+void \mbox{\hyperlink{class_u_runner_stacking_subsystem_aec733a1b19bcefbbda5b544e83a89f29}{Register\+Runner}} (AActor \texorpdfstring{$\ast$}{*}Runner)
+\item 
+void \mbox{\hyperlink{class_u_runner_stacking_subsystem_ab17316283249b11be07f5bd80e7040e8}{Unregister\+Runner}} (AActor \texorpdfstring{$\ast$}{*}Runner)
+\item 
+void \mbox{\hyperlink{class_u_runner_stacking_subsystem_a9e2971ae3672b3a73b1dcc5d67442753}{Update\+Runner\+Track\+State}} (AActor \texorpdfstring{$\ast$}{*}Runner, const FTransform \&Track\+Transform, float Track\+Distance\+Meters)
+\begin{DoxyCompactList}\small\item\em Mise à jour de l\textquotesingle{}évolution de la position du Runner. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_u_runner_stacking_subsystem_a1305b323d6a6c33748b5f2fb0f9c468f}{Set\+Config}} (const \mbox{\hyperlink{struct_f_runner_stacking_config}{FRunner\+Stacking\+Config}} \&New\+Config)
+\item 
+\mbox{\hyperlink{struct_f_runner_stacking_config}{FRunner\+Stacking\+Config}} \mbox{\hyperlink{class_u_runner_stacking_subsystem_aec4acf56405672d3b163052b6f2bb94e}{Get\+Config}} () const
+\item 
+int32 \mbox{\hyperlink{class_u_runner_stacking_subsystem_ad9f3e6add21bc7d33941928801bbf592}{Get\+Registered\+Count}} () const
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{class_u_runner_stacking_subsystem_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_u_runner_stacking_subsystem_af7ef44578005e168e7d7d3f3e1d0da5e}\index{URunnerStackingSubsystem@{URunnerStackingSubsystem}!Deinitialize@{Deinitialize}}
+\index{Deinitialize@{Deinitialize}!URunnerStackingSubsystem@{URunnerStackingSubsystem}}
+\doxysubsubsection{\texorpdfstring{Deinitialize()}{Deinitialize()}}
+{\footnotesize\ttfamily \label{class_u_runner_stacking_subsystem_af7ef44578005e168e7d7d3f3e1d0da5e} 
+void URunner\+Stacking\+Subsystem\+::\+Deinitialize (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_runner_stacking_subsystem_aec4acf56405672d3b163052b6f2bb94e}\index{URunnerStackingSubsystem@{URunnerStackingSubsystem}!GetConfig@{GetConfig}}
+\index{GetConfig@{GetConfig}!URunnerStackingSubsystem@{URunnerStackingSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetConfig()}{GetConfig()}}
+{\footnotesize\ttfamily \label{class_u_runner_stacking_subsystem_aec4acf56405672d3b163052b6f2bb94e} 
+\mbox{\hyperlink{struct_f_runner_stacking_config}{FRunner\+Stacking\+Config}} URunner\+Stacking\+Subsystem\+::\+Get\+Config (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_u_runner_stacking_subsystem_ad9f3e6add21bc7d33941928801bbf592}\index{URunnerStackingSubsystem@{URunnerStackingSubsystem}!GetRegisteredCount@{GetRegisteredCount}}
+\index{GetRegisteredCount@{GetRegisteredCount}!URunnerStackingSubsystem@{URunnerStackingSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetRegisteredCount()}{GetRegisteredCount()}}
+{\footnotesize\ttfamily \label{class_u_runner_stacking_subsystem_ad9f3e6add21bc7d33941928801bbf592} 
+int32 URunner\+Stacking\+Subsystem\+::\+Get\+Registered\+Count (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_u_runner_stacking_subsystem_a7421464df0ae409453eef5c94de0d94f}\index{URunnerStackingSubsystem@{URunnerStackingSubsystem}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!URunnerStackingSubsystem@{URunnerStackingSubsystem}}
+\doxysubsubsection{\texorpdfstring{Initialize()}{Initialize()}}
+{\footnotesize\ttfamily \label{class_u_runner_stacking_subsystem_a7421464df0ae409453eef5c94de0d94f} 
+void URunner\+Stacking\+Subsystem\+::\+Initialize (\begin{DoxyParamCaption}\item[{FSubsystem\+Collection\+Base \&}]{Collection}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_runner_stacking_subsystem_aec733a1b19bcefbbda5b544e83a89f29}\index{URunnerStackingSubsystem@{URunnerStackingSubsystem}!RegisterRunner@{RegisterRunner}}
+\index{RegisterRunner@{RegisterRunner}!URunnerStackingSubsystem@{URunnerStackingSubsystem}}
+\doxysubsubsection{\texorpdfstring{RegisterRunner()}{RegisterRunner()}}
+{\footnotesize\ttfamily \label{class_u_runner_stacking_subsystem_aec733a1b19bcefbbda5b544e83a89f29} 
+void URunner\+Stacking\+Subsystem\+::\+Register\+Runner (\begin{DoxyParamCaption}\item[{AActor \texorpdfstring{$\ast$}{*}}]{Runner}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_runner_stacking_subsystem_a1305b323d6a6c33748b5f2fb0f9c468f}\index{URunnerStackingSubsystem@{URunnerStackingSubsystem}!SetConfig@{SetConfig}}
+\index{SetConfig@{SetConfig}!URunnerStackingSubsystem@{URunnerStackingSubsystem}}
+\doxysubsubsection{\texorpdfstring{SetConfig()}{SetConfig()}}
+{\footnotesize\ttfamily \label{class_u_runner_stacking_subsystem_a1305b323d6a6c33748b5f2fb0f9c468f} 
+void URunner\+Stacking\+Subsystem\+::\+Set\+Config (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_f_runner_stacking_config}{FRunner\+Stacking\+Config}} \&}]{New\+Config}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_runner_stacking_subsystem_ab17316283249b11be07f5bd80e7040e8}\index{URunnerStackingSubsystem@{URunnerStackingSubsystem}!UnregisterRunner@{UnregisterRunner}}
+\index{UnregisterRunner@{UnregisterRunner}!URunnerStackingSubsystem@{URunnerStackingSubsystem}}
+\doxysubsubsection{\texorpdfstring{UnregisterRunner()}{UnregisterRunner()}}
+{\footnotesize\ttfamily \label{class_u_runner_stacking_subsystem_ab17316283249b11be07f5bd80e7040e8} 
+void URunner\+Stacking\+Subsystem\+::\+Unregister\+Runner (\begin{DoxyParamCaption}\item[{AActor \texorpdfstring{$\ast$}{*}}]{Runner}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_runner_stacking_subsystem_a9e2971ae3672b3a73b1dcc5d67442753}\index{URunnerStackingSubsystem@{URunnerStackingSubsystem}!UpdateRunnerTrackState@{UpdateRunnerTrackState}}
+\index{UpdateRunnerTrackState@{UpdateRunnerTrackState}!URunnerStackingSubsystem@{URunnerStackingSubsystem}}
+\doxysubsubsection{\texorpdfstring{UpdateRunnerTrackState()}{UpdateRunnerTrackState()}}
+{\footnotesize\ttfamily \label{class_u_runner_stacking_subsystem_a9e2971ae3672b3a73b1dcc5d67442753} 
+void URunner\+Stacking\+Subsystem\+::\+Update\+Runner\+Track\+State (\begin{DoxyParamCaption}\item[{AActor \texorpdfstring{$\ast$}{*}}]{Runner}{, }\item[{const FTransform \&}]{Track\+Transform}{, }\item[{float}]{Track\+Distance\+Meters}{}\end{DoxyParamCaption})}
+
+
+
+Mise à jour de l\textquotesingle{}évolution de la position du Runner. 
+
+\begin{DoxyNote}{Note}
+Appellée par Runner à l\textquotesingle{}update de sa Location 
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em Runner} & \\
+\hline
+{\em Track\+Transform} & \\
+\hline
+{\em Track\+Distance\+Meters} & \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Subsystems/\+Public/\mbox{\hyperlink{_runner_stacking_subsystem_8h}{Runner\+Stacking\+Subsystem.\+h}}\item 
+Source/\+Subsystems/\+Private/\mbox{\hyperlink{_runner_stacking_subsystem_8cpp}{Runner\+Stacking\+Subsystem.\+cpp}}\end{DoxyCompactItemize}

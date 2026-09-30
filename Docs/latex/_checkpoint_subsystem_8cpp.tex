@@ -1,0 +1,35 @@
+\doxysection{Source/\+Subsystems/\+Private/\+Checkpoint\+Subsystem.cpp File Reference}
+\hypertarget{_checkpoint_subsystem_8cpp}{}\label{_checkpoint_subsystem_8cpp}\index{Source/Subsystems/Private/CheckpointSubsystem.cpp@{Source/Subsystems/Private/CheckpointSubsystem.cpp}}
+{\ttfamily \#include "{}Checkpoint\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Cesium\+Fly\+To\+Component.\+h"{}}\newline
+{\ttfamily \#include "{}Checkpoint\+Interface.\+h"{}}\newline
+{\ttfamily \#include "{}Json\+Object\+Converter.\+h"{}}\newline
+{\ttfamily \#include "{}Http\+Module.\+h"{}}\newline
+{\ttfamily \#include "{}Interfaces/\+IHttp\+Response.\+h"{}}\newline
+{\ttfamily \#include "{}Race\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Slate\+Notifications\+BFL.\+h"{}}\newline
+{\ttfamily \#include "{}Kismet/\+Gameplay\+Statics.\+h"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{_checkpoint_subsystem_8cpp_ac0d691f5772e040658b8c14114e69d44}{Convert\+Checkpoints\+Json}} (const FString \&Json\+String, \mbox{\hyperlink{struct_f_checkpoints}{FCheckpoints}} \&Out\+Root)
+\item 
+bool \mbox{\hyperlink{_checkpoint_subsystem_8cpp_a9f453c8f49ca7ad250a70f6857a58e69}{Convert\+Checkpoint\+Json}} (const FString \&Json\+String, \mbox{\hyperlink{struct_f_race_checkpoint}{FRace\+Checkpoint}} \&Out\+Root)
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{_checkpoint_subsystem_8cpp_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{_checkpoint_subsystem_8cpp_a9f453c8f49ca7ad250a70f6857a58e69}\index{CheckpointSubsystem.cpp@{CheckpointSubsystem.cpp}!ConvertCheckpointJson@{ConvertCheckpointJson}}
+\index{ConvertCheckpointJson@{ConvertCheckpointJson}!CheckpointSubsystem.cpp@{CheckpointSubsystem.cpp}}
+\doxysubsubsection{\texorpdfstring{ConvertCheckpointJson()}{ConvertCheckpointJson()}}
+{\footnotesize\ttfamily \label{_checkpoint_subsystem_8cpp_a9f453c8f49ca7ad250a70f6857a58e69} 
+bool Convert\+Checkpoint\+Json (\begin{DoxyParamCaption}\item[{const FString \&}]{Json\+String}{, }\item[{\mbox{\hyperlink{struct_f_race_checkpoint}{FRace\+Checkpoint}} \&}]{Out\+Root}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_checkpoint_subsystem_8cpp_ac0d691f5772e040658b8c14114e69d44}\index{CheckpointSubsystem.cpp@{CheckpointSubsystem.cpp}!ConvertCheckpointsJson@{ConvertCheckpointsJson}}
+\index{ConvertCheckpointsJson@{ConvertCheckpointsJson}!CheckpointSubsystem.cpp@{CheckpointSubsystem.cpp}}
+\doxysubsubsection{\texorpdfstring{ConvertCheckpointsJson()}{ConvertCheckpointsJson()}}
+{\footnotesize\ttfamily \label{_checkpoint_subsystem_8cpp_ac0d691f5772e040658b8c14114e69d44} 
+bool Convert\+Checkpoints\+Json (\begin{DoxyParamCaption}\item[{const FString \&}]{Json\+String}{, }\item[{\mbox{\hyperlink{struct_f_checkpoints}{FCheckpoints}} \&}]{Out\+Root}{}\end{DoxyParamCaption})}
+

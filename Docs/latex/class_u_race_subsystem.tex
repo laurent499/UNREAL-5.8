@@ -1,0 +1,138 @@
+\doxysection{URace\+Subsystem Class Reference}
+\hypertarget{class_u_race_subsystem}{}\label{class_u_race_subsystem}\index{URaceSubsystem@{URaceSubsystem}}
+
+
+Subsystem de récupération du setup d\textquotesingle{}une Race.  
+
+
+
+
+{\ttfamily \#include $<$Race\+Subsystem.\+h$>$}
+
+Inheritance diagram for URace\+Subsystem\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_u_race_subsystem}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_u_race_subsystem_aaa339aaed08a90bd6637306656b818d3}{Deinitialize}} () override
+\item 
+FString \mbox{\hyperlink{class_u_race_subsystem_ac3439388cbce50b0a6efdd3ee731064d}{Get\+Main\+URL}} () const
+\item 
+void \mbox{\hyperlink{class_u_race_subsystem_a22b8f3e9ec7a3ae6158ac3e4021ee224}{Set\+Current\+Race\+Id}} (int64 Race\+Id)
+\item 
+int64 \mbox{\hyperlink{class_u_race_subsystem_ab3a1dd650252514f0e659060f338cbd8}{Get\+Current\+Race\+Id}} () const
+\item 
+void \mbox{\hyperlink{class_u_race_subsystem_a0661725056b873346b6a26ecabf135e6}{Set\+Current\+Race\+Setup}} (\mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}} New\+Race\+Setup)
+\item 
+\mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}} \mbox{\hyperlink{class_u_race_subsystem_a6de4c545f6a9350fd76306272b77a71e}{Get\+Race\+Setup\+By\+Name}} (const FString \&Race\+Name) const
+\item 
+const \mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}} \mbox{\hyperlink{class_u_race_subsystem_a05ec2528ef2c2798fe0990616122a85d}{Get\+Race\+Setup\+By\+Id}} (int64 Race\+ID) const
+\item 
+void \mbox{\hyperlink{class_u_race_subsystem_a98d9ef4b87ce4b5b74358c54d946bcaa}{Perform\+Http\+Request\+For\+Race\+Setup}} (const int64 Race\+ID, const FString \&Races\+Endpoint, float Total, float Cpt)
+\begin{DoxyCompactList}\small\item\em Triggers the request to the API. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+FString \mbox{\hyperlink{class_u_race_subsystem_adf668a4be0577ca51dc301e6a5208e76}{Main\+URL}} = TEXT("{}https\+://simulacre.\+ltvprod.\+cc/"{})
+\item 
+FOn\+Race\+Datas\+Gathered \mbox{\hyperlink{class_u_race_subsystem_a9c531af18b47ae38db91e3c1c6f6959b}{On\+Race\+Setup\+Datas\+Gathered}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Subsystem de récupération du setup d\textquotesingle{}une Race. 
+
+\begin{DoxyNote}{Note}
+\doxylink{struct_f_race_setup}{FRace\+Setup} 
+\end{DoxyNote}
+
+
+\label{doc-func-members}
+\Hypertarget{class_u_race_subsystem_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_u_race_subsystem_aaa339aaed08a90bd6637306656b818d3}\index{URaceSubsystem@{URaceSubsystem}!Deinitialize@{Deinitialize}}
+\index{Deinitialize@{Deinitialize}!URaceSubsystem@{URaceSubsystem}}
+\doxysubsubsection{\texorpdfstring{Deinitialize()}{Deinitialize()}}
+{\footnotesize\ttfamily \label{class_u_race_subsystem_aaa339aaed08a90bd6637306656b818d3} 
+void URace\+Subsystem\+::\+Deinitialize (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_u_race_subsystem_ab3a1dd650252514f0e659060f338cbd8}\index{URaceSubsystem@{URaceSubsystem}!GetCurrentRaceId@{GetCurrentRaceId}}
+\index{GetCurrentRaceId@{GetCurrentRaceId}!URaceSubsystem@{URaceSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetCurrentRaceId()}{GetCurrentRaceId()}}
+{\footnotesize\ttfamily \label{class_u_race_subsystem_ab3a1dd650252514f0e659060f338cbd8} 
+int64 URace\+Subsystem\+::\+Get\+Current\+Race\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_u_race_subsystem_ac3439388cbce50b0a6efdd3ee731064d}\index{URaceSubsystem@{URaceSubsystem}!GetMainURL@{GetMainURL}}
+\index{GetMainURL@{GetMainURL}!URaceSubsystem@{URaceSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetMainURL()}{GetMainURL()}}
+{\footnotesize\ttfamily \label{class_u_race_subsystem_ac3439388cbce50b0a6efdd3ee731064d} 
+FString URace\+Subsystem\+::\+Get\+Main\+URL (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_u_race_subsystem_a05ec2528ef2c2798fe0990616122a85d}\index{URaceSubsystem@{URaceSubsystem}!GetRaceSetupById@{GetRaceSetupById}}
+\index{GetRaceSetupById@{GetRaceSetupById}!URaceSubsystem@{URaceSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetRaceSetupById()}{GetRaceSetupById()}}
+{\footnotesize\ttfamily \label{class_u_race_subsystem_a05ec2528ef2c2798fe0990616122a85d} 
+const \mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}} URace\+Subsystem\+::\+Get\+Race\+Setup\+By\+Id (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_u_race_subsystem_a6de4c545f6a9350fd76306272b77a71e}\index{URaceSubsystem@{URaceSubsystem}!GetRaceSetupByName@{GetRaceSetupByName}}
+\index{GetRaceSetupByName@{GetRaceSetupByName}!URaceSubsystem@{URaceSubsystem}}
+\doxysubsubsection{\texorpdfstring{GetRaceSetupByName()}{GetRaceSetupByName()}}
+{\footnotesize\ttfamily \label{class_u_race_subsystem_a6de4c545f6a9350fd76306272b77a71e} 
+\mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}} URace\+Subsystem\+::\+Get\+Race\+Setup\+By\+Name (\begin{DoxyParamCaption}\item[{const FString \&}]{Race\+Name}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_u_race_subsystem_a98d9ef4b87ce4b5b74358c54d946bcaa}\index{URaceSubsystem@{URaceSubsystem}!PerformHttpRequestForRaceSetup@{PerformHttpRequestForRaceSetup}}
+\index{PerformHttpRequestForRaceSetup@{PerformHttpRequestForRaceSetup}!URaceSubsystem@{URaceSubsystem}}
+\doxysubsubsection{\texorpdfstring{PerformHttpRequestForRaceSetup()}{PerformHttpRequestForRaceSetup()}}
+{\footnotesize\ttfamily \label{class_u_race_subsystem_a98d9ef4b87ce4b5b74358c54d946bcaa} 
+void URace\+Subsystem\+::\+Perform\+Http\+Request\+For\+Race\+Setup (\begin{DoxyParamCaption}\item[{const int64}]{Race\+ID}{, }\item[{const FString \&}]{Races\+Endpoint}{, }\item[{float}]{Total}{, }\item[{float}]{Cpt}{}\end{DoxyParamCaption})}
+
+
+
+Triggers the request to the API. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em Races\+Endpoint} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_u_race_subsystem_a22b8f3e9ec7a3ae6158ac3e4021ee224}\index{URaceSubsystem@{URaceSubsystem}!SetCurrentRaceId@{SetCurrentRaceId}}
+\index{SetCurrentRaceId@{SetCurrentRaceId}!URaceSubsystem@{URaceSubsystem}}
+\doxysubsubsection{\texorpdfstring{SetCurrentRaceId()}{SetCurrentRaceId()}}
+{\footnotesize\ttfamily \label{class_u_race_subsystem_a22b8f3e9ec7a3ae6158ac3e4021ee224} 
+void URace\+Subsystem\+::\+Set\+Current\+Race\+Id (\begin{DoxyParamCaption}\item[{int64}]{Race\+Id}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_u_race_subsystem_a0661725056b873346b6a26ecabf135e6}\index{URaceSubsystem@{URaceSubsystem}!SetCurrentRaceSetup@{SetCurrentRaceSetup}}
+\index{SetCurrentRaceSetup@{SetCurrentRaceSetup}!URaceSubsystem@{URaceSubsystem}}
+\doxysubsubsection{\texorpdfstring{SetCurrentRaceSetup()}{SetCurrentRaceSetup()}}
+{\footnotesize\ttfamily \label{class_u_race_subsystem_a0661725056b873346b6a26ecabf135e6} 
+void URace\+Subsystem\+::\+Set\+Current\+Race\+Setup (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}}}]{New\+Race\+Setup}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_u_race_subsystem_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_u_race_subsystem_adf668a4be0577ca51dc301e6a5208e76}\index{URaceSubsystem@{URaceSubsystem}!MainURL@{MainURL}}
+\index{MainURL@{MainURL}!URaceSubsystem@{URaceSubsystem}}
+\doxysubsubsection{\texorpdfstring{MainURL}{MainURL}}
+{\footnotesize\ttfamily \label{class_u_race_subsystem_adf668a4be0577ca51dc301e6a5208e76} 
+FString URace\+Subsystem\+::\+Main\+URL = TEXT("{}https\+://simulacre.\+ltvprod.\+cc/"{})}
+
+\Hypertarget{class_u_race_subsystem_a9c531af18b47ae38db91e3c1c6f6959b}\index{URaceSubsystem@{URaceSubsystem}!OnRaceSetupDatasGathered@{OnRaceSetupDatasGathered}}
+\index{OnRaceSetupDatasGathered@{OnRaceSetupDatasGathered}!URaceSubsystem@{URaceSubsystem}}
+\doxysubsubsection{\texorpdfstring{OnRaceSetupDatasGathered}{OnRaceSetupDatasGathered}}
+{\footnotesize\ttfamily \label{class_u_race_subsystem_a9c531af18b47ae38db91e3c1c6f6959b} 
+FOn\+Race\+Datas\+Gathered URace\+Subsystem\+::\+On\+Race\+Setup\+Datas\+Gathered}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Subsystems/\+Public/\mbox{\hyperlink{_race_subsystem_8h}{Race\+Subsystem.\+h}}\item 
+Source/\+Subsystems/\+Private/\mbox{\hyperlink{_race_subsystem_8cpp}{Race\+Subsystem.\+cpp}}\end{DoxyCompactItemize}

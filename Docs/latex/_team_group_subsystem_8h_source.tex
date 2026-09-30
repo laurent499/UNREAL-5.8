@@ -1,0 +1,41 @@
+\doxysection{Team\+Group\+Subsystem.\+h}
+\hypertarget{_team_group_subsystem_8h_source}{}\label{_team_group_subsystem_8h_source}\index{Source/Subsystems/Public/TeamGroupSubsystem.h@{Source/Subsystems/Public/TeamGroupSubsystem.h}}
+\mbox{\hyperlink{_team_group_subsystem_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Subsystems/GameInstanceSubsystem.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}TeamGroupSubsystem.generated.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ UCLASS()}
+\DoxyCodeLine{00011\ class\ SUBSYSTEMS\_API\ \mbox{\hyperlink{class_u_team_group_subsystem}{UTeamGroupSubsystem}}\ :\ public\ UGameInstanceSubsystem}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00014\ \ \ \ \ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_group_subsystem_a4a615e57e23e3b3cac2fb1ebda5f8898}{Initialize}}(FSubsystemCollectionBase\&\ Collection)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_group_subsystem_a79a99b1ce77f1f9a378eec2fdf51d51c}{AddTeamToGroup}}(int64\ RaceID,\ int64\ GroupID,\ int64\ TeamID);}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_group_subsystem_a91ffef0e9389239eef96170ea7d31e1e}{RemoveTeamFromGroup}}(int64\ RaceID,\ int64\ GroupID,\ int64\ TeamID);}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_group_subsystem_a0e4d4dd61d6c5fdad6b1749e45ca06d5}{ToggleGroup}}(int64\ RaceID,\ int64\ GroupID,\ \textcolor{keywordtype}{bool}\ bDisplay);}
+\DoxyCodeLine{00021\ \ \ \ \ TArray<int64>\ \mbox{\hyperlink{class_u_team_group_subsystem_a734c5ef756f2f45f68f917769bf9e9b4}{GetTeamsInGroup}}(int64\ RaceID,\ int64\ GroupID);}
+\DoxyCodeLine{00022\ \ \ \ \ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00024\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00025\ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ CurrentRaceSetup;}
+\DoxyCodeLine{00026\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00027\ \ \ \ \ TObjectPtr<class\ URaceSubsystem>\ RaceSubsystem;}
+\DoxyCodeLine{00028\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00029\ \ \ \ \ TObjectPtr<class\ UTeamSubsystem>\ TeamSubsystem;}
+\DoxyCodeLine{00030\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{void}\ SetRaceSetup(int64\ RaceID,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ NewRaceSetup);}
+\DoxyCodeLine{00032\ \ \ \ \ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{//\ idrace\ -\/\ idgroup/idteam}}
+\DoxyCodeLine{00034\ \ \ \ \ TMap<int64,\ TMap<int64,\ TArray<int64>>>\ RaceGroupTeamMap;}
+\DoxyCodeLine{00035\ \};}
+
+\end{DoxyCode}

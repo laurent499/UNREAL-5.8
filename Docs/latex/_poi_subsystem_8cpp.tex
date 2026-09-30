@@ -1,0 +1,35 @@
+\doxysection{Source/\+Subsystems/\+Private/\+Poi\+Subsystem.cpp File Reference}
+\hypertarget{_poi_subsystem_8cpp}{}\label{_poi_subsystem_8cpp}\index{Source/Subsystems/Private/PoiSubsystem.cpp@{Source/Subsystems/Private/PoiSubsystem.cpp}}
+{\ttfamily \#include "{}Poi\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Cesium\+Fly\+To\+Component.\+h"{}}\newline
+{\ttfamily \#include "{}Json\+Object\+Converter.\+h"{}}\newline
+{\ttfamily \#include "{}Http\+Module.\+h"{}}\newline
+{\ttfamily \#include "{}Poi\+Interface.\+h"{}}\newline
+{\ttfamily \#include "{}Interfaces/\+IHttp\+Response.\+h"{}}\newline
+{\ttfamily \#include "{}Race\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Slate\+Notifications\+BFL.\+h"{}}\newline
+{\ttfamily \#include "{}Kismet/\+Gameplay\+Statics.\+h"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{_poi_subsystem_8cpp_a26a1fa00f97b90003a278333b5600548}{Convert\+POIs\+Json}} (const FString \&Json\+String, \mbox{\hyperlink{struct_f_p_o_is}{FPOIs}} \&Out\+Root)
+\item 
+bool \mbox{\hyperlink{_poi_subsystem_8cpp_aba84a32c6637cf2128f9c0e6c324c121}{Convert\+POIJson}} (const FString \&Json\+String, \mbox{\hyperlink{struct_f_race_p_o_i}{FRace\+POI}} \&Out\+Root)
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{_poi_subsystem_8cpp_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{_poi_subsystem_8cpp_aba84a32c6637cf2128f9c0e6c324c121}\index{PoiSubsystem.cpp@{PoiSubsystem.cpp}!ConvertPOIJson@{ConvertPOIJson}}
+\index{ConvertPOIJson@{ConvertPOIJson}!PoiSubsystem.cpp@{PoiSubsystem.cpp}}
+\doxysubsubsection{\texorpdfstring{ConvertPOIJson()}{ConvertPOIJson()}}
+{\footnotesize\ttfamily \label{_poi_subsystem_8cpp_aba84a32c6637cf2128f9c0e6c324c121} 
+bool Convert\+POIJson (\begin{DoxyParamCaption}\item[{const FString \&}]{Json\+String}{, }\item[{\mbox{\hyperlink{struct_f_race_p_o_i}{FRace\+POI}} \&}]{Out\+Root}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_poi_subsystem_8cpp_a26a1fa00f97b90003a278333b5600548}\index{PoiSubsystem.cpp@{PoiSubsystem.cpp}!ConvertPOIsJson@{ConvertPOIsJson}}
+\index{ConvertPOIsJson@{ConvertPOIsJson}!PoiSubsystem.cpp@{PoiSubsystem.cpp}}
+\doxysubsubsection{\texorpdfstring{ConvertPOIsJson()}{ConvertPOIsJson()}}
+{\footnotesize\ttfamily \label{_poi_subsystem_8cpp_a26a1fa00f97b90003a278333b5600548} 
+bool Convert\+POIs\+Json (\begin{DoxyParamCaption}\item[{const FString \&}]{Json\+String}{, }\item[{\mbox{\hyperlink{struct_f_p_o_is}{FPOIs}} \&}]{Out\+Root}{}\end{DoxyParamCaption})}
+

@@ -1,0 +1,625 @@
+\doxysection{APoi Class Reference}
+\hypertarget{class_a_poi}{}\label{class_a_poi}\index{APoi@{APoi}}
+
+
+{\ttfamily \#include $<$Poi.\+h$>$}
+
+Inheritance diagram for APoi\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_a_poi}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_a_poi_ae1bad8b53e053c980df18e87a09560d6}{APoi}} ()
+\begin{DoxyCompactList}\small\item\em Poi Constructor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_poi_ae7a2e17e395d20b479eed0284da92880}{Tick}} (float Delta\+Time)
+\item 
+virtual void \mbox{\hyperlink{class_a_poi_abfc4199fc960e3069cc281e449000472}{Start\+Animation}} (float Rotation\+Speed) override
+\begin{DoxyCompactList}\small\item\em Playing orbit animation. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_a_poi_a6d993a159c5c6cbd1713b645079b91e0}{Stop\+Animation}} () override
+\begin{DoxyCompactList}\small\item\em Stop orbit animation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_poi_a7ab0d39f57411872230fe8ad298db110}{On\+Look\+At\+Timer\+Tick}} ()
+\begin{DoxyCompactList}\small\item\em Look\+At tick. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_a_poi_a2105d1c3e7d24abf558db7429970c455}{Update\+Poi}} (\mbox{\hyperlink{struct_f_race_p_o_i}{FRace\+POI}} New\+Race\+Poi, \mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}} New\+Race\+Setup) override
+\begin{DoxyCompactList}\small\item\em Updating the Poi visuals \& datas. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_a_poi_a52c237f9885928e0dbaf4e051f2e55dc}{Update\+Poi\+Weather}} (\mbox{\hyperlink{struct_f_open_weather_response}{FOpen\+Weather\+Response}} Weather\+Datas) override
+\begin{DoxyCompactList}\small\item\em Updating the Weather visuals \& datas. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_a_poi_a61eef27848a565699baed69da6123d3d}{Toggle\+Poi\+Weather}} (bool b\+Show)
+\begin{DoxyCompactList}\small\item\em Show/\+Hide Weather components \& requesting Weather datas. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_a_poi_a9ccf7b8bcb38340ae7b202ffcf40c9ed}{Update\+Globe\+Anchor}} ()
+\begin{DoxyCompactList}\small\item\em Aligning the Globe Anchor. \end{DoxyCompactList}\item 
+FString \mbox{\hyperlink{class_a_poi_abf2b68d398a2d1ed7da008c802d9826b}{Capitalize\+First}} (const FString \&In)
+\begin{DoxyCompactList}\small\item\em Capitalizing the first letter of a string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{class_a_poi_ad9f5aaca74bc9916b634141cc0f6d52f}{Get\+Bounds\+Location}} (class UScene\+Component \texorpdfstring{$\ast$}{*}Comp, class USpline\+Component \texorpdfstring{$\ast$}{*}Spline\+Support, FVector \&Start\+Location, FVector \&End\+Location)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+TObject\+Ptr$<$ class USpring\+Arm\+Component $>$ \mbox{\hyperlink{class_a_poi_a4762a441f6a267f2d3545ab0b7bb9ca9}{Spring\+Arm\+Component}}
+\item 
+TObject\+Ptr$<$ class UCine\+Camera\+Component $>$ \mbox{\hyperlink{class_a_poi_a62bfb8f43d395d336332bcba4a10681a}{Camera\+Component}}
+\item 
+TObject\+Ptr$<$ class UOWLCapture\+Component $>$ \mbox{\hyperlink{class_a_poi_af47582326491db7d9eef7bc5b4adc4b4}{OWLCapture\+Component}}
+\item 
+FTimer\+Handle \mbox{\hyperlink{class_a_poi_aa59c43748d776500e9071f1c21f27314}{Rot\+Handle}}
+\item 
+TObject\+Ptr$<$ class UTexture\+Render\+Target $>$ \mbox{\hyperlink{class_a_poi_a8a6d07d504129f57cbde6f82ee9e9723}{Render\+Target}}
+\item 
+float \mbox{\hyperlink{class_a_poi_a6f74458d97e3469bf9f80bd071e9f574}{Orbit\+Yaw}} = 0.f
+\item 
+float \mbox{\hyperlink{class_a_poi_a1d2ffd4600179e44c35854534b2ea57b}{Base\+Arm\+Pitch}} = 0.f
+\item 
+float \mbox{\hyperlink{class_a_poi_af71975946712468950a790b11fe18a4a}{Base\+Arm\+Roll}} = 0.f
+\item 
+float \mbox{\hyperlink{class_a_poi_a81910afe0942e75de1879f52e9da039a}{Orbit\+Speed\+Deg\+Per\+Sec}} = 12.f
+\item 
+bool \mbox{\hyperlink{class_a_poi_a0995dcac0295c54c198cb0476408f94f}{b\+Orbit\+Enabled}} = false
+\item 
+float \mbox{\hyperlink{class_a_poi_ac84f7604a8156ef03fd04a2df6042365}{Orbit\+Elapsed}} = 0.f
+\item 
+float \mbox{\hyperlink{class_a_poi_a3a51773c70b7e7a364726a1967bc48ed}{Start\+Yaw}}
+\item 
+bool \mbox{\hyperlink{class_a_poi_a5aac6effc5187df516ba0ecf03adf04d}{b\+Look\+At\+Enabled}} = true
+\item 
+AActor \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_a_poi_a926ceb74fef9607a57c5b165fb74c939}{Original\+View\+Target}} = nullptr
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_a_poi_a293e2013c4522289ef70e1daf0202c37}{Begin\+Play}} () override
+\item 
+virtual void \mbox{\hyperlink{class_a_poi_a2e36f2247a346e9140a3b07261accd26}{End\+Play}} (const EEnd\+Play\+Reason\+::\+Type End\+Play\+Reason) override
+\item 
+void \mbox{\hyperlink{class_a_poi_a67e071f69206db59af7914848c74b4a7}{Fetch\+Weather}} ()
+\begin{DoxyCompactList}\small\item\em Fetching Weather Datas. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_a_poi_a2b1d0b2f9a03ff2b346d898551c427ae}{Set\+Min\+Max}} (int64 Race\+ID, \mbox{\hyperlink{struct_f_min_max}{FMin\+Max}} New\+Min\+Max)
+\begin{DoxyCompactList}\small\item\em Updating the Min\+Max. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_f_min_max}{FMin\+Max}} \mbox{\hyperlink{class_a_poi_a04e429d8095b51d7f94bfdb83f32937a}{Get\+Min\+Max}} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_f_race_p_o_i}{FRace\+POI}} \mbox{\hyperlink{class_a_poi_ad103a8c9e4f6e583ac7b77202713cf59}{Poi\+Datas}}
+\item 
+\mbox{\hyperlink{struct_f_open_weather_response}{FOpen\+Weather\+Response}} \mbox{\hyperlink{class_a_poi_ae9d15e716bca5c16cd695a9a2ab32b9e}{Poi\+Weather\+Datas}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_poi_subsystem}{UPoi\+Subsystem}} $>$ \mbox{\hyperlink{class_a_poi_a19b20153bde3b38c9a9d58d91aefd190}{Poi\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_race_subsystem}{URace\+Subsystem}} $>$ \mbox{\hyperlink{class_a_poi_a2cb9dcd381b3569e9abd81fb6837ec4d}{Race\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_weather_subsystem}{UWeather\+Subsystem}} $>$ \mbox{\hyperlink{class_a_poi_afd5fdb42e4b9c2d19f067a60ab7ae900}{Weather\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_settings_subsystem}{USettings\+Subsystem}} $>$ \mbox{\hyperlink{class_a_poi_aa6c47d61e48d277e125444afe076fd40}{Settings\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class \mbox{\hyperlink{class_u_scale_subsystem}{UScale\+Subsystem}} $>$ \mbox{\hyperlink{class_a_poi_a38676c630ad2e6c65543f81ab2d11289}{Scale\+Subsystem}}
+\item 
+TObject\+Ptr$<$ class UScene\+Component $>$ \mbox{\hyperlink{class_a_poi_ab19090ca5c45256ffdaee693f870c18e}{Main\+Root}}
+\item 
+TObject\+Ptr$<$ class UStatic\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_poi_ab2101883f2f1be1646968bf90cbd9245}{Foot\+Component}}
+\item 
+TObject\+Ptr$<$ class UScene\+Component $>$ \mbox{\hyperlink{class_a_poi_a561d079f7bf831a6c38ea825a8699faa}{Foot\+Hook}}
+\item 
+TObject\+Ptr$<$ class UScene\+Component $>$ \mbox{\hyperlink{class_a_poi_ac08d61fc40364b72e170e330ee326019}{Spline\+Hook}}
+\item 
+TObject\+Ptr$<$ class USpline\+Component $>$ \mbox{\hyperlink{class_a_poi_a693d31902e2e43121793181bb40d0c95}{Spline\+Component}}
+\item 
+TObject\+Ptr$<$ class USpline\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_poi_a2b0d115c93afde62fbc9157c01472d83}{Name\+Bkg\+Component}}
+\item 
+TObject\+Ptr$<$ class USpline\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_poi_a65b411af78fcf17d084552d50fe019a3}{Infos\+Bkg\+Component}}
+\item 
+TObject\+Ptr$<$ class USpline\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_poi_afcba49ff8a340f1a3b05b4deb82b1476}{Weather\+Bkg\+Component}}
+\item 
+TObject\+Ptr$<$ class USpline\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_poi_a9de91d9e7569a7b0611a2bf5cc886ba3}{Line1\+Component}}
+\item 
+TObject\+Ptr$<$ class USpline\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_poi_a68ab2f4847747e074fb2bed50cf752a0}{Line2\+Component}}
+\item 
+TObject\+Ptr$<$ class UText\+Render\+Component $>$ \mbox{\hyperlink{class_a_poi_ad2c3cb8ccd37aa3fe1b6be61dbc64311}{Name\+Text}}
+\item 
+TObject\+Ptr$<$ class UText\+Render\+Component $>$ \mbox{\hyperlink{class_a_poi_a01dfbeb7413a0215414b09fd090aeda4}{Alt\+Text}}
+\item 
+TObject\+Ptr$<$ class UText\+Render\+Component $>$ \mbox{\hyperlink{class_a_poi_a4a78d70965b3b33122dae24859249315}{Temp\+Text}}
+\item 
+TObject\+Ptr$<$ class UText\+Render\+Component $>$ \mbox{\hyperlink{class_a_poi_ad568dd10866c1edd09c9d77767854560}{Weather1\+Text}}
+\item 
+TObject\+Ptr$<$ class UText\+Render\+Component $>$ \mbox{\hyperlink{class_a_poi_a978bcee9e56e5583f91587647be52623}{Weather2\+Text}}
+\item 
+TObject\+Ptr$<$ class UText\+Render\+Component $>$ \mbox{\hyperlink{class_a_poi_a076bfcff8a766e6334e29b1b982eb0e7}{Weather3\+Text}}
+\item 
+TObject\+Ptr$<$ class UStatic\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_poi_aa421bb21d3128ff10d5b4d994611636b}{Main\+Picto}}
+\item 
+TObject\+Ptr$<$ class UStatic\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_poi_abc41f81f6de733dfa39343c3db350031}{Alt\+Picto}}
+\item 
+TObject\+Ptr$<$ class UStatic\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_poi_affd4f61e43ccd416d76240dfb26b4239}{Weather\+Picto}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_a_poi_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_a_poi_ae1bad8b53e053c980df18e87a09560d6}\index{APoi@{APoi}!APoi@{APoi}}
+\index{APoi@{APoi}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{APoi()}{APoi()}}
+{\footnotesize\ttfamily \label{class_a_poi_ae1bad8b53e053c980df18e87a09560d6} 
+APoi\+::\+APoi (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Poi Constructor. 
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_a_poi_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_a_poi_a293e2013c4522289ef70e1daf0202c37}\index{APoi@{APoi}!BeginPlay@{BeginPlay}}
+\index{BeginPlay@{BeginPlay}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{BeginPlay()}{BeginPlay()}}
+{\footnotesize\ttfamily \label{class_a_poi_a293e2013c4522289ef70e1daf0202c37} 
+void APoi\+::\+Begin\+Play (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented in \mbox{\hyperlink{class_a_poi___generic_a050c49fd4d3928c9c6ab767fed166633}{APoi\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_poi___g_t_w_s_a62355465ac93b7abd9058afd5b32a874}{APoi\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_poi___u_t_m_b_a307770bc5580135266a4d5cb777718aa}{APoi\+\_\+\+UTMB}}.
+
+\Hypertarget{class_a_poi_abf2b68d398a2d1ed7da008c802d9826b}\index{APoi@{APoi}!CapitalizeFirst@{CapitalizeFirst}}
+\index{CapitalizeFirst@{CapitalizeFirst}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{CapitalizeFirst()}{CapitalizeFirst()}}
+{\footnotesize\ttfamily \label{class_a_poi_abf2b68d398a2d1ed7da008c802d9826b} 
+FString APoi\+::\+Capitalize\+First (\begin{DoxyParamCaption}\item[{const FString \&}]{In}{}\end{DoxyParamCaption})}
+
+
+
+Capitalizing the first letter of a string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em In} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_a_poi_a2e36f2247a346e9140a3b07261accd26}\index{APoi@{APoi}!EndPlay@{EndPlay}}
+\index{EndPlay@{EndPlay}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{EndPlay()}{EndPlay()}}
+{\footnotesize\ttfamily \label{class_a_poi_a2e36f2247a346e9140a3b07261accd26} 
+void APoi\+::\+End\+Play (\begin{DoxyParamCaption}\item[{const EEnd\+Play\+Reason\+::\+Type}]{End\+Play\+Reason}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented in \mbox{\hyperlink{class_a_poi___generic_af78aa5e339cf30a1e1cf7538db485c25}{APoi\+\_\+\+Generic}}.
+
+\Hypertarget{class_a_poi_a67e071f69206db59af7914848c74b4a7}\index{APoi@{APoi}!FetchWeather@{FetchWeather}}
+\index{FetchWeather@{FetchWeather}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{FetchWeather()}{FetchWeather()}}
+{\footnotesize\ttfamily \label{class_a_poi_a67e071f69206db59af7914848c74b4a7} 
+void APoi\+::\+Fetch\+Weather (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Fetching Weather Datas. 
+
+\Hypertarget{class_a_poi_ad9f5aaca74bc9916b634141cc0f6d52f}\index{APoi@{APoi}!GetBoundsLocation@{GetBoundsLocation}}
+\index{GetBoundsLocation@{GetBoundsLocation}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{GetBoundsLocation()}{GetBoundsLocation()}}
+{\footnotesize\ttfamily \label{class_a_poi_ad9f5aaca74bc9916b634141cc0f6d52f} 
+void APoi\+::\+Get\+Bounds\+Location (\begin{DoxyParamCaption}\item[{class UScene\+Component \texorpdfstring{$\ast$}{*}}]{Comp}{, }\item[{class USpline\+Component \texorpdfstring{$\ast$}{*}}]{Spline\+Support}{, }\item[{FVector \&}]{Start\+Location}{, }\item[{FVector \&}]{End\+Location}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_a_poi_a04e429d8095b51d7f94bfdb83f32937a}\index{APoi@{APoi}!GetMinMax@{GetMinMax}}
+\index{GetMinMax@{GetMinMax}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{GetMinMax()}{GetMinMax()}}
+{\footnotesize\ttfamily \label{class_a_poi_a04e429d8095b51d7f94bfdb83f32937a} 
+\mbox{\hyperlink{struct_f_min_max}{FMin\+Max}} APoi\+::\+Get\+Min\+Max (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_a7ab0d39f57411872230fe8ad298db110}\index{APoi@{APoi}!OnLookAtTimerTick@{OnLookAtTimerTick}}
+\index{OnLookAtTimerTick@{OnLookAtTimerTick}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{OnLookAtTimerTick()}{OnLookAtTimerTick()}}
+{\footnotesize\ttfamily \label{class_a_poi_a7ab0d39f57411872230fe8ad298db110} 
+void APoi\+::\+On\+Look\+At\+Timer\+Tick (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Look\+At tick. 
+
+\Hypertarget{class_a_poi_a2b1d0b2f9a03ff2b346d898551c427ae}\index{APoi@{APoi}!SetMinMax@{SetMinMax}}
+\index{SetMinMax@{SetMinMax}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{SetMinMax()}{SetMinMax()}}
+{\footnotesize\ttfamily \label{class_a_poi_a2b1d0b2f9a03ff2b346d898551c427ae} 
+void APoi\+::\+Set\+Min\+Max (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{\mbox{\hyperlink{struct_f_min_max}{FMin\+Max}}}]{New\+Min\+Max}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Updating the Min\+Max. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em New\+Min\+Max} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_a_poi_abfc4199fc960e3069cc281e449000472}\index{APoi@{APoi}!StartAnimation@{StartAnimation}}
+\index{StartAnimation@{StartAnimation}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{StartAnimation()}{StartAnimation()}}
+{\footnotesize\ttfamily \label{class_a_poi_abfc4199fc960e3069cc281e449000472} 
+void APoi\+::\+Start\+Animation (\begin{DoxyParamCaption}\item[{float}]{Rotation\+Speed}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Playing orbit animation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Rotation\+Speed} & \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{class_i_poi_interface_a4ef7897c141f1f2dd64849396c8b8edd}{IPoi\+Interface}}.
+
+
+
+Reimplemented in \mbox{\hyperlink{class_a_poi___generic_a1c9d7f9cfc8e468b2229400bfa0be237}{APoi\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_poi___g_t_w_s_a0829621c36f401448a972acaacf2e8fa}{APoi\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_poi___u_t_m_b_a9f30246f9c5d1b38f85267cda8599c36}{APoi\+\_\+\+UTMB}}.
+
+\Hypertarget{class_a_poi_a6d993a159c5c6cbd1713b645079b91e0}\index{APoi@{APoi}!StopAnimation@{StopAnimation}}
+\index{StopAnimation@{StopAnimation}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{StopAnimation()}{StopAnimation()}}
+{\footnotesize\ttfamily \label{class_a_poi_a6d993a159c5c6cbd1713b645079b91e0} 
+void APoi\+::\+Stop\+Animation (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Stop orbit animation. 
+
+
+
+Implements \mbox{\hyperlink{class_i_poi_interface_a176feb5a9de721f5649b8133252fb65e}{IPoi\+Interface}}.
+
+
+
+Reimplemented in \mbox{\hyperlink{class_a_poi___generic_ab84e4b18443372a135eb5af4a26ce67e}{APoi\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_poi___g_t_w_s_a06bba4ec9a9932953558628f0fee6e56}{APoi\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_poi___u_t_m_b_a659fac73b34e0e5125158ac8341daf4c}{APoi\+\_\+\+UTMB}}.
+
+\Hypertarget{class_a_poi_ae7a2e17e395d20b479eed0284da92880}\index{APoi@{APoi}!Tick@{Tick}}
+\index{Tick@{Tick}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{Tick()}{Tick()}}
+{\footnotesize\ttfamily \label{class_a_poi_ae7a2e17e395d20b479eed0284da92880} 
+void APoi\+::\+Tick (\begin{DoxyParamCaption}\item[{float}]{Delta\+Time}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_a_poi_a61eef27848a565699baed69da6123d3d}\index{APoi@{APoi}!TogglePoiWeather@{TogglePoiWeather}}
+\index{TogglePoiWeather@{TogglePoiWeather}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{TogglePoiWeather()}{TogglePoiWeather()}}
+{\footnotesize\ttfamily \label{class_a_poi_a61eef27848a565699baed69da6123d3d} 
+void APoi\+::\+Toggle\+Poi\+Weather (\begin{DoxyParamCaption}\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Show/\+Hide Weather components \& requesting Weather datas. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em b\+Show} & \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{class_i_poi_interface_ac6e383dc046440477f3cbb0fe91f45a7}{IPoi\+Interface}}.
+
+
+
+Reimplemented in \mbox{\hyperlink{class_a_poi___generic_a2bdba58ff71a2e8287988b5cc64b2190}{APoi\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_poi___g_t_w_s_aeb1910e9b20bf649d8c8dd3f290328ce}{APoi\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_poi___u_t_m_b_aba1d3f20287c3714431e76dd742850ed}{APoi\+\_\+\+UTMB}}.
+
+\Hypertarget{class_a_poi_a9ccf7b8bcb38340ae7b202ffcf40c9ed}\index{APoi@{APoi}!UpdateGlobeAnchor@{UpdateGlobeAnchor}}
+\index{UpdateGlobeAnchor@{UpdateGlobeAnchor}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{UpdateGlobeAnchor()}{UpdateGlobeAnchor()}}
+{\footnotesize\ttfamily \label{class_a_poi_a9ccf7b8bcb38340ae7b202ffcf40c9ed} 
+void APoi\+::\+Update\+Globe\+Anchor (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Aligning the Globe Anchor. 
+
+\Hypertarget{class_a_poi_a2105d1c3e7d24abf558db7429970c455}\index{APoi@{APoi}!UpdatePoi@{UpdatePoi}}
+\index{UpdatePoi@{UpdatePoi}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{UpdatePoi()}{UpdatePoi()}}
+{\footnotesize\ttfamily \label{class_a_poi_a2105d1c3e7d24abf558db7429970c455} 
+void APoi\+::\+Update\+Poi (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_race_p_o_i}{FRace\+POI}}}]{New\+Poi\+Datas}{, }\item[{\mbox{\hyperlink{struct_f_race_setup}{FRace\+Setup}}}]{New\+Race\+Setup}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Updating the Poi visuals \& datas. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Poi\+Datas} & \\
+\hline
+{\em Race\+Setup} & \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{class_i_poi_interface_a68cee66335848f7d31e3a0e6500e9847}{IPoi\+Interface}}.
+
+
+
+Reimplemented in \mbox{\hyperlink{class_a_poi___generic_aaf6b9d49b8c9ae79c298d0d4a797d414}{APoi\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_poi___g_t_w_s_a603ecbd32bbf4826248f59520bc50a75}{APoi\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_poi___u_t_m_b_ae18f2ca98223e6f9d7212df598412157}{APoi\+\_\+\+UTMB}}.
+
+\Hypertarget{class_a_poi_a52c237f9885928e0dbaf4e051f2e55dc}\index{APoi@{APoi}!UpdatePoiWeather@{UpdatePoiWeather}}
+\index{UpdatePoiWeather@{UpdatePoiWeather}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{UpdatePoiWeather()}{UpdatePoiWeather()}}
+{\footnotesize\ttfamily \label{class_a_poi_a52c237f9885928e0dbaf4e051f2e55dc} 
+void APoi\+::\+Update\+Poi\+Weather (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_f_open_weather_response}{FOpen\+Weather\+Response}}}]{Weather\+Datas}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Updating the Weather visuals \& datas. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Weather\+Datas} & \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{class_i_poi_interface_ab4cfcf255ea8c46db5d125084330cccf}{IPoi\+Interface}}.
+
+
+
+Reimplemented in \mbox{\hyperlink{class_a_poi___generic_a81a8b067c083a1215f66fb621887e4cf}{APoi\+\_\+\+Generic}}, \mbox{\hyperlink{class_a_poi___g_t_w_s_a4f6821cf9da1f5b9f91dc144e569fccd}{APoi\+\_\+\+GTWS}}, and \mbox{\hyperlink{class_a_poi___u_t_m_b_ab50be200a8d1ea7c70913acc4dccfd1f}{APoi\+\_\+\+UTMB}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_a_poi_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_a_poi_abc41f81f6de733dfa39343c3db350031}\index{APoi@{APoi}!AltPicto@{AltPicto}}
+\index{AltPicto@{AltPicto}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{AltPicto}{AltPicto}}
+{\footnotesize\ttfamily \label{class_a_poi_abc41f81f6de733dfa39343c3db350031} 
+TObject\+Ptr$<$class UStatic\+Mesh\+Component$>$ APoi\+::\+Alt\+Picto\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_a01dfbeb7413a0215414b09fd090aeda4}\index{APoi@{APoi}!AltText@{AltText}}
+\index{AltText@{AltText}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{AltText}{AltText}}
+{\footnotesize\ttfamily \label{class_a_poi_a01dfbeb7413a0215414b09fd090aeda4} 
+TObject\+Ptr$<$class UText\+Render\+Component$>$ APoi\+::\+Alt\+Text\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_a1d2ffd4600179e44c35854534b2ea57b}\index{APoi@{APoi}!BaseArmPitch@{BaseArmPitch}}
+\index{BaseArmPitch@{BaseArmPitch}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{BaseArmPitch}{BaseArmPitch}}
+{\footnotesize\ttfamily \label{class_a_poi_a1d2ffd4600179e44c35854534b2ea57b} 
+float APoi\+::\+Base\+Arm\+Pitch = 0.f}
+
+\Hypertarget{class_a_poi_af71975946712468950a790b11fe18a4a}\index{APoi@{APoi}!BaseArmRoll@{BaseArmRoll}}
+\index{BaseArmRoll@{BaseArmRoll}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{BaseArmRoll}{BaseArmRoll}}
+{\footnotesize\ttfamily \label{class_a_poi_af71975946712468950a790b11fe18a4a} 
+float APoi\+::\+Base\+Arm\+Roll = 0.f}
+
+\Hypertarget{class_a_poi_a5aac6effc5187df516ba0ecf03adf04d}\index{APoi@{APoi}!bLookAtEnabled@{bLookAtEnabled}}
+\index{bLookAtEnabled@{bLookAtEnabled}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{bLookAtEnabled}{bLookAtEnabled}}
+{\footnotesize\ttfamily \label{class_a_poi_a5aac6effc5187df516ba0ecf03adf04d} 
+bool APoi\+::b\+Look\+At\+Enabled = true}
+
+\Hypertarget{class_a_poi_a0995dcac0295c54c198cb0476408f94f}\index{APoi@{APoi}!bOrbitEnabled@{bOrbitEnabled}}
+\index{bOrbitEnabled@{bOrbitEnabled}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{bOrbitEnabled}{bOrbitEnabled}}
+{\footnotesize\ttfamily \label{class_a_poi_a0995dcac0295c54c198cb0476408f94f} 
+bool APoi\+::b\+Orbit\+Enabled = false}
+
+\Hypertarget{class_a_poi_a62bfb8f43d395d336332bcba4a10681a}\index{APoi@{APoi}!CameraComponent@{CameraComponent}}
+\index{CameraComponent@{CameraComponent}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{CameraComponent}{CameraComponent}}
+{\footnotesize\ttfamily \label{class_a_poi_a62bfb8f43d395d336332bcba4a10681a} 
+TObject\+Ptr$<$class UCine\+Camera\+Component$>$ APoi\+::\+Camera\+Component}
+
+\Hypertarget{class_a_poi_ab2101883f2f1be1646968bf90cbd9245}\index{APoi@{APoi}!FootComponent@{FootComponent}}
+\index{FootComponent@{FootComponent}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{FootComponent}{FootComponent}}
+{\footnotesize\ttfamily \label{class_a_poi_ab2101883f2f1be1646968bf90cbd9245} 
+TObject\+Ptr$<$class UStatic\+Mesh\+Component$>$ APoi\+::\+Foot\+Component\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_a561d079f7bf831a6c38ea825a8699faa}\index{APoi@{APoi}!FootHook@{FootHook}}
+\index{FootHook@{FootHook}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{FootHook}{FootHook}}
+{\footnotesize\ttfamily \label{class_a_poi_a561d079f7bf831a6c38ea825a8699faa} 
+TObject\+Ptr$<$class UScene\+Component$>$ APoi\+::\+Foot\+Hook\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_a65b411af78fcf17d084552d50fe019a3}\index{APoi@{APoi}!InfosBkgComponent@{InfosBkgComponent}}
+\index{InfosBkgComponent@{InfosBkgComponent}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{InfosBkgComponent}{InfosBkgComponent}}
+{\footnotesize\ttfamily \label{class_a_poi_a65b411af78fcf17d084552d50fe019a3} 
+TObject\+Ptr$<$class USpline\+Mesh\+Component$>$ APoi\+::\+Infos\+Bkg\+Component\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_a9de91d9e7569a7b0611a2bf5cc886ba3}\index{APoi@{APoi}!Line1Component@{Line1Component}}
+\index{Line1Component@{Line1Component}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{Line1Component}{Line1Component}}
+{\footnotesize\ttfamily \label{class_a_poi_a9de91d9e7569a7b0611a2bf5cc886ba3} 
+TObject\+Ptr$<$class USpline\+Mesh\+Component$>$ APoi\+::\+Line1\+Component\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_a68ab2f4847747e074fb2bed50cf752a0}\index{APoi@{APoi}!Line2Component@{Line2Component}}
+\index{Line2Component@{Line2Component}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{Line2Component}{Line2Component}}
+{\footnotesize\ttfamily \label{class_a_poi_a68ab2f4847747e074fb2bed50cf752a0} 
+TObject\+Ptr$<$class USpline\+Mesh\+Component$>$ APoi\+::\+Line2\+Component\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_aa421bb21d3128ff10d5b4d994611636b}\index{APoi@{APoi}!MainPicto@{MainPicto}}
+\index{MainPicto@{MainPicto}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{MainPicto}{MainPicto}}
+{\footnotesize\ttfamily \label{class_a_poi_aa421bb21d3128ff10d5b4d994611636b} 
+TObject\+Ptr$<$class UStatic\+Mesh\+Component$>$ APoi\+::\+Main\+Picto\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_ab19090ca5c45256ffdaee693f870c18e}\index{APoi@{APoi}!MainRoot@{MainRoot}}
+\index{MainRoot@{MainRoot}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{MainRoot}{MainRoot}}
+{\footnotesize\ttfamily \label{class_a_poi_ab19090ca5c45256ffdaee693f870c18e} 
+TObject\+Ptr$<$class UScene\+Component$>$ APoi\+::\+Main\+Root\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_a2b0d115c93afde62fbc9157c01472d83}\index{APoi@{APoi}!NameBkgComponent@{NameBkgComponent}}
+\index{NameBkgComponent@{NameBkgComponent}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{NameBkgComponent}{NameBkgComponent}}
+{\footnotesize\ttfamily \label{class_a_poi_a2b0d115c93afde62fbc9157c01472d83} 
+TObject\+Ptr$<$class USpline\+Mesh\+Component$>$ APoi\+::\+Name\+Bkg\+Component\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_ad2c3cb8ccd37aa3fe1b6be61dbc64311}\index{APoi@{APoi}!NameText@{NameText}}
+\index{NameText@{NameText}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{NameText}{NameText}}
+{\footnotesize\ttfamily \label{class_a_poi_ad2c3cb8ccd37aa3fe1b6be61dbc64311} 
+TObject\+Ptr$<$class UText\+Render\+Component$>$ APoi\+::\+Name\+Text\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_ac84f7604a8156ef03fd04a2df6042365}\index{APoi@{APoi}!OrbitElapsed@{OrbitElapsed}}
+\index{OrbitElapsed@{OrbitElapsed}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{OrbitElapsed}{OrbitElapsed}}
+{\footnotesize\ttfamily \label{class_a_poi_ac84f7604a8156ef03fd04a2df6042365} 
+float APoi\+::\+Orbit\+Elapsed = 0.f}
+
+\Hypertarget{class_a_poi_a81910afe0942e75de1879f52e9da039a}\index{APoi@{APoi}!OrbitSpeedDegPerSec@{OrbitSpeedDegPerSec}}
+\index{OrbitSpeedDegPerSec@{OrbitSpeedDegPerSec}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{OrbitSpeedDegPerSec}{OrbitSpeedDegPerSec}}
+{\footnotesize\ttfamily \label{class_a_poi_a81910afe0942e75de1879f52e9da039a} 
+float APoi\+::\+Orbit\+Speed\+Deg\+Per\+Sec = 12.f}
+
+\Hypertarget{class_a_poi_a6f74458d97e3469bf9f80bd071e9f574}\index{APoi@{APoi}!OrbitYaw@{OrbitYaw}}
+\index{OrbitYaw@{OrbitYaw}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{OrbitYaw}{OrbitYaw}}
+{\footnotesize\ttfamily \label{class_a_poi_a6f74458d97e3469bf9f80bd071e9f574} 
+float APoi\+::\+Orbit\+Yaw = 0.f}
+
+\Hypertarget{class_a_poi_a926ceb74fef9607a57c5b165fb74c939}\index{APoi@{APoi}!OriginalViewTarget@{OriginalViewTarget}}
+\index{OriginalViewTarget@{OriginalViewTarget}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{OriginalViewTarget}{OriginalViewTarget}}
+{\footnotesize\ttfamily \label{class_a_poi_a926ceb74fef9607a57c5b165fb74c939} 
+AActor\texorpdfstring{$\ast$}{*} APoi\+::\+Original\+View\+Target = nullptr}
+
+\Hypertarget{class_a_poi_af47582326491db7d9eef7bc5b4adc4b4}\index{APoi@{APoi}!OWLCaptureComponent@{OWLCaptureComponent}}
+\index{OWLCaptureComponent@{OWLCaptureComponent}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{OWLCaptureComponent}{OWLCaptureComponent}}
+{\footnotesize\ttfamily \label{class_a_poi_af47582326491db7d9eef7bc5b4adc4b4} 
+TObject\+Ptr$<$class UOWLCapture\+Component$>$ APoi\+::\+OWLCapture\+Component}
+
+\Hypertarget{class_a_poi_ad103a8c9e4f6e583ac7b77202713cf59}\index{APoi@{APoi}!PoiDatas@{PoiDatas}}
+\index{PoiDatas@{PoiDatas}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{PoiDatas}{PoiDatas}}
+{\footnotesize\ttfamily \label{class_a_poi_ad103a8c9e4f6e583ac7b77202713cf59} 
+\mbox{\hyperlink{struct_f_race_p_o_i}{FRace\+POI}} APoi\+::\+Poi\+Datas\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_a19b20153bde3b38c9a9d58d91aefd190}\index{APoi@{APoi}!PoiSubsystem@{PoiSubsystem}}
+\index{PoiSubsystem@{PoiSubsystem}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{PoiSubsystem}{PoiSubsystem}}
+{\footnotesize\ttfamily \label{class_a_poi_a19b20153bde3b38c9a9d58d91aefd190} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_poi_subsystem}{UPoi\+Subsystem}}$>$ APoi\+::\+Poi\+Subsystem\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_ae9d15e716bca5c16cd695a9a2ab32b9e}\index{APoi@{APoi}!PoiWeatherDatas@{PoiWeatherDatas}}
+\index{PoiWeatherDatas@{PoiWeatherDatas}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{PoiWeatherDatas}{PoiWeatherDatas}}
+{\footnotesize\ttfamily \label{class_a_poi_ae9d15e716bca5c16cd695a9a2ab32b9e} 
+\mbox{\hyperlink{struct_f_open_weather_response}{FOpen\+Weather\+Response}} APoi\+::\+Poi\+Weather\+Datas\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_a2cb9dcd381b3569e9abd81fb6837ec4d}\index{APoi@{APoi}!RaceSubsystem@{RaceSubsystem}}
+\index{RaceSubsystem@{RaceSubsystem}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{RaceSubsystem}{RaceSubsystem}}
+{\footnotesize\ttfamily \label{class_a_poi_a2cb9dcd381b3569e9abd81fb6837ec4d} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_race_subsystem}{URace\+Subsystem}}$>$ APoi\+::\+Race\+Subsystem\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_a8a6d07d504129f57cbde6f82ee9e9723}\index{APoi@{APoi}!RenderTarget@{RenderTarget}}
+\index{RenderTarget@{RenderTarget}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{RenderTarget}{RenderTarget}}
+{\footnotesize\ttfamily \label{class_a_poi_a8a6d07d504129f57cbde6f82ee9e9723} 
+TObject\+Ptr$<$class UTexture\+Render\+Target$>$ APoi\+::\+Render\+Target}
+
+\Hypertarget{class_a_poi_aa59c43748d776500e9071f1c21f27314}\index{APoi@{APoi}!RotHandle@{RotHandle}}
+\index{RotHandle@{RotHandle}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{RotHandle}{RotHandle}}
+{\footnotesize\ttfamily \label{class_a_poi_aa59c43748d776500e9071f1c21f27314} 
+FTimer\+Handle APoi\+::\+Rot\+Handle}
+
+\Hypertarget{class_a_poi_a38676c630ad2e6c65543f81ab2d11289}\index{APoi@{APoi}!ScaleSubsystem@{ScaleSubsystem}}
+\index{ScaleSubsystem@{ScaleSubsystem}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{ScaleSubsystem}{ScaleSubsystem}}
+{\footnotesize\ttfamily \label{class_a_poi_a38676c630ad2e6c65543f81ab2d11289} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_scale_subsystem}{UScale\+Subsystem}}$>$ APoi\+::\+Scale\+Subsystem\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_aa6c47d61e48d277e125444afe076fd40}\index{APoi@{APoi}!SettingsSubsystem@{SettingsSubsystem}}
+\index{SettingsSubsystem@{SettingsSubsystem}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{SettingsSubsystem}{SettingsSubsystem}}
+{\footnotesize\ttfamily \label{class_a_poi_aa6c47d61e48d277e125444afe076fd40} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_settings_subsystem}{USettings\+Subsystem}}$>$ APoi\+::\+Settings\+Subsystem\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_a693d31902e2e43121793181bb40d0c95}\index{APoi@{APoi}!SplineComponent@{SplineComponent}}
+\index{SplineComponent@{SplineComponent}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{SplineComponent}{SplineComponent}}
+{\footnotesize\ttfamily \label{class_a_poi_a693d31902e2e43121793181bb40d0c95} 
+TObject\+Ptr$<$class USpline\+Component$>$ APoi\+::\+Spline\+Component\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_ac08d61fc40364b72e170e330ee326019}\index{APoi@{APoi}!SplineHook@{SplineHook}}
+\index{SplineHook@{SplineHook}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{SplineHook}{SplineHook}}
+{\footnotesize\ttfamily \label{class_a_poi_ac08d61fc40364b72e170e330ee326019} 
+TObject\+Ptr$<$class UScene\+Component$>$ APoi\+::\+Spline\+Hook\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_a4762a441f6a267f2d3545ab0b7bb9ca9}\index{APoi@{APoi}!SpringArmComponent@{SpringArmComponent}}
+\index{SpringArmComponent@{SpringArmComponent}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{SpringArmComponent}{SpringArmComponent}}
+{\footnotesize\ttfamily \label{class_a_poi_a4762a441f6a267f2d3545ab0b7bb9ca9} 
+TObject\+Ptr$<$class USpring\+Arm\+Component$>$ APoi\+::\+Spring\+Arm\+Component}
+
+\Hypertarget{class_a_poi_a3a51773c70b7e7a364726a1967bc48ed}\index{APoi@{APoi}!StartYaw@{StartYaw}}
+\index{StartYaw@{StartYaw}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{StartYaw}{StartYaw}}
+{\footnotesize\ttfamily \label{class_a_poi_a3a51773c70b7e7a364726a1967bc48ed} 
+float APoi\+::\+Start\+Yaw}
+
+\Hypertarget{class_a_poi_a4a78d70965b3b33122dae24859249315}\index{APoi@{APoi}!TempText@{TempText}}
+\index{TempText@{TempText}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{TempText}{TempText}}
+{\footnotesize\ttfamily \label{class_a_poi_a4a78d70965b3b33122dae24859249315} 
+TObject\+Ptr$<$class UText\+Render\+Component$>$ APoi\+::\+Temp\+Text\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_ad568dd10866c1edd09c9d77767854560}\index{APoi@{APoi}!Weather1Text@{Weather1Text}}
+\index{Weather1Text@{Weather1Text}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{Weather1Text}{Weather1Text}}
+{\footnotesize\ttfamily \label{class_a_poi_ad568dd10866c1edd09c9d77767854560} 
+TObject\+Ptr$<$class UText\+Render\+Component$>$ APoi\+::\+Weather1\+Text\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_a978bcee9e56e5583f91587647be52623}\index{APoi@{APoi}!Weather2Text@{Weather2Text}}
+\index{Weather2Text@{Weather2Text}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{Weather2Text}{Weather2Text}}
+{\footnotesize\ttfamily \label{class_a_poi_a978bcee9e56e5583f91587647be52623} 
+TObject\+Ptr$<$class UText\+Render\+Component$>$ APoi\+::\+Weather2\+Text\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_a076bfcff8a766e6334e29b1b982eb0e7}\index{APoi@{APoi}!Weather3Text@{Weather3Text}}
+\index{Weather3Text@{Weather3Text}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{Weather3Text}{Weather3Text}}
+{\footnotesize\ttfamily \label{class_a_poi_a076bfcff8a766e6334e29b1b982eb0e7} 
+TObject\+Ptr$<$class UText\+Render\+Component$>$ APoi\+::\+Weather3\+Text\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_afcba49ff8a340f1a3b05b4deb82b1476}\index{APoi@{APoi}!WeatherBkgComponent@{WeatherBkgComponent}}
+\index{WeatherBkgComponent@{WeatherBkgComponent}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{WeatherBkgComponent}{WeatherBkgComponent}}
+{\footnotesize\ttfamily \label{class_a_poi_afcba49ff8a340f1a3b05b4deb82b1476} 
+TObject\+Ptr$<$class USpline\+Mesh\+Component$>$ APoi\+::\+Weather\+Bkg\+Component\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_affd4f61e43ccd416d76240dfb26b4239}\index{APoi@{APoi}!WeatherPicto@{WeatherPicto}}
+\index{WeatherPicto@{WeatherPicto}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{WeatherPicto}{WeatherPicto}}
+{\footnotesize\ttfamily \label{class_a_poi_affd4f61e43ccd416d76240dfb26b4239} 
+TObject\+Ptr$<$class UStatic\+Mesh\+Component$>$ APoi\+::\+Weather\+Picto\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_a_poi_afd5fdb42e4b9c2d19f067a60ab7ae900}\index{APoi@{APoi}!WeatherSubsystem@{WeatherSubsystem}}
+\index{WeatherSubsystem@{WeatherSubsystem}!APoi@{APoi}}
+\doxysubsubsection{\texorpdfstring{WeatherSubsystem}{WeatherSubsystem}}
+{\footnotesize\ttfamily \label{class_a_poi_afd5fdb42e4b9c2d19f067a60ab7ae900} 
+TObject\+Ptr$<$class \mbox{\hyperlink{class_u_weather_subsystem}{UWeather\+Subsystem}}$>$ APoi\+::\+Weather\+Subsystem\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Trail\+Simulator/\+Public/\+Actors/\mbox{\hyperlink{_poi_8h}{Poi.\+h}}\item 
+Source/\+Trail\+Simulator/\+Private/\+Actors/\mbox{\hyperlink{_poi_8cpp}{Poi.\+cpp}}\end{DoxyCompactItemize}

@@ -1,0 +1,51 @@
+// SETTINGS
+curl "http://127.0.0.1:8200/command?group=settings&action=fetch&value=5&idrace=21"
+curl "http://127.0.0.1:8200/command?group=settings&action=fetch&value=0.9&idrace=20"
+curl "http://127.0.0.1:8200/command?group=settings&action=zoffset&value=100&idrace=21"
+curl "http://127.0.0.1:8200/command?group=settings&action=zoffset&value=0&idrace=20"
+curl "http://127.0.0.1:8200/command?group=settings&action=glow&value=0&idrace=20"
+curl "http://127.0.0.1:8200/command?group=settings&action=pulse&idrace=21&value=5"
+
+// RACE
+curl "http://127.0.0.1:8200/command?group=race&action=displayrace&show=1&idrace=21"
+curl "http://127.0.0.1:8200/command?group=race&action=displayrace&show=0&idrace=21"
+curl "http://127.0.0.1:8200/command?group=race&action=displaypath&show=1&idrace=21"
+curl "http://127.0.0.1:8200/command?group=race&action=displaypath&show=0&idrace=21"
+curl "http://127.0.0.1:8200/command?group=race&action=displayslope&show=1&idrace=21"
+curl "http://127.0.0.1:8200/command?group=race&action=displayslope&show=0&idrace=21"
+curl "http://127.0.0.1:8200/command?group=race&action=displaykm&show=1&idrace=21"
+curl "http://127.0.0.1:8200/command?group=race&action=displaykm&show=0&idrace=21"
+
+curl "http://127.0.0.1:8200/command?group=race&action=movetorace&idrace=21"
+curl "http://127.0.0.1:8200/command?group=race&action=play&idrace=21"
+
+curl "http://127.0.0.1:8200/command?group=race&action=displaypulse&show=1&idrace=21"
+
+
+curl "http://127.0.0.1:8200/command?group=race&action=movetorace&idrace=21"
+
+
+
+curl "http://127.0.0.1:8200/command?group=teams&action=teleport&idrace=21&idteam=3974737694"
+curl "http://127.0.0.1:8200/command?group=teams&action=displayteam&show=0&idrace=21&idteam=3974737694"
+curl "http://127.0.0.1:8200/command?group=teams&action=displayflag&show=0&idrace=21&idteam=3974737694"
+curl "http://127.0.0.1:8200/command?group=teams&action=displayclub&show=0&idrace=21&idteam=3974737694"
+curl "http://127.0.0.1:8200/command?group=teams&action=displayphoto&show=0&idrace=21&idteam=3974737694"
+curl "http://127.0.0.1:8200/command?group=teams&action=displayallteams&show=1&idrace=21"
+
+// CHK*
+curl "http://127.0.0.1:8200/command?group=checkpoints&action=display&show=1&idrace=21&idcheckpoint=1212359016"
+curl "http://127.0.0.1:8200/command?group=checkpoints&action=teleport&idrace=21&idcheckpoint=1212359016"
+curl "http://127.0.0.1:8200/command?group=checkpoints&action=animation&idrace=21&idcheckpoint=1212359016"
+curl "http://127.0.0.1:8200/command?group=checkpoints&action=displayall&show=1&idrace=21"
+
+
+curl "http://127.0.0.1:8200/command?group=settings&action=url&idrace=XX&value=XX"
+
+curl -G "http://127.0.0.1:8200/command" \
+  --data-urlencode "group=settings" \
+  --data-urlencode "action=url" \
+  --data-urlencode "idrace=XX" \
+  --data-urlencode "value=https://192.168.12.59:5043"
+
+

@@ -1,0 +1,397 @@
+\doxysection{Source/\+Subsystems/\+Public/\+Http\+Gateway\+Subsystem.h File Reference}
+\hypertarget{_http_gateway_subsystem_8h}{}\label{_http_gateway_subsystem_8h}\index{Source/Subsystems/Public/HttpGatewaySubsystem.h@{Source/Subsystems/Public/HttpGatewaySubsystem.h}}
+{\ttfamily \#include "{}Core\+Minimal.\+h"{}}\newline
+{\ttfamily \#include "{}Subsystems/\+Game\+Instance\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Http\+Route\+Handle.\+h"{}}\newline
+{\ttfamily \#include "{}Http\+Server\+Request.\+h"{}}\newline
+{\ttfamily \#include "{}Http\+Result\+Callback.\+h"{}}\newline
+{\ttfamily \#include "{}Http\+Gateway\+Subsystem.\+generated.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_u_http_gateway_subsystem}{UHttp\+Gateway\+Subsystem}}
+\begin{DoxyCompactList}\small\item\em HTTP Server for Web commands. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a7ed1901c21d274b0aefa20c588994a8e}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param}} (FOn\+Move\+To\+Race, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Display\+Race, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a74bf7ac9c1e990a6ad6730c63ab92b0d}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Display\+Path, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a454f22e162d9362b1443b9ea8cae85ba}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Display\+Slope, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_aaf29908ac01d69b5be0adb8902979af1}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Display\+Pulse, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_af4a28cc6fbf6ea73a8dee4aa4b22e954}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Display\+Kms, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a2345ec7f8946cd782acf570c4b5f6d8c}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param}} (FOn\+Select\+Race\+Teams, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a5ce3a7ec9a6862ff81d6f1e9e3cb6417}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param}} (FOn\+Deselect\+Race\+Teams, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_adc76314dcc7565fa5e279027b3665979}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param}} (FOn\+Refresh\+Race, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_afd119d2d584962c8c703777f4c69d286}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params}} (FOn\+Display\+Team, int64 Team\+ID, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a69129f9b88836d1c885cf032c600e6c3}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Display\+Teams, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a0e4f0c22fde23cb9a68db201d70b3541}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params}} (FOn\+Display\+Flag, int64 Team\+ID, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a5d2a37e75ac00dd7d3595aa600a99e9a}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params}} (FOn\+Display\+Club, int64 Team\+ID, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_ab517dd2fa51867c17b524283ccb80c54}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params}} (FOn\+Display\+Photo, int64 Team\+ID, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_adacdfd782eb0c31d39ed34fd35dd5a2b}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Teleport\+To\+Team, int64 Team\+ID, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_aee99484a1038b5455224c9479de61c44}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Follow\+Team, int64 Team\+ID, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_afcc113c824cd6e79ab5acc8dd7ddefcb}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Team\+Animation, int64 Team\+ID, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a90094570bdbc7da3a6c71105980ed9b6}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Team\+Stop\+Animation, int64 Team\+ID, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a651ca5e1ac8f96d633f7fb0d65fe3a01}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params}} (FOn\+Add\+Team\+To\+Group, int64 Team\+ID, int64 Race\+ID, int64 Group\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_ab5e0813a069a7fa3bef61a806016a6cf}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params}} (FOn\+Remove\+Team\+From\+Group, int64 Race\+ID, int64 Team\+ID, int64 Group\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a0fb3bb3fbfaddc0b71d2d5a7276e8c7c}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params}} (FOn\+Toggle\+Group, int64 Race\+ID, int64 Group\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_aab3ece0a5670b8a82374a70679a2b534}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param}} (FOn\+Delete\+Race\+Team, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_ad6e50079053f6be451ce94d617c7035b}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param}} (FOn\+Fly\+Forward, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a4d6622e758e987197cde4b86d2fc01f4}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param}} (FOn\+Fly\+Stop, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a611d4a4eb4bc35a3abf79e574b9159ae}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param}} (FOn\+Fly\+Pause, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a18f8a3005aec87bac0e39f56b6eda51c}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param}} (FOn\+Fly\+Backward, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a1b594860daf57778e608231b1eb03c8f}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params}} (FOn\+Display\+Checkpoint, int64 Checkpoint\+ID, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a9beec93dd1997a5ecb63eb3e31c4c1b9}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Display\+Checkpoints, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_ac604702e636ed19a9288b7a7dfa2fd45}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params}} (FOn\+Display\+Checkpoint\+Weather, int64 Checkpoint\+ID, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a9786dc984551e3ddd7c19daf101cb47e}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Checkpoint\+Teleport, int64 Checkpoint\+ID, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a4f2f4c9712eb9a936504b24d0147198a}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Checkpoint\+Animation, int64 Checkpoint\+ID, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_ad40f7144565f698665148e8e9002e84f}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Checkpoint\+Stop\+Animation, int64 Checkpoint\+ID, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_ac6626b8a095ce6af520942cf094279e6}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params}} (FOn\+Display\+Poi, int64 Poi\+ID, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_aec982cd410133f380673def4cd97d3ad}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Display\+Pois, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_ac766045ea840daa3b02dc5bc8d340e84}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params}} (FOn\+Display\+Poi\+Weather, int64 Poi\+ID, int64 Race\+ID, bool b\+Show)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_af5140f47da47ddff4fc2609b6890d825}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Poi\+Teleport, int64 Poi\+ID, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a65eed8ab0db7c32c89fe27aa1c28ffd2}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Poi\+Animation, int64 Poi\+ID, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a7530d21cd3fbb0b59ee7127b5953932e}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Poi\+Stop\+Animation, int64 Poi\+ID, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a6326d52c0c3fac060ef54a002a3d1118}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Update\+Fetch, float Fetch\+Value, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a72e3ebd2b7f2f2b72baa554f5c327546}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Update\+Offset, float Offset\+Value, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_af88453f5e7c8d7c65b068b83e60d773c}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Update\+Glow, float Glow\+Value, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_aca1366e9f1bfe526adddca4ef92ee056}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Update\+Pulse, float Pulse\+Speed, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a53c4d7d193391dab4bf55a4a3fa60f61}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params}} (FOn\+Min\+Max\+Update, float Min\+Value, float Max\+Value, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a818a6dd58c3e4e4b61d7fda12387aaf9}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Near\+Far\+Update, float Near\+Value, float Far\+Value)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a6c29a48a1522abb66ea4f0c907cc32ac}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Url\+Update, FString New\+Url, int64 Race\+ID)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a4230ccb8ef476d4e29b602c93a6bbee2}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param}} (FOn\+Main\+Url\+Update, FString New\+Url)
+\item 
+\mbox{\hyperlink{_http_gateway_subsystem_8h_a9c5931b73a40827144a09a6392159ce8}{DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE}} (FOn\+Save\+Main\+Url)
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{_http_gateway_subsystem_8h_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{_http_gateway_subsystem_8h_a9c5931b73a40827144a09a6392159ce8}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE@{DECLARE\_MULTICAST\_DELEGATE}}
+\index{DECLARE\_MULTICAST\_DELEGATE@{DECLARE\_MULTICAST\_DELEGATE}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE()}{DECLARE\_MULTICAST\_DELEGATE()}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a9c5931b73a40827144a09a6392159ce8} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE (\begin{DoxyParamCaption}\item[{FOn\+Save\+Main\+Url}]{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_aab3ece0a5670b8a82374a70679a2b534}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}\hspace{0.1cm}{\footnotesize\ttfamily [1/10]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_aab3ece0a5670b8a82374a70679a2b534} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param (\begin{DoxyParamCaption}\item[{FOn\+Delete\+Race\+Team}]{}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a5ce3a7ec9a6862ff81d6f1e9e3cb6417}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}\hspace{0.1cm}{\footnotesize\ttfamily [2/10]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a5ce3a7ec9a6862ff81d6f1e9e3cb6417} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param (\begin{DoxyParamCaption}\item[{FOn\+Deselect\+Race\+Teams}]{}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a18f8a3005aec87bac0e39f56b6eda51c}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}\hspace{0.1cm}{\footnotesize\ttfamily [3/10]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a18f8a3005aec87bac0e39f56b6eda51c} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param (\begin{DoxyParamCaption}\item[{FOn\+Fly\+Backward}]{}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_ad6e50079053f6be451ce94d617c7035b}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}\hspace{0.1cm}{\footnotesize\ttfamily [4/10]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_ad6e50079053f6be451ce94d617c7035b} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param (\begin{DoxyParamCaption}\item[{FOn\+Fly\+Forward}]{}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a611d4a4eb4bc35a3abf79e574b9159ae}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}\hspace{0.1cm}{\footnotesize\ttfamily [5/10]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a611d4a4eb4bc35a3abf79e574b9159ae} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param (\begin{DoxyParamCaption}\item[{FOn\+Fly\+Pause}]{}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a4d6622e758e987197cde4b86d2fc01f4}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}\hspace{0.1cm}{\footnotesize\ttfamily [6/10]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a4d6622e758e987197cde4b86d2fc01f4} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param (\begin{DoxyParamCaption}\item[{FOn\+Fly\+Stop}]{}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a4230ccb8ef476d4e29b602c93a6bbee2}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}\hspace{0.1cm}{\footnotesize\ttfamily [7/10]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a4230ccb8ef476d4e29b602c93a6bbee2} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param (\begin{DoxyParamCaption}\item[{FOn\+Main\+Url\+Update}]{}{, }\item[{FString}]{New\+Url}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a7ed1901c21d274b0aefa20c588994a8e}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}\hspace{0.1cm}{\footnotesize\ttfamily [8/10]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a7ed1901c21d274b0aefa20c588994a8e} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param (\begin{DoxyParamCaption}\item[{FOn\+Move\+To\+Race}]{}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_adc76314dcc7565fa5e279027b3665979}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}\hspace{0.1cm}{\footnotesize\ttfamily [9/10]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_adc76314dcc7565fa5e279027b3665979} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param (\begin{DoxyParamCaption}\item[{FOn\+Refresh\+Race}]{}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a2345ec7f8946cd782acf570c4b5f6d8c}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_MULTICAST\_DELEGATE\_OneParam}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}{DECLARE\_MULTICAST\_DELEGATE\_OneParam()}\hspace{0.1cm}{\footnotesize\ttfamily [10/10]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a2345ec7f8946cd782acf570c4b5f6d8c} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param (\begin{DoxyParamCaption}\item[{FOn\+Select\+Race\+Teams}]{}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a651ca5e1ac8f96d633f7fb0d65fe3a01}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}\hspace{0.1cm}{\footnotesize\ttfamily [1/12]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a651ca5e1ac8f96d633f7fb0d65fe3a01} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params (\begin{DoxyParamCaption}\item[{FOn\+Add\+Team\+To\+Group}]{}{, }\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{int64}]{Group\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a1b594860daf57778e608231b1eb03c8f}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}\hspace{0.1cm}{\footnotesize\ttfamily [2/12]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a1b594860daf57778e608231b1eb03c8f} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Checkpoint}]{}{, }\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_ac604702e636ed19a9288b7a7dfa2fd45}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}\hspace{0.1cm}{\footnotesize\ttfamily [3/12]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_ac604702e636ed19a9288b7a7dfa2fd45} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Checkpoint\+Weather}]{}{, }\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a5d2a37e75ac00dd7d3595aa600a99e9a}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}\hspace{0.1cm}{\footnotesize\ttfamily [4/12]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a5d2a37e75ac00dd7d3595aa600a99e9a} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Club}]{}{, }\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a0e4f0c22fde23cb9a68db201d70b3541}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}\hspace{0.1cm}{\footnotesize\ttfamily [5/12]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a0e4f0c22fde23cb9a68db201d70b3541} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Flag}]{}{, }\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_ab517dd2fa51867c17b524283ccb80c54}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}\hspace{0.1cm}{\footnotesize\ttfamily [6/12]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_ab517dd2fa51867c17b524283ccb80c54} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Photo}]{}{, }\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_ac6626b8a095ce6af520942cf094279e6}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}\hspace{0.1cm}{\footnotesize\ttfamily [7/12]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_ac6626b8a095ce6af520942cf094279e6} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Poi}]{}{, }\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_ac766045ea840daa3b02dc5bc8d340e84}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}\hspace{0.1cm}{\footnotesize\ttfamily [8/12]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_ac766045ea840daa3b02dc5bc8d340e84} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Poi\+Weather}]{}{, }\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_afd119d2d584962c8c703777f4c69d286}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}\hspace{0.1cm}{\footnotesize\ttfamily [9/12]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_afd119d2d584962c8c703777f4c69d286} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Team}]{}{, }\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a53c4d7d193391dab4bf55a4a3fa60f61}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}\hspace{0.1cm}{\footnotesize\ttfamily [10/12]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a53c4d7d193391dab4bf55a4a3fa60f61} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params (\begin{DoxyParamCaption}\item[{FOn\+Min\+Max\+Update}]{}{, }\item[{float}]{Min\+Value}{, }\item[{float}]{Max\+Value}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_ab5e0813a069a7fa3bef61a806016a6cf}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}\hspace{0.1cm}{\footnotesize\ttfamily [11/12]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_ab5e0813a069a7fa3bef61a806016a6cf} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params (\begin{DoxyParamCaption}\item[{FOn\+Remove\+Team\+From\+Group}]{}{, }\item[{int64}]{Race\+ID}{, }\item[{int64}]{Team\+ID}{, }\item[{int64}]{Group\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a0fb3bb3fbfaddc0b71d2d5a7276e8c7c}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams@{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}{DECLARE\_MULTICAST\_DELEGATE\_ThreeParams()}\hspace{0.1cm}{\footnotesize\ttfamily [12/12]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a0fb3bb3fbfaddc0b71d2d5a7276e8c7c} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Three\+Params (\begin{DoxyParamCaption}\item[{FOn\+Toggle\+Group}]{}{, }\item[{int64}]{Race\+ID}{, }\item[{int64}]{Group\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a4f2f4c9712eb9a936504b24d0147198a}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [1/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a4f2f4c9712eb9a936504b24d0147198a} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Checkpoint\+Animation}]{}{, }\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_ad40f7144565f698665148e8e9002e84f}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [2/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_ad40f7144565f698665148e8e9002e84f} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Checkpoint\+Stop\+Animation}]{}{, }\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a9786dc984551e3ddd7c19daf101cb47e}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [3/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a9786dc984551e3ddd7c19daf101cb47e} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Checkpoint\+Teleport}]{}{, }\item[{int64}]{Checkpoint\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a9beec93dd1997a5ecb63eb3e31c4c1b9}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [4/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a9beec93dd1997a5ecb63eb3e31c4c1b9} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Checkpoints}]{}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_af4a28cc6fbf6ea73a8dee4aa4b22e954}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [5/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_af4a28cc6fbf6ea73a8dee4aa4b22e954} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Kms}]{}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a74bf7ac9c1e990a6ad6730c63ab92b0d}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [6/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a74bf7ac9c1e990a6ad6730c63ab92b0d} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Path}]{}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_aec982cd410133f380673def4cd97d3ad}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [7/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_aec982cd410133f380673def4cd97d3ad} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Pois}]{}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_aaf29908ac01d69b5be0adb8902979af1}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [8/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_aaf29908ac01d69b5be0adb8902979af1} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Pulse}]{}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [9/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a63e99ee9390094e731838bc468f613dd} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Race}]{}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a454f22e162d9362b1443b9ea8cae85ba}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [10/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a454f22e162d9362b1443b9ea8cae85ba} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Slope}]{}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a69129f9b88836d1c885cf032c600e6c3}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [11/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a69129f9b88836d1c885cf032c600e6c3} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Display\+Teams}]{}{, }\item[{int64}]{Race\+ID}{, }\item[{bool}]{b\+Show}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_aee99484a1038b5455224c9479de61c44}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [12/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_aee99484a1038b5455224c9479de61c44} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Follow\+Team}]{}{, }\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a818a6dd58c3e4e4b61d7fda12387aaf9}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [13/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a818a6dd58c3e4e4b61d7fda12387aaf9} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Near\+Far\+Update}]{}{, }\item[{float}]{Near\+Value}{, }\item[{float}]{Far\+Value}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a65eed8ab0db7c32c89fe27aa1c28ffd2}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [14/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a65eed8ab0db7c32c89fe27aa1c28ffd2} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Poi\+Animation}]{}{, }\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a7530d21cd3fbb0b59ee7127b5953932e}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [15/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a7530d21cd3fbb0b59ee7127b5953932e} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Poi\+Stop\+Animation}]{}{, }\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_af5140f47da47ddff4fc2609b6890d825}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [16/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_af5140f47da47ddff4fc2609b6890d825} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Poi\+Teleport}]{}{, }\item[{int64}]{Poi\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_afcc113c824cd6e79ab5acc8dd7ddefcb}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [17/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_afcc113c824cd6e79ab5acc8dd7ddefcb} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Team\+Animation}]{}{, }\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a90094570bdbc7da3a6c71105980ed9b6}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [18/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a90094570bdbc7da3a6c71105980ed9b6} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Team\+Stop\+Animation}]{}{, }\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_adacdfd782eb0c31d39ed34fd35dd5a2b}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [19/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_adacdfd782eb0c31d39ed34fd35dd5a2b} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Teleport\+To\+Team}]{}{, }\item[{int64}]{Team\+ID}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a6326d52c0c3fac060ef54a002a3d1118}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [20/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a6326d52c0c3fac060ef54a002a3d1118} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Update\+Fetch}]{}{, }\item[{float}]{Fetch\+Value}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_af88453f5e7c8d7c65b068b83e60d773c}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [21/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_af88453f5e7c8d7c65b068b83e60d773c} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Update\+Glow}]{}{, }\item[{float}]{Glow\+Value}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a72e3ebd2b7f2f2b72baa554f5c327546}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [22/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a72e3ebd2b7f2f2b72baa554f5c327546} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Update\+Offset}]{}{, }\item[{float}]{Offset\+Value}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_aca1366e9f1bfe526adddca4ef92ee056}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [23/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_aca1366e9f1bfe526adddca4ef92ee056} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Update\+Pulse}]{}{, }\item[{float}]{Pulse\+Speed}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_http_gateway_subsystem_8h_a6c29a48a1522abb66ea4f0c907cc32ac}\index{HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}!DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_MULTICAST\_DELEGATE\_TwoParams}!HttpGatewaySubsystem.h@{HttpGatewaySubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [24/24]}}
+{\footnotesize\ttfamily \label{_http_gateway_subsystem_8h_a6c29a48a1522abb66ea4f0c907cc32ac} 
+DECLARE\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Url\+Update}]{}{, }\item[{FString}]{New\+Url}{, }\item[{int64}]{Race\+ID}{}\end{DoxyParamCaption})}
+

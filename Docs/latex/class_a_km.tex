@@ -1,0 +1,109 @@
+\doxysection{AKm Class Reference}
+\hypertarget{class_a_km}{}\label{class_a_km}\index{AKm@{AKm}}
+
+
+{\ttfamily \#include $<$Km.\+h$>$}
+
+Inheritance diagram for AKm\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_a_km}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_a_km_a6dad270e2ab7b58855b19076ee19bbbc}{AKm}} ()
+\item 
+virtual void \mbox{\hyperlink{class_a_km_a4442c96013303b8caa9555fa081f39c2}{Update\+Km}} (int64 Race\+ID, const FText \&New\+Label) const override
+\begin{DoxyCompactList}\small\item\em Updating Label and Color. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_a_km_ae3a3e708dab5ca8ac8e72a7b04f8ca59}{Update\+Globe\+Anchor}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_a_km_ab1075b31b0711346e3579f7fabb13b54}{Begin\+Play}} () override
+\item 
+void \mbox{\hyperlink{class_a_km_a5dba1e4b10dd2195b032026826fac4d6}{On\+Look\+At\+Timer\+Tick}} ()
+\begin{DoxyCompactList}\small\item\em Look\+At. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+TObject\+Ptr$<$ class UStatic\+Mesh\+Component $>$ \mbox{\hyperlink{class_a_km_a80a7a8b0f937d62b4034e10c7209950e}{Static\+Mesh\+Comp}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_a_km_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_a_km_a6dad270e2ab7b58855b19076ee19bbbc}\index{AKm@{AKm}!AKm@{AKm}}
+\index{AKm@{AKm}!AKm@{AKm}}
+\doxysubsubsection{\texorpdfstring{AKm()}{AKm()}}
+{\footnotesize\ttfamily \label{class_a_km_a6dad270e2ab7b58855b19076ee19bbbc} 
+AKm\+::\+AKm (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_a_km_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_a_km_ab1075b31b0711346e3579f7fabb13b54}\index{AKm@{AKm}!BeginPlay@{BeginPlay}}
+\index{BeginPlay@{BeginPlay}!AKm@{AKm}}
+\doxysubsubsection{\texorpdfstring{BeginPlay()}{BeginPlay()}}
+{\footnotesize\ttfamily \label{class_a_km_ab1075b31b0711346e3579f7fabb13b54} 
+void AKm\+::\+Begin\+Play (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+\Hypertarget{class_a_km_a5dba1e4b10dd2195b032026826fac4d6}\index{AKm@{AKm}!OnLookAtTimerTick@{OnLookAtTimerTick}}
+\index{OnLookAtTimerTick@{OnLookAtTimerTick}!AKm@{AKm}}
+\doxysubsubsection{\texorpdfstring{OnLookAtTimerTick()}{OnLookAtTimerTick()}}
+{\footnotesize\ttfamily \label{class_a_km_a5dba1e4b10dd2195b032026826fac4d6} 
+void AKm\+::\+On\+Look\+At\+Timer\+Tick (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Look\+At. 
+
+\Hypertarget{class_a_km_ae3a3e708dab5ca8ac8e72a7b04f8ca59}\index{AKm@{AKm}!UpdateGlobeAnchor@{UpdateGlobeAnchor}}
+\index{UpdateGlobeAnchor@{UpdateGlobeAnchor}!AKm@{AKm}}
+\doxysubsubsection{\texorpdfstring{UpdateGlobeAnchor()}{UpdateGlobeAnchor()}}
+{\footnotesize\ttfamily \label{class_a_km_ae3a3e708dab5ca8ac8e72a7b04f8ca59} 
+void AKm\+::\+Update\+Globe\+Anchor (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+\Hypertarget{class_a_km_a4442c96013303b8caa9555fa081f39c2}\index{AKm@{AKm}!UpdateKm@{UpdateKm}}
+\index{UpdateKm@{UpdateKm}!AKm@{AKm}}
+\doxysubsubsection{\texorpdfstring{UpdateKm()}{UpdateKm()}}
+{\footnotesize\ttfamily \label{class_a_km_a4442c96013303b8caa9555fa081f39c2} 
+void AKm\+::\+Update\+Km (\begin{DoxyParamCaption}\item[{int64}]{Race\+ID}{, }\item[{const FText \&}]{New\+Label}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Updating Label and Color. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Race\+ID} & \\
+\hline
+{\em New\+Label} & \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{class_i_km_interface_ac8489cf894b8865eec860c9231cbf1a6}{IKm\+Interface}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_a_km_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_a_km_a80a7a8b0f937d62b4034e10c7209950e}\index{AKm@{AKm}!StaticMeshComp@{StaticMeshComp}}
+\index{StaticMeshComp@{StaticMeshComp}!AKm@{AKm}}
+\doxysubsubsection{\texorpdfstring{StaticMeshComp}{StaticMeshComp}}
+{\footnotesize\ttfamily \label{class_a_km_a80a7a8b0f937d62b4034e10c7209950e} 
+TObject\+Ptr$<$class UStatic\+Mesh\+Component$>$ AKm\+::\+Static\+Mesh\+Comp\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Source/\+Trail\+Simulator/\+Public/\+Actors/\mbox{\hyperlink{_km_8h}{Km.\+h}}\item 
+Source/\+Trail\+Simulator/\+Private/\+Actors/\mbox{\hyperlink{_km_8cpp}{Km.\+cpp}}\end{DoxyCompactItemize}

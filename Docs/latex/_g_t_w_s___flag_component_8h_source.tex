@@ -1,0 +1,26 @@
+\doxysection{GTWS\+\_\+\+Flag\+Component.\+h}
+\hypertarget{_g_t_w_s___flag_component_8h_source}{}\label{_g_t_w_s___flag_component_8h_source}\index{Source/TrailSimulator/Public/Components/GTWS/GTWS\_FlagComponent.h@{Source/TrailSimulator/Public/Components/GTWS/GTWS\_FlagComponent.h}}
+\mbox{\hyperlink{_g_t_w_s___flag_component_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_flag_component_8h}{Components/FlagComponent.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}GTWS\_FlagComponent.generated.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ UCLASS(ClassGroup=(Custom),\ meta=(BlueprintSpawnableComponent))}
+\DoxyCodeLine{00011\ \textcolor{keyword}{class\ }TRAILSIMULATOR\_API\ UGTWS\_FlagComponent\ :\ \textcolor{keyword}{public}\ UFlagComponent}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ public:}
+\DoxyCodeLine{00016\ \ \ \ \ UGTWS\_FlagComponent(const\ FObjectInitializer\&\ ObjectInitializer);}
+\DoxyCodeLine{00017\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ UpdateFlag(const\ FString\&\ Country)\ const\ override;}
+\DoxyCodeLine{00018\ \ \ \ \ virtual\ \textcolor{keywordtype}{void}\ ToggleFlag(\textcolor{keywordtype}{bool}\ bShow)\ const\ override;}
+\DoxyCodeLine{00019\ protected:}
+\DoxyCodeLine{00020\ \};}
+
+\end{DoxyCode}

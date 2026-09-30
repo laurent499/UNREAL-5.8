@@ -1,0 +1,77 @@
+\doxysection{Runner\+Stacking\+Subsystem.\+h}
+\hypertarget{_runner_stacking_subsystem_8h_source}{}\label{_runner_stacking_subsystem_8h_source}\index{Source/Subsystems/Public/RunnerStackingSubsystem.h@{Source/Subsystems/Public/RunnerStackingSubsystem.h}}
+\mbox{\hyperlink{_runner_stacking_subsystem_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}Subsystems/WorldSubsystem.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_runner_stackable_interface_8h}{RunnerStackableInterface.h}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}RunnerStackingSubsystem.generated.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ UCLASS()}
+\DoxyCodeLine{00010\ class\ SUBSYSTEMS\_API\ \mbox{\hyperlink{class_u_runner_stacking_subsystem}{URunnerStackingSubsystem}}\ :\ public\ UWorldSubsystem}
+\DoxyCodeLine{00011\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_runner_stacking_subsystem_a7421464df0ae409453eef5c94de0d94f}{Initialize}}(FSubsystemCollectionBase\&\ Collection)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_runner_stacking_subsystem_af7ef44578005e168e7d7d3f3e1d0da5e}{Deinitialize}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{comment}{//\ Runner\ lifecycle}}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_runner_stacking_subsystem_aec733a1b19bcefbbda5b544e83a89f29}{RegisterRunner}}(AActor*\ Runner);}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_runner_stacking_subsystem_ab17316283249b11be07f5bd80e7040e8}{UnregisterRunner}}(AActor*\ Runner);}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{comment}{//\ À\ appeler\ depuis\ ton\ système\ d’update\ (même\ si\ le\ runner\ est\ stacké)}}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_runner_stacking_subsystem_a9e2971ae3672b3a73b1dcc5d67442753}{UpdateRunnerTrackState}}(AActor*\ Runner,\ \textcolor{keyword}{const}\ FTransform\&\ TrackTransform,\ \textcolor{keywordtype}{float}\ TrackDistanceMeters);}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{comment}{//\ Config}}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_runner_stacking_subsystem_a1305b323d6a6c33748b5f2fb0f9c468f}{SetConfig}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_f_runner_stacking_config}{FRunnerStackingConfig}}\&\ NewConfig);}
+\DoxyCodeLine{00027\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_stacking_config}{FRunnerStackingConfig}}\ \mbox{\hyperlink{class_u_runner_stacking_subsystem_aec4acf56405672d3b163052b6f2bb94e}{GetConfig}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ Config;\ \}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{//\ Debug}}
+\DoxyCodeLine{00030\ \ \ \ \ int32\ \mbox{\hyperlink{class_u_runner_stacking_subsystem_ad9f3e6add21bc7d33941928801bbf592}{GetRegisteredCount}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ Entries.Num();\ \}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00033\ \ \ \ \ }
+\DoxyCodeLine{00034\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00035\ \ \ \ \ FVector\ LastCamLoc\ =\ FVector::ZeroVector;}
+\DoxyCodeLine{00036\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{bool}\ bHasLastCamLoc\ =\ false;}
+\DoxyCodeLine{00038\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{float}\ CameraMoveThresholdCm\ =\ 10.f;\ \textcolor{comment}{//\ 1m\ (à\ ajuster)}}
+\DoxyCodeLine{00040\ \ \ \ \ }
+\DoxyCodeLine{00041\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{struct_f_runner_stacking_config}{FRunnerStackingConfig}}\ Config;}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00045\ \ \ \ \ TArray<\mbox{\hyperlink{struct_f_stack_entry}{FStackEntry}}>\ Entries;}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ FTimerHandle\ UpdateTimerHandle;}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{bool}\ bDirty\ =\ false;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{void}\ HandleActorEndPlay(AActor*\ Actor,\ EEndPlayReason::Type\ Reason);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ StartTimer();}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{void}\ StopTimer();}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{void}\ TickSubsystem();}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{comment}{//\ Core}}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{void}\ CleanupInvalid();}
+\DoxyCodeLine{00060\ \ \ \ \ int32\ FindEntryIndex(AActor*\ Runner)\ const;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{float}\ ComputeDynamicRadiusCm(const\ \mbox{\hyperlink{struct_f_stack_entry}{FStackEntry}}\&\ BaseEntry)\ const;}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{comment}{//\ Stacking\ apply}}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{void}\ ApplyNewStackingState(}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ const\ TArray<TWeakObjectPtr<AActor>>\&\ NewBase,}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ const\ TArray<int32>\&\ NewOrder);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{void}\ AttachRunnerToBase(AActor*\ Runner,\ const\ \mbox{\hyperlink{struct_f_stack_entry}{FStackEntry}}\&\ RunnerEntry,\ AActor*\ Base,\ const\ \mbox{\hyperlink{struct_f_stack_entry}{FStackEntry}}\&\ BaseEntry,\ int32\ Order);}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{void}\ DetachRunnerToTrack(AActor*\ Runner,\ const\ \mbox{\hyperlink{struct_f_stack_entry}{FStackEntry}}\&\ RunnerEntry);}
+\DoxyCodeLine{00071\ \};}
+
+\end{DoxyCode}

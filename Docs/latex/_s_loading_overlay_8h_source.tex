@@ -1,0 +1,52 @@
+\doxysection{SLoading\+Overlay.\+h}
+\hypertarget{_s_loading_overlay_8h_source}{}\label{_s_loading_overlay_8h_source}\index{Source/TrailSimulator/Public/UI/SLoadingOverlay.h@{Source/TrailSimulator/Public/UI/SLoadingOverlay.h}}
+\mbox{\hyperlink{_s_loading_overlay_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}Widgets/SCompoundWidget.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}Widgets/Views/SListView.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_loading_tasks_types_8h}{SharedTypes/Public/LoadingTasksTypes.h}}"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_u_loading_status_subsystem}{ULoadingStatusSubsystem}};}
+\DoxyCodeLine{00009\ \textcolor{keyword}{class\ }UFontFace;}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_s_loading_overlay}{SLoadingOverlay}}\ :\ \textcolor{keyword}{public}\ SCompoundWidget}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00014\ \ \ \ \ }
+\DoxyCodeLine{00015\ \ \ \ \ \mbox{\hyperlink{class_s_loading_overlay_ae419955e58b9147cceb0bf313dddcbdc}{SLATE\_BEGIN\_ARGS}}(\mbox{\hyperlink{class_s_loading_overlay}{SLoadingOverlay}})\ \{\}}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ SLATE\_ARGUMENT(TWeakObjectPtr<ULoadingStatusSubsystem>,\ Loading)}
+\DoxyCodeLine{00017\ \ \ \ \ SLATE\_END\_ARGS()}
+\DoxyCodeLine{00018\ \ \ \ \ }
+\DoxyCodeLine{00019\ \ \ \ \ void\ \mbox{\hyperlink{class_s_loading_overlay_abed2649ccb09fefb9aadfde3b2806728}{Construct}}(const\ FArguments\&\ InArgs);}
+\DoxyCodeLine{00020\ \ \ \ \ virtual\ \string~\mbox{\hyperlink{class_s_loading_overlay}{SLoadingOverlay}}()\ override;}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ private:}
+\DoxyCodeLine{00023\ \ \ \ \ TWeakObjectPtr<\mbox{\hyperlink{class_u_loading_status_subsystem}{ULoadingStatusSubsystem}}>\ LoadingSubsystem;}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{comment}{//\ ListView\ data}}
+\DoxyCodeLine{00026\ \ \ \ \ using\ FTaskItemPtr\ =\ TSharedPtr<\mbox{\hyperlink{struct_f_loading_task_info}{FLoadingTaskInfo}}>;}
+\DoxyCodeLine{00027\ \ \ \ \ TArray<FTaskItemPtr>\ Items;}
+\DoxyCodeLine{00028\ \ \ \ \ TSharedPtr<SListView<FTaskItemPtr>>\ ListView;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{comment}{//\ Delegate\ handle\ pour\ se\ désabonner\ proprement}}
+\DoxyCodeLine{00031\ \ \ \ \ FDelegateHandle\ ChangedHandle;}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{//\ Rebuild}}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{void}\ RefreshItemsFromSubsystem();}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{void}\ HandleChanged();}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{//\ Bindings}}
+\DoxyCodeLine{00038\ \ \ \ \ TOptional<\textcolor{keywordtype}{float}>\ GetOverallPercent()\ const;}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{comment}{//\ Row\ generator}}
+\DoxyCodeLine{00041\ \ \ \ \ TSharedRef<ITableRow>\ OnGenerateRow(FTaskItemPtr\ Item,\ const\ TSharedRef<STableViewBase>\&\ OwnerTable);}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{comment}{//\ Helpers\ UI}}
+\DoxyCodeLine{00044\ \ \ \ \ static\ FText\ StateToText(\mbox{\hyperlink{_loading_tasks_types_8h_afba6b1c608e92e1d575d6e61185dc5f8}{ELoadingTaskState}}\ State);}
+\DoxyCodeLine{00045\ \ \ \ \ }
+\DoxyCodeLine{00046\ \};}
+
+\end{DoxyCode}

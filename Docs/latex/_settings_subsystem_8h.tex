@@ -1,0 +1,68 @@
+\doxysection{Source/\+Subsystems/\+Public/\+Settings\+Subsystem.h File Reference}
+\hypertarget{_settings_subsystem_8h}{}\label{_settings_subsystem_8h}\index{Source/Subsystems/Public/SettingsSubsystem.h@{Source/Subsystems/Public/SettingsSubsystem.h}}
+{\ttfamily \#include "{}Core\+Minimal.\+h"{}}\newline
+{\ttfamily \#include "{}Subsystems/\+Game\+Instance\+Subsystem.\+h"{}}\newline
+{\ttfamily \#include "{}Trail\+Shared\+Types.\+h"{}}\newline
+{\ttfamily \#include "{}Settings\+Save\+Game.\+h"{}}\newline
+{\ttfamily \#include "{}Settings\+Subsystem.\+generated.\+h"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_u_settings_subsystem}{USettings\+Subsystem}}
+\begin{DoxyCompactList}\small\item\em Subsystem de gestion des settings. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_settings_subsystem_8h_a12888e60341bc9d9184d3840c26cb12a}{DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Fetch\+Update, int64, Race\+ID, float, Fetch\+Value)
+\item 
+\mbox{\hyperlink{_settings_subsystem_8h_a12b057dc2b7b194c53d097965b3da305}{DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+ZOffset\+Update, int64, Race\+ID, float, New\+ZOffset)
+\item 
+\mbox{\hyperlink{_settings_subsystem_8h_a7f4bede7d036a9fac98bf282368db2c6}{DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Path\+Glow\+Update, int64, Race\+ID, float, Glow\+Intensity)
+\item 
+\mbox{\hyperlink{_settings_subsystem_8h_aee6ebc3734e8dfa5a98c0eddb18d14a4}{DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param}} (FOn\+Pulse\+Frequency\+Update, float, Pulse\+Frequency)
+\item 
+\mbox{\hyperlink{_settings_subsystem_8h_ae91fc7bb998a756fcbcba0348390fcf3}{DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Min\+Max\+Set, int64, Race\+ID, \mbox{\hyperlink{struct_f_min_max}{FMin\+Max}}, Min\+Max)
+\item 
+\mbox{\hyperlink{_settings_subsystem_8h_a09a8ad33357719fc7242b407a456d170}{DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params}} (FOn\+Trail\+Url\+Update, int64, Race\+ID, FString, New\+URL)
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{_settings_subsystem_8h_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{_settings_subsystem_8h_aee6ebc3734e8dfa5a98c0eddb18d14a4}\index{SettingsSubsystem.h@{SettingsSubsystem.h}!DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_OneParam}}
+\index{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_OneParam@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_OneParam}!SettingsSubsystem.h@{SettingsSubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_OneParam()}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_OneParam()}}
+{\footnotesize\ttfamily \label{_settings_subsystem_8h_aee6ebc3734e8dfa5a98c0eddb18d14a4} 
+DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+One\+Param (\begin{DoxyParamCaption}\item[{FOn\+Pulse\+Frequency\+Update}]{}{, }\item[{float}]{}{, }\item[{Pulse\+Frequency}]{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_settings_subsystem_8h_a12888e60341bc9d9184d3840c26cb12a}\index{SettingsSubsystem.h@{SettingsSubsystem.h}!DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}!SettingsSubsystem.h@{SettingsSubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily \label{_settings_subsystem_8h_a12888e60341bc9d9184d3840c26cb12a} 
+DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Fetch\+Update}]{}{, }\item[{int64}]{}{, }\item[{Race\+ID}]{}{, }\item[{float}]{}{, }\item[{Fetch\+Value}]{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_settings_subsystem_8h_ae91fc7bb998a756fcbcba0348390fcf3}\index{SettingsSubsystem.h@{SettingsSubsystem.h}!DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}!SettingsSubsystem.h@{SettingsSubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily \label{_settings_subsystem_8h_ae91fc7bb998a756fcbcba0348390fcf3} 
+DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Min\+Max\+Set}]{}{, }\item[{int64}]{}{, }\item[{Race\+ID}]{}{, }\item[{\mbox{\hyperlink{struct_f_min_max}{FMin\+Max}}}]{}{, }\item[{Min\+Max}]{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_settings_subsystem_8h_a7f4bede7d036a9fac98bf282368db2c6}\index{SettingsSubsystem.h@{SettingsSubsystem.h}!DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}!SettingsSubsystem.h@{SettingsSubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily \label{_settings_subsystem_8h_a7f4bede7d036a9fac98bf282368db2c6} 
+DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Path\+Glow\+Update}]{}{, }\item[{int64}]{}{, }\item[{Race\+ID}]{}{, }\item[{float}]{}{, }\item[{Glow\+Intensity}]{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_settings_subsystem_8h_a09a8ad33357719fc7242b407a456d170}\index{SettingsSubsystem.h@{SettingsSubsystem.h}!DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}!SettingsSubsystem.h@{SettingsSubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily \label{_settings_subsystem_8h_a09a8ad33357719fc7242b407a456d170} 
+DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+Trail\+Url\+Update}]{}{, }\item[{int64}]{}{, }\item[{Race\+ID}]{}{, }\item[{FString}]{}{, }\item[{New\+URL}]{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{_settings_subsystem_8h_a12b057dc2b7b194c53d097965b3da305}\index{SettingsSubsystem.h@{SettingsSubsystem.h}!DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}
+\index{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams@{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}!SettingsSubsystem.h@{SettingsSubsystem.h}}
+\doxysubsubsection{\texorpdfstring{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily \label{_settings_subsystem_8h_a12b057dc2b7b194c53d097965b3da305} 
+DECLARE\+\_\+\+DYNAMIC\+\_\+\+MULTICAST\+\_\+\+DELEGATE\+\_\+\+Two\+Params (\begin{DoxyParamCaption}\item[{FOn\+ZOffset\+Update}]{}{, }\item[{int64}]{}{, }\item[{Race\+ID}]{}{, }\item[{float}]{}{, }\item[{New\+ZOffset}]{}{}\end{DoxyParamCaption})}
+

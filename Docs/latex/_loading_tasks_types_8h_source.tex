@@ -1,0 +1,27 @@
+\doxysection{Loading\+Tasks\+Types.\+h}
+\hypertarget{_loading_tasks_types_8h_source}{}\label{_loading_tasks_types_8h_source}\index{Source/SharedTypes/Public/LoadingTasksTypes.h@{Source/SharedTypes/Public/LoadingTasksTypes.h}}
+\mbox{\hyperlink{_loading_tasks_types_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{_loading_tasks_types_8h_afba6b1c608e92e1d575d6e61185dc5f8}{ELoadingTaskState}}\ :\ uint8}
+\DoxyCodeLine{00006\ \{}
+\DoxyCodeLine{00007\ \ \ \ \ \mbox{\hyperlink{_loading_tasks_types_8h_afba6b1c608e92e1d575d6e61185dc5f8a7b2f31b90fe1c2cc33a52233c1925df3}{Queued}},}
+\DoxyCodeLine{00008\ \ \ \ \ \mbox{\hyperlink{_loading_tasks_types_8h_afba6b1c608e92e1d575d6e61185dc5f8a5bda814c4aedb126839228f1a3d92f09}{Running}},}
+\DoxyCodeLine{00009\ \ \ \ \ \mbox{\hyperlink{_loading_tasks_types_8h_afba6b1c608e92e1d575d6e61185dc5f8a505a83f220c02df2f85c3810cd9ceb38}{Success}},}
+\DoxyCodeLine{00010\ \ \ \ \ \mbox{\hyperlink{_loading_tasks_types_8h_afba6b1c608e92e1d575d6e61185dc5f8ad7c8c85bf79bbe1b7188497c32c3b0ca}{Failed}}}
+\DoxyCodeLine{00011\ \};}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_f_loading_task_info}{FLoadingTaskInfo}}\{}
+\DoxyCodeLine{00014\ \ \ \ \ }
+\DoxyCodeLine{00015\ \ \ \ \ FName\ \mbox{\hyperlink{struct_f_loading_task_info_a25f0fbdbd298020b8a56c5197f5a88cf}{Id}};}
+\DoxyCodeLine{00016\ \ \ \ \ FText\ \mbox{\hyperlink{struct_f_loading_task_info_a496f72064f8487f22b58c0b2be57006a}{Label}};}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_f_loading_task_info_aa4e8a42997af8fa914e6e95cede995e7}{Progress01}}\ =\ 0.f;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0..1}}
+\DoxyCodeLine{00018\ \ \ \ \ \mbox{\hyperlink{_loading_tasks_types_8h_afba6b1c608e92e1d575d6e61185dc5f8}{ELoadingTaskState}}\ \mbox{\hyperlink{struct_f_loading_task_info_aa017f5f982a538a763a1ed7bc79f34c1}{State}}\ =\ \mbox{\hyperlink{_loading_tasks_types_8h_afba6b1c608e92e1d575d6e61185dc5f8a7b2f31b90fe1c2cc33a52233c1925df3}{ELoadingTaskState::Queued}};}
+\DoxyCodeLine{00019\ \ \ \ \ FText\ \mbox{\hyperlink{struct_f_loading_task_info_aeeb017d52a7950db4eebadd6285c84d3}{Detail}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ex:\ "{}1200/1600\ points"{}}}
+\DoxyCodeLine{00020\ \ \ \ \ FSlateColor\ \mbox{\hyperlink{struct_f_loading_task_info_a5a69f749a6af6800928250baedb7dca5}{Color}};}
+\DoxyCodeLine{00021\ \};}
+
+\end{DoxyCode}

@@ -1,0 +1,89 @@
+\doxysection{Team\+Subsystem.\+h}
+\hypertarget{_team_subsystem_8h_source}{}\label{_team_subsystem_8h_source}\index{Source/Subsystems/Public/TeamSubsystem.h@{Source/Subsystems/Public/TeamSubsystem.h}}
+\mbox{\hyperlink{_team_subsystem_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}Subsystems/GameInstanceSubsystem.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}TeamSubsystem.generated.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \mbox{\hyperlink{_team_subsystem_8h_a524b2597e81b8ef14f92b46f705327e5}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}(}
+\DoxyCodeLine{00011\ \ \ \ \ FOnTeamsGathered,}
+\DoxyCodeLine{00012\ \ \ \ \ int64,}
+\DoxyCodeLine{00013\ \ \ \ \ RaceID,}
+\DoxyCodeLine{00014\ \ \ \ \ \mbox{\hyperlink{struct_f_teams}{FTeams}},}
+\DoxyCodeLine{00015\ \ \ \ \ Teams);}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \mbox{\hyperlink{_team_subsystem_8h_a524b2597e81b8ef14f92b46f705327e5}{DECLARE\_DYNAMIC\_MULTICAST\_DELEGATE\_TwoParams}}(}
+\DoxyCodeLine{00018\ \ \ \ \ FOnTeamRunnerGathered,}
+\DoxyCodeLine{00019\ \ \ \ \ int64,}
+\DoxyCodeLine{00020\ \ \ \ \ RunnerId,}
+\DoxyCodeLine{00021\ \ \ \ \ \mbox{\hyperlink{struct_f_team_struct}{FTeamStruct}},}
+\DoxyCodeLine{00022\ \ \ \ \ TeamStruct);}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00027\ UCLASS()}
+\DoxyCodeLine{00028\ class\ SUBSYSTEMS\_API\ \mbox{\hyperlink{class_u_team_subsystem}{UTeamSubsystem}}\ :\ public\ UGameInstanceSubsystem}
+\DoxyCodeLine{00029\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_subsystem_afaa7c8cd98f5aa7fad03c3120845cfcd}{Initialize}}(FSubsystemCollectionBase\&\ Collection)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_subsystem_a2586db4aff274893d6ec2aa0240b0721}{Deinitialize}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00042\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_subsystem_a820527e1f60a978fdf2fbd2a814c1553}{SetRunnerToTeam}}(int64\ RaceID,\ int64\ TeamID,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_f_runner_struct}{FRunnerStruct}}\&\ Runner);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00050\ \ \ \ \ \mbox{\hyperlink{struct_f_race_team_runner_index}{FRaceTeamRunnerIndex}}*\ \mbox{\hyperlink{class_u_team_subsystem_a0a2d37dc1eab5996495917ada77d7378}{GetTeamsForRace}}(int64\ RaceID);}
+\DoxyCodeLine{00057\ \ \ \ \ int64\ \mbox{\hyperlink{class_u_team_subsystem_a87883ade7608fab15445c2cba1178d3d}{GetTeamByRaceRunner}}(int64\ RaceID,\ int64\ RunnerID)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_f_runner_struct}{FRunnerStruct}}*\ \mbox{\hyperlink{class_u_team_subsystem_a554626a01cb251be65cefd345f044a18}{GetRunnerByRaceTeam}}(int64\ RaceID,\ int64\ TeamID)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00065\ \ \ \ \ TObjectPtr<AActor>\ \mbox{\hyperlink{class_u_team_subsystem_adbaa97cb20b72e4f1b0f4a6492a6499f}{GetRunnerActorByRaceTeam}}(int64\ RaceID,\ int64\ TeamID)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_subsystem_a061f9e008291e2b878073a95bf1d6f9a}{DisplayTeam}}(int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00070\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_subsystem_a9f690ad925ca36c6b629dd1326a728b9}{DisplayTeams}}(int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00072\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_subsystem_a49d5b1b577f6fb65e8cb9071366adad7}{DisplayFlag}}(int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00074\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_subsystem_a55ee649eda8fda19268039f495569b27}{DisplayClub}}(int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00076\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_subsystem_ad32e7b25e23576730162a20dd2466308}{DisplayPhoto}}(int64\ TeamID,\ int64\ RaceID,\ \textcolor{keywordtype}{bool}\ bDisplay)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00078\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_subsystem_af5ab4141945895139e7347449eb54b7d}{Teleport}}(int64\ TeamID,\ int64\ RaceID);}
+\DoxyCodeLine{00080\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_subsystem_a2fe7b05ca253a42a680c2f82b604b952}{Follow}}(int64\ TeamID,\ int64\ RaceID);}
+\DoxyCodeLine{00082\ \ \ \ \ }
+\DoxyCodeLine{00083\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_subsystem_a248df6d39ccd610fe90ceb8a3c3250d2}{Animation}}(int64\ TeamID,\ int64\ RaceID);}
+\DoxyCodeLine{00085\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_u_team_subsystem_ade61a4058fa052af07ac4f7f9dd2ddb5}{StopAnimation}}(int64\ TeamID,\ int64\ RaceID);}
+\DoxyCodeLine{00087\ \ \ \ \ }
+\DoxyCodeLine{00088\ \ \ \ \ }
+\DoxyCodeLine{00089\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{comment}{//\ Race\ Setup}}
+\DoxyCodeLine{00091\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00092\ \ \ \ \ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ CurrentRaceSetup;}
+\DoxyCodeLine{00093\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00094\ \ \ \ \ TObjectPtr<class\ URaceSubsystem>\ RaceSubsystem;}
+\DoxyCodeLine{00095\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00096\ \ \ \ \ TObjectPtr<class\ UHttpGatewaySubsystem>\ HttpGatewaySubsystem;}
+\DoxyCodeLine{00097\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00098\ \ \ \ \ TObjectPtr<class\ URunnerSubsystem>\ RunnerSubsystem;}
+\DoxyCodeLine{00099\ \ \ \ \ UFUNCTION()}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{void}\ SetRaceSetup(int64\ RaceID,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ NewRaceSetup);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{comment}{//\ Teams\ Datas\ storage}}
+\DoxyCodeLine{00103\ \ \ \ \ UPROPERTY()}
+\DoxyCodeLine{00104\ \ \ \ \ TMap<int64,\ FTeamStruct>\ TeamsMap;}
+\DoxyCodeLine{00105\ \ \ \ \ TMap<int64,\ TMap<int64,\ int64>>\ RaceIdTeamIdRunnerIdMap;}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{comment}{//\ TMap<int64,\ TMap<int64,\ FTeamStruct>>\ RaceTeamsRunnersMap;}}
+\DoxyCodeLine{00107\ \ \ \ \ }
+\DoxyCodeLine{00108\ \ \ \ \ TMap<int64,\ FRaceTeamRunnerIndex>\ RaceTeamsRunnersMap;}
+\DoxyCodeLine{00109\ \};}
+
+\end{DoxyCode}

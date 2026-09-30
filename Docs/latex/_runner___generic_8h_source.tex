@@ -1,0 +1,52 @@
+\doxysection{Runner\+\_\+\+Generic.\+h}
+\hypertarget{_runner___generic_8h_source}{}\label{_runner___generic_8h_source}\index{Source/TrailSimulator/Public/Actors/Generic/Runner\_Generic.h@{Source/TrailSimulator/Public/Actors/Generic/Runner\_Generic.h}}
+\mbox{\hyperlink{_runner___generic_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_runner_8h}{Actors/Runner.h}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}Runner\_Generic.generated.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ UCLASS()}
+\DoxyCodeLine{00010\ class\ TRAILSIMULATOR\_API\ \mbox{\hyperlink{class_a_runner___generic_a06d140854814bb4bd42a4fddbe7d03ec}{ARunner\_Generic}}\ :\ public\ \mbox{\hyperlink{class_a_runner_a2ca6e85da41e4de6a180c26cbc7685db}{ARunner}}}
+\DoxyCodeLine{00011\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00015\ \ \ \ \ \mbox{\hyperlink{class_a_runner___generic_a06d140854814bb4bd42a4fddbe7d03ec}{ARunner\_Generic}}();}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner___generic_a11ea26d62d90712ccba4e7999660fee8}{UpdateRunner}}(\mbox{\hyperlink{struct_f_runner_struct}{FRunnerStruct}}\ Runner,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ RaceSetup)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00017\ \ \ \ \ \ }
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner___generic_a787ae86238065234e46fb8f88b187515}{ToggleClub}}(\textcolor{keywordtype}{bool}\ bDisplay)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner___generic_af3264eb8070f75e3aa147ab5a47e8d91}{ToggleFlag}}(\textcolor{keywordtype}{bool}\ bDisplay)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner___generic_a99fbc33a3b702999699b5e230febbdc2}{TogglePhoto}}(\textcolor{keywordtype}{bool}\ bDisplay)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00021\ \ \ \ \ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner___generic_a47da349d2f005611f143359e3f6db652}{StartAnimation}}(\textcolor{keywordtype}{float}\ RotationSpeed)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner___generic_aaffe5d4093da40b3e54e0d2886531554}{StopAnimation}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00024\ \ \ \ \ }
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner___generic_ac69bd7e7f3dc6f285841a576460b6a9f}{SetIsStacked}}(\textcolor{keywordtype}{bool}\ bInStacked)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00026\ \ \ \ \ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_a_runner___generic_a02d0730790d09fc5e2bb1c38e4e3ae12}{UpdateRunnerLocation}}(\mbox{\hyperlink{struct_f_runner_struct}{FRunnerStruct}}\ RunnerStruct,\ TObjectPtr<class\ APath>\ CurrentPath)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00028\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{//\ Name}}
+\DoxyCodeLine{00030\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditDefaultsOnly,\ meta=(AllowPrivateAccess=\textcolor{keyword}{true}))}
+\DoxyCodeLine{00031\ \ \ \ \ TObjectPtr<class\ UGeneric\_NameComponent>\ \mbox{\hyperlink{class_a_runner___generic_a0eb65ae02cad7444f40bda28e970922e}{NameComponent}};}
+\DoxyCodeLine{00032\ \ \ \ \ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{//\ Flag}}
+\DoxyCodeLine{00034\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditAnywhere,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00035\ \ \ \ \ TObjectPtr<class\ UGeneric\_FlagComponent>\ \mbox{\hyperlink{class_a_runner___generic_a32abce9103ba436f51c15d6bbdeb5cf6}{FlagComponent}};}
+\DoxyCodeLine{00036\ \ \ \ \ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{//\ Photo}}
+\DoxyCodeLine{00038\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditDefaultsOnly,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00039\ \ \ \ \ TObjectPtr<class\ USceneComponent>\ \mbox{\hyperlink{class_a_runner___generic_a9d4b569e0d0f82ecb34c5ce27a015d59}{PhotoHook}};}
+\DoxyCodeLine{00040\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditAnywhere,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00041\ \ \ \ \ TObjectPtr<class\ UPhotoComponent>\ \mbox{\hyperlink{class_a_runner___generic_aa4414aa808315ac74e59fc21ed386fb9}{PhotoComponent}};}
+\DoxyCodeLine{00042\ \ \ \ \ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{comment}{//\ Slah}}
+\DoxyCodeLine{00044\ \ \ \ \ UPROPERTY(BlueprintReadOnly,\ EditAnywhere,\ meta=(AllowPrivateAccess=true))}
+\DoxyCodeLine{00045\ \ \ \ \ TObjectPtr<class\ UStaticMeshComponent>\ \mbox{\hyperlink{class_a_runner___generic_afb250ff17c9c7e72a139d3a1c4f0a19a}{SlashComponent}};}
+\DoxyCodeLine{00046\ \};}
+
+\end{DoxyCode}

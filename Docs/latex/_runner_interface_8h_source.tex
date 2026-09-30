@@ -1,0 +1,46 @@
+\doxysection{Runner\+Interface.\+h}
+\hypertarget{_runner_interface_8h_source}{}\label{_runner_interface_8h_source}\index{Source/TrailInterfaces/Public/RunnerInterface.h@{Source/TrailInterfaces/Public/RunnerInterface.h}}
+\mbox{\hyperlink{_runner_interface_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ All\ Rights\ Reserved}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}CoreMinimal.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}UObject/Interface.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_trail_shared_types_8h}{TrailSharedTypes.h}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}RunnerInterface.generated.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ This\ class\ does\ not\ need\ to\ be\ modified.}}
+\DoxyCodeLine{00011\ UINTERFACE(MinimalAPI)}
+\DoxyCodeLine{00012\ class\ \mbox{\hyperlink{class_u_runner_interface}{URunnerInterface}}\ :\ public\ UInterface}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00015\ \};}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{class\ }TRAILINTERFACES\_API\ \mbox{\hyperlink{class_i_runner_interface}{IRunnerInterface}}}
+\DoxyCodeLine{00021\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ GENERATED\_BODY()}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_runner_interface_a0538164d64e94216f983bf31cfecc20b}{AssignRunnerToTeam}}(int32\ IdTeam)\ =\ 0;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_runner_interface_a523642f59d951ce1bef29eb5d21eb350}{UpdateRunner}}(\mbox{\hyperlink{struct_f_runner_struct}{FRunnerStruct}}\ Runner,\ \mbox{\hyperlink{struct_f_race_setup}{FRaceSetup}}\ RaceSetup)\ =\ 0;}
+\DoxyCodeLine{00027\ \ \ \ \ }
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_runner_interface_a24f78c6730682a6b2e7f38efc8d7ec66}{ToggleFlag}}(\textcolor{keywordtype}{bool}\ bDisplay)\ =\ 0;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_runner_interface_affee4fb9ea631c5ebe384a6d0a175d30}{ToggleClub}}(\textcolor{keywordtype}{bool}\ bDisplay)\ =\ 0;}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_runner_interface_a805aae64ddd8ba1b163e52f7a58223aa}{TogglePhoto}}(\textcolor{keywordtype}{bool}\ bDisplay)\ =\ 0;}
+\DoxyCodeLine{00031\ \ \ \ \ }
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{struct_f_min_max}{FMinMax}}\ \mbox{\hyperlink{class_i_runner_interface_a2e712181d90150cf246596638205e81f}{GetRunnerMinMax}}()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_i_runner_interface_ab697096c51a8d4591824a78adffe61bc}{GetRunnerVDelta}}()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00034\ \ \ \ \ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_runner_interface_a0f6953eb3d23e873730cb291fa501dc6}{UpdateRunnerLocation}}(\mbox{\hyperlink{struct_f_runner_struct}{FRunnerStruct}}\ RunnerStruct,\ TObjectPtr<class\ APath>\ CurrentPath)\ =\ 0;}
+\DoxyCodeLine{00036\ \ \ \ \ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_runner_interface_a4551f5ed7ad61dd60533f173876c3174}{StartAnimation}}(\textcolor{keywordtype}{float}\ RotationSpeed)\ =\ 0;}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_runner_interface_adfc323a88b7d2c8c6e350c0ef9320643}{StopAnimation}}()\ =\ 0;}
+\DoxyCodeLine{00039\ \ \ \ \ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{virtual}\ USceneComponent*\ \mbox{\hyperlink{class_i_runner_interface_a883b6d7a0ba5661e73196b28eb1c59df}{GetFootHook}}()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{virtual}\ UStaticMeshComponent*\ \mbox{\hyperlink{class_i_runner_interface_a3f0f48728bdfb1d83df5b1f688ae10d6}{GetFootMesh}}()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00042\ \};}
+\DoxyCodeLine{00043\ \ \ \ \ }
+
+\end{DoxyCode}
