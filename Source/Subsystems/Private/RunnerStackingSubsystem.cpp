@@ -12,7 +12,7 @@
 static TAutoConsoleVariable<float> CVarStackingMaxTrackGapM(
 	TEXT("Trail.Stacking.MaxTrackGapM"),
 	1000.f,
-	TEXT("Ecart maximal (m) le long du trace entre deux runners pour les empiler. 0 = pas de limite."),
+	TEXT("Ecart maximal (m) le long du trace pour empiler deux runners, camera loin ; reduit avec la distance camera jusqu a 0 camera proche. 0 = pas de limite."),
 	ECVF_Default);
 
 void URunnerStackingSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -533,6 +533,12 @@ void URunnerStackingSubsystem::TickSubsystem()
 		const FVector BasePos = BaseEntry.TrackTransform.GetLocation();
 		const float RadiusCm = ComputeDynamicRadiusCm(BaseEntry);
 
+		// Meme progression que le rayon (echelle du runner, donc distance camera) : 0 camera
+		// proche (plus aucune pile, on voit les vrais ecarts) -> 1 camera loin (ecart max).
+		const float ScaleAlpha = FMath::Clamp(
+			(RadiusCm - Config.RadiusNearCm) / FMath::Max(KINDA_SMALL_NUMBER, Config.RadiusFarCm - Config.RadiusNearCm),
+			0.f, 1.f);
+
 		TArray<int32> Children;
 		Children.Reserve(16);
 
@@ -559,9 +565,10 @@ void URunnerStackingSubsystem::TickSubsystem()
 			const bool bWasStackedOnThisBase = (CandEntry.CurrentBase.Get() == BaseActor);
 
 			// Ecart sur le trace (TrackDistanceMeters est en cm : distance de spline monde)
-			const float MaxGapCm = CVarStackingMaxTrackGapM.GetValueOnGameThread() * 100.f;
-			if (MaxGapCm > 0.f)
+			const float MaxGapSettingCm = CVarStackingMaxTrackGapM.GetValueOnGameThread() * 100.f;
+			if (MaxGapSettingCm > 0.f)
 			{
+				const float MaxGapCm = MaxGapSettingCm * ScaleAlpha;
 				const float GapCm = FMath::Abs(CandEntry.TrackDistanceMeters - BaseEntry.TrackDistanceMeters);
 				const float GapTh = bWasStackedOnThisBase ? MaxGapCm * 1.1f : MaxGapCm;
 				if (GapCm > GapTh)
