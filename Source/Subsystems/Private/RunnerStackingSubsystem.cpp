@@ -4,6 +4,16 @@
 #include "GameFramework/Actor.h"
 #include "Components/SceneComponent.h"
 #include "TimerManager.h"
+#include "HAL/IConsoleManager.h"
+
+// Ecart maximal le long du trace pour empiler deux runners. Sans ce garde-fou, seule la
+// distance 3D comptait : deux coureurs a des km l'un de l'autre sur le parcours, mais proches a vol
+// d'oiseau (lacets, aller-retour), etaient empiles.
+static TAutoConsoleVariable<float> CVarStackingMaxTrackGapM(
+	TEXT("Trail.Stacking.MaxTrackGapM"),
+	200.f,
+	TEXT("Ecart maximal (m) le long du trace entre deux runners pour les empiler. 0 = pas de limite."),
+	ECVF_Default);
 
 void URunnerStackingSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -547,6 +557,19 @@ void URunnerStackingSubsystem::TickSubsystem()
 			// Hysteresis proportionnelle au rayon : 10 cm fixes ne servaient a rien quand le
 			// rayon monte a 2 km (camera loin), les piles clignotaient autour du seuil.
 			const bool bWasStackedOnThisBase = (CandEntry.CurrentBase.Get() == BaseActor);
+
+			// Ecart sur le trace (TrackDistanceMeters est en cm : distance de spline monde)
+			const float MaxGapCm = CVarStackingMaxTrackGapM.GetValueOnGameThread() * 100.f;
+			if (MaxGapCm > 0.f)
+			{
+				const float GapCm = FMath::Abs(CandEntry.TrackDistanceMeters - BaseEntry.TrackDistanceMeters);
+				const float GapTh = bWasStackedOnThisBase ? MaxGapCm * 1.1f : MaxGapCm;
+				if (GapCm > GapTh)
+				{
+					continue;
+				}
+			}
+
 			const float Extra = bWasStackedOnThisBase
 				? FMath::Max(Config.HysteresisCm, RadiusCm * 0.1f)
 				: 0.f;
