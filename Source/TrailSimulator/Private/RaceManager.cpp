@@ -634,36 +634,37 @@ void ARaceManager::HandleRacePoisDatasGathered(int64 RaceID, FPOIs RacePoisDatas
 	
 	
 	if (!LoadingSubsystem || !PoiSubsystem || !RaceSubsystem || !ScaleSubsystem) return;
-	
+
+	const FName IdPois(*FString::Printf(TEXT("SpawnPois_%lld"), RaceID));
+
+	// Une course sans POI est un cas normal : la tache se termine en succes
 	if (RacePoisDatas.POIs.Num() == 0)
 	{
-		const FName IdPois(*FString::Printf(TEXT("SpawnPois_%lld"), RaceID));
-		LoadingSubsystem->Fail(IdPois,FText::FromString(FString::Printf(TEXT("No Pois found %lld"), RaceID)));
+		LoadingSubsystem->Complete(IdPois, FText::FromString(FString::Printf(TEXT("No Pois for Race %lld"), RaceID)));
 	} else{
 		Georeference = ACesiumGeoreference::GetDefaultGeoreference(GetWorld());
-		if (Georeference)
+		const FVector* GeorefLocation = GeorefLocations.Find(RaceID);
+		UWorld* World = GetWorld();
+		if (!Georeference || !GeorefLocation || !World)
 		{
-			Georeference->SetOriginLongitudeLatitudeHeight(
-				FVector(GeorefLocations[RaceID].X, 
-						GeorefLocations[RaceID].Y, 
-						GeorefLocations[RaceID].Z));
-			
+			LoadingSubsystem->Fail(IdPois, FText::FromString(FString::Printf(TEXT("Georeference not available for Race %lld"), RaceID)));
+		}
+		else
+		{
+			Georeference->SetOriginLongitudeLatitudeHeight(*GeorefLocation);
+
 			// Sampling ??
 			int32 cpt = 0;
-			LoadingSubsystem->SetRunning("SpawnsPois"+RaceID);
-			const FName IdPois(*FString::Printf(TEXT("SpawnPois_%lld"), RaceID));
+			LoadingSubsystem->SetRunning(IdPois);
 			const FRaceSetup& RaceSetup = RaceSubsystem->GetRaceSetupById(RaceID);
-			
-			for (FRacePOI RacePoi : RacePoisDatas.POIs)
+
+			for (const FRacePOI& RacePoi : RacePoisDatas.POIs)
 			{
-				float Result = cpt / RacePoisDatas.POIs.Num();
+				float Result = float(cpt) / float(RacePoisDatas.POIs.Num());
 				LoadingSubsystem->Update(IdPois, Result, FText::FromString(FString::Printf(TEXT("Poi %s spawned"), *RacePoi.name)));
 				FVector PoiLocation = Georeference->TransformLongitudeLatitudeHeightPositionToUnreal(
 					FVector(RacePoi.lon, RacePoi.lat, RacePoi.elevation));
-				
-				UWorld* World = GetWorld();
-				if (!World) return;
-				
+
 				const FVector Location = PoiLocation;
 				const FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
 				const FVector Scale = FVector(40.f);
@@ -673,7 +674,7 @@ void ARaceManager::HandleRacePoisDatasGathered(int64 RaceID, FPOIs RacePoisDatas
 				const TSubclassOf<AActor> PoiClass = GetPoiClassForRace(RaceSetup);
 				SpawnedActor = PoiSubsystem->SpawnPoi(RaceID, RacePoi.poiId, World, PoiClass, SpawnTransform);
 				float Total = float(cpt) / float(RacePoisDatas.POIs.Num());
-				LoadingSubsystem->Update(IdPois, Total, FText::FromString(TEXT("Poi " + RacePoi.name +  "spawned")));
+				LoadingSubsystem->Update(IdPois, Total, FText::FromString(FString::Printf(TEXT("Poi %s spawned"), *RacePoi.name)));
 				
 				if (IPoiInterface* PoiInterface = Cast<IPoiInterface>(SpawnedActor))
 				{
