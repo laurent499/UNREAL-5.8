@@ -11,7 +11,7 @@
 // d'oiseau (lacets, aller-retour), etaient empiles.
 static TAutoConsoleVariable<float> CVarStackingMaxTrackGapM(
 	TEXT("Trail.Stacking.MaxTrackGapM"),
-	200.f,
+	1000.f,
 	TEXT("Ecart maximal (m) le long du trace entre deux runners pour les empiler. 0 = pas de limite."),
 	ECVF_Default);
 
