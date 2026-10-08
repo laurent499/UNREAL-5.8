@@ -68,6 +68,8 @@ void ACheckpoint_Generic::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, F
 			if (!MID) return;
 
 			MID->SetTextureParameterValue(TEXT("Photo"), Tex);
+			// M_Photo3D a une couleur noire par defaut : picto blanc des la creation, sans attendre UpdateDayNight
+			MID->SetVectorParameterValue(TEXT("Color"), FLinearColor::White);
 		} else
 		{
 			MainPicto->SetHiddenInGame(true);
@@ -146,7 +148,7 @@ void ACheckpoint_Generic::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, F
 		if (!DistMID) return;
 
 		DistMID->SetTextureParameterValue(TEXT("Photo"), DistTex);
-		DistMID->SetVectorParameterValue(TEXT("Color"), FLinearColor::FromSRGBColor(FColor::FromHex("#000000ff")));
+		DistMID->SetVectorParameterValue(TEXT("Color"), FLinearColor::White); // pictos blancs, comme le picto principal
 		
 		const FString AltPath = FString::Printf(
 			TEXT("/Game/LTVContent/2D/Pictos/Generic/peak.peak"));
@@ -160,7 +162,7 @@ void ACheckpoint_Generic::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, F
 		if (!AltMID) return;
 
 		AltMID->SetTextureParameterValue(TEXT("Photo"), AltTex);
-		AltMID->SetVectorParameterValue(TEXT("Color"), FLinearColor::FromSRGBColor(FColor::FromHex("#000000ff")));
+		AltMID->SetVectorParameterValue(TEXT("Color"), FLinearColor::White); // pictos blancs, comme le picto principal
 	}
 	
 	if (DistText)
@@ -220,25 +222,25 @@ void ACheckpoint_Generic::UpdateDayNight(bool bIsDay)
 	Super::UpdateDayNight(bIsDay);
 	
 	MainPictoMat = MainPicto->GetMaterial(0);
-	MainPictoMID = Line2Component->CreateAndSetMaterialInstanceDynamicFromMaterial(0, MainPictoMat);
+	MainPictoMID = MainPicto->CreateDynamicMaterialInstance(0, MainPictoMat);
 	MainPictoMID->SetScalarParameterValue(TEXT("Illum"), 1.f);
 	
 	DistPictoMat = DistPicto->GetMaterial(0);
-	DistPictoMID = Line2Component->CreateAndSetMaterialInstanceDynamicFromMaterial(0, DistPictoMat);
+	DistPictoMID = DistPicto->CreateDynamicMaterialInstance(0, DistPictoMat);
 	DistPictoMID->SetScalarParameterValue(TEXT("Illum"), 1.f);
 	
 	AltPictoMat = AltPicto->GetMaterial(0);
-	AltPictoMID = Line2Component->CreateAndSetMaterialInstanceDynamicFromMaterial(0, AltPictoMat);
+	AltPictoMID = AltPicto->CreateDynamicMaterialInstance(0, AltPictoMat);
 	AltPictoMID->SetScalarParameterValue(TEXT("Illum"), 1.f);
 	
 	WeatherPictoMat = WeatherPicto->GetMaterial(0);
-	WeatherPictoMID = Line2Component->CreateAndSetMaterialInstanceDynamicFromMaterial(0, WeatherPictoMat);
+	WeatherPictoMID = WeatherPicto->CreateDynamicMaterialInstance(0, WeatherPictoMat);
 	WeatherPictoMID->SetScalarParameterValue(TEXT("Illum"), 1.f);
 	
 	if (bIsDay)
 	{
 		FootComponent->SetScalarParameterValueOnMaterials("Illum", 0.5f);
-		MainPictoMID->SetVectorParameterValue(TEXT("Color"), FLinearColor(1.5, 1.5, 1.5, 1));
+		MainPictoMID->SetVectorParameterValue(TEXT("Color"), FLinearColor::White);
 		NameBkgComponent->SetScalarParameterValueOnMaterials("Illum", 0.0625f);
 		InfosBkgComponent->SetCustomPrimitiveDataFloat(4, 0.5f);
 		WeatherBkgComponent->SetCustomPrimitiveDataFloat(4, 0.5f);
@@ -247,7 +249,7 @@ void ACheckpoint_Generic::UpdateDayNight(bool bIsDay)
 	} else
 	{
 		FootComponent->SetScalarParameterValueOnMaterials("Illum", 0.025f);
-		MainPictoMID->SetVectorParameterValue(TEXT("Color"), FLinearColor(0.1, 0.1, 0.1, 1));
+		MainPictoMID->SetVectorParameterValue(TEXT("Color"), FLinearColor::White);
 		NameBkgComponent->SetScalarParameterValueOnMaterials("Illum", 0.0625f);
 		InfosBkgComponent->SetCustomPrimitiveDataFloat(4, 0.025f);
 		WeatherBkgComponent->SetCustomPrimitiveDataFloat(4, 0.025f);
