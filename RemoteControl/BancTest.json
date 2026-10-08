@@ -1,6 +1,6 @@
 {
-  "_aide": "Banc de test du monde vivant. Lancer : http://<PC>:30010/monde/bench/start (ou ?shot=N pour un seul plan), suivre : /monde/bench. Resultats dans Saved/BancTest/. height = altitude ellipsoidale de la camera (m) ; aboveGround = hauteur au-dessus du sol (m), la camera est posee par lancer de rayon. heading = cap (0 nord, 90 est), pitch negatif = vers le bas, time = heure UDS 0-2400.",
-  "settleSeconds": 15,
+  "_aide": "Banc de test du monde vivant. Lancer : http://<PC>:30010/monde/bench/start (ou ?shot=N pour un seul plan), suivre : /monde/bench. Resultats dans Saved/BancTest/. settleSeconds = attente maximale du chargement des tuiles (le plan demarre des qu elles sont chargees). height = altitude ellipsoidale de la camera (m) ; aboveGround = hauteur au-dessus du sol (m), la camera est posee par lancer de rayon. heading = cap (0 nord, 90 est), pitch negatif = vers le bas, time = heure UDS 0-2400.",
+  "settleSeconds": 60,
   "measureSeconds": 20,
   "shots": [
     {

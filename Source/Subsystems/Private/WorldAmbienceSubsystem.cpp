@@ -1,6 +1,7 @@
 // Copyright LTV Prod 2026. All Rights Reserved
 
 #include "WorldAmbienceSubsystem.h"
+#include "Cesium3DTileset.h"
 #include "CesiumGeoreference.h"
 #include "Components/DirectionalLightComponent.h"
 #include "GameFramework/Pawn.h"
@@ -629,6 +630,7 @@ void UWorldAmbienceSubsystem::ApplyBenchShot(const FBenchShot& Shot)
 	BenchPhase = EBenchPhase::Settling;
 	BenchTimer = 0.f;
 	bBenchGrounded = false;
+	BenchLoadedTime = 0.f;
 	BenchFrameSamples.Reset();
 	BenchGpuSamples.Reset();
 }
@@ -662,14 +664,26 @@ void UWorldAmbienceSubsystem::TickBench(float DeltaTime)
 
 	if (BenchPhase == EBenchPhase::Settling)
 	{
-		// Pose au sol aux deux tiers de l'attente : les tuiles proches ont eu le temps d'arriver avec leur collision
-		if (Shot.AboveGroundM >= 0.0 && !bBenchGrounded && BenchTimer >= BenchSettleSeconds * 0.66f)
+		// On attend que toutes les tuiles Cesium soient chargees et le restent 3 s (BenchSettleSeconds = attente maximale)
+		float Progress = 100.f;
+		for (TActorIterator<ACesium3DTileset> It(GetWorld()); It; ++It) Progress = FMath::Min(Progress, It->GetLoadProgress());
+		BenchLoadedTime = (Progress >= 99.5f && BenchTimer >= 3.f) ? BenchLoadedTime + DeltaTime : 0.f;
+		const bool bTimeout = BenchTimer >= BenchSettleSeconds;
+
+		// Plan au sol : la camera est posee une fois le relief charge (collision comprise), puis on attend le detail proche
+		if (Shot.AboveGroundM >= 0.0 && !bBenchGrounded)
 		{
-			PlaceCameraOnGround(Shot);
-			bBenchGrounded = true;
+			if (BenchLoadedTime >= 1.f || BenchTimer >= BenchSettleSeconds * 0.5f)
+			{
+				PlaceCameraOnGround(Shot);
+				bBenchGrounded = true;
+				BenchLoadedTime = 0.f;
+			}
+			return;
 		}
-		if (BenchTimer >= BenchSettleSeconds)
+		if (BenchLoadedTime >= 3.f || bTimeout)
 		{
+			if (bTimeout) UE_LOG(LogWorldAmbience, Warning, TEXT("Banc \"%s\" : tuiles chargees a %.0f %% seulement"), *Shot.Name, Progress);
 			BenchPhase = EBenchPhase::Measuring;
 			BenchTimer = 0.f;
 		}

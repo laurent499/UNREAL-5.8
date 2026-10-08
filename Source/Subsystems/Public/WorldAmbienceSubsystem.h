@@ -203,7 +203,9 @@ private:
 	int32 BenchIndex = 0;
 	float BenchTimer = 0.f;
 	bool bBenchGrounded = false;
-	float BenchSettleSeconds = 15.f;
+	float BenchLoadedTime = 0.f;
+	/** Attente maximale du chargement des tuiles par plan */
+	float BenchSettleSeconds = 60.f;
 	float BenchMeasureSeconds = 20.f;
 	FString BenchCsvPath;
 	/** Valeurs d'origine restaurees en fin de banc (georeference, camera, UDS, UDW, gardien) */
