@@ -438,6 +438,13 @@ void UWorldAmbienceSubsystem::SetSettings(const FWorldAmbienceSettings& NewSetti
 	OnAmbienceChanged.Broadcast(Settings);
 }
 
+bool UWorldAmbienceSubsystem::SetSettingByName(const FString& Key, const FString& Value)
+{
+	if (!ApplySetting(Key, Value)) return false;
+	SetSettings(Settings);
+	return true;
+}
+
 void UWorldAmbienceSubsystem::LoadSettings()
 {
 	FString Json;

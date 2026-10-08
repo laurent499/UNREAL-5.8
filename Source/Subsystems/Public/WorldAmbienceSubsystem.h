@@ -196,6 +196,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "WorldAmbience")
 	void SetSettings(const FWorldAmbienceSettings& NewSettings);
 
+	/** Change un reglage par son nom (ex. "bCityLights", "1") et l'enregistre ; utilise par la regie /command */
+	bool SetSettingByName(const FString& Key, const FString& Value);
+
 	/** Valeurs effectives, apres reglages regie et gardien de performance */
 	UFUNCTION(BlueprintPure, Category = "WorldAmbience")
 	float GetEffectiveFloraDensity() const;

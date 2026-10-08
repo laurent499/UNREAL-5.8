@@ -7,6 +7,9 @@
 #include "HttpServerResponse.h"   // FHttpServerResponse
 #include "Async/Async.h"
 #include "SlateNotificationsBFL.h"
+#include "WorldAmbienceSubsystem.h"
+#include "Engine/GameInstance.h"
+#include "Engine/World.h"
 
 /**
  * @brief Initialize HttpGateway module
@@ -975,6 +978,39 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
     }
     
     
+    /*** MONDE VIVANT COMMANDS ***/
+    // group=monde&action=autoweather&show=1 : meteo reelle automatique
+    // group=monde&action=citylights&show=1[&value=1.0] : lumieres des villes la nuit (et leur intensite)
+    if (Group.Equals(TEXT("monde"), ESearchCase::IgnoreCase))
+    {
+        TArray<TPair<FString, FString>> Settings;
+        const FString* ShowStr = Request.QueryParams.Find(TEXT("show"));
+        const FString* ValueStr = Request.QueryParams.Find(TEXT("value"));
+        const FString Show = (ShowStr && FCString::Atoi(**ShowStr) != 0) ? TEXT("1") : TEXT("0");
+
+        if (Action.Equals(TEXT("autoweather"), ESearchCase::IgnoreCase) && ShowStr)
+        {
+            Settings.Emplace(TEXT("bAutoWeather"), Show);
+        }
+        if (Action.Equals(TEXT("citylights"), ESearchCase::IgnoreCase))
+        {
+            if (ShowStr) Settings.Emplace(TEXT("bCityLights"), Show);
+            if (ValueStr && ValueStr->IsNumeric()) Settings.Emplace(TEXT("CityLightsIntensity"), *ValueStr);
+        }
+
+        TWeakObjectPtr<UGameInstance> WeakGI(GetGameInstance());
+        AsyncTask(ENamedThreads::GameThread, [WeakGI, Settings]()
+        {
+            UWorld* World = WeakGI.IsValid() ? WeakGI->GetWorld() : nullptr;
+            UWorldAmbienceSubsystem* Ambience = World ? World->GetSubsystem<UWorldAmbienceSubsystem>() : nullptr;
+            if (!Ambience) return;
+            for (const TPair<FString, FString>& Setting : Settings)
+            {
+                Ambience->SetSettingByName(Setting.Key, Setting.Value);
+            }
+        });
+    }
+
     // Empty Response
     const FString ResponseString = TEXT("");
     TUniquePtr<FHttpServerResponse> Response =

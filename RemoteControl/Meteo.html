@@ -97,6 +97,13 @@
   </section>
 
   <section>
+    <h2>Nuit</h2>
+    <p class="check"><label><input id="cityLights" type="checkbox"> Lumières des villes la nuit (NASA Black Marble)</label></p>
+    <div class="row"><label for="cityIntensity">Intensité</label><input id="cityIntensity" type="range" min="0" max="3" step="0.05"><output id="cityIntensityOut"></output><span></span></div>
+    <div class="hint">Les lumières s'allument au crépuscule sur les toits et les routes des zones habitées, et restent invisibles à moins de 300 m de la caméra.</div>
+  </section>
+
+  <section>
     <h2>Performance</h2>
     <div class="fields">
       <label>Temps d'image <output id="perfFrame" class="big">–</output></label>
@@ -288,6 +295,9 @@ function showMonde(m) {
   $("perfGuardOn").checked = !!m.settings.bPerfGuard;
   $("autoWeather").checked = !!m.settings.bAutoWeather;
   $("lowClouds").checked = !!m.settings.bLowClouds;
+  $("cityLights").checked = !!m.settings.bCityLights;
+  if (document.activeElement !== $("cityIntensity")) $("cityIntensity").value = m.settings.cityLightsIntensity;
+  $("cityIntensityOut").textContent = Number(m.settings.cityLightsIntensity).toFixed(2);
   for (const [id, k] of [["snowLine", "snowLineOverrideM"], ["smoothMin", "weatherSmoothMinutes"], ["refreshMin", "autoWeatherRefreshMinutes"]]) {
     if (document.activeElement !== $(id)) $(id).value = (k === "snowLineOverrideM" && m.settings[k] < 0) ? "" : m.settings[k];
   }
@@ -312,7 +322,10 @@ function pollMonde() {
 }
 const setMonde = (q) => monde(`/monde/set?${q}`).then(showMonde).catch((e) => setStatus(e.message, "err"));
 $("autoWeather").onchange = () => setMonde(`bAutoWeather=${$("autoWeather").checked ? 1 : 0}`);
-$("lowClouds").onchange = () => setMonde(`bLowClouds=${$("lowClouds").checked ? 1 : 0}`);
+$("cityLights").onchange = () => setMonde(`bCityLights=${$("cityLights").checked ? 1 : 0}`);
+$("cityIntensity").oninput = () => { $("cityIntensityOut").textContent = Number($("cityIntensity").value).toFixed(2); };
+$("cityIntensity").onchange = () => setMonde(`cityLightsIntensity=${$("cityIntensity").value}`);
+$("lowClouds").onchange =() => setMonde(`bLowClouds=${$("lowClouds").checked ? 1 : 0}`);
 $("snowLine").onchange =() => setMonde(`snowLineOverrideM=${$("snowLine").value === "" ? -1 : $("snowLine").value}`);
 $("smoothMin").onchange = () => setMonde(`weatherSmoothMinutes=${$("smoothMin").value}`);
 $("refreshMin").onchange = () => setMonde(`autoWeatherRefreshMinutes=${$("refreshMin").value}`);
