@@ -3,6 +3,8 @@
 
 #include "WeatherSubsystem.h"
 #include "JsonObjectConverter.h"
+#include "Dom/JsonObject.h"
+#include "Serialization/JsonSerializer.h"
 #include "HttpModule.h"
 #include "Interfaces/IHttpResponse.h"
 #include "RaceSubsystem.h"
@@ -42,11 +44,24 @@ void UWeatherSubsystem::Deinitialize()
  */
 bool ConvertWeatherJson(const FString& JsonString, FOpenWeatherResponse& OutRoot)
 {
-	return FJsonObjectConverter::JsonObjectStringToUStruct<FOpenWeatherResponse>(
-		JsonString,
-		&OutRoot,
-		0, 0
-	);
+	TSharedPtr<FJsonObject> Root;
+	if (!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(JsonString), Root) || !Root.IsValid())
+		return false;
+	if (!FJsonObjectConverter::JsonObjectToUStruct(Root.ToSharedRef(), &OutRoot, 0, 0))
+		return false;
+
+	// "current.rain.1h" / "current.snow.1h" : absents quand il ne tombe rien
+	const TSharedPtr<FJsonObject>* Current = nullptr;
+	if (Root->TryGetObjectField(TEXT("current"), Current))
+	{
+		const TSharedPtr<FJsonObject>* Precip = nullptr;
+		double Value = 0.0;
+		if ((*Current)->TryGetObjectField(TEXT("rain"), Precip) && (*Precip)->TryGetNumberField(TEXT("1h"), Value))
+			OutRoot.current.rain_1h = Value;
+		if ((*Current)->TryGetObjectField(TEXT("snow"), Precip) && (*Precip)->TryGetNumberField(TEXT("1h"), Value))
+			OutRoot.current.snow_1h = Value;
+	}
+	return true;
 }
 
 void UWeatherSubsystem::PerformHttpRequestForWeather(

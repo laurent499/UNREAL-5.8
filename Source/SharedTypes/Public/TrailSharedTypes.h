@@ -601,8 +601,9 @@ struct SHAREDTYPES_API FOpenWeatherCurrent
 {
     GENERATED_BODY()
 
-    // Timestamp Unix	UPROPERTY(BlueprintReadOnly, meta = (JsonProperty = "dt"))
-    int64 Timestamp = 0;
+    // Timestamp Unix de la mesure (cle JSON "dt", le nom du champ doit la reprendre pour etre lu)
+	UPROPERTY(BlueprintReadOnly, meta = (JsonProperty = "dt"))
+    int64 dt = 0;
 	UPROPERTY(BlueprintReadOnly, meta = (JsonProperty = "sunrise"))
     int64 sunrise = 0;
 	UPROPERTY(BlueprintReadOnly, meta = (JsonProperty = "sunset"))
@@ -629,6 +630,12 @@ struct SHAREDTYPES_API FOpenWeatherCurrent
     int32 wind_deg = 0;
 	UPROPERTY(BlueprintReadOnly, meta = (JsonProperty = "weather"))
     TArray<FOpenWeatherCondition> weather;
+	// Precipitations de la derniere heure en mm (cles JSON "rain" / "snow" -> "1h").
+	// Le convertisseur JSON ne sait pas lire une cle "1h" : remplis a la main par UWeatherSubsystem.
+	UPROPERTY(BlueprintReadOnly)
+    float rain_1h = 0.0;
+	UPROPERTY(BlueprintReadOnly)
+    float snow_1h = 0.0;
 };
 
 USTRUCT(BlueprintType)

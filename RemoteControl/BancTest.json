@@ -1,0 +1,37 @@
+{
+  "_aide": "Banc de test du monde vivant. Lancer : http://<PC>:30010/monde/bench/start (ou ?shot=N pour un seul plan), suivre : /monde/bench. Resultats dans Saved/BancTest/. height = altitude ellipsoidale de la camera (m) ; aboveGround = hauteur au-dessus du sol (m), la camera est posee par lancer de rayon. heading = cap (0 nord, 90 est), pitch negatif = vers le bas, time = heure UDS 0-2400.",
+  "settleSeconds": 15,
+  "measureSeconds": 20,
+  "shots": [
+    {
+      "name": "1 Aerien large midi grand beau",
+      "lat": 45.9000, "lon": 6.8700, "height": 4500,
+      "heading": 160, "pitch": -25, "time": 1300,
+      "weather": { "Cloud Coverage": 0.5, "Rain": 0, "Snow": 0, "Fog": 0, "Thunder/Lightning": 0, "Wind Intensity": 1 }
+    },
+    {
+      "name": "2 Aerien nuit vallee habitee",
+      "lat": 45.9400, "lon": 6.9000, "height": 2200,
+      "heading": 230, "pitch": -30, "time": 2300,
+      "weather": { "Cloud Coverage": 1, "Rain": 0, "Snow": 0, "Fog": 0, "Thunder/Lightning": 0, "Wind Intensity": 1 }
+    },
+    {
+      "name": "3 Ras du sol foret",
+      "lat": 45.9285, "lon": 6.8790, "aboveGround": 2,
+      "heading": 40, "pitch": -3, "time": 1000,
+      "weather": { "Cloud Coverage": 3, "Rain": 0, "Snow": 0, "Fog": 1, "Thunder/Lightning": 0, "Wind Intensity": 2 }
+    },
+    {
+      "name": "4 Ras du sol alpage pluie vent",
+      "lat": 46.0250, "lon": 6.9550, "aboveGround": 3,
+      "heading": 200, "pitch": -5, "time": 1500,
+      "weather": { "Cloud Coverage": 8, "Rain": 7, "Snow": 0, "Fog": 3, "Thunder/Lightning": 0, "Wind Intensity": 6 }
+    },
+    {
+      "name": "5 Aerien orage nuages bas",
+      "lat": 45.8800, "lon": 6.9500, "height": 3500,
+      "heading": 270, "pitch": -15, "time": 1700,
+      "weather": { "Cloud Coverage": 10, "Rain": 9, "Snow": 0, "Fog": 4, "Thunder/Lightning": 8, "Wind Intensity": 7 }
+    }
+  ]
+}
