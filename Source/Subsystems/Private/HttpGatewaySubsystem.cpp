@@ -997,6 +997,12 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
             if (ShowStr) Settings.Emplace(TEXT("bCityLights"), Show);
             if (ValueStr && ValueStr->IsNumeric()) Settings.Emplace(TEXT("CityLightsIntensity"), *ValueStr);
         }
+        // group=monde&action=headlamps&show=1[&value=1.0] : frontales des coureurs la nuit (et leur intensite)
+        if (Action.Equals(TEXT("headlamps"), ESearchCase::IgnoreCase))
+        {
+            if (ShowStr) Settings.Emplace(TEXT("bHeadlamps"), Show);
+            if (ValueStr && ValueStr->IsNumeric()) Settings.Emplace(TEXT("HeadlampIntensity"), *ValueStr);
+        }
         // group=monde&action=fauna&show=1[&value=1.0] : oiseaux (et leur densite)
         if (Action.Equals(TEXT("fauna"), ESearchCase::IgnoreCase))
         {
