@@ -91,14 +91,6 @@
 			"Enabled": false
 		},
 		{
-			"Name": "Bridge",
-			"Enabled": false
-		},
-		{
-			"Name": "Fab",
-			"Enabled": false
-		},
-		{
 			"Name": "MetaHumanSDK",
 			"Enabled": false
 		},
@@ -189,6 +181,25 @@
 		{
 			"Name": "WindowsMoviePlayer",
 			"Enabled": true
+		},
+		{
+			"Name": "ModelContextProtocol",
+			"Enabled": true
+		},
+		{
+			"Name": "AIModuleToolset",
+			"Enabled": true
+		},
+		{
+			"Name": "AllToolsets",
+			"Enabled": true
+		},
+		{
+			"Name": "PlayFabParty",
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Win64"
+			]
 		}
 	]
 }
