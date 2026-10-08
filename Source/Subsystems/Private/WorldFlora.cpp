@@ -12,6 +12,10 @@
 #include "Engine/StaticMesh.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
+#include "Dom/JsonObject.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "Serialization/JsonSerializer.h"
 
 namespace WorldFlora
 {
@@ -19,8 +23,8 @@ namespace WorldFlora
 	constexpr float CellSize = 1000.f;                    // 10 m
 	constexpr float MaxCameraHeightAboveGround = 8000.f;  // 80 m
 	constexpr int32 TracesPerFrame = 300;                 // budget de lancers de rayon par image
-	// Nombre de tentatives par cellule a densite 1 (herbe, buissons, rochers)
-	constexpr float SamplesPerCell[] = { 7.f, 0.6f, 0.35f };
+	// Nombre de tentatives par cellule de 10 m a densite 1 (touffes d'herbe, buissons, rochers)
+	constexpr float SamplesPerCell[] = { 40.f, 1.2f, 0.35f };
 	constexpr float TreelineM = 2300.f;
 
 	uint32 Hash(int32 X, int32 Y, int32 Salt)
@@ -47,16 +51,38 @@ void AWorldFlora::BeginPlay()
 void AWorldFlora::LoadMeshes()
 {
 	IAssetRegistry& Registry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
+	// Liste explicite dans RemoteControl/Flore.json (cles grass, shrubs, rocks), sinon les dossiers Flora
+	TSharedPtr<FJsonObject> Config;
+	FString Json;
+	const FString ConfigFile = FPaths::Combine(FPaths::ProjectDir(), TEXT("RemoteControl"), TEXT("Flore.json"));
+	if (FFileHelper::LoadFileToString(Json, *ConfigFile)) FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Json), Config);
+	const TCHAR* ConfigKeys[] = { TEXT("grass"), TEXT("shrubs"), TEXT("rocks") };
+
 	for (int32 Kind = 0; Kind < static_cast<int32>(EKind::Count); ++Kind)
 	{
-		TArray<FAssetData> Assets;
-		Registry.GetAssetsByPath(FName(WorldFlora::Folders[Kind]), Assets, /*bRecursive=*/true);
-		for (const FAssetData& Asset : Assets)
+		TArray<UStaticMesh*> Meshes;
+		const TArray<TSharedPtr<FJsonValue>>* Paths = nullptr;
+		if (Config.IsValid() && Config->TryGetArrayField(ConfigKeys[Kind], Paths))
 		{
-			if (Asset.AssetClassPath != UStaticMesh::StaticClass()->GetClassPathName()) continue;
-			UStaticMesh* Mesh = Cast<UStaticMesh>(Asset.GetAsset());
-			if (!Mesh) continue;
+			for (const TSharedPtr<FJsonValue>& Path : *Paths)
+			{
+				if (UStaticMesh* Mesh = LoadObject<UStaticMesh>(nullptr, *Path->AsString())) Meshes.Add(Mesh);
+				else UE_LOG(LogTemp, Warning, TEXT("[Flore] Mesh introuvable : %s"), *Path->AsString());
+			}
+		}
+		else
+		{
+			TArray<FAssetData> Assets;
+			Registry.GetAssetsByPath(FName(WorldFlora::Folders[Kind]), Assets, /*bRecursive=*/true);
+			for (const FAssetData& Asset : Assets)
+			{
+				if (Asset.AssetClassPath != UStaticMesh::StaticClass()->GetClassPathName()) continue;
+				if (UStaticMesh* Mesh = Cast<UStaticMesh>(Asset.GetAsset())) Meshes.Add(Mesh);
+			}
+		}
 
+		for (UStaticMesh* Mesh : Meshes)
+		{
 			UHierarchicalInstancedStaticMeshComponent* HISM = NewObject<UHierarchicalInstancedStaticMeshComponent>(this);
 			HISM->SetStaticMesh(Mesh);
 			HISM->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -72,7 +98,7 @@ void AWorldFlora::LoadMeshes()
 		}
 	}
 	Status = AllComponents.Num() == 0
-		? TEXT("Aucun mesh dans /Game/LTVContent/Flora (Grass, Shrubs, Rocks)")
+		? TEXT("Aucun mesh (RemoteControl/Flore.json ou /Game/LTVContent/Flora)")
 		: FString::Printf(TEXT("%d meshes charges"), AllComponents.Num());
 }
 
@@ -141,17 +167,40 @@ void AWorldFlora::ContinueBuild()
 			int32 Count = FMath::FloorToInt(Expected);
 			if (Rand.FRand() < Expected - Count) ++Count;
 
+			// Herbe : beaucoup de petites touffes, posees sur le plan du sol sonde une seule fois au centre de la cellule
+			const bool bGrass = static_cast<EKind>(Kind) == EKind::Grass;
+			FHitResult CellHit;
+			if (bGrass && Count > 0)
+			{
+				const FVector2D CellCenter2D((Cell.X + 0.5f) * WorldFlora::CellSize, (Cell.Y + 0.5f) * WorldFlora::CellSize);
+				if (FVector2D::Distance(CellCenter2D, FVector2D(BuildCenter)) > 6000.f) continue;
+				--Budget;
+				const FVector CellCenter((Cell.X + 0.5f) * WorldFlora::CellSize, (Cell.Y + 0.5f) * WorldFlora::CellSize, BuildCenter.Z);
+				if (!TraceGround(CellCenter, CellHit) || CellHit.ImpactNormal.Z < 0.5) continue;
+			}
+
 			for (int32 i = 0; i < Count; ++i)
 			{
 				const FVector XY((Cell.X + Rand.FRand()) * WorldFlora::CellSize, (Cell.Y + Rand.FRand()) * WorldFlora::CellSize, BuildCenter.Z);
 				const float Yaw = Rand.FRandRange(0.f, 360.f);
-				const float Scale = Rand.FRandRange(0.75f, 1.3f);
+				const float Scale = bGrass ? Rand.FRandRange(0.8f, 1.7f) : Rand.FRandRange(0.75f, 1.3f);
 				const int32 MeshIndex = Rand.RandRange(0, Components.Num() - 1);
 				const float Keep = Rand.FRand();
-				--Budget;
 
 				FHitResult Hit;
-				if (!TraceGround(XY, Hit)) continue;
+				if (bGrass)
+				{
+					// Hauteur sur le plan tangent : z = z0 - (n.x * dx + n.y * dy) / n.z
+					Hit = CellHit;
+					const FVector N = CellHit.ImpactNormal;
+					const double DZ = -(N.X * (XY.X - CellHit.ImpactPoint.X) + N.Y * (XY.Y - CellHit.ImpactPoint.Y)) / N.Z;
+					Hit.ImpactPoint = FVector(XY.X, XY.Y, CellHit.ImpactPoint.Z + DZ);
+				}
+				else
+				{
+					--Budget;
+					if (!TraceGround(XY, Hit)) continue;
+				}
 				const float Slope = static_cast<float>(Hit.ImpactNormal.Z); // 1 = plat
 				float AltitudeM = static_cast<float>(Hit.ImpactPoint.Z) / 100.f;
 				if (const ACesiumGeoreference* Geo = Georeference.Get())
@@ -200,7 +249,9 @@ void AWorldFlora::ApplyBuild()
 			HISM->AddInstances(*Instances, false, /*bWorldSpace=*/true);
 			ShownInstances += Instances->Num();
 		}
-		HISM->SetCullDistances(0, static_cast<int32>(BuildRadius));
+		// L'herbe (petites touffes) disparait plus tot : au-dela de 60 m elle ne fait que couter
+		const bool bGrass = Kinds[static_cast<int32>(EKind::Grass)].Components.Contains(HISM);
+		HISM->SetCullDistances(0, static_cast<int32>(bGrass ? FMath::Min(BuildRadius, 6000.f) : BuildRadius));
 		HISM->SetVisibility(true);
 	}
 	bShown = true;

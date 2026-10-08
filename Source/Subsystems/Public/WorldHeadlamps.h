@@ -6,15 +6,15 @@
 #include "GameFramework/Actor.h"
 #include "WorldHeadlamps.generated.h"
 
-class UStaticMeshComponent;
-class UMaterialInstanceDynamic;
+class UPointLightComponent;
 class UWorldAmbienceSubsystem;
 
 /**
- * @brief Frontales des coureurs la nuit : un point lumineux emissif (sans ombre ni lumiere dynamique)
- * a 3 m au-dessus de chaque coureur affiche. Sa taille suit la distance a la camera pour rester
- * visible en plan aerien, le bloom fait le halo. Allume au crepuscule selon la nuit de MPC_World
- * et le reglage regie (bHeadlamps, HeadlampIntensity).
+ * @brief Frontales des coureurs la nuit : une lumiere ponctuelle sans ombre au-dessus de chaque coureur
+ * affiche, qui eclaire le terrain autour de lui (une flaque de lumiere, pas de boule visible).
+ * Le rayon grandit avec la distance a la camera pour que la lueur reste lisible en plan aerien, et
+ * l'intensite suit pour garder le meme eclat. Allumage progressif au crepuscule selon la nuit de
+ * MPC_World et le reglage regie (bHeadlamps, HeadlampIntensity, HeadlampSize).
  */
 UCLASS(NotPlaceable, Transient)
 class SUBSYSTEMS_API AWorldHeadlamps : public AActor
@@ -30,18 +30,13 @@ public:
 
 private:
 	void RefreshRunners();
-	UStaticMeshComponent* GetLamp(int32 Index);
+	UPointLightComponent* GetLamp(int32 Index);
 
 	UPROPERTY()
-	TArray<TObjectPtr<UStaticMeshComponent>> Lamps;
-	UPROPERTY()
-	TObjectPtr<UMaterialInstanceDynamic> LampMaterial;
-	UPROPERTY()
-	TObjectPtr<UStaticMesh> LampMesh;
+	TArray<TObjectPtr<UPointLightComponent>> Lamps;
 
 	TWeakObjectPtr<UWorldAmbienceSubsystem> Ambience;
 	TArray<TWeakObjectPtr<AActor>> Runners;
 	float RefreshTimer = 0.f;
-	float AppliedGlow = -1.f;
 	int32 LitCount = 0;
 };

@@ -4,20 +4,18 @@
 #include "WorldAmbienceSubsystem.h"
 #include "RunnerInterface.h"
 #include "Camera/PlayerCameraManager.h"
+#include "Components/PointLightComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "Engine/StaticMesh.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
-#include "Materials/MaterialInstanceDynamic.h"
 
 namespace WorldHeadlamps
 {
-	const TCHAR* MeshPath = TEXT("/Engine/BasicShapes/Sphere.Sphere");          // diametre 100 cm
-	const TCHAR* MaterialPath = TEXT("/Game/LTVContent/Materials/Masters/M_MasterIllum.M_MasterIllum"); // unlit, BaseColor x IllumFixed
-	constexpr float HeadHeight = 300.f;      // cm : au-dessus du ruban du trace lumineux
-	constexpr float MinDiameter = 40.f;      // cm, vu de pres
-	constexpr float ScreenRatio = 0.008f;    // diametre / distance : ~6 px a 1080p quelle que soit la distance
+	constexpr float HeadHeight = 250.f;      // cm : la lampe est un peu au-dessus de la tete
+	constexpr float MinRadius = 1500.f;      // cm : flaque de 15 m vue de pres
+	constexpr float RadiusPerDistance = 0.012f; // rayon / distance camera : la lueur reste lisible de loin
+	constexpr float BaseCandela = 60.f;      // intensite pour un rayon de 15 m
 }
 
 AWorldHeadlamps::AWorldHeadlamps()
@@ -31,12 +29,6 @@ void AWorldHeadlamps::BeginPlay()
 {
 	Super::BeginPlay();
 	Ambience = GetWorld()->GetSubsystem<UWorldAmbienceSubsystem>();
-	LampMesh = LoadObject<UStaticMesh>(nullptr, WorldHeadlamps::MeshPath);
-	if (UMaterialInterface* Base = LoadObject<UMaterialInterface>(nullptr, WorldHeadlamps::MaterialPath))
-	{
-		LampMaterial = UMaterialInstanceDynamic::Create(Base, this);
-		LampMaterial->SetVectorParameterValue(TEXT("BaseColor"), FLinearColor(0.85f, 0.93f, 1.f)); // LED blanc froid : se detache du trace orange
-	}
 }
 
 void AWorldHeadlamps::RefreshRunners()
@@ -48,17 +40,18 @@ void AWorldHeadlamps::RefreshRunners()
 	}
 }
 
-UStaticMeshComponent* AWorldHeadlamps::GetLamp(int32 Index)
+UPointLightComponent* AWorldHeadlamps::GetLamp(int32 Index)
 {
 	while (Lamps.Num() <= Index)
 	{
-		UStaticMeshComponent* Lamp = NewObject<UStaticMeshComponent>(this);
-		Lamp->SetStaticMesh(LampMesh);
-		Lamp->SetMaterial(0, LampMaterial);
-		Lamp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		Lamp->SetCastShadow(false);
-		Lamp->SetAffectDistanceFieldLighting(false);
+		UPointLightComponent* Lamp = NewObject<UPointLightComponent>(this);
 		Lamp->SetMobility(EComponentMobility::Movable);
+		Lamp->SetCastShadows(false);              // pas d'ombre : cout quasi nul, meme avec beaucoup de coureurs
+		Lamp->SetIntensityUnits(ELightUnits::Candelas);
+		Lamp->SetUseTemperature(true);
+		Lamp->SetTemperature(5600.f);              // LED de frontale, blanc neutre
+		Lamp->SetIndirectLightingIntensity(0.3f);  // peu de rebond Lumen
+		Lamp->SetSourceRadius(5.f);
 		Lamp->SetupAttachment(GetRootComponent());
 		Lamp->RegisterComponent();
 		Lamps.Add(Lamp);
@@ -70,7 +63,7 @@ void AWorldHeadlamps::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	const UWorldAmbienceSubsystem* World = Ambience.Get();
-	if (!World || !LampMesh || !LampMaterial) return;
+	if (!World) return;
 
 	// Les coureurs apparaissent et disparaissent au fil des courses : liste relue toutes les 2 s
 	RefreshTimer -= DeltaSeconds;
@@ -84,11 +77,7 @@ void AWorldHeadlamps::Tick(float DeltaSeconds)
 	// Allumage progressif entre la fin du jour et la nuit noire
 	const float Night = FMath::SmoothStep(0.3f, 0.7f, World->GetState().Night);
 	const float Glow = Settings.bHeadlamps ? Settings.HeadlampIntensity * Night : 0.f;
-	if (!FMath::IsNearlyEqual(Glow, AppliedGlow, 0.01f))
-	{
-		AppliedGlow = Glow;
-		LampMaterial->SetScalarParameterValue(TEXT("IllumFixed"), Glow * 80.f);
-	}
+	const float Size = FMath::Max(Settings.HeadlampSize, 0.1f);
 
 	const APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
 	const FVector CamPos = Camera ? Camera->GetCameraLocation() : FVector::ZeroVector;
@@ -105,10 +94,14 @@ void AWorldHeadlamps::Tick(float DeltaSeconds)
 			if (!Interface || Runner->IsHidden() || (Foot && !Foot->IsVisible())) continue;
 
 			const FVector Head = Runner->GetActorLocation() + FVector(0.0, 0.0, WorldHeadlamps::HeadHeight);
-			const float Diameter = FMath::Max(WorldHeadlamps::MinDiameter, static_cast<float>(FVector::Dist(Head, CamPos)) * WorldHeadlamps::ScreenRatio * FMath::Max(Settings.HeadlampSize, 0.1f));
-			UStaticMeshComponent* Lamp = GetLamp(LitCount++);
-			Lamp->SetWorldLocationAndRotation(Head, FQuat::Identity, false, nullptr, ETeleportType::TeleportPhysics);
-			Lamp->SetWorldScale3D(FVector(Diameter / 100.f));
+			const float Radius = FMath::Max(WorldHeadlamps::MinRadius, static_cast<float>(FVector::Dist(Head, CamPos)) * WorldHeadlamps::RadiusPerDistance) * Size;
+			// Intensite proportionnelle au carre du rayon : meme eclat au centre quelle que soit la taille
+			const float Candela = WorldHeadlamps::BaseCandela * FMath::Square(Radius / WorldHeadlamps::MinRadius) * Glow;
+
+			UPointLightComponent* Lamp = GetLamp(LitCount++);
+			Lamp->SetWorldLocation(Head);
+			Lamp->SetAttenuationRadius(Radius);
+			Lamp->SetIntensity(Candela);
 			Lamp->SetVisibility(true);
 		}
 	}

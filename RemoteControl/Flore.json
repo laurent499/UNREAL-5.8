@@ -1,0 +1,17 @@
+{
+  "_aide": "Meshes de la flore au ras du sol (AWorldFlora). Chemins d'objets Unreal ; relu au lancement de la partie. A defaut, les dossiers /Game/LTVContent/Flora/Grass, Shrubs et Rocks sont utilises.",
+  "grass": [
+    "/Game/LookoutTower/Meshes/Forest/Generic/SM_Grass_A.SM_Grass_A",
+    "/Game/LookoutTower/Meshes/Forest/Plants/SM_Flower_A1.SM_Flower_A1"
+  ],
+  "shrubs": [
+    "/Game/LookoutTower/Meshes/Forest/Plants/SM_Blueberry_A1.SM_Blueberry_A1",
+    "/Game/LookoutTower/Meshes/Forest/Plants/SM_Fern_A1.SM_Fern_A1"
+  ],
+  "rocks": [
+    "/Game/LookoutTower/Meshes/Forest/Rocks/SM_Rock_C1.SM_Rock_C1",
+    "/Game/LookoutTower/Meshes/Forest/Rocks/SM_Rock_C2.SM_Rock_C2",
+    "/Game/LookoutTower/Meshes/Forest/Rocks/SM_Small_Rock_A.SM_Small_Rock_A",
+    "/Game/LookoutTower/Meshes/Forest/Rocks/SM_Rock_C3.SM_Rock_C3"
+  ]
+}
