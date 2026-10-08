@@ -110,6 +110,7 @@
     <h2>Faune</h2>
     <p class="check"><label><input id="fauna" type="checkbox"> Oiseaux (rapaces en vol plané, petits vols groupés)</label></p>
     <div class="row"><label for="faunaDensity">Densité</label><input id="faunaDensity" type="range" min="0" max="1.5" step="0.05"><output id="faunaDensityOut"></output><span></span></div>
+    <div class="row"><label for="faunaMaxHeight">Visibles jusqu'à (m du sol)</label><input id="faunaMaxHeight" type="range" min="100" max="5000" step="50"><output id="faunaMaxHeightOut"></output><span></span></div>
     <div class="hint">De jour seulement, sans forte pluie ni grand vent, quand la caméra est à moins de 800 m du sol. Le gardien de performance coupe la faune avant les nuages bas.</div>
   </section>
 
@@ -329,6 +330,8 @@ function showMonde(m) {
   $("fauna").checked = !!m.settings.bFauna;
   if (document.activeElement !== $("faunaDensity")) $("faunaDensity").value = m.settings.faunaDensity;
   $("faunaDensityOut").textContent = Number(m.settings.faunaDensity).toFixed(2);
+  if (document.activeElement !== $("faunaMaxHeight")) $("faunaMaxHeight").value = m.settings.faunaMaxHeightM;
+  $("faunaMaxHeightOut").textContent = Math.round(m.settings.faunaMaxHeightM);
   if (document.activeElement !== $("cityIntensity")) $("cityIntensity").value = m.settings.cityLightsIntensity;
   $("cityIntensityOut").textContent = Number(m.settings.cityLightsIntensity).toFixed(2);
   for (const [id, k] of [["snowLine", "snowLineOverrideM"], ["smoothMin", "weatherSmoothMinutes"], ["refreshMin", "autoWeatherRefreshMinutes"]]) {
@@ -366,6 +369,8 @@ $("floraRadius").onchange = () => setMonde(`floraRadiusM=${$("floraRadius").valu
 $("fauna").onchange = () => setMonde(`bFauna=${$("fauna").checked ? 1 : 0}`);
 $("faunaDensity").oninput = () => { $("faunaDensityOut").textContent = Number($("faunaDensity").value).toFixed(2); };
 $("faunaDensity").onchange = () => setMonde(`faunaDensity=${$("faunaDensity").value}`);
+$("faunaMaxHeight").oninput = () => { $("faunaMaxHeightOut").textContent = $("faunaMaxHeight").value; };
+$("faunaMaxHeight").onchange = () => setMonde(`faunaMaxHeightM=${$("faunaMaxHeight").value}`);
 $("cityLights").onchange =() => setMonde(`bCityLights=${$("cityLights").checked ? 1 : 0}`);
 $("cityIntensity").oninput = () => { $("cityIntensityOut").textContent = Number($("cityIntensity").value).toFixed(2); };
 $("cityIntensity").onchange = () => setMonde(`cityLightsIntensity=${$("cityIntensity").value}`);

@@ -46,6 +46,8 @@ struct SUBSYSTEMS_API FWorldAmbienceSettings
 	// --- Faune / flore ---
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bFauna = true;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float FaunaDensity = 1.f;
+	/** Les oiseaux sont visibles tant que la camera est a moins de cette hauteur au-dessus du sol (m) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float FaunaMaxHeightM = 1500.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bFlora = true;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float FloraDensity = 1.f;
 	/** Rayon de la flore autour de la camera (m) */

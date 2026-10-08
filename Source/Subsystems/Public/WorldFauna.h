@@ -17,7 +17,7 @@ class UWorldAmbienceSubsystem;
  *
  * Tout tient dans deux composants instancies (corps et ailes), avec des meshes construits au lancement :
  * quelques dizaines d'instances, sans ombre, mises a jour sur le CPU. Les oiseaux n'apparaissent que
- * de jour, sans forte pluie ni grand vent, quand la camera est a moins de 800 m du sol ; leur nombre
+ * de jour, sans forte pluie ni grand vent, quand la camera est sous l'altitude de visibilite reglee (FaunaMaxHeightM) ; leur nombre
  * suit la densite de faune effective (reglage regie et gardien de performance).
  */
 UCLASS(NotPlaceable, Transient)
@@ -86,6 +86,7 @@ private:
 	float AppliedDensity = -1.f;
 	bool bHasAnchor = false;
 	bool bVisible = false;
+	float SpawnCameraHeight = 0.f;
 	FString Status;
 
 	// Chef du vol groupe : cap qui derive lentement autour du point d'ancrage

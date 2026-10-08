@@ -14,7 +14,7 @@
 namespace WorldFauna
 {
 	const TCHAR* MaterialPath = TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial");
-	constexpr float MaxCameraHeightAboveGround = 80000.f; // 800 m
+
 	constexpr float RespawnDistance = 150000.f;           // 1,5 km
 	constexpr float AnchorDistance = 8000.f;              // 80 m devant la camera
 
@@ -147,7 +147,7 @@ bool AWorldFauna::IsFaunaAllowed()
 	if (S.Night >= 0.5f) { Status = TEXT("Nuit"); return false; }
 	if (S.Rain >= 5.f || S.Snow >= 5.f || S.Wind >= 8.f) { Status = TEXT("Meteo trop forte"); return false; }
 	if (!bHasAnchor) { Status = TEXT("Sol introuvable sous la camera"); return false; }
-	if (CameraHeightAboveGround >= WorldFauna::MaxCameraHeightAboveGround)
+	if (CameraHeightAboveGround >= World->GetSettings().FaunaMaxHeightM * 100.f)
 	{
 		Status = FString::Printf(TEXT("Camera trop haute (%.0f m du sol)"), CameraHeightAboveGround / 100.f);
 		return false;
@@ -170,7 +170,8 @@ bool AWorldFauna::UpdateAnchor(float DeltaSeconds)
 	Forward.Z = 0.0;
 	Forward = Forward.GetSafeNormal(UE_SMALL_NUMBER, FVector::ForwardVector);
 
-	const FVector Candidate = CamPos + Forward * WorldFauna::AnchorDistance;
+	// Plus la camera est haute, plus les oiseaux sont places loin devant et haut, entre le sol et elle
+	const FVector Candidate = CamPos + Forward * FMath::Max(WorldFauna::AnchorDistance, CameraHeightAboveGround * 0.8f);
 	const float GroundZ = GroundZAt(Candidate);
 	if (GroundZ == TNumericLimits<float>::Lowest()) return false;
 	const float CamGroundZ = GroundZAt(CamPos);
@@ -190,6 +191,9 @@ void AWorldFauna::Respawn(const FVector& Center, float GroundZ)
 {
 	const float Density = Ambience.IsValid() ? Ambience->GetEffectiveFaunaDensity() : 0.f;
 	AppliedDensity = Density;
+	// Hauteur de camera au moment du placement : les orbites s'elargissent avec elle
+	SpawnCameraHeight = CameraHeightAboveGround;
+	const float Spread = FMath::Max(1.f, SpawnCameraHeight / 10000.f);
 	Birds.Reset();
 
 	const int32 Raptors = FMath::Clamp(FMath::RoundToInt(2.f * Density), 0, 3);
@@ -198,13 +202,13 @@ void AWorldFauna::Respawn(const FVector& Center, float GroundZ)
 		FBird B;
 		B.Type = EBirdType::Raptor;
 		const float A = FMath::FRandRange(0.f, UE_TWO_PI);
-		const float Dist = FMath::FRandRange(2000.f, 6000.f);
+		const float Dist = FMath::FRandRange(2000.f, 6000.f) * Spread;
 		B.OrbitCenter = Center + FVector(FMath::Cos(A) * Dist, FMath::Sin(A) * Dist, 0.f);
 		B.OrbitCenter.Z = GroundZ;
-		B.OrbitRadius = FMath::FRandRange(2500.f, 5000.f);
+		B.OrbitRadius = FMath::FRandRange(2500.f, 5000.f) * Spread;
 		B.OrbitSpeed = (FMath::RandBool() ? 1.f : -1.f) * 1000.f / B.OrbitRadius; // ~10 m/s
 		B.OrbitAngle = FMath::FRandRange(0.f, UE_TWO_PI);
-		B.HeightAboveGround = FMath::FRandRange(2500.f, 7000.f);
+		B.HeightAboveGround = FMath::FRandRange(FMath::Max(2500.f, SpawnCameraHeight * 0.25f), FMath::Max(7000.f, SpawnCameraHeight * 0.6f));
 		B.Scale = FMath::FRandRange(1.2f, 1.6f); // envergure 2,6 a 3,5 m : gypaete, aigle royal
 		B.FlapSpeed = FMath::FRandRange(5.f, 7.f);
 		B.FlapTimer = FMath::FRandRange(2.f, 15.f);
@@ -215,7 +219,7 @@ void AWorldFauna::Respawn(const FVector& Center, float GroundZ)
 	const int32 Flock = FMath::Clamp(FMath::RoundToInt(10.f * Density), 0, 16);
 	FlockLeader = Center + FVector(FMath::FRandRange(-8000.f, 8000.f), FMath::FRandRange(-8000.f, 8000.f), 0.f);
 	FlockHeading = FMath::FRandRange(0.f, UE_TWO_PI);
-	FlockHeight = FMath::FRandRange(1500.f, 3500.f);
+	FlockHeight = FMath::FRandRange(FMath::Max(1500.f, SpawnCameraHeight * 0.15f), FMath::Max(3500.f, SpawnCameraHeight * 0.35f));
 	FlockLeader.Z = GroundZ + FlockHeight;
 	for (int32 i = 0; i < Flock; ++i)
 	{
@@ -245,7 +249,7 @@ void AWorldFauna::Simulate(float DeltaSeconds)
 	// Chef du vol groupe : cap qui ondule, ramene vers le point d'ancrage s'il s'eloigne de plus de 120 m
 	const FVector ToAnchor = Anchor - FlockLeader;
 	float Turn = FMath::Sin(FlockTime * 0.13f) * 0.25f;
-	if (ToAnchor.Size2D() > 12000.f)
+	if (ToAnchor.Size2D() > 12000.f * FMath::Max(1.f, SpawnCameraHeight / 10000.f))
 	{
 		const float Wanted = FMath::Atan2(ToAnchor.Y, ToAnchor.X);
 		Turn += FMath::FindDeltaAngleRadians(FlockHeading, Wanted) * 0.6f;
@@ -327,7 +331,10 @@ void AWorldFauna::Tick(float DeltaSeconds)
 	if (!bAllowed) return;
 
 	const float Density = Ambience->GetEffectiveFaunaDensity();
-	if (bAnchorMoved || !FMath::IsNearlyEqual(Density, AppliedDensity, 0.05f) || Birds.Num() == 0)
+	// La camera a beaucoup monte ou descendu depuis le placement : on replace les oiseaux a sa hauteur
+	const float HeightRatio = (CameraHeightAboveGround + 5000.f) / (SpawnCameraHeight + 5000.f);
+	const bool bHeightChanged = HeightRatio > 1.6f || HeightRatio < 0.6f;
+	if (bAnchorMoved || bHeightChanged || !FMath::IsNearlyEqual(Density, AppliedDensity, 0.05f) || Birds.Num() == 0)
 	{
 		Respawn(Anchor, AnchorGroundZ);
 		if (Birds.Num() == 0) return;
