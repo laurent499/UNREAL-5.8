@@ -10,6 +10,7 @@
 #include "Components/SceneComponent.h"
 #include "Components/TrailTextWidgetComponent.h"
 #include "Engine/Font.h"
+#include "Components/RawTextMaterial.h"
 
 UNameComponent::UNameComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -59,6 +60,7 @@ void UNameComponent::UpdateName(const FString& RunnerName)
 	if (NameTextComponent)
 	{
 		NameTextComponent->SetText(FText::FromString(RunnerName));
+		TrailRawText::Apply(NameTextComponent, FColor::White);
 		FVector NameLocalSize = NameTextComponent->GetTextLocalSize();
 		
 		StartLocation = FVector(0.f, 0.f, 0.f);

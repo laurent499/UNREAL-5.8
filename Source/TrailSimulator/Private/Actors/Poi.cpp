@@ -10,6 +10,7 @@
 #include "CesiumGlobeAnchorComponent.h"
 #include "CineCameraComponent.h"
 #include "OWLCaptureComponent.h"
+#include "Components/RawTextMaterial.h"
 #include "SettingsSubsystem.h"
 #include "WeatherSubsystem.h"
 #include "RaceSubsystem.h"
@@ -396,6 +397,13 @@ void APoi::SetBroadcastCaptureEnabled_Implementation(bool bEnabled, class UTextu
 void APoi::BeginPlay()
 {
 	Super::BeginPlay();
+	// Les panneaux masquent les textes des runners (M_RawText compare sa profondeur a la CustomDepth)
+	TrailRawText::EnableOcclusion(this);
+	TrailRawText::ApplyToAllTexts(this);
+	if (FootComponent)
+	{
+		FootComponent->SetTranslucentSortPriority(-10); // poteau dessine avant les panneaux
+	}
 	DynaPawn = UGameplayStatics::GetPlayerPawn(this, 0);
 	UCesiumFlyToComponent* FlyToComponent = DynaPawn->GetComponentByClass<UCesiumFlyToComponent>();
 	FlyToComponent->OnFlightComplete.AddDynamic(this, &APoi::UpdateGlobeAnchor);
@@ -474,6 +482,7 @@ void APoi::UpdateGlobeAnchor()
 void APoi::UpdatePoi(FRacePOI NewPoiDatas, FRaceSetup NewRaceSetup)
 {
 	PoiDatas = MoveTemp(NewPoiDatas);
+	TrailRawText::EnableOcclusion(this);
 	Georeference = ACesiumGeoreference::GetDefaultGeoreference(GetWorld());
 	GlobeAnchorComponent->SetGeoreference(Georeference);
 	

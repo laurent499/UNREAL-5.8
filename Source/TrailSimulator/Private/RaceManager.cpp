@@ -10,6 +10,8 @@
 #include "HttpGatewaySubsystem.h"
 #include "LoadingStatusSubsystem.h"
 #include "OWLViewportCapture.h"
+#include "OWLMediaOutput.h"
+#include "OWLMediaOutputComponent.h"
 #include "RunnerSubsystem.h"
 #include "RaceSubsystem.h"
 #include "ScaleSubsystem.h"
@@ -33,6 +35,8 @@
 #include "Actors/UTMB/Poi_UTMB.h"
 #include "Actors/UTMB/Runner_UTMB.h"
 #include "Kismet/GameplayStatics.h"
+#include "Camera/PlayerCameraManager.h"
+#include "Components/SkyAtmosphereComponent.h"
 #include "UI/SLoadingOverlay.h"
 #include "Widgets/SWeakWidget.h"
 #include "Engine/EngineTypes.h"
@@ -321,6 +325,44 @@ void ARaceManager::BeginPlay()
 	AActor* Streamactor = UGameplayStatics::GetActorOfClass(GetWorld(), AOWLViewportCapture::StaticClass());
 	if (Streamactor)
 		Cast<AOWLViewportCapture>(Streamactor)->PauseRendering = false;
+
+	// Audio coupe sur toutes les destinations OWL des le BeginPlay, quel que soit le moyen de
+	// lancer le flux (case du RaceManager, -StartSRT, bouton OWL) : l'init du resampler audio
+	// 7.1 -> stereo precedait chaque crash. -SRTAudio / bSRTEncodeAudio le reactivent.
+	if (AOWLMediaOutput* OwlOutput = Cast<AOWLMediaOutput>(UGameplayStatics::GetActorOfClass(GetWorld(), AOWLMediaOutput::StaticClass())))
+	{
+		if (OwlOutput->MediaOutputComponent)
+		{
+			const bool bAudio = bSRTEncodeAudio || FParse::Param(FCommandLine::Get(), TEXT("SRTAudio"));
+			for (FOWLMediaOutputDestination& Destination : OwlOutput->MediaOutputComponent->Settings.Destinations)
+			{
+				Destination.bEncodeAudio = bAudio;
+			}
+		}
+	}
+
+	// Demarrage differe : lancer l'encodeur OWL des la premiere image fait planter le RHI D3D12
+	// (CopyCommandList->Reset E_INVALIDARG, UE 5.8). On laisse le rendu et la capture s'installer.
+	// -StartSRT (passe par RemoteControl/Lancer_Standalone.bat) force le flux quelle que soit la
+	// case de l'acteur dans la map ; -SRTURL=srt://hote:port remplace la destination.
+	const bool bForceSRT = FParse::Param(FCommandLine::Get(), TEXT("StartSRT"));
+	FString SRTUrlOverride;
+	if (FParse::Value(FCommandLine::Get(), TEXT("SRTURL="), SRTUrlOverride) && !SRTUrlOverride.IsEmpty())
+	{
+		SRTStreamURL = SRTUrlOverride;
+	}
+	if (!bStartSRTOnBeginPlay && !bForceSRT)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[OWL] Demarrage auto du flux SRT desactive (bStartSRTOnBeginPlay = false sur %s). Ajouter -StartSRT a la ligne de commande pour le forcer."), *GetName());
+	}
+	if (bStartSRTOnBeginPlay || bForceSRT)
+	{
+		FTimerHandle SRTStartHandle;
+		GetWorldTimerManager().SetTimer(SRTStartHandle, FTimerDelegate::CreateWeakLambda(this, [this]()
+		{
+			StartSRTOutput();
+		}), 3.f, false);
+	}
 	
 	// UDS Timer
 	if (UDSClass)
@@ -386,6 +428,30 @@ void ARaceManager::UpdateUdsTime()
 	{
 		(Time >= 600 && Time <= 1800)  ? OnChangeDayNight.Broadcast(true) : OnChangeDayNight.Broadcast(false);
 	}
+	RecenterSkyAtmosphere();
+}
+
+/**
+ * @brief Garde le sommet de la planete UDS sous la camera.
+ * UDS (« Keep Planet Top at Camera XY Location ») peut laisser son SkyAtmosphere a des milliers
+ * de km apres un vol Cesium / un changement d'origine : la camera se retrouve hors de l'atmosphere
+ * et une partie du ciel devient noire. Constate le 02/10 : atmosphere a 6385 km de la camera.
+ */
+void ARaceManager::RecenterSkyAtmosphere()
+{
+	if (!UDSActor) return;
+	USkyAtmosphereComponent* Atmosphere = UDSActor->FindComponentByClass<USkyAtmosphereComponent>();
+	APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(this, 0);
+	if (!Atmosphere || !CameraManager) return;
+
+	const FVector Camera = CameraManager->GetCameraLocation();
+	const FVector Top = Atmosphere->GetComponentLocation();
+	static constexpr double MaxOffsetCm = 100000.0 * 100.0; // 100 km
+	if (FVector2D::Distance(FVector2D(Camera), FVector2D(Top)) <= MaxOffsetCm) return;
+
+	UE_LOG(LogTemp, Warning, TEXT("[UDS] SkyAtmosphere a %.0f km de la camera : recentre sous la camera"),
+		FVector2D::Distance(FVector2D(Camera), FVector2D(Top)) / 100000.0);
+	Atmosphere->SetWorldLocation(FVector(Camera.X, Camera.Y, Top.Z));
 }
 
 /**
@@ -429,7 +495,10 @@ void ARaceManager::PerformHttpRequestForRaces()
 		LoadingSubsystem->RegisterTask(IdRunners, FText::FromString(FString::Printf(TEXT("Runners for Race %lld"), RaceId)));
 		LoadingSubsystem->RegisterTask(IdPois, FText::FromString(FString::Printf(TEXT("Pois for Race %lld"), RaceId)));
 		LoadingSubsystem->RegisterTask(IdCheckpoints, FText::FromString(FString::Printf(TEXT("Checkpoints for Race %lld"), RaceId)));
-		LoadingSubsystem->RegisterTask(IdSetup, FText::FromString(FString::Printf(TEXT("Setup for Race %lld"), RaceId)));
+		// Le libelle de la tache Setup sert de titre a la carte de la course dans l'ecran d'initialisation
+		LoadingSubsystem->RegisterTask(IdSetup, FText::FromString(RaceEntry.name.IsEmpty()
+			? FString::Printf(TEXT("Course %lld"), RaceId)
+			: FString::Printf(TEXT("%s"), *RaceEntry.name)));
 
 		RaceSubsystem->PerformHttpRequestForRaceSetup(RaceEntry.raceId, CurrentRaceEndpoint, AllRaces.RacesEntries.Num(), cpt);
 		cpt++;
@@ -634,36 +703,37 @@ void ARaceManager::HandleRacePoisDatasGathered(int64 RaceID, FPOIs RacePoisDatas
 	
 	
 	if (!LoadingSubsystem || !PoiSubsystem || !RaceSubsystem || !ScaleSubsystem) return;
-	
+
+	const FName IdPois(*FString::Printf(TEXT("SpawnPois_%lld"), RaceID));
+
+	// Une course sans POI est un cas normal : la tache se termine en succes
 	if (RacePoisDatas.POIs.Num() == 0)
 	{
-		const FName IdPois(*FString::Printf(TEXT("SpawnPois_%lld"), RaceID));
-		LoadingSubsystem->Fail(IdPois,FText::FromString(FString::Printf(TEXT("No Pois found %lld"), RaceID)));
+		LoadingSubsystem->Complete(IdPois, FText::FromString(FString::Printf(TEXT("No Pois for Race %lld"), RaceID)));
 	} else{
 		Georeference = ACesiumGeoreference::GetDefaultGeoreference(GetWorld());
-		if (Georeference)
+		const FVector* GeorefLocation = GeorefLocations.Find(RaceID);
+		UWorld* World = GetWorld();
+		if (!Georeference || !GeorefLocation || !World)
 		{
-			Georeference->SetOriginLongitudeLatitudeHeight(
-				FVector(GeorefLocations[RaceID].X, 
-						GeorefLocations[RaceID].Y, 
-						GeorefLocations[RaceID].Z));
-			
+			LoadingSubsystem->Fail(IdPois, FText::FromString(FString::Printf(TEXT("Georeference not available for Race %lld"), RaceID)));
+		}
+		else
+		{
+			Georeference->SetOriginLongitudeLatitudeHeight(*GeorefLocation);
+
 			// Sampling ??
 			int32 cpt = 0;
-			LoadingSubsystem->SetRunning("SpawnsPois"+RaceID);
-			const FName IdPois(*FString::Printf(TEXT("SpawnPois_%lld"), RaceID));
+			LoadingSubsystem->SetRunning(IdPois);
 			const FRaceSetup& RaceSetup = RaceSubsystem->GetRaceSetupById(RaceID);
-			
-			for (FRacePOI RacePoi : RacePoisDatas.POIs)
+
+			for (const FRacePOI& RacePoi : RacePoisDatas.POIs)
 			{
-				float Result = cpt / RacePoisDatas.POIs.Num();
+				float Result = float(cpt) / float(RacePoisDatas.POIs.Num());
 				LoadingSubsystem->Update(IdPois, Result, FText::FromString(FString::Printf(TEXT("Poi %s spawned"), *RacePoi.name)));
 				FVector PoiLocation = Georeference->TransformLongitudeLatitudeHeightPositionToUnreal(
 					FVector(RacePoi.lon, RacePoi.lat, RacePoi.elevation));
-				
-				UWorld* World = GetWorld();
-				if (!World) return;
-				
+
 				const FVector Location = PoiLocation;
 				const FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
 				const FVector Scale = FVector(40.f);
@@ -673,7 +743,7 @@ void ARaceManager::HandleRacePoisDatasGathered(int64 RaceID, FPOIs RacePoisDatas
 				const TSubclassOf<AActor> PoiClass = GetPoiClassForRace(RaceSetup);
 				SpawnedActor = PoiSubsystem->SpawnPoi(RaceID, RacePoi.poiId, World, PoiClass, SpawnTransform);
 				float Total = float(cpt) / float(RacePoisDatas.POIs.Num());
-				LoadingSubsystem->Update(IdPois, Total, FText::FromString(TEXT("Poi " + RacePoi.name +  "spawned")));
+				LoadingSubsystem->Update(IdPois, Total, FText::FromString(FString::Printf(TEXT("Poi %s spawned"), *RacePoi.name)));
 				
 				if (IPoiInterface* PoiInterface = Cast<IPoiInterface>(SpawnedActor))
 				{
@@ -785,7 +855,9 @@ void ARaceManager::SpawnInitialRunners(int64 RaceID, FRunners& RunnersDatas)
 
 	if (RunnersDatas.Runners.IsEmpty())
 	{
-		LoadingSubsystem->Fail(IdRunners, FText::FromString(FString::Printf(TEXT("No Runners found for Race %lld"), RaceID)));
+		// Course sans coureur pour l'instant : pas une erreur, les teams arriveront
+		// par UpdateRunnersFromSnapshot (spawn a chaud)
+		LoadingSubsystem->Complete(IdRunners, FText::FromString(FString::Printf(TEXT("No runners yet for Race %lld"), RaceID)));
 		return;
 	}
 
@@ -1066,6 +1138,24 @@ void ARaceManager::MoveToPath_Internal(int64 RaceID)
 	RaceSubsystem->SetCurrentRaceId(RaceID);
 	if (RacePaths.Contains(RaceID))
 	{
+		// Les composants du pawn peuvent manquer (appel hors BeginPlay, pawn recree) : on les resout a nouveau
+		if (!FlyComp || !ShiftComp)
+		{
+			if (APawn* Pawn = UGameplayStatics::GetPlayerPawn(this, 0))
+			{
+				if (!FlyComp)
+				{
+					FlyComp = Pawn->FindComponentByClass<UCesiumFlyToComponent>();
+					if (FlyComp) FlyComp->OnFlightComplete.AddUniqueDynamic(this, &ARaceManager::OnFlightComplete);
+				}
+				if (!ShiftComp) ShiftComp = Pawn->FindComponentByClass<UCesiumOriginShiftComponent>();
+			}
+		}
+		if (!FlyComp || !ShiftComp)
+		{
+			USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Teleport cancelled : pawn components not found (Race %lld)"), RaceID)), EMessageType::Error);
+			return;
+		}
 		ShiftComp->SetActive(false);
 		FRacePath NewPath = PathsDatas.FindRef(RaceID);
 		float NewArrivalHeight = NewPath.Points[0].datas.name.IsEmpty() ? NewPath.Points[0].ele : NewPath.Points[0].datas.altitude;
@@ -2626,4 +2716,41 @@ void ARaceManager::EdUpdateUpdateArmLength()
 		return;
 	}
 	UpdateUpdateArmLength_Internal(TestLength);
+}
+
+/**
+ * @brief Configure la sortie OWL de la map en SRT (premiere destination) et la demarre
+ */
+void ARaceManager::StartSRTOutput()
+{
+	AOWLMediaOutput* Output = Cast<AOWLMediaOutput>(UGameplayStatics::GetActorOfClass(GetWorld(), AOWLMediaOutput::StaticClass()));
+	if (!Output || !Output->MediaOutputComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[OWL] Aucun OWLMediaOutput dans la map : flux SRT non demarre"));
+		USlateNotificationsBFL::SlateNotify(FText::FromString(TEXT("[OWL] Aucun OWLMediaOutput dans la map : flux SRT non demarre")), EMessageType::Error);
+		return;
+	}
+
+	FOWLMediaOutputSettings& Settings = Output->MediaOutputComponent->Settings;
+	if (Settings.Destinations.IsEmpty())
+	{
+		Settings.Destinations.AddDefaulted();
+	}
+	FOWLMediaOutputDestination& Destination = Settings.Destinations[0];
+	Destination.bEnabled = true;
+	Destination.OutputType = EOWLMediaOutputType::T_SRT;
+	Destination.SRTSettings.StreamURL = SRTStreamURL;
+	Destination.bEncodeAudio = bSRTEncodeAudio || FParse::Param(FCommandLine::Get(), TEXT("SRTAudio"));
+	UE_LOG(LogTemp, Log, TEXT("[OWL] Audio du flux SRT : %s"), Destination.bEncodeAudio ? TEXT("active") : TEXT("coupe"));
+
+	// Start peut etre asynchrone au demarrage : le resultat definitif arrive par OnStart
+	if (Output->Start())
+	{
+		UE_LOG(LogTemp, Log, TEXT("[OWL] Flux SRT demande vers %s"), *SRTStreamURL);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[OWL] Echec du demarrage du flux SRT vers %s"), *SRTStreamURL);
+		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("[OWL] Echec du demarrage du flux SRT vers %s"), *SRTStreamURL)), EMessageType::Error);
+	}
 }

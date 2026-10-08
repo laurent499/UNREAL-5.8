@@ -107,13 +107,27 @@ void UPoiSubsystem::PerformHttpRequestForPOIs(int64 RaceID, const FString& POIsE
 		// 	return;
 		// }
 		
+		// Requete en echec : on diffuse une liste vide pour ne pas bloquer le chargement
+		if (!bWasSuccessful || !Response.IsValid() || !EHttpResponseCodes::IsOk(Response->GetResponseCode()))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[PerformHttpRequestForPOIs] Requete POIs en echec (RaceID=%lld, Code=%d)"),
+				RaceID, Response.IsValid() ? Response->GetResponseCode() : -1);
+			UPoiSubsystem* Self = WeakThis.Get();
+			Self->RacePoisMap.Add(RaceID, FPOIs());
+			Self->OnPoisDatasGathered.Broadcast(RaceID, FPOIs());
+			return;
+		}
+
 		const FString JsonString = Response->GetContentAsString();
 
 		UE::Tasks::Launch(UE_SOURCE_LOCATION,
 			[WeakThis, JsonString, RaceID]()
 			{
 				FPOIs NewSnapshot;
-				ConvertPOIsJson(JsonString, NewSnapshot);
+				if (!ConvertPOIsJson(JsonString, NewSnapshot))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("[PerformHttpRequestForPOIs] JSON POIs illisible (RaceID=%lld)"), RaceID);
+				}
 			
 				AsyncTask(ENamedThreads::GameThread,
 					[WeakThis, NewSnapshot = MoveTemp(NewSnapshot), RaceID]() mutable
@@ -180,7 +194,9 @@ void UPoiSubsystem::TogglePois(int64 RaceID, bool bShow)
 	
 	if (!TmpMap)
 	{
-		if (bShow)
+		// Course chargee sans aucun POI : rien a afficher, ce n'est pas une erreur
+		const FPOIs* KnownPois = RacePoisMap.Find(RaceID);
+		if (bShow && !(KnownPois && KnownPois->POIs.Num() == 0))
 		{
 			USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf( TEXT("[TogglePois] Pois introuvables (RaceID=%lld)"), RaceID)), EMessageType::Error);
 		}
@@ -257,7 +273,12 @@ void UPoiSubsystem::Teleport(int64 PoiID, int64 RaceID)
 	}
 	
 	APawn* DynaPawn = UGameplayStatics::GetPlayerPawn(this, 0);
-	UCesiumFlyToComponent* FlyComp = Cast<UCesiumFlyToComponent>(DynaPawn->GetComponentByClass(UCesiumFlyToComponent::StaticClass()));
+	UCesiumFlyToComponent* FlyComp = DynaPawn ? DynaPawn->FindComponentByClass<UCesiumFlyToComponent>() : nullptr;
+	if (!FlyComp)
+	{
+		USlateNotificationsBFL::SlateNotify(FText::FromString(TEXT("[Teleport] Pawn ou CesiumFlyToComponent introuvable")), EMessageType::Error);
+		return;
+	}
 
 	FVector Destination = PoiActor->GetActorLocation();
 	Destination.Z+=5000.f;

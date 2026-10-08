@@ -82,6 +82,12 @@ void URaceSubsystem::PerformHttpRequestForRaceSetup(const int64 RaceID, const FS
 			// }
 			URaceSubsystem* Self = WeakThis.Get();
 			Self->RaceRequest.Remove(RaceID);
+			if (!bWasSuccessful || !Response.IsValid() || !EHttpResponseCodes::IsOk(Response->GetResponseCode()))
+			{
+				UE_LOG(LogTemp, Error, TEXT("[PerformHttpRequestForRaceSetup] Requete en echec (RaceID=%lld, Code=%d)"),
+					RaceID, Response.IsValid() ? Response->GetResponseCode() : -1);
+				return;
+			}
 			const FString JsonString = Response->GetContentAsString();
 			UE::Tasks::Launch(UE_SOURCE_LOCATION,
 				[WeakThis, JsonString, RaceID]()

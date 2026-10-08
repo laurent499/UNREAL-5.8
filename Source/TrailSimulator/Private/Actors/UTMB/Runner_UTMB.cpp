@@ -1,4 +1,4 @@
-﻿// All Rights Reserved
+// All Rights Reserved
 
 
 #include "Actors/UTMB/Runner_UTMB.h"
@@ -6,6 +6,7 @@
 #include "RaceManager.h"
 #include "Components/PhotoComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "Components/RawTextMaterial.h"
 #include "Components/UTMB/UTMB_FlagComponent.h"
 #include "Components/UTMB/UTMB_NameComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -194,6 +195,10 @@ void ARunner_UTMB::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 	{
 		IndexValueComponent->SetText(FText::FromString(FString::FromInt(Runner.IndexM)));
 	}
+		// Couleurs brutes, jamais modifiees par l'eclairage, l'exposition ou le post-process
+		TrailRawText::Apply(UtmbLabelComponent, FColor::White);
+		TrailRawText::Apply(IndexLabelComponent, FColor(0, 13, 68));
+		TrailRawText::Apply(IndexValueComponent, FColor(0, 13, 68));
 }
 void ARunner_UTMB::ToggleFlag(bool bDisplay)
 {

@@ -8,6 +8,8 @@
 
 class UTextureRenderTarget2D;
 class APlayerController;
+class UGameViewportClient;
+class SWidget;
 
 UCLASS()
 class SUBSYSTEMS_API UBroadcastCaptureSubsystem : public UTickableWorldSubsystem
@@ -16,6 +18,7 @@ class SUBSYSTEMS_API UBroadcastCaptureSubsystem : public UTickableWorldSubsystem
 
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Deinitialize() override;
 	
 	UPROPERTY(EditAnywhere, Category="Broadcast")
 	TSoftObjectPtr<UTextureRenderTarget2D> SharedRTAsset;
@@ -42,6 +45,13 @@ private:
 	TWeakObjectPtr<AActor> DefaultSource;
 
 	float Accum = 0.f;
+
+	// Recopie de SharedRT dans le viewport (voir UBroadcastSettings::bMirrorCaptureToViewport)
+	TSharedPtr<SWidget> MirrorWidget;
+	TWeakObjectPtr<UGameViewportClient> MirrorViewport;
+
+	void UpdateViewportMirror();
+	void RemoveViewportMirror();
 
 	void ActivateSource(AActor* Source);
 	AActor* ResolveCaptureSourceFromViewTarget(AActor* ViewTarget) const;

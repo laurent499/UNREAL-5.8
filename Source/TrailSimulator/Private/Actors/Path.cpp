@@ -1,4 +1,4 @@
-﻿// All Rights Reserved
+// All Rights Reserved
 
 #include "TrailSimulator/Public/Actors/Path.h"
 #include "BroadcastCaptureSubsystem.h"
@@ -471,6 +471,7 @@ void APath::RebuildPathSplineMeshes(int64 RaceID)
 		SMC->SetStaticMesh(SplineStaticMesh);
 
 		SMC->SetupAttachment(SlopePath);
+		SMC->SetTranslucentSortPriority(-20); // trace dessine avant les poteaux (-10) et les panneaux
 		SMC->RegisterComponent();
 			
 		SMC->SetForwardAxis(ESplineMeshAxis::Z);
@@ -548,13 +549,58 @@ void APath::RebuildSlopeSplineMeshes(int64 RaceID)
 		OutSegments.Add(CurrentSegment);
 	}
 	const float TotalLen = SlopePath->GetSplineLength();
+
+	// Pente en % (metres de denivele pour 100 m) de chaque troncon entre deux points GPS, et valeur
+	// a chaque jonction = moyenne des deux troncons qui s'y touchent. Le materiau garde la couleur
+	// du troncon en son centre et fond vers la valeur de jonction pres de ses extremites : deux
+	// troncons voisins ont donc la meme couleur a leur jonction, sans coupe nette.
+	// CPD 10 = pente du troncon, CPD 12 = jonction de debut, CPD 13 = jonction de fin.
+	TArray<float> DistM;
+	DistM.SetNumUninitialized(NumPts);
+	for (int32 i = 0; i < NumPts; ++i)
+	{
+		DistM[i] = SlopePath->GetDistanceAlongSplineAtSplinePoint(i) / 100.f;
+	}
+	// Pente absolue (la couleur ne depend que de la valeur absolue) mesuree sur au moins
+	// SlopeWindowM autour du milieu du troncon : l'altitude GPS est bruitee (pentes brutes qui
+	// alternent -15 % / +12 % d'un point a l'autre), et moyenner des pentes de signes opposes a
+	// une jonction donnait une valeur proche de 0, donc des coupes claires.
+	constexpr float SlopeWindowM = 250.f;
+	TArray<float> SegGrade; // SegGrade[i] = pente absolue du troncon [i, i+1]
+	SegGrade.SetNumZeroed(NumPts - 1);
+	for (int32 i = 0; i < NumPts - 1; ++i)
+	{
+		const float Mid = 0.5f * (DistM[i] + DistM[i + 1]);
+		int32 J0 = i, J1 = i + 1;
+		while (J0 > 0 && Mid - DistM[J0] < 0.5f * SlopeWindowM) --J0;
+		while (J1 < NumPts - 1 && DistM[J1] - Mid < 0.5f * SlopeWindowM) ++J1;
+		const float Run = DistM[J1] - DistM[J0];
+		SegGrade[i] = Run > 1.f ? FMath::Abs(RacePath.Points[J1].ele - RacePath.Points[J0].ele) / Run * 100.f : 0.f;
+	}
+	// Lissage supplementaire entre troncons voisins : evite les petits morceaux de couleur isoles
+	constexpr int32 SlopeSmoothPasses = 4;
+	for (int32 Pass = 0; Pass < SlopeSmoothPasses && SegGrade.Num() > 2; ++Pass)
+	{
+		TArray<float> Prev = SegGrade;
+		for (int32 i = 1; i < SegGrade.Num() - 1; ++i)
+		{
+			SegGrade[i] = 0.25f * Prev[i - 1] + 0.5f * Prev[i] + 0.25f * Prev[i + 1];
+		}
+	}
+	TArray<float> Junction; // Junction[i] = valeur au point i
+	Junction.SetNumZeroed(NumPts);
+	for (int32 i = 0; i < NumPts; ++i)
+	{
+		const float Before = i > 0 ? SegGrade[i - 1] : SegGrade[0];
+		const float After = i < NumPts - 1 ? SegGrade[i] : SegGrade[NumPts - 2];
+		Junction[i] = 0.5f * (Before + After);
+	}
+
 	Root->SetMobility(EComponentMobility::Static);
 	for (const FPointIndexSegment& Seg : OutSegments)
 	{
 		const int32 I0 = Seg.Indices[0];
 		const int32 I1 = Seg.Indices.Last();
-		
-		float Slope = RacePath.Points[I1].ele - RacePath.Points[I0].ele;
 		
 		for (int32 k = 0; k < Seg.Indices.Num() - 1; ++k)
 		{
@@ -569,6 +615,7 @@ void APath::RebuildSlopeSplineMeshes(int64 RaceID)
 			SMC->SetStaticMesh(SplineStaticMesh);
 
 			SMC->SetupAttachment(SlopePath);
+			SMC->SetTranslucentSortPriority(-20); // trace dessine avant les poteaux (-10) et les panneaux
 			SMC->RegisterComponent();
 			
 			SMC->SetForwardAxis(ESplineMeshAxis::Z);
@@ -595,7 +642,9 @@ void APath::RebuildSlopeSplineMeshes(int64 RaceID)
 			SMC->SetCustomPrimitiveDataVector3(2, StartPos);	// M_Glow
 			SMC->SetCustomPrimitiveDataVector3(6, EndPos);
 			
-			SMC->SetCustomPrimitiveDataFloat(10, Slope);	// SlopeMeters (signé)
+			SMC->SetCustomPrimitiveDataFloat(10, SegGrade[A]);	// SlopeMeters (signé) : pente % du troncon
+			SMC->SetCustomPrimitiveDataFloat(12, Junction[A]);	// valeur a la jonction de debut
+			SMC->SetCustomPrimitiveDataFloat(13, Junction[B]);	// valeur a la jonction de fin
 			SMC->SetCustomPrimitiveDataFloat(11, 1.f);	// UseSlope = 1
 			SMC->SetCustomPrimitiveDataFloat(16, SettingsSubsystem->GetGlowById(RaceID));
 			SMC->SetHiddenInGame(true);

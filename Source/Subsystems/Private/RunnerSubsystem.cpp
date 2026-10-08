@@ -146,9 +146,12 @@ void URunnerSubsystem::RequestRunnersWithRetry(int64 RaceID, const FString& Runn
 			// }
 						
 			const FString JsonString = Response->GetContentAsString();
+			// Le backend pose cet en-tete tant que son premier cycle de fetch n'est pas termine :
+			// seule une liste vide « en attente » merite une nouvelle tentative.
+			const bool bBackendPending = !Response->GetHeader(TEXT("X-Runners-Pending")).IsEmpty();
 
 			UE::Tasks::Launch(UE_SOURCE_LOCATION,
-		[WeakThis, JsonString, RaceID, RunnersEndpoint, bStartup, Attempt]()
+		[WeakThis, JsonString, RaceID, RunnersEndpoint, bStartup, Attempt, bBackendPending]()
 			{
 				FRunners NewSnapshot;
 				ConvertRunnersJson(JsonString, NewSnapshot);
@@ -158,16 +161,19 @@ void URunnerSubsystem::RequestRunnersWithRetry(int64 RaceID, const FString& Runn
 						RaceID,
 						RunnersEndpoint,
 						bStartup,
-						Attempt]() mutable
+						Attempt,
+						bBackendPending]() mutable
 					{
 						if (!WeakThis.IsValid()) return;
 
 						URunnerSubsystem* Self = WeakThis.Get();
 
-						// Au chargement, un snapshot vide veut presque toujours dire que le backend
-						// n'a pas encore produit son premier cycle : on reessaye.
-						// En update, une race sans coureur reste legitime (course terminee).
-						if (bStartup && NewSnapshot.Runners.IsEmpty())
+						// Au chargement, on ne reessaye un snapshot vide que si le backend signale
+						// qu'il n'a pas encore produit son premier cycle. Une course sans coureur
+						// (pas encore partie, terminee) est legitime : on l'accepte tout de suite,
+						// les teams arriveront par le fetch periodique (spawn a chaud).
+						// Avant, chaque course vide bloquait le chargement ~25 s (5 tentatives).
+						if (bStartup && bBackendPending && NewSnapshot.Runners.IsEmpty())
 						{
 							if (Self->ScheduleRunnersRetry(RaceID, RunnersEndpoint, bStartup, Attempt, TEXT("snapshot vide au demarrage")))
 							{
@@ -349,7 +355,14 @@ void URunnerSubsystem::PerformHttpRequestForRunner(int64 RaceID, const FString& 
 				// gestion erreur (retry, etc.)
 				return;
 			}*/
-			
+
+			if (!bWasSuccessful || !Response.IsValid() || !EHttpResponseCodes::IsOk(Response->GetResponseCode()))
+			{
+				UE_LOG(LogTemp, Error, TEXT("[RunnerSubsystem] Requete coureur en echec (RaceID=%lld, Code=%d)"),
+					RaceID, Response.IsValid() ? Response->GetResponseCode() : -1);
+				return;
+			}
+
 			const FString JsonString = Response->GetContentAsString();
 			UE::Tasks::Launch(UE_SOURCE_LOCATION,
 				[WeakThis, JsonString, RaceID]()

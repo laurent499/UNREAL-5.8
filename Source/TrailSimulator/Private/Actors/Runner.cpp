@@ -23,6 +23,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Components/RawTextMaterial.h"
 
 #define ECC_CesiumChannel ECC_GameTraceChannel1
 
@@ -158,6 +159,15 @@ void ARunner::SetBroadcastCaptureEnabled_Implementation(bool bEnabled, class UTe
 void ARunner::BeginPlay()
 {
 	Super::BeginPlay();
+	// Les textes (M_RawText) comparent leur profondeur a la CustomDepth des autres elements du
+	// runner : ils sont ainsi masques par les cartes et photos translucides placees devant eux.
+	TrailRawText::EnableOcclusion(this);
+	// Le pied (poteau) est translucide comme les cartes : sans priorite, il passait par-dessus
+	// le cartouche INDEX quand la camera est basse. Priorite basse = dessine avant les cartes.
+	if (FootComponent)
+	{
+		FootComponent->SetTranslucentSortPriority(-10);
+	}
 	DynaPawn = UGameplayStatics::GetPlayerPawn(this, 0);
 	UCesiumFlyToComponent* FlyToComponent = DynaPawn->GetComponentByClass<UCesiumFlyToComponent>();
 	FlyToComponent->OnFlightComplete.AddDynamic(this, &ARunner::UpdateGlobeAnchor);
@@ -270,7 +280,10 @@ void ARunner::UpdateRunnerLocation(FRunnerStruct RunnerStruct, TObjectPtr<APath>
 void ARunner::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 {
 	RunnerDatas = MoveTemp(Runner);
-	
+	// Des composants apparaissent / disparaissent pendant la partie (photo, drapeau, club...) :
+	// on repasse sur tous ceux presents a chaque mise a jour (idempotent, sans cout si deja actifs).
+	TrailRawText::EnableOcclusion(this);
+
 	ScaleSubsystem->SetActorScaleMinMax(this, SettingsSubsystem->GetMinMaxById(RaceSetup.raceId));
 	RaceSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<URaceSubsystem>();
 	FRaceSetup CurrentSetup = RaceSubsystem->GetRaceSetupByName(RunnerDatas.raceName); 

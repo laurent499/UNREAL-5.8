@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "Engine/TimerHandle.h"
 #include "LoadingTasksTypes.h"
 #include "LoadingStatusSubsystem.generated.h"
 

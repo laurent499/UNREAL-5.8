@@ -170,25 +170,25 @@ void ACheckpoint_GTWS::UpdateDayNight(bool bIsDay)
 	// Chaque MID doit être créé sur son propre composant, sinon les paramètres
 	// n'atteignent pas le picto et le slot 0 de Line2Component se fait écraser
 	MainPictoMat = MainPicto->GetMaterial(0);
-	MainPictoMID = MainPicto->CreateAndSetMaterialInstanceDynamicFromMaterial(0, MainPictoMat);
+	MainPictoMID = MainPicto->CreateDynamicMaterialInstance(0, MainPictoMat);
 	MainPictoMID->SetScalarParameterValue(TEXT("Illum"), 1.f);
 
 	DistPictoMat = DistPicto->GetMaterial(0);
-	DistPictoMID = DistPicto->CreateAndSetMaterialInstanceDynamicFromMaterial(0, DistPictoMat);
+	DistPictoMID = DistPicto->CreateDynamicMaterialInstance(0, DistPictoMat);
 	DistPictoMID->SetScalarParameterValue(TEXT("Illum"), 1.f);
 
 	AltPictoMat = AltPicto->GetMaterial(0);
-	AltPictoMID = AltPicto->CreateAndSetMaterialInstanceDynamicFromMaterial(0, AltPictoMat);
+	AltPictoMID = AltPicto->CreateDynamicMaterialInstance(0, AltPictoMat);
 	AltPictoMID->SetScalarParameterValue(TEXT("Illum"), 1.f);
 
 	WeatherPictoMat = WeatherPicto->GetMaterial(0);
-	WeatherPictoMID = WeatherPicto->CreateAndSetMaterialInstanceDynamicFromMaterial(0, WeatherPictoMat);
+	WeatherPictoMID = WeatherPicto->CreateDynamicMaterialInstance(0, WeatherPictoMat);
 	WeatherPictoMID->SetScalarParameterValue(TEXT("Illum"), 1.f);
 	
 	if (bIsDay)
 	{
 		FootComponent->SetScalarParameterValueOnMaterials("Illum", 0.5f);
-		MainPictoMID->SetVectorParameterValue(TEXT("Color"), FLinearColor(1.5, 1.5, 1.5, 1));
+		MainPictoMID->SetVectorParameterValue(TEXT("Color"), FLinearColor::White);
 		NameBkgComponent->SetCustomPrimitiveDataFloat(4, 0.5f );
 		InfosBkgComponent->SetCustomPrimitiveDataFloat(4, 0.5f);
 		WeatherBkgComponent->SetCustomPrimitiveDataFloat(4, 0.5f);
@@ -197,7 +197,7 @@ void ACheckpoint_GTWS::UpdateDayNight(bool bIsDay)
 	} else
 	{
 		FootComponent->SetScalarParameterValueOnMaterials("Illum", 0.025f);
-		MainPictoMID->SetVectorParameterValue(TEXT("Color"), FLinearColor(0.1, 0.1, 0.1, 1));
+		MainPictoMID->SetVectorParameterValue(TEXT("Color"), FLinearColor::White);
 		NameBkgComponent->SetCustomPrimitiveDataFloat(4, 0.0625f);
 		InfosBkgComponent->SetCustomPrimitiveDataFloat(4, 0.025f);
 		WeatherBkgComponent->SetCustomPrimitiveDataFloat(4, 0.025f);

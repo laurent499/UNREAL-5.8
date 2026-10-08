@@ -19,6 +19,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "OWLCaptureComponent.h"
+#include "Components/RawTextMaterial.h"
 #include "TrailInputModeInterface.h"
 
 #define ECC_CesiumChannel ECC_GameTraceChannel1
@@ -415,6 +416,13 @@ void ACheckpoint::SetBroadcastCaptureEnabled_Implementation(bool bEnabled, class
 void ACheckpoint::BeginPlay()
 {
 	Super::BeginPlay();
+	// Les panneaux masquent les textes des runners (M_RawText compare sa profondeur a la CustomDepth)
+	TrailRawText::EnableOcclusion(this);
+	TrailRawText::ApplyToAllTexts(this);
+	if (FootComponent)
+	{
+		FootComponent->SetTranslucentSortPriority(-10); // poteau dessine avant les panneaux
+	}
 	SetActorTickEnabled(false);
 	
 	// SubSystems

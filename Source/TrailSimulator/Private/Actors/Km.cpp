@@ -9,6 +9,7 @@
 #include "SettingsSubsystem.h"
 #include "Camera/CameraComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "Components/RawTextMaterial.h"
 #include "Kismet/GameplayStatics.h"
 
 AKm::AKm()
@@ -50,6 +51,7 @@ AKm::AKm()
 void AKm::BeginPlay()
 {
 	Super::BeginPlay();
+	TrailRawText::ApplyToAllTexts(this);
 	
 	DynaPawn = UGameplayStatics::GetPlayerPawn(this, 0);
 	UCesiumFlyToComponent* FlyToComponent = DynaPawn->GetComponentByClass<UCesiumFlyToComponent>();

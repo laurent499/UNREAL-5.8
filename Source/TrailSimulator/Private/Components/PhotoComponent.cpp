@@ -74,6 +74,13 @@ void UPhotoComponent::UpdatePhoto(const FString& PhotoPath, const FVector& Scale
 		return;
 	}
 
+	// Coureur sans photo : le backend envoie null, que les runners transforment en "null.png".
+	// Sans schema http(s), inutile de lancer une requete (libcurl echouait chaque seconde).
+	if (!PhotoPath.StartsWith(TEXT("http://"), ESearchCase::IgnoreCase) && !PhotoPath.StartsWith(TEXT("https://"), ESearchCase::IgnoreCase))
+	{
+		return;
+	}
+
 	// Le fetch runners rappelle UpdatePhoto à chaque cycle : ne retélécharger que sur changement d'URL
 	if (PhotoPath == CurrentPhotoUrl && CurrentPhotoTexture)
 	{
@@ -166,13 +173,8 @@ void UPhotoComponent::UpdateDayNight(bool bIsDay)
 		return;
 	}
 
-	if (bIsDay)
-	{
-		PhotoMID->SetVectorParameterValue("Color", FVector(1.5f, 1.5f, 1.5f));
-		PhotoMID->SetScalarParameterValue("Illum", 1.f);
-	} else
-	{
-		PhotoMID->SetVectorParameterValue("Color", FVector(0.1f, 0.1f, 0.1f));
-		PhotoMID->SetScalarParameterValue("Illum", 1.f);
-	}
+	// La photo ne reagit ni a la lumiere ni a l'heure : meme rendu de jour comme de nuit
+	// (le materiau est Unlit, exposition compensee). Avant : teinte x0,1 la nuit.
+	PhotoMID->SetVectorParameterValue("Color", FVector(1.f, 1.f, 1.f));
+	PhotoMID->SetScalarParameterValue("Illum", 1.f);
 }

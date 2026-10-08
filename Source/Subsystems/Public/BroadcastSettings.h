@@ -11,4 +11,10 @@ class SUBSYSTEMS_API UBroadcastSettings : public UDeveloperSettings
 public:
 	UPROPERTY(EditAnywhere, Config, Category="Capture")
 	TSoftObjectPtr<class UTextureRenderTarget2D> SharedRT;
+
+	// Affiche SharedRT dans le viewport du jeu et coupe le rendu du monde principal :
+	// la scène n'est plus rendue deux fois (viewport + capture OWL).
+	// Surcharge à chaud : trail.Broadcast.MirrorViewport 0/1
+	UPROPERTY(EditAnywhere, Config, Category="Capture")
+	bool bMirrorCaptureToViewport = true;
 };

@@ -98,7 +98,14 @@ TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Req = FHttpModule::Get().CreateReq
 		(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 		{
 			if (!WeakThis.IsValid()) return;
-			
+
+			if (!bWasSuccessful || !Response.IsValid() || !EHttpResponseCodes::IsOk(Response->GetResponseCode()))
+			{
+				UE_LOG(LogTemp, Error, TEXT("[PerformHttpRequestForCheckpoints] Requete en echec (RaceID=%lld, Code=%d)"),
+					RaceID, Response.IsValid() ? Response->GetResponseCode() : -1);
+				return;
+			}
+
 			const FString JsonString = Response->GetContentAsString();
 			UE::Tasks::Launch(UE_SOURCE_LOCATION,
 		[WeakThis, JsonString, RaceID]()

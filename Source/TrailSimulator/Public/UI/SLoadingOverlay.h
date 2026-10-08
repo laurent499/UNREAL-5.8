@@ -1,46 +1,48 @@
-﻿#pragma once
+#pragma once
 
 #include "CoreMinimal.h"
 #include "Widgets/SCompoundWidget.h"
-#include "Widgets/Views/SListView.h"
 #include "SharedTypes/Public/LoadingTasksTypes.h"
 
 class ULoadingStatusSubsystem;
-class UFontFace;
+class SVerticalBox;
+class STextBlock;
 
+/**
+ * Ecran « Initialisation » affiche pendant le chargement des courses.
+ * Une carte par course avec ses etapes (reglages, trace, coureurs, POI, checkpoints),
+ * une barre de progression globale et le resume des taches terminees / en erreur.
+ */
 class SLoadingOverlay : public SCompoundWidget
 {
 public:
-	
+
 	SLATE_BEGIN_ARGS(SLoadingOverlay) {}
 		SLATE_ARGUMENT(TWeakObjectPtr<ULoadingStatusSubsystem>, Loading)
 	SLATE_END_ARGS()
-	
+
 	void Construct(const FArguments& InArgs);
 	virtual ~SLoadingOverlay() override;
+
+	virtual void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override;
 
 private:
 	TWeakObjectPtr<ULoadingStatusSubsystem> LoadingSubsystem;
 
-	// ListView data
-	using FTaskItemPtr = TSharedPtr<FLoadingTaskInfo>;
-	TArray<FTaskItemPtr> Items;
-	TSharedPtr<SListView<FTaskItemPtr>> ListView;
-
 	// Delegate handle pour se désabonner proprement
 	FDelegateHandle ChangedHandle;
 
-	// Rebuild
-	void RefreshItemsFromSubsystem();
+	// Le subsystem notifie a chaque coureur spawne : on reconstruit au plus toutes les 100 ms
+	bool bDirty = true;
+	double LastRebuildTime = 0.0;
+
+	TSharedPtr<SVerticalBox> CardsBox;
+	TSharedPtr<STextBlock> SummaryText;
+	TSharedPtr<STextBlock> PercentText;
+
 	void HandleChanged();
+	void Rebuild();
 
 	// Bindings
 	TOptional<float> GetOverallPercent() const;
-
-	// Row generator
-	TSharedRef<ITableRow> OnGenerateRow(FTaskItemPtr Item, const TSharedRef<STableViewBase>& OwnerTable);
-
-	// Helpers UI
-	static FText StateToText(ELoadingTaskState State);
-	
 };

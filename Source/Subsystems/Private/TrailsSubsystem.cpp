@@ -82,7 +82,20 @@ void UTrailsSubsystem::PerformHttpRequestForRaces(const FString& RacesEndpoint)
 		// );
 		//
 		// if (!bOk) return;
-		
+
+		// Serveur injoignable : Response est nulle, on signale l'echec au lieu de crasher
+		if (!bWasSuccessful || !Response.IsValid() || !EHttpResponseCodes::IsOk(Response->GetResponseCode()))
+		{
+			UE_LOG(LogTemp, Error, TEXT("[PerformHttpRequestForRaces] Requete courses en echec (Code=%d)"),
+				Response.IsValid() ? Response->GetResponseCode() : -1);
+			if (LoadingSubsystem)
+			{
+				LoadingSubsystem->Fail("LoadingRaces", FText::FromString(TEXT("Server error")));
+				LoadingSubsystem->Complete("LoadingRaces", FText::FromString(TEXT("Server error")));
+			}
+			return;
+		}
+
 		const FString JsonString = Response->GetContentAsString();
 		UTrailsSubsystem* Self = WeakThis.Get();
 

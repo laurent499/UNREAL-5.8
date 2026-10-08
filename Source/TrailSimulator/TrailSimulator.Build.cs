@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
 
@@ -38,7 +38,8 @@ public class TrailSimulator : ModuleRules
 			"TrailInterfaces",
 			"Engine",
 			"ImageWrapper",
-			"OWLCamera"
+			"OWLCamera",
+			"OWLMedia"
 			
 		});
 

@@ -526,6 +526,17 @@ private:
 	UPROPERTY()
 	float UpdateIntervalSeconds;
 	
+	// Sortie OWL : destination SRT configuree et demarree au BeginPlay
+	UPROPERTY(EditAnywhere, Category="Broadcast")
+	bool bStartSRTOnBeginPlay = true;
+	UPROPERTY(EditAnywhere, Category="Broadcast", meta=(EditCondition="bStartSRTOnBeginPlay"))
+	FString SRTStreamURL = TEXT("srt://192.168.88.129:7029");
+	// Audio coupe par defaut : chaque crash Cesium (corruption du tas) suivait de moins d'une
+	// seconde l'init du resampler audio OWL 7.1 -> stereo. -SRTAudio le reactive.
+	UPROPERTY(EditAnywhere, Category="Broadcast")
+	bool bSRTEncodeAudio = false;
+	void StartSRTOutput();
+
 	// UDS
 	UPROPERTY()
 	TSubclassOf<AActor> UDSClass;
@@ -535,6 +546,7 @@ private:
 	FTimerHandle UdsHandle;
 	UFUNCTION()
 	void UpdateUdsTime();
+	void RecenterSkyAtmosphere();
 	UPROPERTY()
 	bool bIsDay = false;
 		

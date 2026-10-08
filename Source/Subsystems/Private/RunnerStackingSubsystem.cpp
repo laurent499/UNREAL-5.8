@@ -4,6 +4,16 @@
 #include "GameFramework/Actor.h"
 #include "Components/SceneComponent.h"
 #include "TimerManager.h"
+#include "HAL/IConsoleManager.h"
+
+// Ecart maximal le long du trace pour empiler deux runners. Sans ce garde-fou, seule la
+// distance 3D comptait : deux coureurs a des km l'un de l'autre sur le parcours, mais proches a vol
+// d'oiseau (lacets, aller-retour), etaient empiles.
+static TAutoConsoleVariable<float> CVarStackingMaxTrackGapM(
+	TEXT("Trail.Stacking.MaxTrackGapM"),
+	1000.f,
+	TEXT("Ecart maximal (m) le long du trace pour empiler deux runners, camera loin ; reduit avec la distance camera jusqu a 0 camera proche. 0 = pas de limite."),
+	ECVF_Default);
 
 void URunnerStackingSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -111,6 +121,14 @@ void URunnerStackingSubsystem::RegisterRunner(AActor* Runner)
 	Runner->OnEndPlay.AddDynamic(this, &URunnerStackingSubsystem::HandleActorEndPlay);
 
 	bDirty = true;
+
+	// UnregisterRunner coupe le timer quand la liste se vide (changement de course) :
+	// sans ce redemarrage, plus aucun empilement n'etait calcule pour les runners suivants.
+	if (UWorld* World = GetWorld(); World && World->IsGameWorld()
+		&& !World->GetTimerManager().IsTimerActive(UpdateTimerHandle))
+	{
+		StartTimer();
+	}
 }
 
 void URunnerStackingSubsystem::UnregisterRunner(AActor* Runner)
@@ -212,6 +230,25 @@ void URunnerStackingSubsystem::ApplyNewStackingState(
 	};
 
 	// ------------------------------------------------------------
+	// PASS 0 : detacher d'abord tous ceux qui quittent leur base
+	// Sinon, quand un enfant devient la base de son ancienne base (depassement dans la pile),
+	// l'anti-cycle d'AttachRunnerToBase refusait l'attache selon l'ordre du tableau et le
+	// runner restait fige sans pied pendant un intervalle.
+	// ------------------------------------------------------------
+	for (int32 i = 0; i < Entries.Num(); ++i)
+	{
+		FStackEntry& E = Entries[i];
+		AActor* Runner = E.Runner.Get();
+		AActor* OldBaseActor = E.CurrentBase.Get();
+		if (IsValid(Runner) && IsValid(OldBaseActor) && OldBaseActor != NewBase[i].Get())
+		{
+			DetachRunnerToTrack(Runner, E);
+			E.CurrentBase  = nullptr;
+			E.CurrentOrder = -1;
+		}
+	}
+
+	// ------------------------------------------------------------
 	// PASS 1 : appliquer l'état réel de stacking
 	// ------------------------------------------------------------
 	for (int32 i = 0; i < Entries.Num(); ++i)
@@ -310,52 +347,8 @@ void URunnerStackingSubsystem::ApplyNewStackingState(
 		E.CurrentOrder = NewO;
 	}
 
-	// ------------------------------------------------------------
-	// PASS 2 : reconstruire l'état appliqué pour les photos
-	// ------------------------------------------------------------
-	TMap<TObjectPtr<AActor>, int32> AppliedChildCountByBase;
-	AppliedChildCountByBase.Reserve(Entries.Num());
-
-	for (const FStackEntry& E : Entries)
-	{
-		AActor* Runner = E.Runner.Get();
-		AActor* Base   = E.CurrentBase.Get();
-
-		if (!IsEligible(Runner))
-		{
-			continue;
-		}
-
-		if (IsEligible(Base))
-		{
-			AppliedChildCountByBase.FindOrAdd(Base)++;
-		}
-	}
-
-	// ------------------------------------------------------------
-	// PASS 3 : rafraîchir la visibilité réelle des photos
-	// ------------------------------------------------------------
-	for (FStackEntry& E : Entries)
-	{
-		AActor* Runner = E.Runner.Get();
-		if (!IsValid(Runner))
-		{
-			continue;
-		}
-
-		const bool bIsChild = IsValid(E.CurrentBase.Get());
-		const bool bIsBaseWithChildren = AppliedChildCountByBase.FindRef(Runner) > 0;
-
-		if (IRunnerInterface* RI = Cast<IRunnerInterface>(Runner))
-		{
-			// IsPhotoVisible() = préférence user uniquement
-			const bool bShouldShowPhoto =
-				RI->IsPhotoVisible() && !(bIsChild || bIsBaseWithChildren);
-
-			// Le club reste visible en pile : sa visibilité ne dépend que de la préférence user
-			RI->TogglePhoto(bShouldShowPhoto);
-		}
-	}
+	// La visibilite des photos est geree une seule fois, dans TickSubsystem (passe photo) :
+	// l'ancienne passe faite ici etait aussitot ecrasee par celle-ci et effacait la preference.
 }
 
 
@@ -540,6 +533,12 @@ void URunnerStackingSubsystem::TickSubsystem()
 		const FVector BasePos = BaseEntry.TrackTransform.GetLocation();
 		const float RadiusCm = ComputeDynamicRadiusCm(BaseEntry);
 
+		// Meme progression que le rayon (echelle du runner, donc distance camera) : 0 camera
+		// proche (plus aucune pile, on voit les vrais ecarts) -> 1 camera loin (ecart max).
+		const float ScaleAlpha = FMath::Clamp(
+			(RadiusCm - Config.RadiusNearCm) / FMath::Max(KINDA_SMALL_NUMBER, Config.RadiusFarCm - Config.RadiusNearCm),
+			0.f, 1.f);
+
 		TArray<int32> Children;
 		Children.Reserve(16);
 
@@ -561,8 +560,26 @@ void URunnerStackingSubsystem::TickSubsystem()
 			const FVector CandPos = CandEntry.TrackTransform.GetLocation();
 			const float DistSq = FVector::DistSquared(BasePos, CandPos);
 
+			// Hysteresis proportionnelle au rayon : 10 cm fixes ne servaient a rien quand le
+			// rayon monte a 2 km (camera loin), les piles clignotaient autour du seuil.
 			const bool bWasStackedOnThisBase = (CandEntry.CurrentBase.Get() == BaseActor);
-			const float Extra = bWasStackedOnThisBase ? Config.HysteresisCm : 0.f;
+
+			// Ecart sur le trace (TrackDistanceMeters est en cm : distance de spline monde)
+			const float MaxGapSettingCm = CVarStackingMaxTrackGapM.GetValueOnGameThread() * 100.f;
+			if (MaxGapSettingCm > 0.f)
+			{
+				const float MaxGapCm = MaxGapSettingCm * ScaleAlpha;
+				const float GapCm = FMath::Abs(CandEntry.TrackDistanceMeters - BaseEntry.TrackDistanceMeters);
+				const float GapTh = bWasStackedOnThisBase ? MaxGapCm * 1.1f : MaxGapCm;
+				if (GapCm > GapTh)
+				{
+					continue;
+				}
+			}
+
+			const float Extra = bWasStackedOnThisBase
+				? FMath::Max(Config.HysteresisCm, RadiusCm * 0.1f)
+				: 0.f;
 
 			const float Th = RadiusCm + Extra;
 			const float ThSq = Th * Th;
@@ -677,9 +694,14 @@ void URunnerStackingSubsystem::TickSubsystem()
 		const bool bIsBaseWithChildren = UsedAsBase.Contains(Runner);
 		const bool bShouldShowPhoto = !(bIsChild || bIsBaseWithChildren);
 
+		// On ne touche la photo que quand l'etat de pile change : sinon chaque recalcul
+		// (plusieurs fois par seconde) reaffichait une photo masquee depuis la regie.
 		// Le club reste visible en pile : sa visibilité ne dépend que de la préférence user
-		RI->TogglePhoto(bShouldShowPhoto);
-		E.bPhotoVisible = bShouldShowPhoto;
+		if (E.bPhotoVisible != bShouldShowPhoto)
+		{
+			RI->TogglePhoto(bShouldShowPhoto);
+			E.bPhotoVisible = bShouldShowPhoto;
+		}
 		E.bClubVisible = RI->IsClubVisible();
 	}
 }

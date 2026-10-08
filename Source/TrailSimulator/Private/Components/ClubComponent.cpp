@@ -7,6 +7,7 @@
 #include "Components/TextRenderComponent.h"
 #include "Components/TrailTextWidgetComponent.h"
 #include "Engine/Font.h"
+#include "Components/RawTextMaterial.h"
 
 UClubComponent::UClubComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -71,6 +72,7 @@ void UClubComponent::UpdateClub(const FRunnerStruct& RunnerDatas)
 	if (ClubTextComponent)
 	{
 		ClubTextComponent->SetText(FText::FromString(RunnerDatas.club.ToUpper()));
+		TrailRawText::Apply(ClubTextComponent, FColor::White);
 		
 		FVector ClubLocalSize = ClubTextComponent->GetTextLocalSize();
 		StartLocation = FVector(0.f, ClubLocalSize.Y + 100.f, 0.f);
