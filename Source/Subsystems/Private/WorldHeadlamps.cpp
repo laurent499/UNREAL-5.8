@@ -13,9 +13,9 @@
 namespace WorldHeadlamps
 {
 	constexpr float HeadHeight = 250.f;      // cm : la lampe est un peu au-dessus de la tete
-	constexpr float MinRadius = 1500.f;      // cm : flaque de 15 m vue de pres
-	constexpr float RadiusPerDistance = 0.012f; // rayon / distance camera : la lueur reste lisible de loin
-	constexpr float BaseCandela = 60.f;      // intensite pour un rayon de 15 m
+	constexpr float MinRadius = 4000.f;      // cm : flaque de 40 m vue de pres
+	constexpr float RadiusPerDistance = 0.03f;  // rayon / distance camera : la lueur reste lisible de loin
+	constexpr float BaseCandela = 120.f;     // intensite pour un rayon de 40 m
 }
 
 AWorldHeadlamps::AWorldHeadlamps()

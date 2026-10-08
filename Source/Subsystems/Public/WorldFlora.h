@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "TrailSharedTypes.h"
 #include "WorldFlora.generated.h"
 
 class UHierarchicalInstancedStaticMeshComponent;
@@ -46,6 +47,14 @@ private:
 	void ApplyBuild();
 	void HideAll();
 	bool TraceGround(const FVector& XY, FHitResult& OutHit) const;
+	bool IsOnTrail(const FVector& Location) const;
+
+	/** Traces des courses (lon, lat) : pas de vegetation sur le chemin de la course */
+	UFUNCTION()
+	void HandlePathGathered(int64 RaceID, FRacePath RacePath);
+	TMap<int64, TArray<FVector2D>> RacePathsLonLat;
+	/** Segments du trace proches de la camera, en coordonnees monde, recalcules a chaque construction */
+	TArray<TPair<FVector2D, FVector2D>> TrailSegments;
 
 	UPROPERTY()
 	TArray<TObjectPtr<UHierarchicalInstancedStaticMeshComponent>> AllComponents;

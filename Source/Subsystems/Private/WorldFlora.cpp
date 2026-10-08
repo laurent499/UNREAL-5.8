@@ -3,6 +3,7 @@
 #include "WorldFlora.h"
 #include "WorldAmbienceSubsystem.h"
 #include "WaterMaskSubsystem.h"
+#include "PathSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Camera/PlayerCameraManager.h"
@@ -46,6 +47,37 @@ void AWorldFlora::BeginPlay()
 	Super::BeginPlay();
 	Ambience = GetWorld()->GetSubsystem<UWorldAmbienceSubsystem>();
 	LoadMeshes();
+
+	if (UGameInstance* GI = GetWorld()->GetGameInstance())
+	{
+		if (UPathSubsystem* Paths = GI->GetSubsystem<UPathSubsystem>())
+		{
+			Paths->OnPathDatasGathered.AddUniqueDynamic(this, &AWorldFlora::HandlePathGathered);
+			HandlePathGathered(-1, Paths->GetRacePath()); // trace deja charge avant nous
+		}
+	}
+}
+
+void AWorldFlora::HandlePathGathered(int64 RaceID, FRacePath RacePath)
+{
+	TArray<FVector2D>& Points = RacePathsLonLat.FindOrAdd(RaceID);
+	Points.Reset(RacePath.Points.Num());
+	for (const FRacePathPoint& P : RacePath.Points) Points.Emplace(P.lon, P.lat);
+	BuiltDensity = -1.f; // force une reconstruction avec le nouveau trace
+}
+
+bool AWorldFlora::IsOnTrail(const FVector& Location) const
+{
+	// Couloir de 3 m de part et d'autre du trace : le chemin reste degage
+	constexpr double HalfWidth = 300.0;
+	const FVector2D P(Location);
+	for (const TPair<FVector2D, FVector2D>& S : TrailSegments)
+	{
+		const FVector2D AB = S.Value - S.Key;
+		const double T = FMath::Clamp(FVector2D::DotProduct(P - S.Key, AB) / FMath::Max(AB.SizeSquared(), 1.0), 0.0, 1.0);
+		if (FVector2D::DistSquared(P, S.Key + AB * T) < HalfWidth * HalfWidth) return true;
+	}
+	return false;
 }
 
 void AWorldFlora::LoadMeshes()
@@ -148,6 +180,29 @@ void AWorldFlora::StartBuild(const FVector& Center, float RadiusCm, float Densit
 	Georeference = Cast<ACesiumGeoreference>(UGameplayStatics::GetActorOfClass(GetWorld(), ACesiumGeoreference::StaticClass()));
 	UGameInstance* GI = GetWorld()->GetGameInstance();
 	WaterMask = GI ? GI->GetSubsystem<UWaterMaskSubsystem>() : nullptr;
+
+	// Segments des traces de course qui passent dans la zone (avec une marge)
+	TrailSegments.Reset();
+	if (const ACesiumGeoreference* Geo = Georeference.Get())
+	{
+		const double Reach = FMath::Square(RadiusCm + 5000.0);
+		for (const TPair<int64, TArray<FVector2D>>& Pair : RacePathsLonLat)
+		{
+			FVector2D Prev;
+			bool bHasPrev = false;
+			for (const FVector2D& LonLat : Pair.Value)
+			{
+				const FVector World = Geo->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(LonLat.X, LonLat.Y, 0.0));
+				const FVector2D Cur(World);
+				if (bHasPrev && (FVector2D::DistSquared(Cur, FVector2D(Center)) < Reach || FVector2D::DistSquared(Prev, FVector2D(Center)) < Reach))
+				{
+					TrailSegments.Emplace(Prev, Cur);
+				}
+				Prev = Cur;
+				bHasPrev = true;
+			}
+		}
+	}
 }
 
 void AWorldFlora::ContinueBuild()
@@ -201,6 +256,7 @@ void AWorldFlora::ContinueBuild()
 					--Budget;
 					if (!TraceGround(XY, Hit)) continue;
 				}
+				if (IsOnTrail(Hit.ImpactPoint)) continue;
 				const float Slope = static_cast<float>(Hit.ImpactNormal.Z); // 1 = plat
 				float AltitudeM = static_cast<float>(Hit.ImpactPoint.Z) / 100.f;
 				if (const ACesiumGeoreference* Geo = Georeference.Get())
