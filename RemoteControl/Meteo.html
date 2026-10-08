@@ -59,9 +59,17 @@
   </section>
   <section>
     <h2>Météo</h2>
+    <p class="check"><label><input id="autoWeather" type="checkbox"> Météo réelle automatique (checkpoint le plus proche de la caméra)</label></p>
+    <p class="check"><label><input id="lowClouds" type="checkbox"> Nuages bas réels (base calculée, nuages accrochés aux sommets ; coupés en premier si la perf baisse)</label></p>
+    <div id="autoInfo" class="hint"></div>
     <div id="weather"></div>
-    <div class="hint">Le point orange indique qu'un paramètre est forcé à la main. « Rendre la main » revient au préréglage UDS de la map.</div>
-    <p><button id="release">Rendre la main au préréglage UDS</button></p>
+    <div class="hint">Le point orange indique qu'un paramètre est forcé à la main ; il reste prioritaire sur la météo réelle. « Rendre la main » libère les forçages : la météo réelle reprend si elle est active, sinon le préréglage UDS de la map.</div>
+    <p><button id="release">Rendre la main</button></p>
+    <div class="fields">
+      <label>Ligne de neige (m, vide = auto) <input id="snowLine" type="number" step="50" min="0" max="6000"></label>
+      <label>Transition (min) <input id="smoothMin" type="number" step="0.5" min="0.1" max="30"></label>
+      <label>Relevé toutes les (min) <input id="refreshMin" type="number" step="1" min="1" max="60"></label>
+    </div>
   </section>
   <section>
     <h2>Lieu du terrain (Cesium)</h2>
@@ -176,13 +184,20 @@ function makeRow(parent, key, label, min, max, step, onChange, withOverride) {
 
 function toClock(v) { v = Math.round(v); const h = Math.floor(v / 100), m = Math.round((v % 100) * 0.6); return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`; }
 
+// Paramètres pilotés par le monde vivant (/monde/force) : la météo réelle ne les écrase pas tant qu'ils sont forcés
+const AUTO_KEYS = ["Cloud Coverage", "Rain", "Snow", "Fog", "Thunder/Lightning", "Wind Intensity"];
+async function setWeather(key, v) {
+  if (AUTO_KEYS.includes(key)) {
+    try { await monde(`/monde/force?key=${encodeURIComponent(key)}&value=${v}`); return; } catch (e) { /* ancien binaire : Remote Control direct */ }
+  }
+  await rc(WEATHER, key + " - Manual Override", true);
+  await rc(WEATHER, key, v);
+}
+
 const rows = {};
 rows.TimeOfDay = makeRow($("sky"), "TimeOfDay", "Heure", 0, 2400, 5, (v) => rc(SKY, "TimeOfDay", v), false);
 for (const [key, label] of WEATHER_PARAMS) {
-  rows[key] = makeRow($("weather"), key, label, 0, 10, 0.1, async (v) => {
-    await rc(WEATHER, key + " - Manual Override", true);
-    await rc(WEATHER, key, v);
-  }, true);
+  rows[key] = makeRow($("weather"), key, label, 0, 10, 0.1, (v) => setWeather(key, v), true);
 }
 
 for (const name of Object.keys(PRESETS)) {
@@ -191,8 +206,7 @@ for (const name of Object.keys(PRESETS)) {
     if (!base) return setStatus("Connecte-toi d'abord", "err");
     try {
       for (const [key, v] of Object.entries(PRESETS[name])) {
-        await rc(WEATHER, key + " - Manual Override", true);
-        await rc(WEATHER, key, v);
+        await setWeather(key, v);
         rows[key].set(v); rows[key].override(true);
       }
       setStatus(`Préréglage « ${name} » appliqué`, "ok");
@@ -204,8 +218,12 @@ for (const name of Object.keys(PRESETS)) {
 $("release").onclick = async () => {
   if (!base) return setStatus("Connecte-toi d'abord", "err");
   try {
-    for (const [key] of WEATHER_PARAMS) { await rc(WEATHER, key + " - Manual Override", false); rows[key].override(false); }
-    setStatus("Météo rendue au préréglage UDS", "ok");
+    await monde("/monde/release");
+    for (const [key] of WEATHER_PARAMS) {
+      if (!AUTO_KEYS.includes(key)) await rc(WEATHER, key + " - Manual Override", false);
+      rows[key].override(false);
+    }
+    setStatus($("autoWeather").checked ? "Forçages libérés : météo réelle" : "Météo rendue au préréglage UDS", "ok");
   } catch (e) { setStatus(e.message, "err"); }
 };
 
@@ -268,6 +286,22 @@ function showMonde(m) {
   guard.textContent = GUARD_LABELS[s.guardLevel] || s.guardLevel;
   guard.className = "big" + (s.guardLevel > 0 ? " warn" : "");
   $("perfGuardOn").checked = !!m.settings.bPerfGuard;
+  $("autoWeather").checked = !!m.settings.bAutoWeather;
+  $("lowClouds").checked = !!m.settings.bLowClouds;
+  for (const [id, k] of [["snowLine", "snowLineOverrideM"], ["smoothMin", "weatherSmoothMinutes"], ["refreshMin", "autoWeatherRefreshMinutes"]]) {
+    if (document.activeElement !== $(id)) $(id).value = (k === "snowLineOverrideM" && m.settings[k] < 0) ? "" : m.settings[k];
+  }
+  const w = m.weather;
+  if (!m.settings.bAutoWeather) $("autoInfo").textContent = "";
+  else if (!w.bHasData) $("autoInfo").textContent = w.source || "En attente du premier relevé…";
+  else {
+    const t = w.targets || {};
+    $("autoInfo").innerHTML = `${w.source} (${w.distanceKm.toFixed(1)} km, relevé il y a ${w.ageMinutes} min) : ${w.description}, ` +
+      `${w.tempC.toFixed(1)} °C à ${Math.round(w.sourceAltitudeM)} m, ${w.cameraTempC.toFixed(1)} °C côté caméra (caméra à ${Math.round(w.cameraAltitudeM)} m), ` +
+      `nuages ${w.clouds} %, pluie ${w.rain1h} mm/h, neige ${w.snow1h} mm/h, visibilité ${w.visibility} m, vent ${w.windMs.toFixed(1)} m/s.<br>` +
+      `Ligne de neige ${Math.round(m.state.snowLineM)} m, base des nuages ${Math.round(w.cloudBaseM)} m. Cibles : ` + AUTO_KEYS.map((k) => `${k} ${(t[k] ?? 0).toFixed(1)}`).join(", ");
+    for (const k of AUTO_KEYS) if (rows[k] && !(k in (w.forced || {}))) rows[k].override(false);
+  }
 }
 let mondeTimer = null;
 function pollMonde() {
@@ -276,6 +310,12 @@ function pollMonde() {
   tick();
   mondeTimer = setInterval(tick, 1000);
 }
+const setMonde = (q) => monde(`/monde/set?${q}`).then(showMonde).catch((e) => setStatus(e.message, "err"));
+$("autoWeather").onchange = () => setMonde(`bAutoWeather=${$("autoWeather").checked ? 1 : 0}`);
+$("lowClouds").onchange = () => setMonde(`bLowClouds=${$("lowClouds").checked ? 1 : 0}`);
+$("snowLine").onchange =() => setMonde(`snowLineOverrideM=${$("snowLine").value === "" ? -1 : $("snowLine").value}`);
+$("smoothMin").onchange = () => setMonde(`weatherSmoothMinutes=${$("smoothMin").value}`);
+$("refreshMin").onchange = () => setMonde(`autoWeatherRefreshMinutes=${$("refreshMin").value}`);
 $("perfGuardOn").onchange = () =>
   monde(`/monde/set?bPerfGuard=${$("perfGuardOn").checked ? 1 : 0}`).then(showMonde).catch((e) => setStatus(e.message, "err"));
 

@@ -1,9 +1,15 @@
 // Copyright LTV Prod 2026. All Rights Reserved
 
 #include "WorldAmbienceSubsystem.h"
+#include "Camera/PlayerCameraManager.h"
+#include "CheckpointSubsystem.h"
+#include "Engine/GameInstance.h"
+#include "RaceSubsystem.h"
+#include "WeatherSubsystem.h"
 #include "Cesium3DTileset.h"
 #include "CesiumGeoreference.h"
 #include "Components/DirectionalLightComponent.h"
+#include "Components/VolumetricCloudComponent.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
@@ -90,6 +96,21 @@ namespace WorldAmbience
 		return static_cast<float>(Sum / Values.Num());
 	}
 
+	/** Interpolation lineaire par morceaux sur des points (x croissants) */
+	float Piecewise(float X, std::initializer_list<FVector2f> Points)
+	{
+		const FVector2f* Prev = nullptr;
+		for (const FVector2f& P : Points)
+		{
+			if (X <= P.X) return Prev ? FMath::GetMappedRangeValueClamped(FVector2f(Prev->X, P.X), FVector2f(Prev->Y, P.Y), X) : P.Y;
+			Prev = &P;
+		}
+		return Prev ? Prev->Y : 0.f;
+	}
+
+	/** Cles des parametres UDW pilotes par la meteo reelle et la regie */
+	const TCHAR* WeatherKeys[] = { TEXT("Cloud Coverage"), TEXT("Rain"), TEXT("Snow"), TEXT("Fog"), TEXT("Thunder/Lightning"), TEXT("Wind Intensity") };
+
 	TUniquePtr<FHttpServerResponse> JsonResponse(const FString& Json)
 	{
 		TUniquePtr<FHttpServerResponse> Response = FHttpServerResponse::Create(Json, TEXT("application/json"));
@@ -112,6 +133,13 @@ void UWorldAmbienceSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 void UWorldAmbienceSubsystem::Deinitialize()
 {
+	if (UGameInstance* GI = GetWorld() ? GetWorld()->GetGameInstance() : nullptr)
+	{
+		if (UCheckpointSubsystem* Checkpoints = GI->GetSubsystem<UCheckpointSubsystem>())
+		{
+			Checkpoints->OnCheckpointsDatasGathered.RemoveDynamic(this, &UWorldAmbienceSubsystem::HandleCheckpointsGathered);
+		}
+	}
 	UnbindRoutes();
 	Super::Deinitialize();
 }
@@ -125,6 +153,14 @@ void UWorldAmbienceSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	{
 		UE_LOG(LogWorldAmbience, Warning, TEXT("%s introuvable : les materiaux ne recevront pas l'etat du monde"), WorldAmbience::MPCPath);
 	}
+	if (UGameInstance* GI = InWorld.GetGameInstance())
+	{
+		if (UCheckpointSubsystem* Checkpoints = GI->GetSubsystem<UCheckpointSubsystem>())
+		{
+			Checkpoints->OnCheckpointsDatasGathered.AddUniqueDynamic(this, &UWorldAmbienceSubsystem::HandleCheckpointsGathered);
+		}
+	}
+
 	bBegunPlay = true;
 	UpdateState(0.f);
 }
@@ -138,6 +174,8 @@ void UWorldAmbienceSubsystem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	if (!bBegunPlay) return;
+
+	TimeSinceBeginPlay += DeltaTime;
 
 	// Le gardien suit chaque image ; l'etat du monde n'a pas besoin de plus de 4 mises a jour par seconde
 	UpdatePerfGuard(DeltaTime);
@@ -185,6 +223,8 @@ void UWorldAmbienceSubsystem::UpdateState(float DeltaTime)
 		State.Night = 1.f - FMath::SmoothStep(-8.f, 6.f, State.SunElevationDeg);
 	}
 
+	TickAutoWeather(DeltaTime);
+	UpdateCloudBase(DeltaTime);
 	ReadWeatherActor();
 
 	// Sol mouille : monte en 2 a 6 minutes selon l'intensite, seche en DryingMinutes
@@ -199,8 +239,21 @@ void UWorldAmbienceSubsystem::UpdateState(float DeltaTime)
 		State.Wetness = FMath::Max(0.f, State.Wetness - DeltaTime / (FMath::Max(Settings.DryingMinutes, 0.1f) * 60.f));
 	}
 
-	// Ligne de neige : forcee par la regie, sinon valeur par defaut en attendant le calcul automatique (lot 1)
-	State.SnowLineM = Settings.SnowLineOverrideM >= 0.f ? Settings.SnowLineOverrideM : 3000.f;
+	// Ligne de neige : forcee par la regie, sinon isotherme 0 degre deduit du releve reel moins 300 m
+	// (la neige tient un peu sous l'isotherme), sinon 3000 m par defaut
+	if (Settings.SnowLineOverrideM >= 0.f)
+	{
+		State.SnowLineM = Settings.SnowLineOverrideM;
+	}
+	else if (AutoWeather.bHasData)
+	{
+		const float FreezingLevelM = AutoWeather.SourceAltitudeM + AutoWeather.TempC / 0.0065f;
+		State.SnowLineM = FMath::Clamp(FreezingLevelM - 300.f, 0.f, 6000.f);
+	}
+	else
+	{
+		State.SnowLineM = 3000.f;
+	}
 
 	PushToMPC();
 }
@@ -280,7 +333,12 @@ void UWorldAmbienceSubsystem::UpdatePerfGuard(float DeltaTime)
 	State.FrameMs = FMath::Lerp(State.FrameMs, RawMs, Alpha);
 
 	const int32 PreviousLevel = State.GuardLevel;
-	if (!Settings.bPerfGuard)
+	if (TimeSinceBeginPlay < 15.f)
+	{
+		// Chargement de la map et des premieres tuiles : images tres longues sans rapport avec le cout du rendu
+		GuardHighTime = GuardLowTime = 0.f;
+	}
+	else if (!Settings.bPerfGuard)
 	{
 		State.GuardLevel = 0;
 		GuardHighTime = GuardLowTime = 0.f;
@@ -392,6 +450,7 @@ FString UWorldAmbienceSubsystem::StateJson() const
 	Root->SetBoolField(TEXT("ok"), true);
 	Root->SetObjectField(TEXT("settings"), FJsonObjectConverter::UStructToJsonObject(Settings));
 	Root->SetObjectField(TEXT("state"), FJsonObjectConverter::UStructToJsonObject(State));
+	Root->SetObjectField(TEXT("weather"), FJsonObjectConverter::UStructToJsonObject(AutoWeather));
 
 	TSharedRef<FJsonObject> Effective = MakeShared<FJsonObject>();
 	Effective->SetNumberField(TEXT("flora"), GetEffectiveFloraDensity());
@@ -400,6 +459,10 @@ FString UWorldAmbienceSubsystem::StateJson() const
 	Effective->SetBoolField(TEXT("mpc"), WorldMPC != nullptr);
 	Effective->SetBoolField(TEXT("sun"), SunLight.IsValid());
 	Effective->SetBoolField(TEXT("weather"), WeatherActor.IsValid());
+	if (const UVolumetricCloudComponent* Cloud = CloudComponent.Get())
+	{
+		Effective->SetNumberField(TEXT("cloudBottomKm"), Cloud->LayerBottomAltitude);
+	}
 	Root->SetObjectField(TEXT("effective"), Effective);
 
 	FString Out;
@@ -426,6 +489,10 @@ void UWorldAmbienceSubsystem::BindRoutes()
 	SetRouteHandle = HttpRouter->BindRoute(FHttpPath(TEXT("/monde/set")), EHttpServerRequestVerbs::VERB_GET,
 		FHttpRequestHandler::CreateUObject(this, &UWorldAmbienceSubsystem::HandleSetRequest));
 
+	ForceRouteHandle = HttpRouter->BindRoute(FHttpPath(TEXT("/monde/force")), EHttpServerRequestVerbs::VERB_GET,
+		FHttpRequestHandler::CreateUObject(this, &UWorldAmbienceSubsystem::HandleForceRequest));
+	ReleaseRouteHandle = HttpRouter->BindRoute(FHttpPath(TEXT("/monde/release")), EHttpServerRequestVerbs::VERB_GET,
+		FHttpRequestHandler::CreateUObject(this, &UWorldAmbienceSubsystem::HandleReleaseRequest));
 	BenchStartRouteHandle = HttpRouter->BindRoute(FHttpPath(TEXT("/monde/bench/start")), EHttpServerRequestVerbs::VERB_GET,
 		FHttpRequestHandler::CreateUObject(this, &UWorldAmbienceSubsystem::HandleBenchStartRequest));
 	BenchStateRouteHandle = HttpRouter->BindRoute(FHttpPath(TEXT("/monde/bench")), EHttpServerRequestVerbs::VERB_GET,
@@ -442,7 +509,7 @@ void UWorldAmbienceSubsystem::UnbindRoutes()
 {
 	if (HttpRouter.IsValid())
 	{
-		for (FHttpRouteHandle* Handle : { &StateRouteHandle, &SetRouteHandle, &BenchStartRouteHandle, &BenchStateRouteHandle })
+		for (FHttpRouteHandle* Handle : { &StateRouteHandle, &SetRouteHandle, &ForceRouteHandle, &ReleaseRouteHandle, &BenchStartRouteHandle, &BenchStateRouteHandle })
 		{
 			if (Handle->IsValid()) HttpRouter->UnbindRoute(*Handle);
 			Handle->Reset();
@@ -767,4 +834,315 @@ FString UWorldAmbienceSubsystem::BenchJson() const
 	FString Out;
 	FJsonSerializer::Serialize(Root, TJsonWriterFactory<>::Create(&Out));
 	return Out;
+}
+
+// ---------------------------------------------------------------------------
+// Meteo reelle -> UDW
+// Les releves OpenWeather des checkpoints de la course sont relus toutes les AutoWeatherRefreshMinutes ;
+// celui du checkpoint le plus proche de la camera donne les cibles UDW, corrigees de l'altitude.
+// Les parametres forces depuis la regie (/monde/force) restent prioritaires.
+// ---------------------------------------------------------------------------
+
+void UWorldAmbienceSubsystem::TickAutoWeather(float DeltaTime)
+{
+	AutoWeather.Sources = WeatherSamples.Num();
+	// Le banc de test impose sa propre meteo
+	if (BenchPhase != EBenchPhase::Idle) return;
+	if (!Settings.bAutoWeather)
+	{
+		bWasAutoWeather = false;
+		return;
+	}
+
+	if (!bWasAutoWeather)
+	{
+		// Activation : on part des valeurs UDW courantes pour que la transition soit douce
+		bWasAutoWeather = true;
+		WeatherRefreshTimer = 0.f;
+		AppliedWeather.Reset();
+		if (const AActor* Weather = WeatherActor.Get())
+		{
+			for (const TCHAR* Key : WorldAmbience::WeatherKeys)
+			{
+				float Value = 0.f;
+				if (WorldAmbience::ReadNumber(Weather, Key, Value)) AppliedWeather.Add(Key, Value);
+			}
+		}
+	}
+
+	WeatherRefreshTimer -= DeltaTime;
+	if (WeatherRefreshTimer <= 0.f)
+	{
+		// Tant qu'aucune course n'est chargee, on reessaie toutes les 30 s
+		WeatherRefreshTimer = RequestAutoWeather() ? FMath::Max(Settings.AutoWeatherRefreshMinutes, 1.f) * 60.f : 30.f;
+	}
+	if (WeatherSamples.Num() == 0) return;
+
+	ComputeAutoWeather();
+
+	// Pleine echelle (0 -> 10) parcourue en WeatherSmoothMinutes ; un forcage regie s'applique tout de suite
+	const float Rate = 10.f / (FMath::Max(Settings.WeatherSmoothMinutes, 0.05f) * 60.f);
+	for (const TCHAR* Key : WorldAmbience::WeatherKeys)
+	{
+		const float* Forced = AutoWeather.Forced.Find(Key);
+		const float* Target = Forced ? Forced : AutoWeather.Targets.Find(Key);
+		if (!Target) continue;
+		float& Current = AppliedWeather.FindOrAdd(Key, *Target);
+		Current = Forced ? *Forced : FMath::FInterpConstantTo(Current, *Target, DeltaTime, Rate);
+		WriteWeatherParam(Key, Current);
+	}
+
+	// Direction du vent : meteo = d'ou il vient (0 = nord) ; repere Cesium +X est, +Y sud.
+	// Lacet de la direction vers laquelle il souffle = cap + 180 - 90
+	if (AActor* Weather = WeatherActor.Get())
+	{
+		WorldAmbience::ImportProperty(Weather, TEXT("Wind Direction"), FString::SanitizeFloat(FMath::Fmod(AutoWeather.WindDeg + 90.f, 360.f)));
+	}
+}
+
+void UWorldAmbienceSubsystem::HandleCheckpointsGathered(int64 RaceID, FCheckpoints AllCheckpoints)
+{
+	KnownCheckpoints.Add(RaceID, MoveTemp(AllCheckpoints));
+}
+
+bool UWorldAmbienceSubsystem::RequestAutoWeather()
+{
+	UGameInstance* GI = GetWorld()->GetGameInstance();
+	URaceSubsystem* Race = GI ? GI->GetSubsystem<URaceSubsystem>() : nullptr;
+	UCheckpointSubsystem* Checkpoints = GI ? GI->GetSubsystem<UCheckpointSubsystem>() : nullptr;
+	UWeatherSubsystem* Weather = GI ? GI->GetSubsystem<UWeatherSubsystem>() : nullptr;
+	if (!Weather) return false;
+
+	// Checkpoints de toutes les courses vues passer, plus ceux de la course courante (chargee avant nous)
+	TArray<const FRaceCheckpoint*> All;
+	for (const TPair<int64, FCheckpoints>& Pair : KnownCheckpoints)
+		for (const FRaceCheckpoint& C : Pair.Value.Checkpoints) All.Add(&C);
+	if (const FCheckpoints* Current = (Race && Checkpoints) ? Checkpoints->GetCheckpointsByRaceId(Race->GetCurrentRaceId()) : nullptr)
+		for (const FRaceCheckpoint& C : Current->Checkpoints) All.Add(&C);
+
+	TSet<FString> Seen;
+	TWeakObjectPtr<UWorldAmbienceSubsystem> WeakThis(this);
+	for (const FRaceCheckpoint* CheckpointPtr : All)
+	{
+		const FRaceCheckpoint& Checkpoint = *CheckpointPtr;
+		if (Checkpoint.weather.IsEmpty() || Seen.Contains(Checkpoint.weather)) continue;
+		Seen.Add(Checkpoint.weather);
+
+		Weather->PerformHttpRequestForWeather(
+			FString::Printf(TEXT("WorldAmbience_%lld"), Checkpoint.checkpointId),
+			Checkpoint.weather,
+			[WeakThis, Name = Checkpoint.name, AltitudeM = Checkpoint.altitude](FWeatherResult&& Result)
+			{
+				if (!WeakThis.IsValid() || !Result.bSuccess) return;
+				FWeatherSample* Sample = WeakThis->WeatherSamples.FindByPredicate([&Name](const FWeatherSample& S) { return S.Name == Name; });
+				if (!Sample) Sample = &WeakThis->WeatherSamples.AddDefaulted_GetRef();
+				Sample->Name = Name;
+				Sample->Lat = Result.Data.lat;
+				Sample->Lon = Result.Data.lon;
+				Sample->ElevationM = AltitudeM;
+				Sample->Current = Result.Data.current;
+				Sample->Description = Result.Data.current.weather.Num() > 0 ? Result.Data.current.weather[0].description : FString();
+				Sample->Received = FDateTime::UtcNow();
+			});
+	}
+
+	if (Seen.Num() == 0)
+	{
+		AutoWeather.Source = FString::Printf(TEXT("Aucun checkpoint avec meteo (%d checkpoints connus) : course pas encore chargee ?"), All.Num());
+		return false;
+	}
+	return true;
+}
+
+bool UWorldAmbienceSubsystem::GetCameraLongLatHeight(FVector& OutLLH) const
+{
+	const APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	const ACesiumGeoreference* Geo = Cast<ACesiumGeoreference>(UGameplayStatics::GetActorOfClass(GetWorld(), ACesiumGeoreference::StaticClass()));
+	if (!PC || !PC->PlayerCameraManager || !Geo) return false;
+	OutLLH = Geo->TransformUnrealPositionToLongitudeLatitudeHeight(PC->PlayerCameraManager->GetCameraLocation());
+	return true;
+}
+
+void UWorldAmbienceSubsystem::ComputeAutoWeather()
+{
+	using WorldAmbience::Piecewise;
+
+	FVector Camera(0.0);
+	const bool bHasCamera = GetCameraLongLatHeight(Camera);
+
+	// Checkpoint le plus proche de la camera (distance equirectangulaire, suffisante a l'echelle d'une course)
+	const FWeatherSample* Best = &WeatherSamples[0];
+	double BestKm = 0.0;
+	if (bHasCamera)
+	{
+		BestKm = TNumericLimits<double>::Max();
+		for (const FWeatherSample& S : WeatherSamples)
+		{
+			const double X = FMath::DegreesToRadians(S.Lon - Camera.X) * FMath::Cos(FMath::DegreesToRadians((S.Lat + Camera.Y) * 0.5));
+			const double Y = FMath::DegreesToRadians(S.Lat - Camera.Y);
+			const double Km = 6371.0 * FMath::Sqrt(X * X + Y * Y);
+			if (Km < BestKm) { BestKm = Km; Best = &S; }
+		}
+	}
+
+	FAutoWeatherInfo& W = AutoWeather;
+	W.SourceLat = Best->Lat;
+	W.SourceLon = Best->Lon;
+	// Releve trop loin de la camera (autre course, terrain deplace) : on laisse UDW tel quel
+	if (bHasCamera && BestKm > MaxSourceDistanceKm)
+	{
+		W.bHasData = false;
+		W.Targets.Reset();
+		W.Source = FString::Printf(TEXT("Aucun checkpoint a moins de %.0f km de la camera (le plus proche : %s, %.0f km)"), MaxSourceDistanceKm, *Best->Name, BestKm);
+		return;
+	}
+
+	const FOpenWeatherCurrent& C = Best->Current;
+	W.bHasData = true;
+	W.Source = Best->Name;
+	W.DistanceKm = static_cast<float>(BestKm);
+	W.AgeMinutes = static_cast<int32>((FDateTime::UtcNow() - Best->Received).GetTotalMinutes());
+	W.Description = Best->Description;
+	W.SourceAltitudeM = Best->ElevationM;
+	W.TempC = C.temp;
+	W.CameraAltitudeM = bHasCamera ? static_cast<float>(Camera.Z) : Best->ElevationM;
+	// Temperature la ou tombent les precipitations visibles : a la camera, mais pas plus de 1000 m au-dessus
+	// du releve (en plan aerien, la pluie qu'on voit tombe sur le relief, pas a l'altitude de l'avion)
+	const float PrecipAltitudeM = FMath::Min(W.CameraAltitudeM, Best->ElevationM + 1000.f);
+	W.CameraTempC = C.temp - 0.0065f * (PrecipAltitudeM - Best->ElevationM);
+	W.DewPointC = C.dew_point;
+	W.CloudBaseM = Best->ElevationM + 125.f * FMath::Max(0.f, C.temp - C.dew_point);
+	W.Clouds = C.clouds;
+	W.Rain1h = C.rain_1h;
+	W.Snow1h = C.snow_1h;
+	W.Visibility = C.visibility;
+	W.Humidity = C.humidity;
+	W.WindMs = C.wind_speed;
+	W.WindDeg = C.wind_deg;
+
+	const int32 Id = C.weather.Num() > 0 ? C.weather[0].id : 800;
+	const int32 Group = Id / 100;
+
+	// Precipitations : cumul horaire en priorite, code meteo sinon
+	const std::initializer_list<FVector2f> PrecipCurve = { {0.f, 0.f}, {0.5f, 2.f}, {2.f, 5.f}, {8.f, 9.f}, {20.f, 10.f} };
+	float Rain = Piecewise(C.rain_1h, PrecipCurve);
+	float Snow = Piecewise(C.snow_1h, PrecipCurve);
+	if (Rain <= 0.f && Snow <= 0.f)
+	{
+		const int32 Sub = Id % 100;
+		if (Group == 3) Rain = 1.5f;                                                           // bruine
+		else if (Group == 5) Rain = Sub == 0 ? 2.f : Sub == 1 ? 4.f : Sub == 2 ? 7.f : Sub <= 4 ? 9.f : 4.f;
+		else if (Group == 6) Snow = Sub == 0 ? 2.f : Sub == 1 ? 4.f : Sub == 2 ? 7.f : 3.f;
+		else if (Group == 2) Rain = 5.f;
+	}
+
+	// Pluie ou neige selon la temperature a l'altitude de la camera
+	const float T = W.CameraTempC;
+	if (T <= 0.5f) { Snow += Rain; Rain = 0.f; }
+	else if (T < 2.f) { const float Half = Rain * 0.5f; Snow += Half; Rain -= Half; }
+	else if (T >= 3.f) { Rain += Snow; Snow = 0.f; }
+
+	// Orage
+	float Thunder = 0.f;
+	if (Group == 2)
+	{
+		Thunder = (Id == 202 || Id == 232 || Id == 212) ? 9.f : (Id == 211 || Id == 201 || Id == 231) ? 7.f : 5.f;
+	}
+
+	// Brouillard : visibilite, codes brume/brouillard, air sature sans vent
+	float Fog = C.visibility > 0 ? Piecewise(static_cast<float>(C.visibility), { {200.f, 9.f}, {1000.f, 6.f}, {5000.f, 2.f}, {10000.f, 0.f} }) : 0.f;
+	if (Id == 741) Fog = FMath::Max(Fog, 7.f);
+	else if (Id == 701 || Id == 721) Fog = FMath::Max(Fog, 3.f);
+	if (C.humidity >= 95 && C.wind_speed < 2.f) Fog = FMath::Max(Fog, 2.f);
+
+	float Clouds = C.clouds / 10.f;
+	if (Rain > 0.f || Snow > 0.f) Clouds = FMath::Max(Clouds, 7.f);
+	if (Thunder > 0.f) Clouds = FMath::Max(Clouds, 9.f);
+
+	W.Targets.Add(TEXT("Cloud Coverage"), Clouds);
+	W.Targets.Add(TEXT("Rain"), FMath::Min(Rain, 10.f));
+	W.Targets.Add(TEXT("Snow"), FMath::Min(Snow, 10.f));
+	W.Targets.Add(TEXT("Fog"), Fog);
+	W.Targets.Add(TEXT("Thunder/Lightning"), Thunder);
+	W.Targets.Add(TEXT("Wind Intensity"), FMath::Clamp(C.wind_speed * 0.6f, 0.f, 10.f));
+}
+
+void UWorldAmbienceSubsystem::UpdateCloudBase(float DeltaTime)
+{
+	UVolumetricCloudComponent* Cloud = CloudComponent.Get();
+	if (!Cloud)
+	{
+		AActor* Sky = WorldAmbience::FindActorByClassToken(GetWorld(), WorldAmbience::SkyClassToken);
+		Cloud = Sky ? Sky->FindComponentByClass<UVolumetricCloudComponent>() : nullptr;
+		if (!Cloud) return;
+		CloudComponent = Cloud;
+		OriginalCloudBottomKm = CurrentCloudBottomKm = Cloud->LayerBottomAltitude;
+	}
+
+	// Sans nuages bas (reglage ou gardien) ou sans releve : la base reste celle d'Ultra Dynamic Sky
+	float TargetKm = OriginalCloudBottomKm;
+	const ACesiumGeoreference* Geo = Cast<ACesiumGeoreference>(UGameplayStatics::GetActorOfClass(GetWorld(), ACesiumGeoreference::StaticClass()));
+	if (AreLowCloudsAllowed() && Settings.bAutoWeather && AutoWeather.bHasData && Geo)
+	{
+		// La planete d'UDS a son sommet a l'origine du monde, donc a l'altitude de l'origine Cesium
+		TargetKm = FMath::Clamp((AutoWeather.CloudBaseM - static_cast<float>(Geo->GetOriginHeight())) / 1000.f, 0.2f, OriginalCloudBottomKm);
+	}
+
+	// Montee ou descente de 0,5 km par minute au plus
+	CurrentCloudBottomKm = FMath::FInterpConstantTo(CurrentCloudBottomKm, TargetKm, DeltaTime, 0.5f / 60.f);
+	if (!FMath::IsNearlyEqual(Cloud->LayerBottomAltitude, CurrentCloudBottomKm, 0.005f))
+	{
+		Cloud->SetLayerBottomAltitude(CurrentCloudBottomKm);
+	}
+}
+
+void UWorldAmbienceSubsystem::WriteWeatherParam(const FString& Key, float Value)
+{
+	AActor* Weather = WeatherActor.Get();
+	if (!Weather) return;
+	WorldAmbience::ImportProperty(Weather, Key + TEXT(" - Manual Override"), TEXT("True"));
+	WorldAmbience::ImportProperty(Weather, Key, FString::SanitizeFloat(Value));
+}
+
+bool UWorldAmbienceSubsystem::HandleForceRequest(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
+{
+	// /monde/force?key=Rain&value=6 force un parametre ; sans value, le rend a la meteo reelle
+	const FString* Key = Request.QueryParams.Find(TEXT("key"));
+	const FString* Value = Request.QueryParams.Find(TEXT("value"));
+	bool bKnown = false;
+	for (const TCHAR* K : WorldAmbience::WeatherKeys) bKnown |= (Key && *Key == K);
+	if (!bKnown || (Value && !Value->IsNumeric()))
+	{
+		OnComplete(WorldAmbience::JsonResponse(TEXT("{\"ok\":false,\"error\":\"key attendu parmi les parametres UDW, value numerique\"}")));
+		return true;
+	}
+
+	if (Value)
+	{
+		const float V = FCString::Atof(**Value);
+		AutoWeather.Forced.Add(*Key, V);
+		WriteWeatherParam(*Key, V);
+	}
+	else
+	{
+		AutoWeather.Forced.Remove(*Key);
+	}
+	OnComplete(WorldAmbience::JsonResponse(StateJson()));
+	return true;
+}
+
+bool UWorldAmbienceSubsystem::HandleReleaseRequest(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
+{
+	AutoWeather.Forced.Reset();
+	// Sans meteo auto, on rend la main au prereglage UDS de la map comme avant
+	if (!Settings.bAutoWeather)
+	{
+		if (AActor* Weather = WeatherActor.Get())
+		{
+			for (const TCHAR* Key : WorldAmbience::WeatherKeys)
+				WorldAmbience::ImportProperty(Weather, FString(Key) + TEXT(" - Manual Override"), TEXT("False"));
+		}
+	}
+	OnComplete(WorldAmbience::JsonResponse(StateJson()));
+	return true;
 }

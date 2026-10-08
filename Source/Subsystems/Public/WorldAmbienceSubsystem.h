@@ -6,11 +6,13 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "HttpRouteHandle.h"
 #include "HttpResultCallback.h"
+#include "TrailSharedTypes.h"
 #include "WorldAmbienceSubsystem.generated.h"
 
 class IHttpRouter;
 class UMaterialParameterCollection;
 class UDirectionalLightComponent;
+class UVolumetricCloudComponent;
 struct FHttpServerRequest;
 
 /**
@@ -22,8 +24,12 @@ struct SUBSYSTEMS_API FWorldAmbienceSettings
 	GENERATED_BODY()
 
 	// --- Meteo et sol ---
-	/** La meteo reelle pilote UDW (branche au lot 1) */
+	/** La meteo reelle (OpenWeather du checkpoint le plus proche de la camera) pilote UDW */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bAutoWeather = false;
+	/** Intervalle entre deux releves meteo (minutes) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float AutoWeatherRefreshMinutes = 10.f;
+	/** Duree d'une transition complete vers la nouvelle meteo (minutes) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float WeatherSmoothMinutes = 3.f;
 	/** Duree de sechage du sol apres la pluie (minutes) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float DryingMinutes = 20.f;
 	/** Ligne de neige forcee (m) ; negative = automatique (lot 1) */
@@ -44,6 +50,7 @@ struct SUBSYSTEMS_API FWorldAmbienceSettings
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float FloraRadiusM = 150.f;
 
 	// --- Nuages bas ---
+	/** Base des nuages volumetriques calculee depuis le releve reel (point de rosee) : nuages accroches aux sommets */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bLowClouds = false;
 
 	// --- Performance ---
@@ -83,6 +90,44 @@ struct SUBSYSTEMS_API FWorldAmbienceState
 	UPROPERTY(BlueprintReadOnly) float GpuMs = 0.f;
 	/** Cran de reduction du gardien : 0 = rien, 1 = flore a moitie, 2 = sans flore, 3 = sans faune, 4 = sans nuages bas */
 	UPROPERTY(BlueprintReadOnly) int32 GuardLevel = 0;
+};
+
+/**
+ * @brief Dernier releve meteo reel retenu et valeurs UDW qui en decoulent (affiche dans la regie)
+ */
+USTRUCT(BlueprintType)
+struct SUBSYSTEMS_API FAutoWeatherInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly) bool bHasData = false;
+	/** Checkpoint dont la meteo est utilisee */
+	UPROPERTY(BlueprintReadOnly) FString Source;
+	UPROPERTY(BlueprintReadOnly) int32 Sources = 0;
+	UPROPERTY(BlueprintReadOnly) float DistanceKm = 0.f;
+	UPROPERTY(BlueprintReadOnly) double SourceLat = 0.0;
+	UPROPERTY(BlueprintReadOnly) double SourceLon = 0.0;
+	UPROPERTY(BlueprintReadOnly) int32 AgeMinutes = 0;
+	UPROPERTY(BlueprintReadOnly) FString Description;
+	UPROPERTY(BlueprintReadOnly) float SourceAltitudeM = 0.f;
+	UPROPERTY(BlueprintReadOnly) float TempC = 0.f;
+	UPROPERTY(BlueprintReadOnly) float CameraAltitudeM = 0.f;
+	/** Temperature ramenee a l'altitude de la camera, plafonnee a 1000 m au-dessus du releve (-0,65 degre / 100 m) */
+	UPROPERTY(BlueprintReadOnly) float CameraTempC = 0.f;
+	UPROPERTY(BlueprintReadOnly) float DewPointC = 0.f;
+	/** Base des nuages estimee (m, niveau de la mer) : altitude du releve + 125 m par degre d'ecart temperature / point de rosee */
+	UPROPERTY(BlueprintReadOnly) float CloudBaseM = 0.f;
+	UPROPERTY(BlueprintReadOnly) int32 Clouds = 0;
+	UPROPERTY(BlueprintReadOnly) float Rain1h = 0.f;
+	UPROPERTY(BlueprintReadOnly) float Snow1h = 0.f;
+	UPROPERTY(BlueprintReadOnly) int32 Visibility = 0;
+	UPROPERTY(BlueprintReadOnly) int32 Humidity = 0;
+	UPROPERTY(BlueprintReadOnly) float WindMs = 0.f;
+	UPROPERTY(BlueprintReadOnly) int32 WindDeg = 0;
+	/** Cibles UDW calculees (0-10) */
+	UPROPERTY(BlueprintReadOnly) TMap<FString, float> Targets;
+	/** Parametres forces a la main depuis la regie (prioritaires sur la meteo reelle) */
+	UPROPERTY(BlueprintReadOnly) TMap<FString, float> Forced;
 };
 
 /**
@@ -215,6 +260,51 @@ private:
 	TMap<FString, FString> SavedSkyValues;
 	TMap<FString, FString> SavedWeatherValues;
 	bool bSavedPerfGuard = true;
+
+	// --- Meteo reelle ---
+	struct FWeatherSample
+	{
+		FString Name;
+		double Lat = 0.0;
+		double Lon = 0.0;
+		float ElevationM = 0.f;
+		FOpenWeatherCurrent Current;
+		FString Description;
+		FDateTime Received;
+	};
+	void TickAutoWeather(float DeltaTime);
+	/** Lance les releves ; renvoie false s'il n'y a encore aucun checkpoint avec meteo */
+	bool RequestAutoWeather();
+	UFUNCTION()
+	void HandleCheckpointsGathered(int64 RaceID, FCheckpoints AllCheckpoints);
+	/** Checkpoints de toutes les courses chargees : la meteo du plus proche de la camera l'emporte */
+	TMap<int64, FCheckpoints> KnownCheckpoints;
+	/** Au-dela, le releve du checkpoint le plus proche n'est pas representatif du lieu filme */
+	static constexpr float MaxSourceDistanceKm = 50.f;
+	void ComputeAutoWeather();
+	bool GetCameraLongLatHeight(FVector& OutLLH) const;
+	void WriteWeatherParam(const FString& Key, float Value);
+	bool HandleForceRequest(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
+	bool HandleReleaseRequest(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
+
+	TArray<FWeatherSample> WeatherSamples;
+	FAutoWeatherInfo AutoWeather;
+	/** Valeurs UDW effectivement appliquees, qui glissent vers les cibles */
+	TMap<FString, float> AppliedWeather;
+	float WeatherRefreshTimer = 0.f;
+	int32 WeatherRequestSerial = 0;
+	bool bWasAutoWeather = false;
+
+	// --- Base des nuages ---
+	void UpdateCloudBase(float DeltaTime);
+	TWeakObjectPtr<UVolumetricCloudComponent> CloudComponent;
+	float OriginalCloudBottomKm = -1.f;
+	float CurrentCloudBottomKm = -1.f;
+	FHttpRouteHandle ForceRouteHandle;
+	FHttpRouteHandle ReleaseRouteHandle;
+
+	/** Temps ecoule depuis le BeginPlay : le gardien ignore le chargement initial */
+	float TimeSinceBeginPlay = 0.f;
 
 	float LastRawFrameMs = 0.f;
 	float LastRawGpuMs = 0.f;
