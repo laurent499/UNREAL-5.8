@@ -7,6 +7,7 @@
 #include "RaceSubsystem.h"
 #include "WeatherSubsystem.h"
 #include "Cesium3DTileset.h"
+#include "CesiumUrlTemplateRasterOverlay.h"
 #include "CesiumGeoreference.h"
 #include "Components/DirectionalLightComponent.h"
 #include "Components/VolumetricCloudComponent.h"
@@ -39,6 +40,7 @@ namespace WorldAmbience
 	const TCHAR* MPCPath = TEXT("/Game/LTVContent/Materials/MPC_World.MPC_World");
 	const TCHAR* WeatherClassToken = TEXT("Ultra_Dynamic_Weather");
 	const TCHAR* SkyClassToken = TEXT("Ultra_Dynamic_Sky");
+	const TCHAR* NightLightsKey = TEXT("NightLights");
 
 	FString SettingsFilePath()
 	{
@@ -197,9 +199,10 @@ void UWorldAmbienceSubsystem::UpdateState(float DeltaTime)
 {
 	// Les acteurs UDS/UDW peuvent arriver apres le BeginPlay (streaming, changement de map) : on les recherche de temps en temps
 	FindAccumulator -= DeltaTime;
-	if ((!SunLight.IsValid() || !WeatherActor.IsValid()) && FindAccumulator <= 0.f)
+	if ((!SunLight.IsValid() || !WeatherActor.IsValid() || !bNightLightsAdded) && FindAccumulator <= 0.f)
 	{
 		FindAccumulator = 2.f;
+		EnsureNightLightsOverlay();
 		FindSunLight();
 		if (!WeatherActor.IsValid())
 		{
@@ -258,6 +261,32 @@ void UWorldAmbienceSubsystem::UpdateState(float DeltaTime)
 	PushToMPC();
 }
 
+void UWorldAmbienceSubsystem::EnsureNightLightsOverlay()
+{
+	// Lumieres des villes : NASA Black Marble (VIIRS 2016), lu par le materiau des tuiles sous la cle "NightLights".
+	// Ajoute aux tilesets qui portent deja le masque d'eau, c'est-a-dire ceux qui utilisent M_CesiumGlobalWater.
+	bool bAny = false;
+	for (TActorIterator<ACesium3DTileset> It(GetWorld()); It; ++It)
+	{
+		TArray<UCesiumRasterOverlay*> Overlays;
+		It->GetComponents(Overlays);
+		const bool bHasWater = Overlays.ContainsByPredicate([](const UCesiumRasterOverlay* O) { return O->MaterialLayerKey == TEXT("Water"); });
+		if (!bHasWater) continue;
+		bAny = true;
+		if (Overlays.ContainsByPredicate([](const UCesiumRasterOverlay* O) { return O->MaterialLayerKey == WorldAmbience::NightLightsKey; })) continue;
+
+		UCesiumUrlTemplateRasterOverlay* Overlay = NewObject<UCesiumUrlTemplateRasterOverlay>(*It, TEXT("NightLightsOverlay"));
+		Overlay->MaterialLayerKey = WorldAmbience::NightLightsKey;
+		Overlay->TemplateUrl = TEXT("https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_Black_Marble/default/2016-01-01/GoogleMapsCompatible_Level8/{z}/{reverseY}/{x}.png");
+		Overlay->Projection = ECesiumUrlTemplateRasterOverlayProjection::WebMercator;
+		Overlay->MaximumLevel = 8;
+		It->AddInstanceComponent(Overlay);
+		Overlay->RegisterComponent(); // auto-activation : ajoute l'overlay au tileset
+		UE_LOG(LogWorldAmbience, Log, TEXT("Overlay NightLights (NASA Black Marble) ajoute a %s"), *It->GetActorNameOrLabel());
+	}
+	bNightLightsAdded = bAny;
+}
+
 UDirectionalLightComponent* UWorldAmbienceSubsystem::FindSunLight()
 {
 	// Le soleil est la lumiere directionnelle d'atmosphere d'indice 0, de preference celle d'Ultra Dynamic Sky
@@ -312,6 +341,11 @@ void UWorldAmbienceSubsystem::PushToMPC() const
 	Set(TEXT("CityLightsIntensity"), Settings.bCityLights ? Settings.CityLightsIntensity : 0.f);
 	Set(TEXT("FloraDensity"), GetEffectiveFloraDensity());
 	Set(TEXT("FaunaDensity"), GetEffectiveFaunaDensity());
+	// Altitude de l'origine Cesium (cm) : le materiau des tuiles en deduit l'altitude reelle de chaque pixel
+	if (const ACesiumGeoreference* Geo = Cast<ACesiumGeoreference>(UGameplayStatics::GetActorOfClass(GetWorld(), ACesiumGeoreference::StaticClass())))
+	{
+		Set(TEXT("OriginHeight"), static_cast<float>(Geo->GetOriginHeight() * 100.0));
+	}
 }
 
 // ---------------------------------------------------------------------------

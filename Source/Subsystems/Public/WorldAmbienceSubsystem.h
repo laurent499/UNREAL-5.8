@@ -217,6 +217,8 @@ private:
 	void PushToMPC() const;
 	void ReadWeatherActor();
 	UDirectionalLightComponent* FindSunLight();
+	void EnsureNightLightsOverlay();
+	bool bNightLightsAdded = false;
 
 	void LoadSettings();
 	void SaveSettings() const;
