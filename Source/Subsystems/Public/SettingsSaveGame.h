@@ -26,4 +26,7 @@ public:
 	float GlobalLength;
 	UPROPERTY(VisibleAnywhere, SaveGame)
 	float GlobalZAnchor;
+	/** 1 = ZOffset en reglage fin au-dessus du trace recale sur les tuiles (0 = anciennes valeurs, compensant le geoide) */
+	UPROPERTY(VisibleAnywhere, SaveGame)
+	int32 ZOffsetVersion = 0;
 };

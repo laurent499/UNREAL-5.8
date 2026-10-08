@@ -38,6 +38,16 @@ bool USettingsSubsystem::Load()
 				TrailGlobalPitch = CachedSave->GlobalPitch;
 				TrailGlobalArmLength = CachedSave->GlobalLength;
 				TrailGlobalZAnchor = CachedSave->GlobalZAnchor;
+				// Les anciens ZOffset (50 a 115 m) compensaient l'altitude GPS ; le trace est maintenant recale
+				// sur les tuiles, ils le feraient flotter : remise a zero une seule fois
+				if (CachedSave->ZOffsetVersion < 1)
+				{
+					for (TPair<int64, FSettings>& Pair : TrailSettingsMap)
+					{
+						Pair.Value.ZOffset = 0.f;
+					}
+					Save();
+				}
 				return true;
 			}
 		}
@@ -61,6 +71,7 @@ bool USettingsSubsystem::Save()
 	CachedSave->GlobalPitch = TrailGlobalPitch;
 	CachedSave->GlobalLength = TrailGlobalArmLength;
 	CachedSave->GlobalZAnchor = TrailGlobalZAnchor;
+	CachedSave->ZOffsetVersion = 1;
 	if (UGameplayStatics::SaveGameToSlot(CachedSave, SlotName, UserIndex))
 	{
 		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Saving Settings done"))), EMessageType::Success);

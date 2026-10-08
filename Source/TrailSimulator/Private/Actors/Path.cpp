@@ -3,6 +3,12 @@
 #include "TrailSimulator/Public/Actors/Path.h"
 #include "BroadcastCaptureSubsystem.h"
 #include "CesiumFlyToComponent.h"
+#include "Cesium3DTileset.h"
+#include "CesiumSampleHeightResult.h"
+#include "EngineUtils.h"
+#include "TimerManager.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
 #include "CesiumGeoreference.h"
 #include "CesiumGlobeAnchorComponent.h"
 #include "CesiumOriginShiftComponent.h"
@@ -324,13 +330,13 @@ void APath::DrawPath(int64 RaceID, FRacePath RacePathDatas)
 	DynaPawn = UGameplayStatics::GetPlayerPawn(this, 0);
 	FlyComp = Cast<UCesiumFlyToComponent>(DynaPawn->GetComponentByClass(UCesiumFlyToComponent::StaticClass()));
 	ShiftComp = Cast<UCesiumOriginShiftComponent>(DynaPawn->GetComponentByClass(UCesiumOriginShiftComponent::StaticClass()));
-	
+
 	RaceId = RaceID;
 	const FName IdPath(*FString::Printf(TEXT("SpawnPath_%lld"), RaceId));
 	// LoadingSubsystem->RegisterTask(IdPath, FText::FromString(FString::Printf(TEXT("Path %lld construction"), RaceID)));
 	const FName IdKm(*FString::Printf(TEXT("BuildKms_%lld"), RaceID));
 	LoadingSubsystem->RegisterTask(IdKm, FText::FromString(FString::Printf(TEXT("Kms %lld construction"), RaceID)));
-	
+
 	if (RacePathDatas.Points.Num() == 0)
 	{
 		LoadingSubsystem->Fail(IdPath, FText::FromString(FString::Printf(TEXT("Path %lld is empty"), RaceID)));
@@ -339,105 +345,364 @@ void APath::DrawPath(int64 RaceID, FRacePath RacePathDatas)
 	const FName IdCheckpoints(*FString::Printf(TEXT("SpawnCheckpoints_%lld"), RaceID));
 	LoadingSubsystem->SetRunning(IdCheckpoints);
 	LoadingSubsystem->SetRunning(IdPath);
-	
-	if (Georeference)
-	{
-		RacePath = RacePathDatas;
-		RaceId = RaceID;
-		
-		if (!SettingsSubsystem->DoesSettingsExist(RaceID))
-		{
-			FSettings NewSettings = FSettings(
-				RaceID,
-				TEXT("https://simulacre.ltvprod.cc/"),
-				1.0f,
-				0.f,
-				1.f,
-				10.f,
-				0,
-				FMinMax(FVector(30.0f), FVector(200.f)),
-				-25.f,
-				50000.f,
-				-500.f);	
-				SettingsSubsystem->CreateTrailSettingsById(RaceID, NewSettings);
-		}
-		
-		ZOffset = SettingsSubsystem->GetZOffsetById(RaceID);
-				
-		if (ShiftComp)
-			ShiftComp->SetActive(false);
-		
-		Root->SetMobility(EComponentMobility::Movable);
-		Georeference->SetOriginLongitudeLatitudeHeight(
-			FVector(RacePath.Points[0].lon, RacePath.Points[0].lat, RacePath.Points[0].ele));
-		OnGeoRefLocation.Broadcast(RaceID, 
-			FVector(RacePath.Points[0].lon, RacePath.Points[0].lat, RacePath.Points[0].ele));
-		
-		FVector PathLocation = Georeference->TransformLongitudeLatitudeHeightPositionToUnreal(
-			FVector(RacePath.Points[0].lon, RacePath.Points[0].lat, RacePath.Points[0].ele));
-		PathLocation.Z += ZOffset;
-		SetActorLocation(PathLocation, false);
 
-		SplinePath->ClearSplinePoints(false);
-		SlopePath->ClearSplinePoints(false);
-		TravelPath->ClearSplinePoints(false);
-		int32 cpt = 0;
-		const int32 Total = RacePath.Points.Num();
-		for (FRacePathPoint Point  : RacePath.Points)
-		{
-			FVector UE = Georeference->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(Point.lon, Point.lat, Point.ele));
-			UE.Z += ZOffset;
-			SplinePath->AddSplinePoint(UE, ESplineCoordinateSpace::World, false);
-			SlopePath->AddSplinePoint(UE, ESplineCoordinateSpace::World, false);
-			if (FMath::Modulo(cpt, 25) == 0 || cpt == Total -1)
-			{
-				const float P = float(cpt + 1) / float(Total);
-				LoadingSubsystem->Update(IdPath, P,
-					FText::FromString(FString::Printf(TEXT("%d/%d"), cpt, Total)));
-			}	
-			
-			// Checkpoints
-			LoadingSubsystem->SetRunning(IdCheckpoints);
-			int32 ChkIndex = 0;
-			if (!RacePathDatas.Points[cpt].datas.name.IsEmpty())
-			{
-				UWorld* World = GetWorld();
-				if (!World) return;
-		
-				const FVector Location = UE;
-				LockedPoints.Add(UE);
-				
-				const FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
-				const FVector Scale = FVector(40.0f);
-				
-				const FTransform SpawnTransform = FTransform(Rotation, Location, Scale);
-				const FRaceSetup& RaceSetup = RaceSubsystem->GetRaceSetupById(RaceID);
-				TObjectPtr<AActor> SpawnedActor = nullptr;
-				
-				const TSubclassOf<AActor> CheckpointClass = GetCheckpointClassForRace(RaceSetup); 
-				SpawnedActor = CheckpointSubsystem->SpawnCheckpointActor(RaceID, RacePathDatas.Points[cpt].datas.checkpointId, World, CheckpointClass, SpawnTransform);
-				
-				if (ICheckpointInterface* CheckpointInterface = Cast<ICheckpointInterface>(SpawnedActor))
-				{
-					CheckpointInterface->UpdateCheckpoint(RacePathDatas.Points[cpt].datas, RaceSetup);
-					SpawnedActor->SetActorHiddenInGame(true);
-					SpawnedActor->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-					LoadingSubsystem->Update(IdCheckpoints, 1.f, FText::FromString(FString::Printf(TEXT("Checkpoint %s spawned"), *RacePathDatas.Points[cpt].datas.name)));
-				}
-				ChkIndex++;
-			}
-			cpt++;
-		} 
-		LoadingSubsystem->Complete(IdCheckpoints, FText::FromString(FString::Printf(TEXT("Checkpoints spawned for race %lld"), RaceID)));
+	if (!Georeference)
+	{
+		LoadingSubsystem->Fail(IdPath, FText::FromString(FString::Printf(TEXT("Path %lld : no georeference"), RaceID)));
+		return;
 	}
-	
+
+	RacePath = RacePathDatas;
+	RaceId = RaceID;
+
+	if (!SettingsSubsystem->DoesSettingsExist(RaceID))
+	{
+		FSettings NewSettings = FSettings(
+			RaceID,
+			TEXT("https://simulacre.ltvprod.cc/"),
+			1.0f,
+			0.f,
+			1.f,
+			10.f,
+			0,
+			FMinMax(FVector(30.0f), FVector(200.f)),
+			-25.f,
+			50000.f,
+			-500.f);
+			SettingsSubsystem->CreateTrailSettingsById(RaceID, NewSettings);
+	}
+
+	// Avec le recalage sur les tuiles, le ZOffset n'est plus qu'un reglage fin (0 par defaut)
+	ZOffset = SettingsSubsystem->GetZOffsetById(RaceID);
+
+	if (ShiftComp)
+		ShiftComp->SetActive(false);
+
+	Root->SetMobility(EComponentMobility::Movable);
+	Georeference->SetOriginLongitudeLatitudeHeight(
+		FVector(RacePath.Points[0].lon, RacePath.Points[0].lat, RacePath.Points[0].ele));
+	OnGeoRefLocation.Broadcast(RaceID,
+		FVector(RacePath.Points[0].lon, RacePath.Points[0].lat, RacePath.Points[0].ele));
+
+	FVector PathLocation = Georeference->TransformLongitudeLatitudeHeightPositionToUnreal(
+		FVector(RacePath.Points[0].lon, RacePath.Points[0].lat, RacePath.Points[0].ele));
+	PathLocation.Z += ZOffset;
+	SetActorLocation(PathLocation, false);
+
+	StartDrape(RaceID);
+}
+
+/**
+ * @brief Tuileset du terrain : Google Photorealistic 3D Tiles de preference, sinon le premier tileset du niveau
+ */
+ACesium3DTileset* APath::FindTerrainTileset() const
+{
+	ACesium3DTileset* Fallback = nullptr;
+	for (TActorIterator<ACesium3DTileset> It(GetWorld()); It; ++It)
+	{
+		ACesium3DTileset* Tileset = *It;
+		if (!IsValid(Tileset) || Tileset->IsHidden()) continue;
+		if (Tileset->GetIonAssetID() == 2275207 || Tileset->GetUrl().Contains(TEXT("tile.googleapis.com")))
+		{
+			return Tileset;
+		}
+		if (!Fallback) Fallback = Tileset;
+	}
+	return Fallback;
+}
+
+FString APath::GetDrapeCachePath(int64 RaceID, uint32 Hash) const
+{
+	return FPaths::ProjectSavedDir() / TEXT("DrapeCache") / FString::Printf(TEXT("Race_%lld_%08x.bin"), RaceID, Hash);
+}
+
+/**
+ * @brief Recalage : l'altitude GPS (au-dessus du niveau de la mer, bruitee) est remplacee par la hauteur
+ * des tuiles sous chaque point (au-dessus de l'ellipsoide, ce qu'attend Cesium). Des echantillons
+ * supplementaires sur chaque troncon detectent les cretes que la ligne droite entre deux points couperait.
+ * Les hauteurs sont mises en cache sur disque : le chargement suivant de la meme course est immediat.
+ */
+void APath::StartDrape(int64 RaceID)
+{
+	const int32 NumPts = RacePath.Points.Num();
+
+	// Requete : les points du trace, puis les echantillons intermediaires de chaque troncon
+	TArray<FVector> Query;
+	TArray<int32> SubSegment;
+	TArray<float> SubAlpha;
+	Query.Reserve(NumPts * 2);
+	for (const FRacePathPoint& P : RacePath.Points)
+	{
+		Query.Add(FVector(P.lon, P.lat, P.ele));
+	}
+	const double SpacingCm = FMath::Max(5.0, (double)DrapeSampleSpacingM) * 100.0;
+	for (int32 i = 0; i < NumPts - 1; ++i)
+	{
+		const FRacePathPoint& A = RacePath.Points[i];
+		const FRacePathPoint& B = RacePath.Points[i + 1];
+		const FVector UA = Georeference->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(A.lon, A.lat, 0.0));
+		const FVector UB = Georeference->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(B.lon, B.lat, 0.0));
+		const int32 NumSub = FMath::Min(FMath::FloorToInt32(FVector::Dist2D(UA, UB) / SpacingCm), 32);
+		for (int32 k = 1; k <= NumSub; ++k)
+		{
+			const float T = float(k) / float(NumSub + 1);
+			Query.Add(FVector(FMath::Lerp((double)A.lon, (double)B.lon, (double)T), FMath::Lerp((double)A.lat, (double)B.lat, (double)T), FMath::Lerp(A.ele, B.ele, T)));
+			SubSegment.Add(i);
+			SubAlpha.Add(T);
+		}
+	}
+
+	const uint32 Hash = FCrc::MemCrc32(Query.GetData(), Query.Num() * Query.GetTypeSize());
+	const int32 Serial = ++DrapeSerial;
+
+	// Cache disque
+	{
+		TArray<uint8> Bytes;
+		const int32 Expected = Query.Num() * (sizeof(double) + 1);
+		if (FFileHelper::LoadFileToArray(Bytes, *GetDrapeCachePath(RaceID, Hash), FILEREAD_Silent) && Bytes.Num() == Expected)
+		{
+			TArray<FVector> Cached = Query;
+			TArray<bool> bOk;
+			bOk.SetNumUninitialized(Query.Num());
+			const double* Heights = reinterpret_cast<const double*>(Bytes.GetData());
+			const uint8* Flags = Bytes.GetData() + Query.Num() * sizeof(double);
+			for (int32 i = 0; i < Query.Num(); ++i)
+			{
+				Cached[i].Z = Heights[i];
+				bOk[i] = Flags[i] != 0;
+			}
+			UE_LOG(LogTemp, Log, TEXT("[Path] Race %lld : hauteurs du trace lues dans le cache (%d echantillons)"), RaceID, Query.Num());
+			HandleDrapeHeights(RaceID, Serial, Cached, bOk, NumPts, SubSegment, SubAlpha);
+			return;
+		}
+	}
+
+	ACesium3DTileset* Tileset = FindTerrainTileset();
+	if (!Tileset)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[Path] Race %lld : aucun tileset Cesium, trace place sur l'altitude GPS"), RaceID);
+		HandleDrapeHeights(RaceID, Serial, Query, TArray<bool>(), NumPts, SubSegment, SubAlpha);
+		return;
+	}
+
+	const FName IdPath(*FString::Printf(TEXT("SpawnPath_%lld"), RaceID));
+	LoadingSubsystem->Update(IdPath, 0.f, FText::FromString(FString::Printf(TEXT("Recalage sur les tuiles (%d echantillons)"), Query.Num())));
+
+	bDrapePending = true;
+	GetWorldTimerManager().SetTimer(DrapeTimeoutHandle,
+		FTimerDelegate::CreateUObject(this, &APath::DrapeTimedOut, RaceID, Serial),
+		FMath::Max(5.f, DrapeTimeoutSeconds), false);
+
+	TWeakObjectPtr<APath> WeakThis(this);
+	Tileset->SampleHeightMostDetailed(Query, FCesiumSampleHeightMostDetailedCallback::CreateLambda(
+		[WeakThis, RaceID, Serial, Query, NumPts, SubSegment, SubAlpha, Hash](ACesium3DTileset*, const TArray<FCesiumSampleHeightResult>& Results, const TArray<FString>& Warnings)
+		{
+			APath* Self = WeakThis.Get();
+			if (!Self || !Self->bDrapePending || Serial != Self->DrapeSerial) return;
+			Self->bDrapePending = false;
+			Self->GetWorldTimerManager().ClearTimer(Self->DrapeTimeoutHandle);
+
+			for (const FString& W : Warnings)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[Path] Race %lld : %s"), RaceID, *W);
+			}
+			TArray<FVector> Sampled = Query;
+			TArray<bool> bOk;
+			bOk.Init(false, Query.Num());
+			int32 NumOk = 0;
+			for (int32 i = 0; i < Results.Num() && i < Query.Num(); ++i)
+			{
+				if (Results[i].SampleSuccess)
+				{
+					Sampled[i].Z = Results[i].LongitudeLatitudeHeight.Z;
+					bOk[i] = true;
+					++NumOk;
+				}
+			}
+			UE_LOG(LogTemp, Log, TEXT("[Path] Race %lld : %d/%d hauteurs lues sur les tuiles"), RaceID, NumOk, Query.Num());
+
+			// Cache seulement si l'echantillonnage est quasi complet (sinon on retentera au prochain chargement)
+			if (NumOk >= Query.Num() * 95 / 100)
+			{
+				TArray<uint8> Bytes;
+				Bytes.SetNumUninitialized(Query.Num() * (sizeof(double) + 1));
+				double* Heights = reinterpret_cast<double*>(Bytes.GetData());
+				uint8* Flags = Bytes.GetData() + Query.Num() * sizeof(double);
+				for (int32 i = 0; i < Query.Num(); ++i)
+				{
+					Heights[i] = Sampled[i].Z;
+					Flags[i] = bOk[i] ? 1 : 0;
+				}
+				FFileHelper::SaveArrayToFile(Bytes, *Self->GetDrapeCachePath(RaceID, Hash));
+			}
+			Self->HandleDrapeHeights(RaceID, Serial, Sampled, bOk, NumPts, SubSegment, SubAlpha);
+		}));
+}
+
+void APath::DrapeTimedOut(int64 RaceID, int32 Serial)
+{
+	if (!bDrapePending || Serial != DrapeSerial) return;
+	bDrapePending = false;
+	UE_LOG(LogTemp, Warning, TEXT("[Path] Race %lld : les tuiles n'ont pas repondu, trace place sur l'altitude GPS"), RaceID);
+
+	TArray<FVector> Query;
+	for (const FRacePathPoint& P : RacePath.Points)
+	{
+		Query.Add(FVector(P.lon, P.lat, P.ele));
+	}
+	HandleDrapeHeights(RaceID, Serial, Query, TArray<bool>(), RacePath.Points.Num(), TArray<int32>(), TArray<float>());
+}
+
+/**
+ * @brief Hauteurs finales : surface des tuiles + DrapeClearanceM. Un point sans reponse garde l'ecart
+ * tuiles/GPS de ses voisins ; sans aucune reponse, altitude GPS + DrapeFallbackGeoidM. Sur un troncon
+ * dont un echantillon depasse la ligne droite, tous ses echantillons deviennent des points du trace.
+ */
+void APath::HandleDrapeHeights(int64 RaceID, int32 Serial, const TArray<FVector>& Query, const TArray<bool>& bSuccess, int32 NumPathPoints, const TArray<int32>& SubSegment, const TArray<float>& SubAlpha)
+{
+	if (Serial != DrapeSerial) return;
+	const int32 NumPts = NumPathPoints;
+	if (NumPts != RacePath.Points.Num()) return;
+
+	auto IsOk = [&bSuccess](int32 i) { return bSuccess.IsValidIndex(i) && bSuccess[i]; };
+
+	// Ecart tuiles - GPS aux points du trace, interpole la ou l'echantillonnage a echoue
+	TArray<double> Delta;
+	Delta.Init(DrapeFallbackGeoidM, NumPts);
+	{
+		int32 Prev = INDEX_NONE;
+		for (int32 i = 0; i < NumPts; ++i)
+		{
+			if (!IsOk(i)) continue;
+			Delta[i] = Query[i].Z - RacePath.Points[i].ele;
+			const double DPrev = Prev == INDEX_NONE ? Delta[i] : Delta[Prev];
+			for (int32 j = (Prev == INDEX_NONE ? 0 : Prev + 1); j < i; ++j)
+			{
+				const double T = Prev == INDEX_NONE ? 1.0 : double(j - Prev) / double(i - Prev);
+				Delta[j] = FMath::Lerp(DPrev, Delta[i], T);
+			}
+			Prev = i;
+		}
+		if (Prev != INDEX_NONE)
+		{
+			for (int32 j = Prev + 1; j < NumPts; ++j) Delta[j] = Delta[Prev];
+		}
+	}
+
+	TArray<double> PointH;
+	PointH.SetNumUninitialized(NumPts);
+	for (int32 i = 0; i < NumPts; ++i)
+	{
+		PointH[i] = RacePath.Points[i].ele + Delta[i] + DrapeClearanceM;
+	}
+
+	// Troncons dont le relief depasse la ligne droite
+	TArray<bool> bDensify;
+	bDensify.Init(false, FMath::Max(0, NumPts - 1));
+	for (int32 s = 0; s < SubSegment.Num(); ++s)
+	{
+		const int32 Q = NumPts + s;
+		if (!IsOk(Q)) continue;
+		const int32 Seg = SubSegment[s];
+		const double Chord = FMath::Lerp(PointH[Seg], PointH[Seg + 1], (double)SubAlpha[s]);
+		if (Query[Q].Z + DrapeClearanceM > Chord + 0.5) bDensify[Seg] = true;
+	}
+
+	FRacePath Draped;
+	TArray<double> HeightsM;
+	Draped.Points.Reserve(NumPts + SubSegment.Num());
+	HeightsM.Reserve(NumPts + SubSegment.Num());
+	int32 NumAdded = 0;
+	int32 s = 0;
+	for (int32 i = 0; i < NumPts; ++i)
+	{
+		Draped.Points.Add(RacePath.Points[i]);
+		HeightsM.Add(PointH[i]);
+		for (; s < SubSegment.Num() && SubSegment[s] == i; ++s)
+		{
+			if (!bDensify[i] || !IsOk(NumPts + s)) continue;
+			const FRacePathPoint& A = RacePath.Points[i];
+			const FRacePathPoint& B = RacePath.Points[i + 1];
+			// Point intermediaire sans checkpoint ; ele interpole (sert au calcul des pentes)
+			FRacePathPoint Mid;
+			Mid.lon = Query[NumPts + s].X;
+			Mid.lat = Query[NumPts + s].Y;
+			Mid.ele = FMath::Lerp(A.ele, B.ele, SubAlpha[s]);
+			Draped.Points.Add(Mid);
+			HeightsM.Add(Query[NumPts + s].Z + DrapeClearanceM);
+			++NumAdded;
+		}
+	}
+	UE_LOG(LogTemp, Log, TEXT("[Path] Race %lld : %d points recales, %d points ajoutes sur les cretes"), RaceID, NumPts, NumAdded);
+
+	RacePath = MoveTemp(Draped);
+	BuildPathGeometry(RaceID, HeightsM);
+}
+
+void APath::BuildPathGeometry(int64 RaceID, const TArray<double>& HeightsM)
+{
+	const FName IdPath(*FString::Printf(TEXT("SpawnPath_%lld"), RaceID));
+	const FName IdCheckpoints(*FString::Printf(TEXT("SpawnCheckpoints_%lld"), RaceID));
+	const FName IdKm(*FString::Printf(TEXT("BuildKms_%lld"), RaceID));
+
+	SplinePath->ClearSplinePoints(false);
+	SlopePath->ClearSplinePoints(false);
+	TravelPath->ClearSplinePoints(false);
+	LockedPoints.Reset();
+	int32 cpt = 0;
+	const int32 Total = RacePath.Points.Num();
+	for (const FRacePathPoint& Point : RacePath.Points)
+	{
+		FVector UE = Georeference->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(Point.lon, Point.lat, HeightsM[cpt]));
+		UE.Z += ZOffset;
+		SplinePath->AddSplinePoint(UE, ESplineCoordinateSpace::World, false);
+		SlopePath->AddSplinePoint(UE, ESplineCoordinateSpace::World, false);
+		if (FMath::Modulo(cpt, 25) == 0 || cpt == Total -1)
+		{
+			const float P = float(cpt + 1) / float(Total);
+			LoadingSubsystem->Update(IdPath, P,
+				FText::FromString(FString::Printf(TEXT("%d/%d"), cpt, Total)));
+		}
+
+		// Checkpoints
+		LoadingSubsystem->SetRunning(IdCheckpoints);
+		if (!Point.datas.name.IsEmpty())
+		{
+			UWorld* World = GetWorld();
+			if (!World) return;
+
+			const FVector Location = UE;
+			LockedPoints.Add(UE);
+
+			const FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
+			const FVector Scale = FVector(40.0f);
+
+			const FTransform SpawnTransform = FTransform(Rotation, Location, Scale);
+			const FRaceSetup& RaceSetup = RaceSubsystem->GetRaceSetupById(RaceID);
+			TObjectPtr<AActor> SpawnedActor = nullptr;
+
+			const TSubclassOf<AActor> CheckpointClass = GetCheckpointClassForRace(RaceSetup);
+			SpawnedActor = CheckpointSubsystem->SpawnCheckpointActor(RaceID, Point.datas.checkpointId, World, CheckpointClass, SpawnTransform);
+
+			if (ICheckpointInterface* CheckpointInterface = Cast<ICheckpointInterface>(SpawnedActor))
+			{
+				CheckpointInterface->UpdateCheckpoint(Point.datas, RaceSetup);
+				SpawnedActor->SetActorHiddenInGame(true);
+				SpawnedActor->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+				LoadingSubsystem->Update(IdCheckpoints, 1.f, FText::FromString(FString::Printf(TEXT("Checkpoint %s spawned"), *Point.datas.name)));
+			}
+		}
+		cpt++;
+	}
+	LoadingSubsystem->Complete(IdCheckpoints, FText::FromString(FString::Printf(TEXT("Checkpoints spawned for race %lld"), RaceID)));
+
 	SplinePath->UpdateSpline();
 	SlopePath->UpdateSpline();
-	
+
 	BuildSimplifiedRailLocked(SplinePath, TravelPath, ToleranceMeters, LockedPoints, SampleStepMeters);
 	FollowRail(SpringArmComponent, TravelPath, DistanceCm);
 	BuildKms(RaceID);
-		
+
 	LoadingSubsystem->Complete(IdKm, FText::FromString(FString::Printf(TEXT("Kms %lld built"), RaceID)));
 	RebuildPathSplineMeshes(RaceID);
 	RebuildSlopeSplineMeshes(RaceID);
@@ -472,6 +737,10 @@ void APath::RebuildPathSplineMeshes(int64 RaceID)
 
 		SMC->SetupAttachment(SlopePath);
 		SMC->SetTranslucentSortPriority(-20); // trace dessine avant les poteaux (-10) et les panneaux
+			// Le materiau rapproche le trace de la camera (CPD 17) : il ne doit pas etre ecarte par l'occlusion
+			// des tuiles qu'il recouvre. Le flag custom depth coupe l'occlusion ; materiau translucide sans
+			// ecriture custom depth, donc rien n'est dessine dans ce buffer.
+			SMC->SetRenderCustomDepth(true);
 		SMC->RegisterComponent();
 			
 		SMC->SetForwardAxis(ESplineMeshAxis::Z);
@@ -498,6 +767,7 @@ void APath::RebuildPathSplineMeshes(int64 RaceID)
 		SMC->SetCustomPrimitiveDataFloat(11, 0.f); // UseSlope = 0	M_MasterPC
 		SMC->SetCustomPrimitiveDataVector4(12, LinearColor); // Color (12->15)
 		SMC->SetCustomPrimitiveDataFloat(16, SettingsSubsystem->GetGlowById(RaceID));
+		SMC->SetCustomPrimitiveDataFloat(17, CameraBiasRatio); // decalage vers la camera
 		SMC->SetHiddenInGame(true);
 	}
 	Root->SetMobility(EComponentMobility::Movable);
@@ -616,6 +886,10 @@ void APath::RebuildSlopeSplineMeshes(int64 RaceID)
 
 			SMC->SetupAttachment(SlopePath);
 			SMC->SetTranslucentSortPriority(-20); // trace dessine avant les poteaux (-10) et les panneaux
+			// Le materiau rapproche le trace de la camera (CPD 17) : il ne doit pas etre ecarte par l'occlusion
+			// des tuiles qu'il recouvre. Le flag custom depth coupe l'occlusion ; materiau translucide sans
+			// ecriture custom depth, donc rien n'est dessine dans ce buffer.
+			SMC->SetRenderCustomDepth(true);
 			SMC->RegisterComponent();
 			
 			SMC->SetForwardAxis(ESplineMeshAxis::Z);
@@ -647,6 +921,7 @@ void APath::RebuildSlopeSplineMeshes(int64 RaceID)
 			SMC->SetCustomPrimitiveDataFloat(13, Junction[B]);	// valeur a la jonction de fin
 			SMC->SetCustomPrimitiveDataFloat(11, 1.f);	// UseSlope = 1
 			SMC->SetCustomPrimitiveDataFloat(16, SettingsSubsystem->GetGlowById(RaceID));
+			SMC->SetCustomPrimitiveDataFloat(17, CameraBiasRatio); // decalage vers la camera
 			SMC->SetHiddenInGame(true);
 		}
 	}
