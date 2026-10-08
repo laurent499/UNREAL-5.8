@@ -997,6 +997,12 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
             if (ShowStr) Settings.Emplace(TEXT("bCityLights"), Show);
             if (ValueStr && ValueStr->IsNumeric()) Settings.Emplace(TEXT("CityLightsIntensity"), *ValueStr);
         }
+        // group=monde&action=fauna&show=1[&value=1.0] : oiseaux (et leur densite)
+        if (Action.Equals(TEXT("fauna"), ESearchCase::IgnoreCase))
+        {
+            if (ShowStr) Settings.Emplace(TEXT("bFauna"), Show);
+            if (ValueStr && ValueStr->IsNumeric()) Settings.Emplace(TEXT("FaunaDensity"), *ValueStr);
+        }
 
         TWeakObjectPtr<UGameInstance> WeakGI(GetGameInstance());
         AsyncTask(ENamedThreads::GameThread, [WeakGI, Settings]()

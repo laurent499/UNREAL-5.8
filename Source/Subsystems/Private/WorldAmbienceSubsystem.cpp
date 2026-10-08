@@ -1,6 +1,7 @@
 // Copyright LTV Prod 2026. All Rights Reserved
 
 #include "WorldAmbienceSubsystem.h"
+#include "WorldFauna.h"
 #include "Camera/PlayerCameraManager.h"
 #include "CheckpointSubsystem.h"
 #include "Engine/GameInstance.h"
@@ -162,6 +163,11 @@ void UWorldAmbienceSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 			Checkpoints->OnCheckpointsDatasGathered.AddUniqueDynamic(this, &UWorldAmbienceSubsystem::HandleCheckpointsGathered);
 		}
 	}
+
+	// Faune : un acteur unique, invisible tant que les conditions ne s'y pretent pas
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.ObjectFlags |= RF_Transient;
+	InWorld.SpawnActor<AWorldFauna>(AWorldFauna::StaticClass(), FTransform::Identity, SpawnParams);
 
 	bBegunPlay = true;
 	UpdateState(0.f);
@@ -500,6 +506,11 @@ FString UWorldAmbienceSubsystem::StateJson() const
 	Effective->SetBoolField(TEXT("mpc"), WorldMPC != nullptr);
 	Effective->SetBoolField(TEXT("sun"), SunLight.IsValid());
 	Effective->SetBoolField(TEXT("weather"), WeatherActor.IsValid());
+	for (TActorIterator<AWorldFauna> It(GetWorld()); It; ++It)
+	{
+		Effective->SetNumberField(TEXT("birds"), It->GetVisibleBirdCount());
+		Effective->SetStringField(TEXT("faunaStatus"), It->GetStatus());
+	}
 	if (const UVolumetricCloudComponent* Cloud = CloudComponent.Get())
 	{
 		Effective->SetNumberField(TEXT("cloudBottomKm"), Cloud->LayerBottomAltitude);

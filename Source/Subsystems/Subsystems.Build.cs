@@ -28,7 +28,7 @@ public class Subsystems : ModuleRules
             new string[]
             {
                 "Engine","CinematicCamera", "DeveloperSettings",
-                "RenderCore", "RHI"
+                "RenderCore", "RHI", "MeshDescription", "StaticMeshDescription"
             }
         );
     }
