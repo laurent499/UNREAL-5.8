@@ -15,9 +15,9 @@ namespace WorldHeadlamps
 {
 	const TCHAR* MeshPath = TEXT("/Engine/BasicShapes/Sphere.Sphere");          // diametre 100 cm
 	const TCHAR* MaterialPath = TEXT("/Game/LTVContent/Materials/Masters/M_MasterIllum.M_MasterIllum"); // unlit, BaseColor x IllumFixed
-	constexpr float HeadHeight = 170.f;      // cm au-dessus du coureur
-	constexpr float MinDiameter = 12.f;      // cm, vu de pres
-	constexpr float ScreenRatio = 0.0025f;   // diametre / distance : ~2 px a 1080p quelle que soit la distance
+	constexpr float HeadHeight = 300.f;      // cm : au-dessus du ruban du trace lumineux
+	constexpr float MinDiameter = 40.f;      // cm, vu de pres
+	constexpr float ScreenRatio = 0.008f;    // diametre / distance : ~6 px a 1080p quelle que soit la distance
 }
 
 AWorldHeadlamps::AWorldHeadlamps()
@@ -35,7 +35,7 @@ void AWorldHeadlamps::BeginPlay()
 	if (UMaterialInterface* Base = LoadObject<UMaterialInterface>(nullptr, WorldHeadlamps::MaterialPath))
 	{
 		LampMaterial = UMaterialInstanceDynamic::Create(Base, this);
-		LampMaterial->SetVectorParameterValue(TEXT("BaseColor"), FLinearColor(1.f, 0.88f, 0.7f)); // LED legerement chaude
+		LampMaterial->SetVectorParameterValue(TEXT("BaseColor"), FLinearColor(0.85f, 0.93f, 1.f)); // LED blanc froid : se detache du trace orange
 	}
 }
 
@@ -87,7 +87,7 @@ void AWorldHeadlamps::Tick(float DeltaSeconds)
 	if (!FMath::IsNearlyEqual(Glow, AppliedGlow, 0.01f))
 	{
 		AppliedGlow = Glow;
-		LampMaterial->SetScalarParameterValue(TEXT("IllumFixed"), Glow * 25.f);
+		LampMaterial->SetScalarParameterValue(TEXT("IllumFixed"), Glow * 80.f);
 	}
 
 	const APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
@@ -105,7 +105,7 @@ void AWorldHeadlamps::Tick(float DeltaSeconds)
 			if (!Interface || Runner->IsHidden() || (Foot && !Foot->IsVisible())) continue;
 
 			const FVector Head = Runner->GetActorLocation() + FVector(0.0, 0.0, WorldHeadlamps::HeadHeight);
-			const float Diameter = FMath::Max(WorldHeadlamps::MinDiameter, static_cast<float>(FVector::Dist(Head, CamPos)) * WorldHeadlamps::ScreenRatio);
+			const float Diameter = FMath::Max(WorldHeadlamps::MinDiameter, static_cast<float>(FVector::Dist(Head, CamPos)) * WorldHeadlamps::ScreenRatio * FMath::Max(Settings.HeadlampSize, 0.1f));
 			UStaticMeshComponent* Lamp = GetLamp(LitCount++);
 			Lamp->SetWorldLocationAndRotation(Head, FQuat::Identity, false, nullptr, ETeleportType::TeleportPhysics);
 			Lamp->SetWorldScale3D(FVector(Diameter / 100.f));

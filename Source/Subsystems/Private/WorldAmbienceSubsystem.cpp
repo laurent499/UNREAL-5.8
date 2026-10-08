@@ -3,6 +3,7 @@
 #include "WorldAmbienceSubsystem.h"
 #include "WorldFauna.h"
 #include "WorldHeadlamps.h"
+#include "WorldFlora.h"
 #include "Camera/PlayerCameraManager.h"
 #include "CheckpointSubsystem.h"
 #include "Engine/GameInstance.h"
@@ -170,6 +171,7 @@ void UWorldAmbienceSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	SpawnParams.ObjectFlags |= RF_Transient;
 	InWorld.SpawnActor<AWorldFauna>(AWorldFauna::StaticClass(), FTransform::Identity, SpawnParams);
 	InWorld.SpawnActor<AWorldHeadlamps>(AWorldHeadlamps::StaticClass(), FTransform::Identity, SpawnParams);
+	InWorld.SpawnActor<AWorldFlora>(AWorldFlora::StaticClass(), FTransform::Identity, SpawnParams);
 
 	bBegunPlay = true;
 	UpdateState(0.f);
@@ -508,6 +510,11 @@ FString UWorldAmbienceSubsystem::StateJson() const
 	Effective->SetBoolField(TEXT("mpc"), WorldMPC != nullptr);
 	Effective->SetBoolField(TEXT("sun"), SunLight.IsValid());
 	Effective->SetBoolField(TEXT("weather"), WeatherActor.IsValid());
+	for (TActorIterator<AWorldFlora> It(GetWorld()); It; ++It)
+	{
+		Effective->SetNumberField(TEXT("floraInstances"), It->GetInstanceCount());
+		Effective->SetStringField(TEXT("floraStatus"), It->GetStatus());
+	}
 	for (TActorIterator<AWorldHeadlamps> It(GetWorld()); It; ++It)
 	{
 		Effective->SetNumberField(TEXT("headlamps"), It->GetLitCount());

@@ -100,6 +100,7 @@
     <h2>Nuit</h2>
     <p class="check"><label><input id="headlamps" type="checkbox"> Frontales des coureurs</label></p>
     <div class="row"><label for="headlampIntensity">Intensité frontales</label><input id="headlampIntensity" type="range" min="0" max="3" step="0.05"><output id="headlampIntensityOut"></output><span></span></div>
+    <div class="row"><label for="headlampSize">Taille frontales</label><input id="headlampSize" type="range" min="0.25" max="4" step="0.05"><output id="headlampSizeOut"></output><span></span></div>
     <p class="check"><label><input id="cityLights" type="checkbox"> Lumières des villes la nuit (NASA Black Marble)</label></p>
     <div class="row"><label for="cityIntensity">Intensité</label><input id="cityIntensity" type="range" min="0" max="3" step="0.05"><output id="cityIntensityOut"></output><span></span></div>
     <div class="hint">Les lumières s'allument au crépuscule sur les toits et les routes des zones habitées, et restent invisibles à moins de 300 m de la caméra.</div>
@@ -110,6 +111,15 @@
     <p class="check"><label><input id="fauna" type="checkbox"> Oiseaux (rapaces en vol plané, petits vols groupés)</label></p>
     <div class="row"><label for="faunaDensity">Densité</label><input id="faunaDensity" type="range" min="0" max="1.5" step="0.05"><output id="faunaDensityOut"></output><span></span></div>
     <div class="hint">De jour seulement, sans forte pluie ni grand vent, quand la caméra est à moins de 800 m du sol. Le gardien de performance coupe la faune avant les nuages bas.</div>
+  </section>
+
+  <section>
+    <h2>Flore</h2>
+    <p class="check"><label><input id="flora" type="checkbox"> Herbe, buissons et rochers au ras du sol</label></p>
+    <div class="row"><label for="floraDensity">Densité</label><input id="floraDensity" type="range" min="0" max="2" step="0.05"><output id="floraDensityOut"></output><span></span></div>
+    <div class="row"><label for="floraRadius">Rayon (m)</label><input id="floraRadius" type="range" min="30" max="400" step="10"><output id="floraRadiusOut"></output><span></span></div>
+    <div class="hint" id="floraInfo"></div>
+    <div class="hint">Seulement quand la caméra est à moins de 80 m du sol. Meshes pris dans /Game/LTVContent/Flora (Grass, Shrubs, Rocks). Le gardien de performance coupe la flore en premier.</div>
   </section>
 
   <section>
@@ -308,6 +318,14 @@ function showMonde(m) {
   $("headlamps").checked = !!m.settings.bHeadlamps;
   if (document.activeElement !== $("headlampIntensity")) $("headlampIntensity").value = m.settings.headlampIntensity;
   $("headlampIntensityOut").textContent = Number(m.settings.headlampIntensity).toFixed(2);
+  if (document.activeElement !== $("headlampSize")) $("headlampSize").value = m.settings.headlampSize;
+  $("headlampSizeOut").textContent = Number(m.settings.headlampSize).toFixed(2);
+  $("flora").checked = !!m.settings.bFlora;
+  for (const [id, k, d] of [["floraDensity", "floraDensity", 2], ["floraRadius", "floraRadiusM", 0]]) {
+    if (document.activeElement !== $(id)) $(id).value = m.settings[k];
+    $(id + "Out").textContent = Number(m.settings[k]).toFixed(d);
+  }
+  $("floraInfo").textContent = m.effective.floraStatus || "";
   $("fauna").checked = !!m.settings.bFauna;
   if (document.activeElement !== $("faunaDensity")) $("faunaDensity").value = m.settings.faunaDensity;
   $("faunaDensityOut").textContent = Number(m.settings.faunaDensity).toFixed(2);
@@ -340,7 +358,12 @@ $("autoWeather").onchange = () => setMonde(`bAutoWeather=${$("autoWeather").chec
 $("headlamps").onchange = () => setMonde(`bHeadlamps=${$("headlamps").checked ? 1 : 0}`);
 $("headlampIntensity").oninput = () => { $("headlampIntensityOut").textContent = Number($("headlampIntensity").value).toFixed(2); };
 $("headlampIntensity").onchange = () => setMonde(`headlampIntensity=${$("headlampIntensity").value}`);
-$("fauna").onchange =() => setMonde(`bFauna=${$("fauna").checked ? 1 : 0}`);
+$("headlampSize").oninput = () => { $("headlampSizeOut").textContent = Number($("headlampSize").value).toFixed(2); };
+$("headlampSize").onchange = () => setMonde(`headlampSize=${$("headlampSize").value}`);
+$("flora").onchange = () => setMonde(`bFlora=${$("flora").checked ? 1 : 0}`);
+$("floraDensity").onchange = () => setMonde(`floraDensity=${$("floraDensity").value}`);
+$("floraRadius").onchange = () => setMonde(`floraRadiusM=${$("floraRadius").value}`);
+$("fauna").onchange = () => setMonde(`bFauna=${$("fauna").checked ? 1 : 0}`);
 $("faunaDensity").oninput = () => { $("faunaDensityOut").textContent = Number($("faunaDensity").value).toFixed(2); };
 $("faunaDensity").onchange = () => setMonde(`faunaDensity=${$("faunaDensity").value}`);
 $("cityLights").onchange =() => setMonde(`bCityLights=${$("cityLights").checked ? 1 : 0}`);

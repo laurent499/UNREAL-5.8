@@ -12,7 +12,7 @@ class UWorldAmbienceSubsystem;
 
 /**
  * @brief Frontales des coureurs la nuit : un point lumineux emissif (sans ombre ni lumiere dynamique)
- * a 1,7 m au-dessus de chaque coureur affiche. Sa taille suit la distance a la camera pour rester
+ * a 3 m au-dessus de chaque coureur affiche. Sa taille suit la distance a la camera pour rester
  * visible en plan aerien, le bloom fait le halo. Allume au crepuscule selon la nuit de MPC_World
  * et le reglage regie (bHeadlamps, HeadlampIntensity).
  */

@@ -38,6 +38,8 @@ struct SUBSYSTEMS_API FWorldAmbienceSettings
 	// --- Nuit ---
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bHeadlamps = true;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float HeadlampIntensity = 1.f;
+	/** Taille des frontales (multiplicateur) : le trace lumineux reste affiche, il faut qu'elles s'en detachent */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float HeadlampSize = 2.5f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bCityLights = true;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float CityLightsIntensity = 1.f;
 
