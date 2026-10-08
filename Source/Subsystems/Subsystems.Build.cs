@@ -27,7 +27,8 @@ public class Subsystems : ModuleRules
         PrivateDependencyModuleNames.AddRange(
             new string[]
             {
-                "Engine","CinematicCamera", "DeveloperSettings"
+                "Engine","CinematicCamera", "DeveloperSettings",
+                "RenderCore", "RHI"
             }
         );
     }
