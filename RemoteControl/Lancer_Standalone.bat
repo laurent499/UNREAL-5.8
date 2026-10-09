@@ -4,11 +4,8 @@ rem pour piloter la meteo depuis RemoteControl\Meteo.html (port 30010).
 rem -StartSRT demarre le flux SRT OWL (destination : SRTStreamURL du RaceManager, ou -SRTURL=srt://hote:port).
 rem -SRTAudio ajoute la piste audio (sortie audio Windows stereo obligatoire, sinon audio coupe).
 rem Les arguments passes au .bat sont ajoutes a la ligne de commande (ex. : Lancer_Standalone.bat -SRTURL=srt://127.0.0.1:7029).
-rem Resolution de la fenetre (et donc du flux, capture du viewport) : 1920x1080 sauf si RESX/RESY sont deja definis.
 set UE="C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\Win64\UnrealEditor.exe"
 set PROJ="%~dp0..\TrailSimulator.uproject"
-if not defined RESX set RESX=1920
-if not defined RESY set RESY=1080
-start "" %UE% %PROJ% -game -windowed -resx=%RESX% -resy=%RESY% -RCWebControlEnable -StartSRT -SRTAudio -log %*
+start "" %UE% %PROJ% -game -windowed -resx=1920 -resy=1080 -RCWebControlEnable -StartSRT -SRTAudio -log %*
 rem La page est aussi servie par Unreal : http://<IP de ce PC>:30010/meteo
 timeout /t 20 /nobreak >nul
