@@ -1,4 +1,5 @@
 #include "AudioSanitizer.h"
+#include "CesiumGeoreference.h"
 #include "AudioMixerBlueprintLibrary.h"
 #include "Components/AudioComponent.h"
 #include "EngineUtils.h"
@@ -7,6 +8,7 @@
 
 std::atomic<int64> FSubmixEffectSanitizer::BadSamples{0};
 std::atomic<int64> FSubmixEffectSanitizer::ClippedSamples{0};
+std::atomic<float> FSubmixEffectSanitizer::TargetGain{1.f};
 
 void FSubmixEffectSanitizer::OnProcessAudio(const FSoundEffectSubmixInputData& InData, FSoundEffectSubmixOutputData& OutData)
 {
@@ -39,6 +41,24 @@ void FSubmixEffectSanitizer::OnProcessAudio(const FSoundEffectSubmixInputData& I
 			++Bad;
 		}
 	}
+	// Gain general (son coupe avant la premiere course), rampe lineaire sur le tampon
+	const float Target = TargetGain.load();
+	if (CurrentGain != Target || Target != 1.f)
+	{
+		const float Step = FMath::Clamp(Target - CurrentGain, -0.02f, 0.02f);
+		const int32 NumChannels = FMath::Max(1, InData.NumChannels);
+		const int32 Frames = Num / NumChannels;
+		for (int32 f = 0; f < Frames; ++f)
+		{
+			const float G = CurrentGain + Step * float(f) / float(FMath::Max(1, Frames));
+			for (int32 ch = 0; ch < NumChannels; ++ch)
+			{
+				Out[f * NumChannels + ch] *= G;
+			}
+		}
+		CurrentGain += Step;
+	}
+
 	if (Bad > 0)
 	{
 		BadSamples += Bad;
@@ -62,6 +82,17 @@ void UAudioSanitizerSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	UAudioMixerBlueprintLibrary::AddMasterSubmixEffect(&InWorld, Preset);
 	FSubmixEffectSanitizer::BadSamples = 0;
 
+	// Avant la premiere course, la camera est a sa position de depart (hors tuiles Cesium) et les
+	// sons UDS y buzzent : son coupe jusqu'a ce que l'origine Cesium change (teleportation)
+	FSubmixEffectSanitizer::TargetGain = 0.f;
+	bSoundOpened = false;
+	BeginPlayTime = FPlatformTime::Seconds();
+	if (ACesiumGeoreference* Geo = ACesiumGeoreference::GetDefaultGeoreference(&InWorld))
+	{
+		InitialOrigin = Geo->GetOriginLongitudeLatitudeHeight();
+	}
+	UE_LOG(LogTemp, Log, TEXT("[Audio] Son coupe jusqu'a la premiere course"));
+
 	// Occlusion des sons UDS (traces pour les interieurs) inutile en plein air ; ses valeurs au
 	// demarrage, avant le chargement des tuiles Cesium, sont suspectes de produire les NaN.
 	// Coupee avant le BeginPlay des acteurs (variable Blueprint, retrouvee par son nom affiche).
@@ -79,6 +110,16 @@ void UAudioSanitizerSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 				UE_LOG(LogTemp, Log, TEXT("[Audio] Occlusion des sons UDS coupee sur %s"), *It->GetName());
 			}
 		}
+		// L'ambiance d'UDS se trompe de moment de la journee (22:51 = matin) : on la debranche
+		// d'UDS et on la joue nous-memes (voir UpdateForest)
+		for (TFieldIterator<FObjectPropertyBase> PropIt(It->GetClass()); PropIt; ++PropIt)
+		{
+			if (PropIt->GetAuthoredName() == TEXT("Environment Sound"))
+			{
+				PropIt->SetObjectPropertyValue_InContainer(*It, nullptr);
+				UE_LOG(LogTemp, Log, TEXT("[Audio] Ambiance UDS debranchee de %s (jouee par le jeu)"), *It->GetName());
+			}
+		}
 	}
 
 	InWorld.GetTimerManager().SetTimer(CheckTimer, FTimerDelegate::CreateUObject(this, &UAudioSanitizerSubsystem::CheckNaN), 0.25f, true);
@@ -89,33 +130,26 @@ static FString SoundName(const UAudioComponent* Comp)
 	return Comp ? FString::Printf(TEXT("%s (son %s)"), *Comp->GetPathName(), Comp->Sound ? *Comp->Sound->GetName() : TEXT("aucun")) : TEXT("?");
 }
 
-// Ambiance foret UDS (MetaSound Forest_Example) : ses entrees « Bird/Insects Time Volumes » donnent
-// un volume par moment (avant l'aube, matin, midi, soir, apres le crepuscule, nuit), mais UDS lui
-// transmet toujours « nuit » dans ce projet (grillons et pas d'oiseaux, meme a midi). On calcule donc
-// le volume pour l'heure reelle du ciel UDS et on le pousse a l'identique dans les 6 cases.
-static float TimeVolume(double Hour, const float (&Levels)[6])
+// Ambiance foret (MetaSound UDS Forest_Example), jouee par le jeu et non par UDS. Son entree
+// « Time » est le moment de la journee : 0 avant l'aube, 1 matin, 2 midi, 3 soir, 4 apres le
+// crepuscule, 5 nuit ; « Time Interp » la duree du fondu (s). Calcule d'apres l'heure du ciel UDS.
+static constexpr float ForestVolume = 0.5f;
+static const TCHAR* ForestSoundPath = TEXT("/Game/UltraDynamicSky/Sound/Environment/Forest_Example/Forest_Example.Forest_Example");
+
+static int32 DayPhase(double Hour)
 {
-	// Centre de chaque moment (heures) ; interpolation lineaire entre deux moments voisins
-	static const double Centers[6] = {5.0, 8.5, 13.5, 17.5, 20.0, 1.0 + 24.0};
-	const double H = Hour < Centers[0] ? Hour + 24.0 : Hour;
-	for (int32 i = 0; i < 6; ++i)
-	{
-		const int32 j = (i + 1) % 6;
-		const double C0 = Centers[i];
-		const double C1 = j == 0 ? Centers[0] + 24.0 : Centers[j];
-		if (H >= C0 && H < C1)
-		{
-			return FMath::Lerp(Levels[i], Levels[j], float((H - C0) / (C1 - C0)));
-		}
-	}
-	return Levels[5];
+	if (Hour >= 4.5 && Hour < 6.5) return 0;
+	if (Hour >= 6.5 && Hour < 11.0) return 1;
+	if (Hour >= 11.0 && Hour < 16.0) return 2;
+	if (Hour >= 16.0 && Hour < 18.5) return 3;
+	if (Hour >= 18.5 && Hour < 20.5) return 4;
+	return 5;
 }
 
-static constexpr float ForestVolume = 0.5f;
-
-static void ApplyForestVolumes(UWorld* World)
+void UAudioSanitizerSubsystem::UpdateForest()
 {
-	// Heure du ciel UDS (variable Blueprint TimeOfDay, 0-2400)
+	UWorld* World = GetWorld();
+	// Heure du ciel UDS (variable Blueprint TimeOfDay, heures x 100)
 	double TimeOfDay = -1.0;
 	for (TActorIterator<AActor> It(World); It && TimeOfDay < 0.0; ++It)
 	{
@@ -132,49 +166,65 @@ static void ApplyForestVolumes(UWorld* World)
 		return;
 	}
 	const double Hour = FMath::Fmod(TimeOfDay / 100.0, 24.0);
+	const int32 DayIndex = DayPhase(Hour);
 
-	// Avant l'aube, matin, midi, soir, apres le crepuscule, nuit
-	static const float BirdLevels[6] = {0.6f, 2.f, 1.6f, 1.2f, 0.2f, 0.f};
-	static const float InsectLevels[6] = {0.4f, 0.f, 0.f, 0.2f, 1.f, 1.f};
-	const float BirdLevel = TimeVolume(Hour, BirdLevels);
-	const float InsectLevel = TimeVolume(Hour, InsectLevels);
-	TArray<float> Birds, Insects;
-	Birds.Init(BirdLevel, 6);
-	Insects.Init(InsectLevel, 6);
-
-	// Trace a chaque changement notable (verification du cycle jour/nuit)
-	static float LastBird = -1.f, LastInsect = -1.f;
-	if (FMath::Abs(BirdLevel - LastBird) > 0.1f || FMath::Abs(InsectLevel - LastInsect) > 0.1f)
-	{
-		UE_LOG(LogTemp, Log, TEXT("[Audio] Ambiance foret a %02d:%02d (ciel UDS) : oiseaux %.2f, insectes %.2f"),
-			int32(Hour), int32(FMath::Fmod(Hour, 1.0) * 60.0), BirdLevel, InsectLevel);
-		LastBird = BirdLevel;
-		LastInsect = InsectLevel;
-	}
-
+	// UDS a pu lancer sa propre ambiance avant qu'on la debranche (BeginPlay des acteurs passe
+	// avant celui du sous-systeme) : on arrete tout autre composant qui la joue
 	for (TObjectIterator<UAudioComponent> It; It; ++It)
 	{
-		if (It->GetWorld() == World && It->Sound && It->Sound->GetName() == TEXT("Forest_Example"))
+		if (*It != ForestComp && It->GetWorld() == World && It->Sound && It->Sound->GetName() == TEXT("Forest_Example") && It->IsPlaying())
 		{
-			// Ambiance foret plus discrete que la meteo
-			It->SetVolumeMultiplier(ForestVolume);
-			It->SetParameters({
-				FAudioParameter(TEXT("Bird Time Volumes"), Birds),
-				FAudioParameter(TEXT("Insects Time Volumes"), Insects)});
+			UE_LOG(LogTemp, Log, TEXT("[Audio] Ambiance UDS arretee : %s"), *It->GetPathName());
+			It->Stop();
 		}
+	}
+
+	if (!ForestComp)
+	{
+		USoundBase* Sound = LoadObject<USoundBase>(nullptr, ForestSoundPath);
+		if (!Sound)
+		{
+			return;
+		}
+		ForestComp = UGameplayStatics::SpawnSound2D(World, Sound, ForestVolume);
+		LastForestPhase = -1;
+	}
+	if (ForestComp && DayIndex != LastForestPhase)
+	{
+		// Premier reglage instantane, ensuite fondu de 10 s
+		ForestComp->SetParameters({
+			FAudioParameter(TEXT("Time Interp"), LastForestPhase < 0 ? 0.f : 10.f),
+			FAudioParameter(TEXT("Time"), float(DayIndex))});
+		static const TCHAR* Names[6] = {TEXT("avant l'aube"), TEXT("matin"), TEXT("midi"), TEXT("soir"), TEXT("apres le crepuscule"), TEXT("nuit")};
+		UE_LOG(LogTemp, Log, TEXT("[Audio] Ambiance foret : %02d:%02d (ciel UDS) -> %s"),
+			int32(Hour), int32(FMath::Fmod(Hour, 1.0) * 60.0), Names[DayIndex]);
+		LastForestPhase = DayIndex;
 	}
 }
 
 void UAudioSanitizerSubsystem::CheckNaN()
 {
-	// Toutes les 2 s : reglages de l'ambiance foret (UDS peut recreer son composant)
+	// Toutes les 2 s : moment de la journee de l'ambiance foret
 	if (++ForestTick % 8 == 1)
 	{
-		ApplyForestVolumes(GetWorld());
+		UpdateForest();
 	}
 
 	const int64 Bad = FSubmixEffectSanitizer::BadSamples.exchange(0);
 	const double Now = FPlatformTime::Seconds();
+
+	// Ouverture du son a la premiere teleportation (ou au bout de 2 min par securite)
+	if (!bSoundOpened)
+	{
+		const ACesiumGeoreference* Geo = ACesiumGeoreference::GetDefaultGeoreference(GetWorld());
+		const bool bMoved = Geo && !Geo->GetOriginLongitudeLatitudeHeight().Equals(InitialOrigin, 1e-4);
+		if (bMoved || Now - BeginPlayTime > 120.0)
+		{
+			bSoundOpened = true;
+			FSubmixEffectSanitizer::TargetGain = 1.f;
+			UE_LOG(LogTemp, Log, TEXT("[Audio] Son ouvert (%s)"), bMoved ? TEXT("course chargee") : TEXT("delai de securite"));
+		}
+	}
 
 	// Saturation : un log toutes les 10 s au plus
 	ClippedSinceLog += FSubmixEffectSanitizer::ClippedSamples.exchange(0);
