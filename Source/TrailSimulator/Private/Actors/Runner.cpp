@@ -195,7 +195,9 @@ void ARunner::BeginPlay()
 		this,
 		&ARunner::OnLookAtTimerTick,
 		SettingsSubsystem->GetUpdateIntervalSeconds(),
-		true
+		true,
+		// premier declenchement aleatoire : les acteurs ne tournent pas tous sur la meme image
+		FMath::FRandRange(0.f, SettingsSubsystem->GetUpdateIntervalSeconds())
 	);
 	
 	SpringArmComponent->SetUsingAbsoluteRotation(false);
@@ -397,7 +399,9 @@ void ARunner::StopAnimation()
 		this,
 		&ARunner::OnLookAtTimerTick,
 		SettingsSubsystem->GetUpdateIntervalSeconds(),
-		true
+		true,
+		// premier declenchement aleatoire : les acteurs ne tournent pas tous sur la meme image
+		FMath::FRandRange(0.f, SettingsSubsystem->GetUpdateIntervalSeconds())
 	);
 }
 
@@ -467,6 +471,9 @@ bool ARunner::IsStacked() const
 
 void ARunner::OnLookAtTimerTick()
 {
+	// Hors champ (ni vue principale ni capture OWL) : inutile de le tourner vers la camera
+	if (!WasRecentlyRendered(0.5f)) return;
+
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 	UCineCameraComponent* ActiveCam = nullptr;
 	AActor* ViewTarget = PC->GetViewTarget();

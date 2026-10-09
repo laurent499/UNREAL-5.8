@@ -69,7 +69,9 @@ void AKm::BeginPlay()
 		this,
 		&AKm::OnLookAtTimerTick,
 		SettingsSubsystem->GetUpdateIntervalSeconds(),
-		true // looping
+		true,
+		// premier declenchement aleatoire : les acteurs ne tournent pas tous sur la meme image
+		FMath::FRandRange(0.f, SettingsSubsystem->GetUpdateIntervalSeconds())
 	);
 	AActor* RMActor = UGameplayStatics::GetActorOfClass(GetWorld(), ARaceManager::StaticClass());
 	RaceManager = Cast<ARaceManager>(RMActor);
@@ -121,6 +123,9 @@ void AKm::UpdateDayNight(bool bIsDay)
  */
 void AKm::OnLookAtTimerTick()
 {
+	// Hors champ (ni vue principale ni capture OWL) : inutile de le tourner vers la camera
+	if (!WasRecentlyRendered(0.5f)) return;
+
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 	UCameraComponent* ActiveCam = nullptr;
 	AActor* ViewTarget = PC->GetViewTarget();

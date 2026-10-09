@@ -72,7 +72,12 @@ public:
 	TSubclassOf<AActor> GetRunnerClassForRace(const FRaceSetup& RaceSetup) const;
 	void SpawnInitialRunners(int64 RaceID, FRunners& RunnersDatas);
 	void UpdateRunnersFromSnapshot(int64 RaceID, FRunners& RunnersDatas);
-	
+	// Mises a jour des coureurs en attente : traitees quelques-unes par image pour eviter un pic chaque seconde
+	TArray<FRunnerStruct> PendingRunnerUpdates;
+	int64 PendingRunnerRaceID = -1;
+	FTimerHandle PendingRunnerHandle;
+	void ProcessPendingRunnerUpdates();
+
 	/** Request Callbacks */
 	// All Races
 	UFUNCTION()

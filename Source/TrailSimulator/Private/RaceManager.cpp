@@ -1047,9 +1047,20 @@ void ARaceManager::UpdateRunnersFromSnapshot(int64 RaceID, FRunners& RunnersData
 	Georeference = ACesiumGeoreference::GetDefaultGeoreference(World);
 	const TSubclassOf<AActor> RunnerClass = GetRunnerClassForRace(RaceSetup);
 
+	// Le nouveau snapshot remplace les mises a jour pas encore traitees du precedent
+	PendingRunnerUpdates.Reset();
+	PendingRunnerRaceID = RaceID;
+
 	for (FRunnerStruct& Runner : RunnersDatas.Runners)
 	{
 		TObjectPtr<AActor> CurrentRunner = RunnerSubsystem->GetRunnerActorByTeam(RaceID, Runner.canalId);
+
+		// Coureur deja present : mise a jour etalee sur les images suivantes
+		if (CurrentRunner)
+		{
+			PendingRunnerUpdates.Add(Runner);
+			continue;
+		}
 
 		// Nouvelle team dans la race => spawn à chaud
 		if (!CurrentRunner)
@@ -1091,6 +1102,48 @@ void ARaceManager::UpdateRunnersFromSnapshot(int64 RaceID, FRunners& RunnersData
 				RunnerInterface->UpdateRunnerLocation(Runner, CurrentRacePath);
 			}
 		}
+	}
+
+	if (!PendingRunnerUpdates.IsEmpty() && !PendingRunnerHandle.IsValid())
+	{
+		PendingRunnerHandle = GetWorldTimerManager().SetTimerForNextTick(this, &ARaceManager::ProcessPendingRunnerUpdates);
+	}
+}
+
+/**
+ * @brief Applique quelques mises a jour de coureurs par image, puis se replanifie s'il en reste
+ */
+void ARaceManager::ProcessPendingRunnerUpdates()
+{
+	PendingRunnerHandle.Invalidate();
+	if (!RunnerSubsystem || !RaceSubsystem) return;
+
+	TObjectPtr<APath>* PathPtr = RacePaths.Find(PendingRunnerRaceID);
+	if (!PathPtr || !*PathPtr)
+	{
+		PendingRunnerUpdates.Reset();
+		return;
+	}
+	const FRaceSetup& RaceSetup = RaceSubsystem->GetRaceSetupById(PendingRunnerRaceID);
+
+	constexpr int32 RunnersPerFrame = 2;
+	const int32 Count = FMath::Min(RunnersPerFrame, PendingRunnerUpdates.Num());
+	for (int32 i = 0; i < Count; ++i)
+	{
+		FRunnerStruct& Runner = PendingRunnerUpdates[i];
+		AActor* CurrentRunner = RunnerSubsystem->GetRunnerActorByTeam(PendingRunnerRaceID, Runner.canalId);
+		if (IRunnerInterface* RunnerInterface = Cast<IRunnerInterface>(CurrentRunner))
+		{
+			RunnerInterface->AssignRunnerToTeam(Runner.canalId);
+			RunnerInterface->UpdateRunner(Runner, RaceSetup);
+			RunnerInterface->UpdateRunnerLocation(Runner, *PathPtr);
+		}
+	}
+	PendingRunnerUpdates.RemoveAt(0, Count, EAllowShrinking::No);
+
+	if (!PendingRunnerUpdates.IsEmpty())
+	{
+		PendingRunnerHandle = GetWorldTimerManager().SetTimerForNextTick(this, &ARaceManager::ProcessPendingRunnerUpdates);
 	}
 }
 

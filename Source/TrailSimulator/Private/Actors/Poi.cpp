@@ -427,7 +427,9 @@ void APoi::BeginPlay()
 		this,
 		&APoi::OnLookAtTimerTick,
 		SettingsSubsystem->GetUpdateIntervalSeconds(),
-		true
+		true,
+		// premier declenchement aleatoire : les acteurs ne tournent pas tous sur la meme image
+		FMath::FRandRange(0.f, SettingsSubsystem->GetUpdateIntervalSeconds())
 	);
 	
 	SpringArmComponent->SetUsingAbsoluteRotation(false);
@@ -846,7 +848,9 @@ void APoi::StopAnimation()
 		this,
 		&APoi::OnLookAtTimerTick,
 		SettingsSubsystem->GetUpdateIntervalSeconds(),
-		true
+		true,
+		// premier declenchement aleatoire : les acteurs ne tournent pas tous sur la meme image
+		FMath::FRandRange(0.f, SettingsSubsystem->GetUpdateIntervalSeconds())
 	);
 	SetActorTickEnabled(false);
 	bOrbitEnabled = false;
@@ -878,6 +882,9 @@ FMinMax APoi::GetMinMax() const
  */
 void APoi::OnLookAtTimerTick()
 {
+	// Hors champ (ni vue principale ni capture OWL) : inutile de le tourner vers la camera
+	if (!WasRecentlyRendered(0.5f)) return;
+
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 	UCineCameraComponent* ActiveCam = nullptr;
 	AActor* ViewTarget = PC->GetViewTarget();
