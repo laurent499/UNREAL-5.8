@@ -18,6 +18,12 @@ namespace WorldFauna
 	constexpr float RespawnDistance = 80000.f;            // 800 m : les oiseaux ne restent pas loin derriere
 	constexpr float AnchorDistance = 8000.f;              // 80 m devant la camera
 
+	/** Hauteur maximale des oiseaux au-dessus du sol (cm), reglee par la regie (0 a 4 000 m) */
+	float MaxBirdHeight(const UWorldAmbienceSubsystem* Ambience)
+	{
+		return Ambience ? FMath::Max(Ambience->GetSettings().FaunaMaxHeightM * 100.f, 1500.f) : 150000.f;
+	}
+
 	/** Mesh statique construit au lancement a partir de triangles (chaque face doublee : visible des deux cotes) */
 	UStaticMesh* BuildMesh(UObject* Outer, const TCHAR* Name, const TArray<FVector3f>& Points, const TArray<int32>& Triangles, UMaterialInterface* Material)
 	{
@@ -147,7 +153,8 @@ bool AWorldFauna::IsFaunaAllowed()
 	if (S.Night >= 0.5f) { Status = TEXT("Nuit"); return false; }
 	if (S.Rain >= 5.f || S.Snow >= 5.f || S.Wind >= 8.f) { Status = TEXT("Meteo trop forte"); return false; }
 	if (!bHasAnchor) { Status = TEXT("Sol introuvable sous la camera"); return false; }
-	if (CameraHeightAboveGround >= World->GetSettings().FaunaMaxHeightM * 100.f)
+	// Oiseaux confines entre le sol et FaunaMaxHeightM ; au-dela de 3 km au-dessus de cette tranche ils ne seraient plus visibles
+	if (CameraHeightAboveGround >= WorldFauna::MaxBirdHeight(World) + 300000.f)
 	{
 		Status = FString::Printf(TEXT("Camera trop haute (%.0f m du sol)"), CameraHeightAboveGround / 100.f);
 		return false;
@@ -193,6 +200,9 @@ void AWorldFauna::Respawn(const FVector& Center, float GroundZ)
 	AppliedDensity = Density;
 	// Hauteur de camera au moment du placement : les orbites s'elargissent avec elle
 	SpawnCameraHeight = CameraHeightAboveGround;
+	// Les oiseaux volent pres de la hauteur de la camera, sans depasser la tranche reglee
+	const float Top = WorldFauna::MaxBirdHeight(Ambience.Get());
+	const float RefHeight = FMath::Min(SpawnCameraHeight, Top);
 	const float Spread = FMath::Max(1.f, SpawnCameraHeight / 10000.f);
 	// Camera haute : oiseaux grossis pour rester lisibles a plusieurs centaines de metres
 	const float Readable = FMath::Clamp(SpawnCameraHeight / 30000.f, 1.f, 3.f);
@@ -210,7 +220,7 @@ void AWorldFauna::Respawn(const FVector& Center, float GroundZ)
 		B.OrbitRadius = FMath::FRandRange(2500.f, 5000.f) * Spread;
 		B.OrbitSpeed = (FMath::RandBool() ? 1.f : -1.f) * 1000.f / B.OrbitRadius; // ~10 m/s
 		B.OrbitAngle = FMath::FRandRange(0.f, UE_TWO_PI);
-		B.HeightAboveGround = FMath::FRandRange(FMath::Max(2500.f, SpawnCameraHeight * 0.25f), FMath::Max(7000.f, SpawnCameraHeight * 0.6f));
+		B.HeightAboveGround = FMath::Min(FMath::FRandRange(FMath::Max(2500.f, RefHeight * 0.4f), FMath::Max(7000.f, RefHeight * 1.0f)), Top - 800.f);
 		B.Scale = FMath::FRandRange(1.2f, 1.6f) * Readable; // envergure 2,6 a 3,5 m : gypaete, aigle royal
 		B.FlapSpeed = FMath::FRandRange(5.f, 7.f);
 		B.FlapTimer = FMath::FRandRange(2.f, 15.f);
@@ -221,7 +231,7 @@ void AWorldFauna::Respawn(const FVector& Center, float GroundZ)
 	const int32 Flock = FMath::Clamp(FMath::RoundToInt(10.f * Density), 0, 30);
 	FlockLeader = Center + FVector(FMath::FRandRange(-8000.f, 8000.f), FMath::FRandRange(-8000.f, 8000.f), 0.f);
 	FlockHeading = FMath::FRandRange(0.f, UE_TWO_PI);
-	FlockHeight = FMath::FRandRange(FMath::Max(1500.f, SpawnCameraHeight * 0.15f), FMath::Max(3500.f, SpawnCameraHeight * 0.35f));
+	FlockHeight = FMath::Min(FMath::FRandRange(FMath::Max(1500.f, RefHeight * 0.2f), FMath::Max(3500.f, RefHeight * 0.7f)), Top - 300.f);
 	FlockLeader.Z = GroundZ + FlockHeight;
 	for (int32 i = 0; i < Flock; ++i)
 	{
