@@ -4,25 +4,6 @@
 #include "EngineUtils.h"
 #include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
-#include "OWLMediaOutput.h"
-#include "Misc/OutputDeviceRedirector.h"
-
-// Repere dans le log les erreurs d'encodage audio OWL « Input contains (near) NaN/+-Inf »
-struct FOWLNaNLogWatcher : public FOutputDevice
-{
-	std::atomic<bool> bSeen{false};
-
-	virtual void Serialize(const TCHAR* V, ELogVerbosity::Type Verbosity, const FName& Category) override
-	{
-		static const FName OWLCategory(TEXT("LogOWLMedia"));
-		if (Category == OWLCategory && FCString::Strstr(V, TEXT("NaN")))
-		{
-			bSeen = true;
-		}
-	}
-	virtual bool CanBeUsedOnAnyThread() const override { return true; }
-	virtual bool CanBeUsedOnMultipleThreads() const override { return true; }
-};
 
 std::atomic<int64> FSubmixEffectSanitizer::BadSamples{0};
 
@@ -83,88 +64,121 @@ void UAudioSanitizerSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 		}
 	}
 
-	OWLLogWatcher = new FOWLNaNLogWatcher();
-	GLog->AddOutputDevice(OWLLogWatcher);
-
 	InWorld.GetTimerManager().SetTimer(CheckTimer, FTimerDelegate::CreateUObject(this, &UAudioSanitizerSubsystem::CheckNaN), 1.f, true);
+}
+
+static FString SoundName(const UAudioComponent* Comp)
+{
+	return Comp ? FString::Printf(TEXT("%s (son %s)"), *Comp->GetPathName(), Comp->Sound ? *Comp->Sound->GetName() : TEXT("aucun")) : TEXT("?");
 }
 
 void UAudioSanitizerSubsystem::CheckNaN()
 {
-	// Erreurs NaN de l'encodeur OWL : relance de la sortie (5 fois max, 5 s mini entre deux)
-	if (OWLLogWatcher && OWLLogWatcher->bSeen.exchange(false))
-	{
-		const double Now = FPlatformTime::Seconds();
-		if (OWLRestarts < 5 && Now - LastOWLRestartTime > 5.0)
-		{
-			LastOWLRestartTime = Now;
-			RestartOWLOutput();
-		}
-	}
-
 	const int64 Bad = FSubmixEffectSanitizer::BadSamples.exchange(0);
 	if (Bad == 0)
 	{
-		if (LastRestarted.IsValid())
+		if (Phase == ENaNHuntPhase::Restart || Phase == ENaNHuntPhase::Stop)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[Audio] NaN disparus apres relance de %s (son %s)"),
-				*LastRestarted->GetPathName(), LastRestarted->Sound ? *LastRestarted->Sound->GetName() : TEXT("aucun"));
-			LastRestarted = nullptr;
-			RestartIndex = 0;
+			UAudioComponent* Culprit = Suspects.IsValidIndex(Step - 1) ? Suspects[Step - 1].Get() : nullptr;
+			UE_LOG(LogTemp, Warning, TEXT("[Audio] NaN disparus apres %s de %s"),
+				Phase == ENaNHuntPhase::Restart ? TEXT("relance") : TEXT("coupure"), *SoundName(Culprit));
+			if (Phase == ENaNHuntPhase::Stop)
+			{
+				// Les sons coupes avant le fautif etaient innocents : on les relance
+				for (int32 i = 0; i < Step - 1; ++i)
+				{
+					if (UAudioComponent* Comp = Suspects[i].Get())
+					{
+						Comp->Play();
+					}
+				}
+			}
 		}
-		return;
-	}
-
-	// Composants audio en cours de lecture, dans un ordre stable
-	TArray<UAudioComponent*> Playing;
-	for (TObjectIterator<UAudioComponent> It; It; ++It)
-	{
-		if (It->GetWorld() == GetWorld() && It->IsPlaying())
+		if (Phase != ENaNHuntPhase::Idle)
 		{
-			Playing.Add(*It);
+			UE_LOG(LogTemp, Warning, TEXT("[Audio] Mix general sain"));
 		}
-	}
-	Playing.Sort([](const UAudioComponent& A, const UAudioComponent& B) { return A.GetPathName() < B.GetPathName(); });
-	if (Playing.IsEmpty())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[Audio] %lld echantillons NaN/Inf dans le mix general, aucun composant audio actif"), Bad);
+		Phase = ENaNHuntPhase::Idle;
 		return;
 	}
 
-	UAudioComponent* Comp = Playing[RestartIndex % Playing.Num()];
-	++RestartIndex;
-	UE_LOG(LogTemp, Warning, TEXT("[Audio] %lld echantillons NaN/Inf dans le mix general : relance de %s (son %s)"),
-		Bad, *Comp->GetPathName(), Comp->Sound ? *Comp->Sound->GetName() : TEXT("aucun"));
-	Comp->Stop();
-	Comp->Play();
-	LastRestarted = Comp;
-}
-
-void UAudioSanitizerSubsystem::RestartOWLOutput()
-{
-	AOWLMediaOutput* Output = Cast<AOWLMediaOutput>(UGameplayStatics::GetActorOfClass(GetWorld(), AOWLMediaOutput::StaticClass()));
-	if (!Output)
+	if (Phase == ENaNHuntPhase::Idle)
 	{
+		// Sons en cours de lecture, dans un ordre stable
+		TArray<UAudioComponent*> Playing;
+		for (TObjectIterator<UAudioComponent> It; It; ++It)
+		{
+			if (It->GetWorld() == GetWorld() && It->IsPlaying())
+			{
+				Playing.Add(*It);
+			}
+		}
+		Playing.Sort([](const UAudioComponent& A, const UAudioComponent& B) { return A.GetPathName() < B.GetPathName(); });
+		Suspects.Reset();
+		for (UAudioComponent* Comp : Playing)
+		{
+			Suspects.Add(Comp);
+		}
+		Phase = ENaNHuntPhase::Restart;
+		Step = 0;
+		UE_LOG(LogTemp, Warning, TEXT("[Audio] %lld echantillons NaN/Inf dans le mix general, %d sons actifs : recherche de la source"), Bad, Suspects.Num());
+	}
+
+	if (Phase == ENaNHuntPhase::Restart)
+	{
+		if (Step < Suspects.Num())
+		{
+			UAudioComponent* Comp = Suspects[Step++].Get();
+			UE_LOG(LogTemp, Warning, TEXT("[Audio] NaN : relance de %s"), *SoundName(Comp));
+			if (Comp)
+			{
+				Comp->Stop();
+				Comp->Play();
+			}
+			return;
+		}
+		Phase = ENaNHuntPhase::Stop;
+		Step = 0;
+	}
+
+	if (Phase == ENaNHuntPhase::Stop)
+	{
+		if (Step < Suspects.Num())
+		{
+			UAudioComponent* Comp = Suspects[Step++].Get();
+			UE_LOG(LogTemp, Warning, TEXT("[Audio] NaN : coupure de %s"), *SoundName(Comp));
+			if (Comp)
+			{
+				Comp->Stop();
+			}
+			return;
+		}
+		// Tous les sons coupes et toujours des NaN : volume global (sound mix) suspect
+		UE_LOG(LogTemp, Warning, TEXT("[Audio] NaN malgre tous les sons coupes : vidage des sound mix"));
+		UGameplayStatics::ClearSoundMixModifiers(GetWorld());
+		for (const TWeakObjectPtr<UAudioComponent>& Weak : Suspects)
+		{
+			if (UAudioComponent* Comp = Weak.Get())
+			{
+				Comp->Play();
+			}
+		}
+		Phase = ENaNHuntPhase::Done;
+		LastDoneLogTime = FPlatformTime::Seconds();
 		return;
 	}
-	++OWLRestarts;
-	UE_LOG(LogTemp, Warning, TEXT("[Audio] Encodeur audio OWL bloque par des NaN : relance de la sortie OWL (%d/5)"), OWLRestarts);
-	Output->Stop();
-	FTimerHandle Handle;
-	GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateWeakLambda(Output, [Output]()
+
+	// Done : source introuvable, on se contente de signaler toutes les 10 s
+	const double Now = FPlatformTime::Seconds();
+	if (Now - LastDoneLogTime > 10.0)
 	{
-		Output->Start();
-	}), 1.f, false);
+		UE_LOG(LogTemp, Warning, TEXT("[Audio] NaN persistants dans le mix general (%lld/s), source non trouvee"), Bad);
+		LastDoneLogTime = Now;
+	}
 }
 
 void UAudioSanitizerSubsystem::Deinitialize()
 {
-	if (OWLLogWatcher)
-	{
-		GLog->RemoveOutputDevice(OWLLogWatcher);
-		delete OWLLogWatcher;
-		OWLLogWatcher = nullptr;
-	}
 	if (UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(CheckTimer);

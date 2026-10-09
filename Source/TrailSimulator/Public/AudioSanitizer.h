@@ -6,7 +6,6 @@
 #include "AudioSanitizer.generated.h"
 
 class UAudioComponent;
-struct FOWLNaNLogWatcher;
 
 // Effet place sur le mix general : remplace toute valeur NaN/Inf par du silence et le signale.
 // Une source qui sort des NaN (filtre MetaSound UDS parti en NaN au demarrage, au hasard des
@@ -42,9 +41,19 @@ public:
 	FSubmixEffectSanitizerSettings Settings;
 };
 
-// Installe le filtre sur le mix general de chaque monde de jeu (jeu et PIE), et tant que des NaN
-// arrivent, relance les composants audio actifs un par un (une seconde chacun) pour trouver et
-// reinitialiser la source fautive.
+// Installe le filtre sur le mix general de chaque monde de jeu (jeu et PIE). Tant que des NaN
+// arrivent : relance chaque son actif une fois, puis les coupe un par un jusqu'a ce que les NaN
+// cessent (le dernier coupe est le fautif, il reste coupe, les autres repartent), et en dernier
+// recours vide les sound mix (volume de classe global). Chaque etape est journalisee [Audio].
+UENUM()
+enum class ENaNHuntPhase : uint8
+{
+	Idle,
+	Restart,
+	Stop,
+	Done
+};
+
 UCLASS()
 class UAudioSanitizerSubsystem : public UWorldSubsystem
 {
@@ -57,20 +66,14 @@ public:
 
 private:
 	void CheckNaN();
-	// OWL peut aussi produire des NaN de lui-meme (au hasard des lancements, mix UE sain) : son
-	// encodeur reste alors bloque toute la session. On relance la sortie OWL quand son log le signale.
-	void RestartOWLOutput();
 
 	UPROPERTY()
 	TObjectPtr<USubmixEffectSanitizerPreset> Preset;
 
-	// Composant relance a la verification precedente, et position dans la liste des composants
-	TWeakObjectPtr<UAudioComponent> LastRestarted;
-	int32 RestartIndex = 0;
+	ENaNHuntPhase Phase = ENaNHuntPhase::Idle;
+	// Sons actifs au moment de la detection, et position dans la liste
+	TArray<TWeakObjectPtr<UAudioComponent>> Suspects;
+	int32 Step = 0;
+	double LastDoneLogTime = 0.0;
 	FTimerHandle CheckTimer;
-
-	// Possede par le sous-systeme (cree au BeginPlay, detruit dans Deinitialize)
-	FOWLNaNLogWatcher* OWLLogWatcher = nullptr;
-	int32 OWLRestarts = 0;
-	double LastOWLRestartTime = 0.0;
 };
