@@ -29,6 +29,11 @@ public:
 	static std::atomic<int64> BadSamples;
 	// Echantillons au-dela de 0,9 (adoucis) depuis la derniere lecture
 	static std::atomic<int64> ClippedSamples;
+	// Gain voulu sur le mix general (0 = son coupe), atteint en rampe
+	static std::atomic<float> TargetGain;
+
+private:
+	float CurrentGain = 0.f;
 };
 
 UCLASS()
@@ -68,6 +73,8 @@ public:
 
 private:
 	void CheckNaN();
+	// Ambiance foret jouee par le jeu (voir AudioSanitizer.cpp)
+	void UpdateForest();
 
 	UPROPERTY()
 	TObjectPtr<USubmixEffectSanitizerPreset> Preset;
@@ -85,6 +92,12 @@ private:
 	double CulpritRetryDelay = 10.0;
 	bool bCulpritRetrying = false;
 	int32 ForestTick = 0;
+	UPROPERTY()
+	TObjectPtr<UAudioComponent> ForestComp;
+	int32 LastForestPhase = -1;
+	bool bSoundOpened = false;
+	double BeginPlayTime = 0.0;
+	FVector InitialOrigin = FVector::ZeroVector;
 	int64 ClippedSinceLog = 0;
 	double LastClipLogTime = 0.0;
 };
