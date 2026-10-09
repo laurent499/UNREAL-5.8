@@ -255,27 +255,42 @@ void ARunner::UpdateRunnerLocation(FRunnerStruct RunnerStruct, TObjectPtr<APath>
 			}
 		}
 
+		const double Now = GetWorld()->GetTimeSeconds();
+		const float SinceLast = bHasTrackDist ? float(Now - TrackSamples.Last().Time) : 0.f;
+
 		// Premier placement, changement de trace ou saut trop grand : teleportation
-		const float Dt = FMath::Max(SettingsSubsystem->GetFetchFrequency(), 0.1f);
-		const float MaxInterpCm = FMath::Max(100.f * 100.f, 15.f * 100.f * Dt); // 100 m ou 15 m/s
+		const float MaxInterpCm = FMath::Max(100.f * 100.f, 15.f * 100.f * SinceLast); // 100 m ou 15 m/s
 		if (!bHasTrackDist || TrackInterpPath.Get() != CurrentPath.Get()
-			|| FMath::Abs(TargetDist - TrackDisplayedDist) > MaxInterpCm)
+			|| FMath::Abs(TargetDist - TrackSamples.Last().Dist) > MaxInterpCm)
 		{
 			SetActorLocation(TargetOnSpline, false);
 			TrackInterpPath = CurrentPath.Get();
+			TrackSamples.Reset();
+			TrackSamples.Add({Now, TargetDist});
+			TrackPlayTime = Now;
+			TrackAvgInterval = 0.f;
 			TrackDisplayedDist = TargetDist;
 			bHasTrackDist = true;
 			bTrackInterpActive = false;
 			return;
 		}
 
-		// Interpolation le long du trace depuis la position affichee vers la cible.
-		// Duree un peu superieure a la periode : le snapshot suivant arrive avant l'arret, le mouvement reste continu.
-		TrackFromDist = TrackDisplayedDist;
-		TrackToDist = TargetDist;
-		TrackInterpElapsed = 0.f;
-		TrackInterpDuration = Dt * 1.1f;
-		bTrackInterpActive = !FMath::IsNearlyEqual(TrackFromDist, TrackToDist, 1.f);
+		// Position inchangee (tracker pas encore rafraichi) : on attend le prochain point
+		if (FMath::IsNearlyEqual(TargetDist, TrackSamples.Last().Dist, 1.f)) return;
+
+		// Intervalle moyen entre deux positions differentes
+		const float Interval = FMath::Clamp(SinceLast, 0.1f, 30.f);
+		TrackAvgInterval = TrackAvgInterval > 0.f ? FMath::Lerp(TrackAvgInterval, Interval, 0.3f) : Interval;
+
+		// Lecture a court de points (arretee sur le dernier) : le segment suivant part de maintenant
+		if (TrackPlayTime >= TrackSamples.Last().Time)
+		{
+			TrackPlayTime = FMath::Max(TrackPlayTime, Now - 2.0 * TrackAvgInterval);
+			TrackSamples.Last().Time = TrackPlayTime;
+		}
+		TrackSamples.Add({Now, TargetDist});
+		if (TrackSamples.Num() > 6) TrackSamples.RemoveAt(0);
+		bTrackInterpActive = true;
 	} else
 	{
 		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("No Path Inteface"))), EMessageType::Error);
@@ -287,20 +302,32 @@ bool ARunner::AdvanceTrackInterp(float DeltaTime)
 	if (!bTrackInterpActive) return false;
 
 	APath* Path = TrackInterpPath.Get();
-	if (!Path || bStackedState || GetAttachParentActor())
+	if (!Path || bStackedState || GetAttachParentActor() || TrackSamples.Num() < 2)
 	{
 		bTrackInterpActive = false;
 		bHasTrackDist = false;
 		return false;
 	}
 
-	TrackInterpElapsed += DeltaTime;
-	const float Alpha = FMath::Min(TrackInterpElapsed / TrackInterpDuration, 1.f);
-	TrackDisplayedDist = FMath::Lerp(TrackFromDist, TrackToDist, Alpha);
-	const bool bDone = Alpha >= 1.f;
+	// Horloge de lecture : vise 2 intervalles de retard, accelere ou ralentit doucement pour s'y tenir, sans jamais reculer
+	const double Delay = 2.0 * TrackAvgInterval;
+	const double TargetPlay = GetWorld()->GetTimeSeconds() - Delay;
+	const double Rate = FMath::Clamp(1.0 + (TargetPlay - TrackPlayTime) / FMath::Max(Delay, 0.5), 0.5, 1.5);
+	TrackPlayTime = FMath::Min(TrackPlayTime + DeltaTime * Rate, TrackSamples.Last().Time);
+
+	// Segment courant
+	while (TrackSamples.Num() > 2 && TrackSamples[1].Time <= TrackPlayTime) TrackSamples.RemoveAt(0);
+	const FTrackSample& A = TrackSamples[0];
+	const FTrackSample& B = TrackSamples[1];
+	const double Span = B.Time - A.Time;
+	const float Alpha = Span > KINDA_SMALL_NUMBER ? FMath::Clamp(float((TrackPlayTime - A.Time) / Span), 0.f, 1.f) : 1.f;
+	TrackDisplayedDist = FMath::Lerp(A.Dist, B.Dist, Alpha);
+
+	// Plus de point d'avance : on s'arrete sur le dernier en attendant le suivant
+	const bool bDone = TrackPlayTime >= TrackSamples.Last().Time;
 	if (bDone) bTrackInterpActive = false;
 
-	// Hors champ ou cache : on ne deplace l'acteur qu'a la fin (economie du thread de jeu)
+	// Hors champ ou cache : on ne deplace l'acteur qu'a l'arret (economie du thread de jeu)
 	if (!bDone && (IsHidden() || !WasRecentlyRendered(0.5f))) return true;
 
 	SetActorLocation(Path->GetLocationAtDistance(TrackDisplayedDist), false);

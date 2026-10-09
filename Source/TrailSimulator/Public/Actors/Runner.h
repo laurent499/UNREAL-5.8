@@ -221,13 +221,18 @@ private:
 	UPROPERTY()
 	float Height;
 
-	// Interpolation le long du trace (distances en cm sur la spline)
+	// Lecture differee le long du trace : on rejoue les positions recues avec 2 intervalles de retard,
+	// pour avoir toujours un point d'avance et un deplacement continu (distances en cm sur la spline)
+	struct FTrackSample
+	{
+		double Time = 0.0;
+		float Dist = 0.f;
+	};
+	TArray<FTrackSample, TInlineAllocator<6>> TrackSamples;
 	TWeakObjectPtr<class APath> TrackInterpPath;
-	float TrackFromDist = 0.f;
-	float TrackToDist = 0.f;
+	double TrackPlayTime = 0.0;
+	float TrackAvgInterval = 0.f;
 	float TrackDisplayedDist = 0.f;
-	float TrackInterpElapsed = 0.f;
-	float TrackInterpDuration = 1.f;
 	bool bTrackInterpActive = false;
 	bool bHasTrackDist = false;
 
