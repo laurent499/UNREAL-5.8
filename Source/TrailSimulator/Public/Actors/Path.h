@@ -164,34 +164,6 @@ private:
 	UPROPERTY(meta=(allowPrivateAccess=true))
 	TObjectPtr<class UBroadcastCaptureSubsystem> BroadCastSubsystem;
 		
-	/** Recalage du trace sur les tuiles Cesium : demande l'altitude des tuiles sous chaque point */
-	void StartDrape(int64 RaceID);
-	void HandleDrapeHeights(int64 RaceID, int32 Serial, const TArray<FVector>& Query, const TArray<bool>& bSuccess, int32 NumPathPoints, const TArray<int32>& SubSegment, const TArray<float>& SubAlpha);
-	/** Construit splines, checkpoints, kms et meshes a partir de RacePath et des hauteurs (m, ellipsoide) */
-	void BuildPathGeometry(int64 RaceID, const TArray<double>& HeightsM);
-	void DrapeTimedOut(int64 RaceID, int32 Serial);
-	class ACesium3DTileset* FindTerrainTileset() const;
-	FString GetDrapeCachePath(int64 RaceID, uint32 Hash) const;
-
-	/** Hauteur du centre du tube au-dessus de la surface des tuiles (m) */
-	UPROPERTY(EditAnywhere, Category="Drape")
-	float DrapeClearanceM = 3.f;
-	/** Ecart max entre deux echantillons de relief sur un troncon (m) : sert a detecter les cretes coupees */
-	UPROPERTY(EditAnywhere, Category="Drape")
-	float DrapeSampleSpacingM = 20.f;
-	/** Ecart geoide/ellipsoide utilise si les tuiles ne repondent pas (m, ~50 dans les Alpes) */
-	UPROPERTY(EditAnywhere, Category="Drape")
-	float DrapeFallbackGeoidM = 50.f;
-	UPROPERTY(EditAnywhere, Category="Drape")
-	float DrapeTimeoutSeconds = 60.f;
-	/** Decalage du trace vers la camera, en fraction de la distance (CPD 17 de M_Glow / M_MasterPC) */
-	UPROPERTY(EditAnywhere, Category="Drape")
-	float CameraBiasRatio = 0.02f;
-
-	int32 DrapeSerial = 0;
-	bool bDrapePending = false;
-	FTimerHandle DrapeTimeoutHandle;
-
 	UFUNCTION()
 	void RebuildPathSplineMeshes(int64 RaceID);
 	UFUNCTION()
