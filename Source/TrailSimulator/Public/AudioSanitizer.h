@@ -27,6 +27,8 @@ public:
 
 	// Echantillons invalides vus depuis la derniere lecture (thread audio -> thread de jeu)
 	static std::atomic<int64> BadSamples;
+	// Echantillons au-dela de 0,9 (adoucis) depuis la derniere lecture
+	static std::atomic<int64> ClippedSamples;
 };
 
 UCLASS()
@@ -41,15 +43,15 @@ public:
 	FSubmixEffectSanitizerSettings Settings;
 };
 
-// Installe le filtre sur le mix general de chaque monde de jeu (jeu et PIE). Tant que des NaN
-// arrivent : relance chaque son actif une fois, puis les coupe un par un jusqu'a ce que les NaN
-// cessent (le dernier coupe est le fautif, il reste coupe, les autres repartent), et en dernier
-// recours vide les sound mix (volume de classe global). Chaque etape est journalisee [Audio].
+// Installe le filtre sur le mix general de chaque monde de jeu (jeu et PIE). Des qu'il voit des
+// NaN (verification toutes les 0,25 s), coupe les sons actifs un par un, le son directionnel UDS
+// en premier (source constatee : UDS_Directional_WeatherSounds part en NaN au demarrage), jusqu'a ce
+// que les NaN cessent. Le dernier coupe est le fautif : les autres repartent, lui est relance plus
+// tard (10 s, puis 20, 40...) et recoupe si les NaN reviennent. En dernier recours, vide les sound mix.
 UENUM()
 enum class ENaNHuntPhase : uint8
 {
 	Idle,
-	Restart,
 	Stop,
 	Done
 };
@@ -76,4 +78,13 @@ private:
 	int32 Step = 0;
 	double LastDoneLogTime = 0.0;
 	FTimerHandle CheckTimer;
+
+	// Son fautif coupe, et prochaine tentative de relance
+	TWeakObjectPtr<UAudioComponent> Culprit;
+	double CulpritRetryTime = 0.0;
+	double CulpritRetryDelay = 10.0;
+	bool bCulpritRetrying = false;
+	int32 ForestTick = 0;
+	int64 ClippedSinceLog = 0;
+	double LastClipLogTime = 0.0;
 };
