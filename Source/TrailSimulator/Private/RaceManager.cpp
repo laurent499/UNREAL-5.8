@@ -2143,16 +2143,18 @@ void ARaceManager::ChangePathOffset_Internal(float OffsetValue, int64 RaceID)
 	
 	if (!SettingsSubsystem || !TeamSubsystem || !RunnerSubsystem) return;
 	
+	// Trace absent (course non chargee, id inconnu) : on ne touche ni au reglage ni a la scene
+	TObjectPtr<APath>* PathPtr = RacePaths.Find(RaceID);
+	if (!PathPtr || !IsValid(PathPtr->Get()))
+	{
+		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Path not found in Race %lld"), RaceID)), EMessageType::Error);
+		return;
+	}
+
 	float OldZOffset = SettingsSubsystem->GetZOffsetById(RaceID);
 	float NewZOffset = OldZOffset + OffsetValue;
 	SettingsSubsystem->SetZOffsetById(NewZOffset, RaceID);
-	
-	TObjectPtr<APath>* PathPtr = RacePaths.Find(RaceID);
-	if (!PathPtr)
-	{
-		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Path not found in Race %lld"), RaceID)), EMessageType::Error);
-	}
-	
+
 	PathPtr->Get()->AddActorWorldOffset(FVector(0.f, 0.f, OffsetValue));
 	
 	// Runners
