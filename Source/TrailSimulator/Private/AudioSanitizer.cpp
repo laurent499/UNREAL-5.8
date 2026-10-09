@@ -111,6 +111,8 @@ static float TimeVolume(double Hour, const float (&Levels)[6])
 	return Levels[5];
 }
 
+static constexpr float ForestVolume = 0.5f;
+
 static void ApplyForestVolumes(UWorld* World)
 {
 	// Heure du ciel UDS (variable Blueprint TimeOfDay, 0-2400)
@@ -134,14 +136,28 @@ static void ApplyForestVolumes(UWorld* World)
 	// Avant l'aube, matin, midi, soir, apres le crepuscule, nuit
 	static const float BirdLevels[6] = {0.6f, 2.f, 1.6f, 1.2f, 0.2f, 0.f};
 	static const float InsectLevels[6] = {0.4f, 0.f, 0.f, 0.2f, 1.f, 1.f};
+	const float BirdLevel = TimeVolume(Hour, BirdLevels);
+	const float InsectLevel = TimeVolume(Hour, InsectLevels);
 	TArray<float> Birds, Insects;
-	Birds.Init(TimeVolume(Hour, BirdLevels), 6);
-	Insects.Init(TimeVolume(Hour, InsectLevels), 6);
+	Birds.Init(BirdLevel, 6);
+	Insects.Init(InsectLevel, 6);
+
+	// Trace a chaque changement notable (verification du cycle jour/nuit)
+	static float LastBird = -1.f, LastInsect = -1.f;
+	if (FMath::Abs(BirdLevel - LastBird) > 0.1f || FMath::Abs(InsectLevel - LastInsect) > 0.1f)
+	{
+		UE_LOG(LogTemp, Log, TEXT("[Audio] Ambiance foret a %02d:%02d (ciel UDS) : oiseaux %.2f, insectes %.2f"),
+			int32(Hour), int32(FMath::Fmod(Hour, 1.0) * 60.0), BirdLevel, InsectLevel);
+		LastBird = BirdLevel;
+		LastInsect = InsectLevel;
+	}
 
 	for (TObjectIterator<UAudioComponent> It; It; ++It)
 	{
 		if (It->GetWorld() == World && It->Sound && It->Sound->GetName() == TEXT("Forest_Example"))
 		{
+			// Ambiance foret plus discrete que la meteo
+			It->SetVolumeMultiplier(ForestVolume);
 			It->SetParameters({
 				FAudioParameter(TEXT("Bird Time Volumes"), Birds),
 				FAudioParameter(TEXT("Insects Time Volumes"), Insects)});
