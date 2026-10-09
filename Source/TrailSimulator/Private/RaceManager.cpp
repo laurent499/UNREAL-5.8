@@ -12,6 +12,8 @@
 #include "OWLViewportCapture.h"
 #include "OWLMediaOutput.h"
 #include "OWLMediaOutputComponent.h"
+#include "AudioDevice.h"
+#include "AudioMixerDevice.h"
 #include "RunnerSubsystem.h"
 #include "RaceSubsystem.h"
 #include "ScaleSubsystem.h"
@@ -2815,6 +2817,40 @@ void ARaceManager::StartSRTOutput()
 	Destination.SRTSettings.StreamURL = SRTStreamURL;
 	Destination.bEncodeAudio = bSRTEncodeAudio || FParse::Param(FCommandLine::Get(), TEXT("SRTAudio"));
 	UE_LOG(LogTemp, Log, TEXT("[OWL] Audio du flux SRT : %s"), Destination.bEncodeAudio ? TEXT("active") : TEXT("coupe"));
+
+	// OWL ne gere correctement l'audio que si le mixeur UE est en stereo : avec un peripherique 7.1
+	// (casque PRO X), le resampler 8 -> 2 corrompt le tas (crash), Stereo Downmix sort des NaN et
+	// 7.1 aussi. On coupe donc l'audio si la sortie Windows par defaut n'est pas stereo.
+	if (Destination.bEncodeAudio)
+	{
+		const FAudioDeviceHandle AudioDevice = GetWorld()->GetAudioDevice();
+		const Audio::FMixerDevice* Mixer = static_cast<const Audio::FMixerDevice*>(AudioDevice.GetAudioDevice());
+		const int32 NumChannels = Mixer ? Mixer->GetNumDeviceChannels() : 0;
+		if (NumChannels != 2)
+		{
+			Destination.bEncodeAudio = false;
+			const FString Msg = FString::Printf(TEXT("[OWL] Audio du flux coupe : la sortie audio Windows a %d canaux, il faut un peripherique stereo"), NumChannels);
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *Msg);
+			USlateNotificationsBFL::SlateNotify(FText::FromString(Msg), EMessageType::Error);
+		}
+	}
+
+	// -SRTAudioLayout=71|Downmix permet de retester les autres formats OWL (instables, voir plus haut).
+	FString AudioLayout = TEXT("Stereo");
+	FParse::Value(FCommandLine::Get(), TEXT("SRTAudioLayout="), AudioLayout);
+	if (AudioLayout == TEXT("71"))
+	{
+		Settings.AudioChannelLayout = EOWLAudioChannelLayout::ACL_7POINT1;
+	}
+	else if (AudioLayout == TEXT("Downmix"))
+	{
+		Settings.AudioChannelLayout = EOWLAudioChannelLayout::ACL_STEREO_DOWNMIX;
+	}
+	else
+	{
+		Settings.AudioChannelLayout = EOWLAudioChannelLayout::ACL_STEREO;
+	}
+	UE_LOG(LogTemp, Log, TEXT("[OWL] Format audio du flux : %s"), *UEnum::GetValueAsString(Settings.AudioChannelLayout));
 
 	// Start peut etre asynchrone au demarrage : le resultat definitif arrive par OnStart
 	if (Output->Start())

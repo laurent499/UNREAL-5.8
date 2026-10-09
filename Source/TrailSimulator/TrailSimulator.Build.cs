@@ -39,7 +39,8 @@ public class TrailSimulator : ModuleRules
 			"Engine",
 			"ImageWrapper",
 			"OWLCamera",
-			"OWLMedia"
+			"OWLMedia",
+			"AudioMixer"	// nombre de canaux du mixeur (audio du flux OWL)
 			
 		});
 
