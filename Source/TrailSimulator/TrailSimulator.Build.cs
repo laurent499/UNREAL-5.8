@@ -43,6 +43,9 @@ public class TrailSimulator : ModuleRules
 			
 		});
 
+		// Grille du geoide EGM96 (lue par APath), copiee telle quelle dans les builds
+		RuntimeDependencies.Add("$(ProjectDir)/Content/Data/Geoid/WW15MGH.DAC", StagedFileType.NonUFS);
+
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 		
