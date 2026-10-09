@@ -330,12 +330,12 @@ void ARaceManager::BeginPlay()
 
 	// Audio coupe sur toutes les destinations OWL des le BeginPlay, quel que soit le moyen de
 	// lancer le flux (case du RaceManager, -StartSRT, bouton OWL) : l'init du resampler audio
-	// 7.1 -> stereo precedait chaque crash. -SRTAudio / bSRTEncodeAudio le reactivent.
+	// 7.1 -> stereo precedait chaque crash. -SRTAudio / bSRTEncodeAudio le reactivent, -NoSRTAudio le coupe quoi qu'il arrive.
 	if (AOWLMediaOutput* OwlOutput = Cast<AOWLMediaOutput>(UGameplayStatics::GetActorOfClass(GetWorld(), AOWLMediaOutput::StaticClass())))
 	{
 		if (OwlOutput->MediaOutputComponent)
 		{
-			const bool bAudio = bSRTEncodeAudio || FParse::Param(FCommandLine::Get(), TEXT("SRTAudio"));
+			const bool bAudio = (bSRTEncodeAudio || FParse::Param(FCommandLine::Get(), TEXT("SRTAudio"))) && !FParse::Param(FCommandLine::Get(), TEXT("NoSRTAudio"));
 			for (FOWLMediaOutputDestination& Destination : OwlOutput->MediaOutputComponent->Settings.Destinations)
 			{
 				Destination.bEncodeAudio = bAudio;
@@ -2815,7 +2815,7 @@ void ARaceManager::StartSRTOutput()
 	Destination.bEnabled = true;
 	Destination.OutputType = EOWLMediaOutputType::T_SRT;
 	Destination.SRTSettings.StreamURL = SRTStreamURL;
-	Destination.bEncodeAudio = bSRTEncodeAudio || FParse::Param(FCommandLine::Get(), TEXT("SRTAudio"));
+	Destination.bEncodeAudio = (bSRTEncodeAudio || FParse::Param(FCommandLine::Get(), TEXT("SRTAudio"))) && !FParse::Param(FCommandLine::Get(), TEXT("NoSRTAudio"));
 	UE_LOG(LogTemp, Log, TEXT("[OWL] Audio du flux SRT : %s"), Destination.bEncodeAudio ? TEXT("active") : TEXT("coupe"));
 
 	// OWL ne gere correctement l'audio que si le mixeur UE est en stereo : avec un peripherique 7.1
