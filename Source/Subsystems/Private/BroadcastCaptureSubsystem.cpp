@@ -7,6 +7,7 @@
 #include "Engine/TextureRenderTarget2D.h"
 #include "Engine/GameViewportClient.h"
 #include "HAL/IConsoleManager.h"
+#include "OWLCaptureComponent.h"
 #include "Widgets/SLeafWidget.h"
 #include "Brushes/SlateColorBrush.h"
 #include "Rendering/DrawElements.h"
@@ -223,6 +224,18 @@ void UBroadcastCaptureSubsystem::ActivateSource(AActor* Source)
 	{
 		if (Cur->GetClass()->ImplementsInterface(UBroadcastInterface::StaticClass()))
 		{
+			// -BroadcastResY=720 : hauteur de la capture OWL (et donc du flux), 1080 par defaut.
+			// OWL recalcule la largeur d'apres le ratio de la camera.
+			int32 ResY = 0;
+			if (FParse::Value(FCommandLine::Get(), TEXT("BroadcastResY="), ResY) && ResY >= 64)
+			{
+				if (UOWLCaptureComponent* Capture = Cur->FindComponentByClass<UOWLCaptureComponent>())
+				{
+					Capture->ResolutionY = ResY;
+					Capture->ResolutionX = FMath::RoundToInt(ResY * 16.f / 9.f);
+				}
+			}
+
 			IBroadcastInterface::Execute_SetBroadcastCaptureEnabled(Cur, true, SharedRT);
 		}
 	}
