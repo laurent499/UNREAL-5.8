@@ -15,6 +15,16 @@ static TAutoConsoleVariable<float> CVarStackingMaxTrackGapM(
 	TEXT("Ecart maximal (m) le long du trace pour empiler deux runners, camera loin ; reduit avec la distance camera jusqu a 0 camera proche. 0 = pas de limite."),
 	ECVF_Default);
 
+// Distance (en hauteurs de runner : mat + etiquette, a l'echelle courante) en dessous de laquelle deux
+// runners sont toujours empiles, quels que soient le rayon et l'ecart sur le trace. Sans ce plancher,
+// camera proche (ecart autorise 0, rayon 1 cm), deux coureurs au meme endroit dessinaient leurs
+// etiquettes l'une sur l'autre.
+static TAutoConsoleVariable<float> CVarStackingOverlapFactor(
+	TEXT("Trail.Stacking.OverlapFactor"),
+	1.f,
+	TEXT("Distance minimale d'empilement, en hauteurs de runner a l'echelle courante. 0 = desactive."),
+	ECVF_Default);
+
 void URunnerStackingSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
@@ -194,6 +204,31 @@ float URunnerStackingSubsystem::ComputeDynamicRadiusCm(const FStackEntry& BaseEn
 	
 	// 4) Rayon
 	return FMath::Lerp(Config.RadiusNearCm, Config.RadiusFarCm, Alpha);
+}
+
+float URunnerStackingSubsystem::ComputeOverlapRadiusCm(const FStackEntry& BaseEntry) const
+{
+	const AActor* Base = BaseEntry.Runner.Get();
+	if (!IsValid(Base)) return 0.f;
+
+	// Meme pas vertical que la pile (AttachRunnerToBase), converti en monde par l'echelle reelle
+	float VDelta = 0.f;
+	if (const IRunnerInterface* IRunner = Cast<IRunnerInterface>(Base))
+	{
+		VDelta = IRunner->GetRunnerVDelta();
+	}
+
+	float S = Base->GetActorScale3D().X;
+	if (const IRunnerStackableInterface* SI = Cast<IRunnerStackableInterface>(Base))
+	{
+		if (USceneComponent* ScaleComp = SI->GetStackAttachComponent())
+		{
+			S = ScaleComp->GetComponentScale().X;
+		}
+	}
+
+	const float Factor = FMath::Max(0.f, CVarStackingOverlapFactor.GetValueOnGameThread());
+	return Factor * (FMath::Max(1.f, BaseEntry.HookHeightCm) + VDelta) * FMath::Abs(S);
 }
 
 void URunnerStackingSubsystem::CleanupInvalid()
@@ -532,6 +567,8 @@ void URunnerStackingSubsystem::TickSubsystem()
 
 		const FVector BasePos = BaseEntry.TrackTransform.GetLocation();
 		const float RadiusCm = ComputeDynamicRadiusCm(BaseEntry);
+		// Plancher : en dessous d'une hauteur de runner, les etiquettes se chevauchent a l'image
+		const float OverlapCm = ComputeOverlapRadiusCm(BaseEntry);
 
 		// Meme progression que le rayon (echelle du runner, donc distance camera) : 0 camera
 		// proche (plus aucune pile, on voit les vrais ecarts) -> 1 camera loin (ecart max).
@@ -568,7 +605,7 @@ void URunnerStackingSubsystem::TickSubsystem()
 			const float MaxGapSettingCm = CVarStackingMaxTrackGapM.GetValueOnGameThread() * 100.f;
 			if (MaxGapSettingCm > 0.f)
 			{
-				const float MaxGapCm = MaxGapSettingCm * ScaleAlpha;
+				const float MaxGapCm = FMath::Max(MaxGapSettingCm * ScaleAlpha, OverlapCm);
 				const float GapCm = FMath::Abs(CandEntry.TrackDistanceMeters - BaseEntry.TrackDistanceMeters);
 				const float GapTh = bWasStackedOnThisBase ? MaxGapCm * 1.1f : MaxGapCm;
 				if (GapCm > GapTh)
@@ -581,7 +618,7 @@ void URunnerStackingSubsystem::TickSubsystem()
 				? FMath::Max(Config.HysteresisCm, RadiusCm * 0.1f)
 				: 0.f;
 
-			const float Th = RadiusCm + Extra;
+			const float Th = FMath::Max(RadiusCm, OverlapCm) + Extra;
 			const float ThSq = Th * Th;
 
 			if (DistSq <= ThSq)

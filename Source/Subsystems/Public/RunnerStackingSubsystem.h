@@ -66,6 +66,7 @@ private:
 	int32 FindEntryIndex(AActor* Runner) const;
 
 	float ComputeDynamicRadiusCm(const FStackEntry& BaseEntry) const;
+	float ComputeOverlapRadiusCm(const FStackEntry& BaseEntry) const;
 
 	// Stacking apply
 	void ApplyNewStackingState(
