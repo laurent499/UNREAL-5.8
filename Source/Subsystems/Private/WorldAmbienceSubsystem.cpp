@@ -953,9 +953,10 @@ void UWorldAmbienceSubsystem::TickAutoWeather(float DeltaTime)
 		const float* Target = Forced ? Forced : AutoWeather.Targets.Find(Key);
 		if (!Target) continue;
 		float& Current = AppliedWeather.FindOrAdd(Key, *Target);
-		Current = Forced ? *Forced : FMath::FInterpConstantTo(Current, *Target, DeltaTime, Rate);
+		Current = (Forced || bSnapWeather) ? *Target : FMath::FInterpConstantTo(Current, *Target, DeltaTime, Rate);
 		WriteWeatherParam(Key, Current);
 	}
+	bSnapWeather = false;
 
 	// Direction du vent : meteo = d'ou il vient (0 = nord) ; repere Cesium +X est, +Y sud.
 	// Lacet de la direction vers laquelle il souffle = cap + 180 - 90
@@ -968,6 +969,8 @@ void UWorldAmbienceSubsystem::TickAutoWeather(float DeltaTime)
 void UWorldAmbienceSubsystem::HandleCheckpointsGathered(int64 RaceID, FCheckpoints AllCheckpoints)
 {
 	KnownCheckpoints.Add(RaceID, MoveTemp(AllCheckpoints));
+	// Pas encore de releve : on interroge OpenWeather tout de suite plutot qu'a la prochaine relance (30 s)
+	if (WeatherSamples.Num() == 0) WeatherRefreshTimer = 0.f;
 }
 
 bool UWorldAmbienceSubsystem::RequestAutoWeather()
@@ -999,6 +1002,7 @@ bool UWorldAmbienceSubsystem::RequestAutoWeather()
 			[WeakThis, Name = Checkpoint.name, AltitudeM = Checkpoint.altitude](FWeatherResult&& Result)
 			{
 				if (!WeakThis.IsValid() || !Result.bSuccess) return;
+				if (WeakThis->WeatherSamples.Num() == 0) WeakThis->bSnapWeather = true;
 				FWeatherSample* Sample = WeakThis->WeatherSamples.FindByPredicate([&Name](const FWeatherSample& S) { return S.Name == Name; });
 				if (!Sample) Sample = &WeakThis->WeatherSamples.AddDefaulted_GetRef();
 				Sample->Name = Name;

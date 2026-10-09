@@ -303,6 +303,8 @@ private:
 	float WeatherRefreshTimer = 0.f;
 	int32 WeatherRequestSerial = 0;
 	bool bWasAutoWeather = false;
+	/** Premier releve de la partie : applique tel quel, sans glissement depuis le prereglage de la map */
+	bool bSnapWeather = false;
 
 	// --- Base des nuages ---
 	void UpdateCloudBase(float DeltaTime);
