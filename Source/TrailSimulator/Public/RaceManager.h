@@ -77,6 +77,9 @@ public:
 	int64 PendingRunnerRaceID = -1;
 	FTimerHandle PendingRunnerHandle;
 	void ProcessPendingRunnerUpdates();
+	// Coureurs en cours d'interpolation le long du trace, avances a chaque image dans Tick
+	TSet<TWeakObjectPtr<class ARunner>> InterpolatingRunners;
+	void TrackRunnerInterp(AActor* RunnerActor);
 
 	/** Request Callbacks */
 	// All Races

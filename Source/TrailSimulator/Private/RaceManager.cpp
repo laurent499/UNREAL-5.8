@@ -415,8 +415,26 @@ void ARaceManager::Tick(float DeltaTime)
 		{
 			HideLoadingOverlay();
 			bOverlayHidden = true;
-			SetActorTickEnabled(false);
 		}
+	}
+
+	// Deplacement fluide des coureurs entre deux snapshots
+	for (auto It = InterpolatingRunners.CreateIterator(); It; ++It)
+	{
+		ARunner* Runner = It->Get();
+		if (!Runner || !Runner->AdvanceTrackInterp(DeltaTime))
+		{
+			It.RemoveCurrent();
+		}
+	}
+}
+
+void ARaceManager::TrackRunnerInterp(AActor* RunnerActor)
+{
+	ARunner* Runner = Cast<ARunner>(RunnerActor);
+	if (Runner && Runner->IsTrackInterpActive())
+	{
+		InterpolatingRunners.Add(Runner);
 	}
 }
 
@@ -1100,6 +1118,7 @@ void ARaceManager::UpdateRunnersFromSnapshot(int64 RaceID, FRunners& RunnersData
 				RunnerInterface->AssignRunnerToTeam(Runner.canalId);
 				RunnerInterface->UpdateRunner(Runner, RaceSetup);
 				RunnerInterface->UpdateRunnerLocation(Runner, CurrentRacePath);
+				TrackRunnerInterp(CurrentRunner);
 			}
 		}
 	}
@@ -1137,6 +1156,7 @@ void ARaceManager::ProcessPendingRunnerUpdates()
 			RunnerInterface->AssignRunnerToTeam(Runner.canalId);
 			RunnerInterface->UpdateRunner(Runner, RaceSetup);
 			RunnerInterface->UpdateRunnerLocation(Runner, *PathPtr);
+			TrackRunnerInterp(CurrentRunner);
 		}
 	}
 	PendingRunnerUpdates.RemoveAt(0, Count, EAllowShrinking::No);

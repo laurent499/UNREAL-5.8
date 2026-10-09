@@ -223,6 +223,8 @@ void ARunner::TriggerUpdateAfterHidden(int64 RunnerID)
 	TObjectPtr<AActor> PathActor = PathSubsystem->GetPathById(RaceSubsystem->GetCurrentRaceId());
 	if (TObjectPtr<APath> Path = Cast<APath>(PathActor))
 	{
+		// Reapparition : placement direct, sans interpolation depuis l'ancienne position
+		bHasTrackDist = false;
 		UpdateRunnerLocation(RunnerDatas, Path);
 	}
 }
@@ -232,46 +234,77 @@ void ARunner::UpdateRunnerLocation(FRunnerStruct RunnerStruct, TObjectPtr<APath>
 	Georeference = ACesiumGeoreference::GetDefaultGeoreference(GetWorld());
 	if (IPathInterface* PathInterface = Cast<IPathInterface>(CurrentPath))
 	{
-		FVector CurrentRunnerLocation = PathInterface->GetClosestSplineLocation(GetActorLocation());
-		FVector NewRunnerLocation = Georeference->TransformLongitudeLatitudeHeightPositionToUnreal(
+		const FVector NewRunnerLocation = Georeference->TransformLongitudeLatitudeHeightPositionToUnreal(
 				FVector(RunnerStruct.lon, RunnerStruct.lat, RunnerStruct.elevation));
-		FVector TargetOnSpline = PathInterface->GetClosestSplineLocation(NewRunnerLocation);
-	
-		// Calcul de la vitesse nécessaire pour atteindre le point suivant
-		const float Dt = SettingsSubsystem->GetFetchFrequency();
-		const float DistCm = FVector::Dist2D(CurrentRunnerLocation, TargetOnSpline);
-		
-		FVector NewInterpLocation = FMath::VInterpConstantTo(
-			CurrentRunnerLocation, 
-			NewRunnerLocation, 
-			SettingsSubsystem->GetFetchFrequency(), 
-			DistCm/Dt);
-		
-		FVector SplineLocation = PathInterface->GetClosestSplineLocation(NewInterpLocation);
-		FRotator RunnerRot = GetActorRotation();
-		FVector RunnerScale = GetActorScale3D();
-		FTransform RunnerTransform = FTransform(RunnerRot, SplineLocation, RunnerScale);
+		const FVector TargetOnSpline = PathInterface->GetClosestSplineLocation(NewRunnerLocation);
+		const float TargetDist = PathInterface->GetDistanceAlongSpline(TargetOnSpline);
+
+		// Le stacking travaille sur la position cible (vraie position track)
+		const FTransform RunnerTransform = FTransform(GetActorRotation(), TargetOnSpline, GetActorScale3D());
 		if (!IsHidden())
-			StackingSubsystem->UpdateRunnerTrackState(this, RunnerTransform, PathInterface->GetDistanceAlongSpline(SplineLocation));
+			StackingSubsystem->UpdateRunnerTrackState(this, RunnerTransform, TargetDist);
 		
 		if (IRunnerStackableInterface* SI = Cast<IRunnerStackableInterface>(this))
 		{
 			if (SI->IsStacked())
 			{
+				// Empile : il suit son parent, on note juste ou il en est sur le trace
+				bTrackInterpActive = false;
+				bHasTrackDist = false;
 				return;
 			}
 		}
-		
-		// On leur laisse 10m pour pisser !!
-		if (FVector::Dist2D(TargetOnSpline, SplineLocation) / 100.f <= 10.f){
-			SetActorLocation(SplineLocation, false);
-		} else{
-			SetActorLocation(FVector(NewInterpLocation.X, NewInterpLocation.Y, SplineLocation.Z), false);
+
+		// Premier placement, changement de trace ou saut trop grand : teleportation
+		const float Dt = FMath::Max(SettingsSubsystem->GetFetchFrequency(), 0.1f);
+		const float MaxInterpCm = FMath::Max(100.f * 100.f, 15.f * 100.f * Dt); // 100 m ou 15 m/s
+		if (!bHasTrackDist || TrackInterpPath.Get() != CurrentPath.Get()
+			|| FMath::Abs(TargetDist - TrackDisplayedDist) > MaxInterpCm)
+		{
+			SetActorLocation(TargetOnSpline, false);
+			TrackInterpPath = CurrentPath.Get();
+			TrackDisplayedDist = TargetDist;
+			bHasTrackDist = true;
+			bTrackInterpActive = false;
+			return;
 		}
+
+		// Interpolation le long du trace depuis la position affichee vers la cible.
+		// Duree un peu superieure a la periode : le snapshot suivant arrive avant l'arret, le mouvement reste continu.
+		TrackFromDist = TrackDisplayedDist;
+		TrackToDist = TargetDist;
+		TrackInterpElapsed = 0.f;
+		TrackInterpDuration = Dt * 1.1f;
+		bTrackInterpActive = !FMath::IsNearlyEqual(TrackFromDist, TrackToDist, 1.f);
 	} else
 	{
 		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("No Path Inteface"))), EMessageType::Error);
 	}
+}
+
+bool ARunner::AdvanceTrackInterp(float DeltaTime)
+{
+	if (!bTrackInterpActive) return false;
+
+	APath* Path = TrackInterpPath.Get();
+	if (!Path || bStackedState || GetAttachParentActor())
+	{
+		bTrackInterpActive = false;
+		bHasTrackDist = false;
+		return false;
+	}
+
+	TrackInterpElapsed += DeltaTime;
+	const float Alpha = FMath::Min(TrackInterpElapsed / TrackInterpDuration, 1.f);
+	TrackDisplayedDist = FMath::Lerp(TrackFromDist, TrackToDist, Alpha);
+	const bool bDone = Alpha >= 1.f;
+	if (bDone) bTrackInterpActive = false;
+
+	// Hors champ ou cache : on ne deplace l'acteur qu'a la fin (economie du thread de jeu)
+	if (!bDone && (IsHidden() || !WasRecentlyRendered(0.5f))) return true;
+
+	SetActorLocation(Path->GetLocationAtDistance(TrackDisplayedDist), false);
+	return !bDone;
 }
 
 /**

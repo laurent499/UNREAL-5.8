@@ -117,7 +117,12 @@ public:
 	UFUNCTION()
 	virtual void TriggerUpdateAfterHidden(int64 RunnerID) override;
 	virtual void UpdateRunnerLocation(FRunnerStruct RunnerStruct, TObjectPtr<class APath> CurrentPath) override;
-	
+
+	// Interpolation le long du trace entre deux snapshots (avancee par ARaceManager::Tick)
+	bool IsTrackInterpActive() const { return bTrackInterpActive; }
+	// Avance l'interpolation ; renvoie false quand elle est terminee
+	bool AdvanceTrackInterp(float DeltaTime);
+
 	FVector CurrentLocation;
 	
 	virtual USceneComponent* GetFootHook() const override { return FootHook; }
@@ -215,7 +220,17 @@ private:
 	float Pitch;
 	UPROPERTY()
 	float Height;
-	
+
+	// Interpolation le long du trace (distances en cm sur la spline)
+	TWeakObjectPtr<class APath> TrackInterpPath;
+	float TrackFromDist = 0.f;
+	float TrackToDist = 0.f;
+	float TrackDisplayedDist = 0.f;
+	float TrackInterpElapsed = 0.f;
+	float TrackInterpDuration = 1.f;
+	bool bTrackInterpActive = false;
+	bool bHasTrackDist = false;
+
 	//Pawn
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta=(AllowPrivateAccess=true))
 	TObjectPtr<APawn> DynaPawn;
