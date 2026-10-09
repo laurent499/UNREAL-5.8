@@ -187,6 +187,20 @@ float USettingsSubsystem::GetZOffsetById(int64 RaceID) const
 	return Tmp->ZOffset;
 }
 
+float USettingsSubsystem::ApplyGeoidCorrectionById(int64 RaceID, float GeoidCm)
+{
+	FSettings* Tmp = TrailSettingsMap.Find(RaceID);
+	if (!Tmp) return 0.f;
+	if (!Tmp->bGeoidCorrected)
+	{
+		Tmp->ZOffset -= GeoidCm;
+		Tmp->bGeoidCorrected = true;
+		UE_LOG(LogTemp, Log, TEXT("[Settings] Race %lld : ZOffset ajuste de %.0f cm pour le geoide -> %.0f cm"), RaceID, -GeoidCm, Tmp->ZOffset);
+		Save();
+	}
+	return Tmp->ZOffset;
+}
+
 /**
  * @brief Set the Glow value by Race
  * @param NewGlowValue 

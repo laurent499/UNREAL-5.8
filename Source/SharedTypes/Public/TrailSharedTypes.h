@@ -75,6 +75,9 @@ struct SHAREDTYPES_API FSettings
 	float Length = 50000.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame)
 	float ZAnchor = -500.0f;
+	/** Le trace ajoute l'ecart du geoide (EGM96) a l'altitude GPS ; true une fois le ZOffset ajuste en consequence */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame)
+	bool bGeoidCorrected = false;
 	
 	FSettings() = default;
 	FSettings(int64 NewRaceID,

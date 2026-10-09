@@ -31,6 +31,51 @@
 #include "Kismet/GameplayStatics.h"
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+
+THIRD_PARTY_INCLUDES_START
+#include <CesiumGeospatial/Cartographic.h>
+#include <CesiumGeospatial/EarthGravitationalModel1996Grid.h>
+THIRD_PARTY_INCLUDES_END
+
+// -------------------- Geoid EGM96
+/**
+ * Ecart entre le geoide EGM96 (niveau de la mer) et l'ellipsoide WGS84, lu dans la grille officielle
+ * Content/Data/Geoid/WW15MGH.DAC (chargee une fois, ~2 Mo en memoire).
+ */
+struct FGeoidGrid
+{
+	static const CesiumGeospatial::EarthGravitationalModel1996Grid* Get()
+	{
+		static TOptional<std::optional<CesiumGeospatial::EarthGravitationalModel1996Grid>> Grid;
+		if (!Grid.IsSet())
+		{
+			TArray<uint8> Bytes;
+			const FString File = FPaths::ProjectContentDir() / TEXT("Data/Geoid/WW15MGH.DAC");
+			if (FFileHelper::LoadFileToArray(Bytes, *File))
+			{
+				Grid.Emplace(CesiumGeospatial::EarthGravitationalModel1996Grid::fromBuffer(
+					std::span<const std::byte>(reinterpret_cast<const std::byte*>(Bytes.GetData()), Bytes.Num())));
+			}
+			else
+			{
+				Grid.Emplace(std::nullopt);
+			}
+			if (!Grid.GetValue())
+			{
+				UE_LOG(LogTemp, Error, TEXT("[Path] Grille du geoide illisible (%s) : trace place sur l'altitude GPS brute"), *File);
+			}
+		}
+		return Grid.GetValue() ? &*Grid.GetValue() : nullptr;
+	}
+	static bool IsAvailable() { return Get() != nullptr; }
+	static double UndulationM(double LonDeg, double LatDeg)
+	{
+		const CesiumGeospatial::EarthGravitationalModel1996Grid* G = Get();
+		return G ? G->sampleHeight(CesiumGeospatial::Cartographic::fromDegrees(LonDeg, LatDeg, 0.0)) : 0.0;
+	}
+};
 
 // -------------------- Geometry helpers
 static float DistPointSegment3D(const FVector& P, const FVector& A, const FVector& B)
@@ -359,10 +404,17 @@ void APath::DrawPath(int64 RaceID, FRacePath RacePathDatas)
 				-25.f,
 				50000.f,
 				-500.f);	
+				NewSettings.bGeoidCorrected = true; // nouvelle course : ZOffset deja relatif au trace corrige
 				SettingsSubsystem->CreateTrailSettingsById(RaceID, NewSettings);
 		}
-		
-		ZOffset = SettingsSubsystem->GetZOffsetById(RaceID);
+
+		// L'altitude GPS est au-dessus du niveau de la mer, Cesium attend une hauteur ellipsoidale :
+		// on ajoute l'ecart du geoide a chaque point (~50 m dans les Alpes). Les ZOffset regles avant
+		// cette correction sont ajustes une fois pour que le trace ne bouge pas.
+		const bool bGeoid = FGeoidGrid::IsAvailable();
+		ZOffset = bGeoid
+			? SettingsSubsystem->ApplyGeoidCorrectionById(RaceID, FGeoidGrid::UndulationM(RacePath.Points[0].lon, RacePath.Points[0].lat) * 100.f)
+			: SettingsSubsystem->GetZOffsetById(RaceID);
 				
 		if (ShiftComp)
 			ShiftComp->SetActive(false);
@@ -374,7 +426,8 @@ void APath::DrawPath(int64 RaceID, FRacePath RacePathDatas)
 			FVector(RacePath.Points[0].lon, RacePath.Points[0].lat, RacePath.Points[0].ele));
 		
 		FVector PathLocation = Georeference->TransformLongitudeLatitudeHeightPositionToUnreal(
-			FVector(RacePath.Points[0].lon, RacePath.Points[0].lat, RacePath.Points[0].ele));
+			FVector(RacePath.Points[0].lon, RacePath.Points[0].lat,
+				RacePath.Points[0].ele + (bGeoid ? FGeoidGrid::UndulationM(RacePath.Points[0].lon, RacePath.Points[0].lat) : 0.0)));
 		PathLocation.Z += ZOffset;
 		SetActorLocation(PathLocation, false);
 
@@ -385,7 +438,8 @@ void APath::DrawPath(int64 RaceID, FRacePath RacePathDatas)
 		const int32 Total = RacePath.Points.Num();
 		for (FRacePathPoint Point  : RacePath.Points)
 		{
-			FVector UE = Georeference->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(Point.lon, Point.lat, Point.ele));
+			const double HeightM = Point.ele + (bGeoid ? FGeoidGrid::UndulationM(Point.lon, Point.lat) : 0.0);
+			FVector UE = Georeference->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(Point.lon, Point.lat, HeightM));
 			UE.Z += ZOffset;
 			SplinePath->AddSplinePoint(UE, ESplineCoordinateSpace::World, false);
 			SlopePath->AddSplinePoint(UE, ESplineCoordinateSpace::World, false);

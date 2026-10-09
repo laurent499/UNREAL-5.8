@@ -121,6 +121,13 @@ public:
 	void SetZOffsetById(float ZOffset, int64 IdRace);
 	UFUNCTION(BlueprintCallable, Category = "Settings", meta = (BlueprintInternalMethod))
 	float GetZOffsetById(int64 RaceID) const;
+	/**
+	 * @brief Une seule fois par course : retire du ZOffset l'ecart du geoide desormais ajoute au trace,
+	 * pour que le trace reste a la hauteur reglee auparavant
+	 * @param GeoidCm	Ecart geoide/ellipsoide au depart de la course (cm)
+	 * @return Le ZOffset a utiliser (cm)
+	 */
+	float ApplyGeoidCorrectionById(int64 RaceID, float GeoidCm);
 	FOnZOffsetUpdate OnZOffsetUpdate;
 
 	/**
