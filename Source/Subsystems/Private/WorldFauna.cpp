@@ -15,7 +15,7 @@ namespace WorldFauna
 {
 	const TCHAR* MaterialPath = TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial");
 
-	constexpr float RespawnDistance = 150000.f;           // 1,5 km
+	constexpr float RespawnDistance = 80000.f;            // 800 m : les oiseaux ne restent pas loin derriere
 	constexpr float AnchorDistance = 8000.f;              // 80 m devant la camera
 
 	/** Mesh statique construit au lancement a partir de triangles (chaque face doublee : visible des deux cotes) */
@@ -194,9 +194,11 @@ void AWorldFauna::Respawn(const FVector& Center, float GroundZ)
 	// Hauteur de camera au moment du placement : les orbites s'elargissent avec elle
 	SpawnCameraHeight = CameraHeightAboveGround;
 	const float Spread = FMath::Max(1.f, SpawnCameraHeight / 10000.f);
+	// Camera haute : oiseaux grossis pour rester lisibles a plusieurs centaines de metres
+	const float Readable = FMath::Clamp(SpawnCameraHeight / 30000.f, 1.f, 3.f);
 	Birds.Reset();
 
-	const int32 Raptors = FMath::Clamp(FMath::RoundToInt(2.f * Density), 0, 3);
+	const int32 Raptors = FMath::Clamp(FMath::RoundToInt(2.f * Density), 0, 6);
 	for (int32 i = 0; i < Raptors; ++i)
 	{
 		FBird B;
@@ -209,14 +211,14 @@ void AWorldFauna::Respawn(const FVector& Center, float GroundZ)
 		B.OrbitSpeed = (FMath::RandBool() ? 1.f : -1.f) * 1000.f / B.OrbitRadius; // ~10 m/s
 		B.OrbitAngle = FMath::FRandRange(0.f, UE_TWO_PI);
 		B.HeightAboveGround = FMath::FRandRange(FMath::Max(2500.f, SpawnCameraHeight * 0.25f), FMath::Max(7000.f, SpawnCameraHeight * 0.6f));
-		B.Scale = FMath::FRandRange(1.2f, 1.6f); // envergure 2,6 a 3,5 m : gypaete, aigle royal
+		B.Scale = FMath::FRandRange(1.2f, 1.6f) * Readable; // envergure 2,6 a 3,5 m : gypaete, aigle royal
 		B.FlapSpeed = FMath::FRandRange(5.f, 7.f);
 		B.FlapTimer = FMath::FRandRange(2.f, 15.f);
 		B.Position = B.OrbitCenter + FVector(FMath::Cos(B.OrbitAngle) * B.OrbitRadius, FMath::Sin(B.OrbitAngle) * B.OrbitRadius, B.HeightAboveGround);
 		Birds.Add(B);
 	}
 
-	const int32 Flock = FMath::Clamp(FMath::RoundToInt(10.f * Density), 0, 16);
+	const int32 Flock = FMath::Clamp(FMath::RoundToInt(10.f * Density), 0, 30);
 	FlockLeader = Center + FVector(FMath::FRandRange(-8000.f, 8000.f), FMath::FRandRange(-8000.f, 8000.f), 0.f);
 	FlockHeading = FMath::FRandRange(0.f, UE_TWO_PI);
 	FlockHeight = FMath::FRandRange(FMath::Max(1500.f, SpawnCameraHeight * 0.15f), FMath::Max(3500.f, SpawnCameraHeight * 0.35f));
@@ -226,7 +228,7 @@ void AWorldFauna::Respawn(const FVector& Center, float GroundZ)
 		FBird B;
 		B.Type = EBirdType::Flock;
 		B.FormationOffset = FVector(FMath::FRandRange(-600.f, 600.f), FMath::FRandRange(-500.f, 500.f), FMath::FRandRange(-200.f, 200.f));
-		B.Scale = FMath::FRandRange(0.13f, 0.18f);
+		B.Scale = FMath::FRandRange(0.13f, 0.18f) * Readable;
 		B.FlapSpeed = FMath::FRandRange(45.f, 60.f);
 		B.FlapPhase = FMath::FRandRange(0.f, UE_TWO_PI);
 		B.FlapAmount = 1.f;
