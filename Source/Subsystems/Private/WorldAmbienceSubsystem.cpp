@@ -925,6 +925,8 @@ void UWorldAmbienceSubsystem::TickAutoWeather(float DeltaTime)
 		bWasAutoWeather = true;
 		WeatherRefreshTimer = 0.f;
 		AppliedWeather.Reset();
+		// Les forcages poses avant (prereglage Orage, curseurs) cedent la place a la meteo reelle
+		AutoWeather.Forced.Reset();
 		if (const AActor* Weather = WeatherActor.Get())
 		{
 			for (const TCHAR* Key : WorldAmbience::WeatherKeys)
