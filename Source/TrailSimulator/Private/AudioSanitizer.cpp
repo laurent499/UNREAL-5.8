@@ -1,14 +1,26 @@
 #include "AudioSanitizer.h"
 #include "CesiumGeoreference.h"
+#include "AudioDevice.h"
+#include "Sound/AudioSettings.h"
+#include "Sound/SoundSubmix.h"
 #include "AudioMixerBlueprintLibrary.h"
 #include "Components/AudioComponent.h"
 #include "EngineUtils.h"
 #include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Camera/PlayerCameraManager.h"
 
 std::atomic<int64> FSubmixEffectSanitizer::BadSamples{0};
 std::atomic<int64> FSubmixEffectSanitizer::ClippedSamples{0};
 std::atomic<float> FSubmixEffectSanitizer::TargetGain{1.f};
+
+// Ouverture du son : instant de la premiere teleportation et derniers NaN vus (un seul monde de jeu a la fois)
+static double MovedTime = 0.0;
+static double LastBadTime = 0.0;
+static bool bHasLastPose = false;
+static FVector LastCamPos = FVector::ZeroVector;
+// Gain du mix une fois ouvert : le mix UDS sature souvent (pluie + vent + ambiance)
+static constexpr float OpenGain = 0.7f;
 
 void FSubmixEffectSanitizer::OnProcessAudio(const FSoundEffectSubmixInputData& InData, FSoundEffectSubmixOutputData& OutData)
 {
@@ -45,7 +57,7 @@ void FSubmixEffectSanitizer::OnProcessAudio(const FSoundEffectSubmixInputData& I
 	const float Target = TargetGain.load();
 	if (CurrentGain != Target || Target != 1.f)
 	{
-		const float Step = FMath::Clamp(Target - CurrentGain, -0.02f, 0.02f);
+		const float Step = Target < CurrentGain ? Target - CurrentGain : FMath::Min(Target - CurrentGain, 0.02f);
 		const int32 NumChannels = FMath::Max(1, InData.NumChannels);
 		const int32 Frames = Num / NumChannels;
 		for (int32 f = 0; f < Frames; ++f)
@@ -75,11 +87,37 @@ bool UAudioSanitizerSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 	return World && World->IsGameWorld();
 }
 
+// Coupe tout le son du monde des sa creation : les sons UDS demarrent a l'enregistrement de leurs
+// composants, avant tout BeginPlay, et buzzent 1 a 2 s a la position de depart
+static void SetWorldMute(UWorld* World, bool bMute)
+{
+	if (World)
+	{
+		if (FAudioDeviceHandle Device = World->GetAudioDevice())
+		{
+			Device->SetTransientPrimaryVolume(bMute ? 0.f : 1.f);
+		}
+	}
+}
+
+void UAudioSanitizerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+	SetWorldMute(GetWorld(), true);
+}
+
 void UAudioSanitizerSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 {
 	Super::OnWorldBeginPlay(InWorld);
 	Preset = NewObject<USubmixEffectSanitizerPreset>(this);
 	UAudioMixerBlueprintLibrary::AddMasterSubmixEffect(&InWorld, Preset);
+	// Le submix general reinjecte une part du signal brut (« dry », -96 dB) apres les effets : avec
+	// des valeurs aberrantes (1e6) ou des NaN, ce petit reste suffisait a buzzer et a bloquer OWL.
+	// Dry a 0 : seule la sortie du filtre est entendue et envoyee au flux.
+	if (USoundSubmix* Master = Cast<USoundSubmix>(GetDefault<UAudioSettings>()->MasterSubmix.TryLoad()))
+	{
+		Master->SetSubmixDryLevel(&InWorld, 0.f);
+	}
 	FSubmixEffectSanitizer::BadSamples = 0;
 
 	// Avant la premiere course, la camera est a sa position de depart (hors tuiles Cesium) et les
@@ -87,6 +125,9 @@ void UAudioSanitizerSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	FSubmixEffectSanitizer::TargetGain = 0.f;
 	bSoundOpened = false;
 	BeginPlayTime = FPlatformTime::Seconds();
+	MovedTime = 0.0;
+	LastBadTime = 0.0;
+	bHasLastPose = false;
 	if (ACesiumGeoreference* Geo = ACesiumGeoreference::GetDefaultGeoreference(&InWorld))
 	{
 		InitialOrigin = Geo->GetOriginLongitudeLatitudeHeight();
@@ -191,9 +232,10 @@ void UAudioSanitizerSubsystem::UpdateForest()
 	}
 	if (ForestComp && DayIndex != LastForestPhase)
 	{
-		// Premier reglage instantane, ensuite fondu de 10 s
+		// Premier reglage quasi instantane, ensuite fondu de 10 s (jamais 0 : le fondu de la
+		// MetaSound divise par cette duree et sortait des NaN, ambiance entiere en NaN pour la session)
 		ForestComp->SetParameters({
-			FAudioParameter(TEXT("Time Interp"), LastForestPhase < 0 ? 0.f : 10.f),
+			FAudioParameter(TEXT("Time Interp"), LastForestPhase < 0 ? 0.5f : 10.f),
 			FAudioParameter(TEXT("Time"), float(DayIndex))});
 		static const TCHAR* Names[6] = {TEXT("avant l'aube"), TEXT("matin"), TEXT("midi"), TEXT("soir"), TEXT("apres le crepuscule"), TEXT("nuit")};
 		UE_LOG(LogTemp, Log, TEXT("[Audio] Ambiance foret : %02d:%02d (ciel UDS) -> %s"),
@@ -213,16 +255,55 @@ void UAudioSanitizerSubsystem::CheckNaN()
 	const int64 Bad = FSubmixEffectSanitizer::BadSamples.exchange(0);
 	const double Now = FPlatformTime::Seconds();
 
-	// Ouverture du son a la premiere teleportation (ou au bout de 2 min par securite)
+	// Teleportation (changement d'origine Cesium ou saut de camera de plus de 2 km) : les sons UDS
+	// buzzent quelques secondes (position aberrante, tuiles en chargement). Son coupe net, puis rouvert
+	// en fondu 4 s apres, une fois 2 s passees sans NaN. Aussi au lancement, jusqu'a la 1re course.
+	{
+		UWorld* World = GetWorld();
+		// Position geographique de la camera : l'origine Cesium se decale en continu avec la camera
+		// (OriginShift), seul un saut reel de plus de 2 km entre deux verifications compte
+		const ACesiumGeoreference* Geo = ACesiumGeoreference::GetDefaultGeoreference(World);
+		const APlayerCameraManager* Cam = World ? UGameplayStatics::GetPlayerCameraManager(World, 0) : nullptr;
+		bool bJump = false;
+		if (Geo && Cam)
+		{
+			const FVector LLH = Geo->TransformUnrealPositionToLongitudeLatitudeHeight(Cam->GetCameraLocation());
+			if (bHasLastPose)
+			{
+				const double DLatKm = (LLH.Y - LastCamPos.Y) * 111.0;
+				const double DLonKm = (LLH.X - LastCamPos.X) * 111.0 * FMath::Cos(FMath::DegreesToRadians(LLH.Y));
+				bJump = FMath::Sqrt(DLatKm * DLatKm + DLonKm * DLonKm) > 2.0;
+			}
+			LastCamPos = LLH;
+			bHasLastPose = true;
+		}
+		if (bJump)
+		{
+			MovedTime = Now;
+			// Le volume general coupe met les sons en veille : on le rouvre des maintenant pour que
+			// leur demarrage (et ses valeurs aberrantes) se fasse pendant que le filtre est a 0
+			SetWorldMute(World, false);
+			if (bSoundOpened)
+			{
+				bSoundOpened = false;
+				FSubmixEffectSanitizer::TargetGain = 0.f;
+				UE_LOG(LogTemp, Log, TEXT("[Audio] Teleportation : son coupe le temps du chargement"));
+			}
+		}
+	}
+	if (Bad > 0)
+	{
+		LastBadTime = Now;
+	}
 	if (!bSoundOpened)
 	{
-		const ACesiumGeoreference* Geo = ACesiumGeoreference::GetDefaultGeoreference(GetWorld());
-		const bool bMoved = Geo && !Geo->GetOriginLongitudeLatitudeHeight().Equals(InitialOrigin, 1e-4);
-		if (bMoved || Now - BeginPlayTime > 120.0)
+		const bool bReady = MovedTime > 0.0 && Now - MovedTime > 4.0 && Now - LastBadTime > 2.0;
+		if (bReady || (Now - BeginPlayTime > 120.0 && Now - MovedTime > 4.0))
 		{
 			bSoundOpened = true;
-			FSubmixEffectSanitizer::TargetGain = 1.f;
-			UE_LOG(LogTemp, Log, TEXT("[Audio] Son ouvert (%s)"), bMoved ? TEXT("course chargee") : TEXT("delai de securite"));
+			SetWorldMute(GetWorld(), false);
+			FSubmixEffectSanitizer::TargetGain = OpenGain;
+			UE_LOG(LogTemp, Log, TEXT("[Audio] Son ouvert (%s)"), bReady ? TEXT("course chargee") : TEXT("delai de securite"));
 		}
 	}
 
@@ -252,6 +333,13 @@ void UAudioSanitizerSubsystem::CheckNaN()
 		}
 		UE_LOG(LogTemp, Warning, TEXT("[Audio] %s relance sans NaN"), *SoundName(Culprit.Get()));
 		Culprit = nullptr;
+	}
+
+	if (!bSoundOpened && Phase == ENaNHuntPhase::Idle)
+	{
+		// Son coupe (lancement, teleportation) : NaN et buzz n'atteignent pas la sortie, inutile de
+		// couper des sons ; l'ouverture attend 2 s sans NaN
+		return;
 	}
 
 	if (Bad == 0)
@@ -347,6 +435,13 @@ void UAudioSanitizerSubsystem::CheckNaN()
 
 void UAudioSanitizerSubsystem::Deinitialize()
 {
+	// Ne jamais laisser l'editeur muet apres un PIE
+	SetWorldMute(GetWorld(), false);
+	if (USoundSubmix* Master = Cast<USoundSubmix>(GetDefault<UAudioSettings>()->MasterSubmix.TryLoad()))
+	{
+		Master->SetSubmixDryLevel(GetWorld(), 1.f);
+	}
+	FSubmixEffectSanitizer::TargetGain = 1.f;
 	if (UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(CheckTimer);
