@@ -14,7 +14,7 @@
 namespace GTWSStyle
 {
 	/** Couleur de fond du template, en hexa sRGB (#RRGGBBAA). Seule valeur à modifier. */
-	inline const TCHAR* BkgColorHex = TEXT("#000000ff");
+	inline const TCHAR* BkgColorHex = TEXT("#FF3C00ff");
 
 	/** Couleur convertie en linéaire, à passer aux custom primitive data (slot 0). */
 	inline FLinearColor GetBkgColor()
