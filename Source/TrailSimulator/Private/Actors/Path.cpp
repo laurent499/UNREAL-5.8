@@ -251,16 +251,98 @@ void BuildSimplifiedRailLocked(
 	Rail->UpdateSpline();
 }
 
-// -------------------- Runtime follow (Option A): tangent + WorldUp
-static void FollowRail(USceneComponent* Follower, USplineComponent* Rail, float DistanceCm)
+// -------------------- Survol : suivi anticipatif du rail
+/**
+ * La camera ne suit plus la tangente instantanee du rail (saccade dans les virages serres, tangage qui suit
+ * chaque pente) : elle vise un point moyen en avance sur le trace et s'eloigne quand le trace se replie
+ * (epingle, demi-tour) pour garder les deux branches dans le cadre. Position et visee sont lissees
+ * a partir de l'image precedente (aucun etat ajoute a APath). Quelques lectures de spline par image.
+ * Reglable a chaud a la console.
+ */
+namespace PathFly
 {
-	if (!Follower || !Rail) return;
+	static TAutoConsoleVariable<float> CVarLead(TEXT("ts.Fly.LeadM"), 800.f, TEXT("Survol : distance d'anticipation sur le trace (m)"));
+	static TAutoConsoleVariable<float> CVarBack(TEXT("ts.Fly.BackM"), 132.f, TEXT("Survol : recul de la camera derriere le point suivi (m)"));
+	static TAutoConsoleVariable<float> CVarHeight(TEXT("ts.Fly.HeightM"), 122.f, TEXT("Survol : hauteur de la camera au-dessus du point suivi (m)"));
+	static TAutoConsoleVariable<float> CVarZoomOut(TEXT("ts.Fly.TightZoomOut"), 1.8f, TEXT("Survol : facteur de recul dans un demi-tour (1 = aucun)"));
+	static TAutoConsoleVariable<float> CVarUTurnRatio(TEXT("ts.Fly.UTurnRatio"), 0.35f, TEXT("Survol : rapport corde/longueur considere comme un demi-tour complet"));
+	static TAutoConsoleVariable<float> CVarPosTau(TEXT("ts.Fly.PosSmoothSec"), 0.8f, TEXT("Survol : temps de lissage de la position (s)"));
+	static TAutoConsoleVariable<float> CVarRotTau(TEXT("ts.Fly.RotSmoothSec"), 0.6f, TEXT("Survol : temps de lissage de la visee (s)"));
 
-	const FVector Pos = Rail->GetLocationAtDistanceAlongSpline(DistanceCm, ESplineCoordinateSpace::World);
-	const FVector Fwd = Rail->GetDirectionAtDistanceAlongSpline(DistanceCm, ESplineCoordinateSpace::World);
-	const FRotator Rot = FRotationMatrix::MakeFromXZ(Fwd, FVector::UpVector).Rotator();
+	constexpr int32 AheadSamples = 4;
 
-	Follower->SetWorldLocationAndRotation(Pos, Rot);
+	/** Part a rattraper cette image pour un lissage de constante Tau (independant de la cadence) */
+	static float Alpha(float DeltaTime, float Tau)
+	{
+		return (DeltaTime <= 0.f || Tau <= KINDA_SMALL_NUMBER) ? 1.f : 1.f - FMath::Exp(-DeltaTime / Tau);
+	}
+}
+
+/**
+ * @param Direction +1 en avant, -1 en arriere
+ * @param DeltaTime 0 : place la camera sans lissage (depart, arret)
+ */
+static void FollowRail(USceneComponent* Arm, USceneComponent* Camera, USplineComponent* Rail,
+	float DistanceCm, float Direction, float DeltaTime)
+{
+	if (!Arm || !Camera || !Rail) return;
+
+	const float Len = Rail->GetSplineLength();
+	const float LeadCm = FMath::Max(1000.f, PathFly::CVarLead.GetValueOnGameThread() * 100.f);
+	auto At = [&](float Offset)
+	{
+		return Rail->GetLocationAtDistanceAlongSpline(FMath::Clamp(DistanceCm + Direction * Offset, 0.f, Len), ESplineCoordinateSpace::World);
+	};
+	auto Flat = [](const FVector& V) { return FVector(V.X, V.Y, 0.f); };
+
+	// Fenetre du trace : un peu derriere, le point suivi, puis l'avance
+	const FVector Pivot = At(0.f);
+	const FVector Behind = At(-0.5f * LeadCm);
+	FVector Ahead = FVector::ZeroVector;
+	FVector End = Pivot;
+	for (int32 i = 1; i <= PathFly::AheadSamples; ++i)
+	{
+		End = At(LeadCm * i / PathFly::AheadSamples);
+		Ahead += End;
+	}
+	Ahead /= PathFly::AheadSamples;
+	const FVector Window = (Behind + Pivot + Ahead * PathFly::AheadSamples) / (PathFly::AheadSamples + 2);
+
+	// Repli du trace sur la fenetre : 0 en ligne droite, 1 dans un demi-tour
+	const float Arc = FMath::Abs(FMath::Clamp(DistanceCm + Direction * LeadCm, 0.f, Len) - FMath::Clamp(DistanceCm - Direction * 0.5f * LeadCm, 0.f, Len));
+	const float Straightness = Arc > 100.f ? FVector::Dist(Flat(Behind), Flat(End)) / Arc : 1.f;
+	const float UTurn = FMath::Clamp(PathFly::CVarUTurnRatio.GetValueOnGameThread(), 0.f, 0.95f);
+	const float Tight = FMath::Clamp((1.f - Straightness) / (1.f - UTurn), 0.f, 1.f);
+
+	// Visee : point moyen en avance, glisse vers le centre du virage quand il se replie
+	const FVector Aim = FMath::Lerp(Ahead, Window, Tight);
+	FVector Heading = Flat(Aim - Pivot);
+	if (Heading.Size() < 5000.f)
+	{
+		// Fin du rail ou visee trop proche : tangente du rail
+		Heading += Flat(Rail->GetDirectionAtDistanceAlongSpline(FMath::Clamp(DistanceCm, 0.f, Len), ESplineCoordinateSpace::World)) * Direction * 5000.f;
+	}
+	Heading = Heading.GetSafeNormal();
+	if (Heading.IsNearlyZero())
+	{
+		Heading = Flat(Camera->GetForwardVector()).GetSafeNormal();
+	}
+
+	const float Zoom = FMath::Lerp(1.f, FMath::Max(1.f, PathFly::CVarZoomOut.GetValueOnGameThread()), Tight);
+	const FVector DesiredOffset = (-Heading * PathFly::CVarBack.GetValueOnGameThread() + FVector::UpVector * PathFly::CVarHeight.GetValueOnGameThread()) * 100.f * Zoom;
+
+	// Lissage depuis l'image precedente : decalage camera / point suivi, puis visee
+	const bool bSnap = DeltaTime <= 0.f;
+	const FVector PrevOffset = Camera->GetComponentLocation() - Arm->GetComponentLocation();
+	const FVector Offset = bSnap ? DesiredOffset : FMath::Lerp(PrevOffset, DesiredOffset, PathFly::Alpha(DeltaTime, PathFly::CVarPosTau.GetValueOnGameThread()));
+	const FVector CamPos = Pivot + Offset;
+
+	const FQuat DesiredRot = FRotationMatrix::MakeFromXZ(Aim - CamPos, FVector::UpVector).ToQuat();
+	FRotator CamRot = (bSnap ? DesiredRot : FQuat::Slerp(Camera->GetComponentQuat(), DesiredRot, PathFly::Alpha(DeltaTime, PathFly::CVarRotTau.GetValueOnGameThread()))).Rotator();
+	CamRot.Roll = 0.f;
+
+	Arm->SetWorldLocationAndRotation(Pivot, FRotator(0.f, CamRot.Yaw, 0.f));
+	Camera->SetWorldLocationAndRotation(CamPos, CamRot);
 }
 
 APath::APath()
@@ -575,7 +657,7 @@ void APath::DrawPath(int64 RaceID, FRacePath RacePathDatas)
 	SlopePath->UpdateSpline();
 	
 	BuildSimplifiedRailLocked(SplinePath, TravelPath, ToleranceMeters, LockedPoints, SampleStepMeters);
-	FollowRail(SpringArmComponent, TravelPath, DistanceCm);
+	FollowRail(SpringArmComponent, CameraComponent, TravelPath, DistanceCm, bForward ? 1.f : -1.f, 0.f);
 	BuildKms(RaceID);
 		
 	LoadingSubsystem->Complete(IdKm, FText::FromString(FString::Printf(TEXT("Kms %lld built"), RaceID)));
@@ -897,7 +979,7 @@ void APath::StopTravel()
 		}
 	}
 	DistanceCm = 0.f;
-	FollowRail(SpringArmComponent, TravelPath, DistanceCm);
+	FollowRail(SpringArmComponent, CameraComponent, TravelPath, DistanceCm, 1.f, 0.f);
 	SetActorTickEnabled(false);
 }
 
@@ -1049,7 +1131,7 @@ void APath::Tick(float DeltaTime)
 		DistanceCm = FMath::Clamp(DistanceCm, 0.f, MaxCm);
 	}
 
-	FollowRail(SpringArmComponent, TravelPath, DistanceCm);
+	FollowRail(SpringArmComponent, CameraComponent, TravelPath, DistanceCm, bForward ? 1.f : -1.f, DeltaTime);
 }
 
 // HELPERS
