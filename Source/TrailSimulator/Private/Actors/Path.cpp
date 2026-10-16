@@ -20,6 +20,10 @@
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
 #include "Components/PathSegmentsComponent.h"
+#include "EnhancedPlayerInput.h"
+#include "InputAction.h"
+#include "GameFramework/Pawn.h"
+#include "GameFramework/PlayerController.h"
 #include "Actors/Km.h"
 #include "Actors/Generic/Checkpoint_Generic.h"
 #include "Actors/GTWS/Checkpoint_GTWS.h"
@@ -255,37 +259,186 @@ void BuildSimplifiedRailLocked(
 /**
  * La camera ne suit plus la tangente instantanee du rail (saccade dans les virages serres, tangage qui suit
  * chaque pente) : elle vise un point moyen en avance sur le trace et s'eloigne quand le trace se replie
- * (epingle, demi-tour) pour garder les deux branches dans le cadre. Position et visee sont lissees
- * a partir de l'image precedente (aucun etat ajoute a APath). Quelques lectures de spline par image.
- * Reglable a chaud a la console.
+ * (epingle, demi-tour) pour garder les deux branches dans le cadre. Le rail lui-meme est lisse (moyenne
+ * glissante), la vitesse ralentit dans les demi-tours, position et visee sont lissees depuis l'image precedente.
+ * Pendant le survol, le pad pilote la camera (le pawn ne recoit plus ses entrees) :
+ * gachettes = monter / descendre, LB / RB = zoom, X / B = vitesse, boutons speciaux = remise a zero.
+ * Les reglages ts.Fly.* sont envoyes par la regie (onglet Flyover, commun a toutes les courses).
  */
 namespace PathFly
 {
+	static TAutoConsoleVariable<float> CVarSpeed(TEXT("ts.Fly.SpeedMps"), 100.f, TEXT("Survol : vitesse le long du trace (m/s)"));
 	static TAutoConsoleVariable<float> CVarLead(TEXT("ts.Fly.LeadM"), 800.f, TEXT("Survol : distance d'anticipation sur le trace (m)"));
-	static TAutoConsoleVariable<float> CVarBack(TEXT("ts.Fly.BackM"), 132.f, TEXT("Survol : recul de la camera derriere le point suivi (m)"));
-	static TAutoConsoleVariable<float> CVarHeight(TEXT("ts.Fly.HeightM"), 122.f, TEXT("Survol : hauteur de la camera au-dessus du point suivi (m)"));
+	static TAutoConsoleVariable<float> CVarBack(TEXT("ts.Fly.BackM"), 130.f, TEXT("Survol : recul de la camera derriere le point suivi (m)"));
+	static TAutoConsoleVariable<float> CVarHeight(TEXT("ts.Fly.HeightM"), 120.f, TEXT("Survol : hauteur de la camera au-dessus du point suivi (m)"));
 	static TAutoConsoleVariable<float> CVarZoomOut(TEXT("ts.Fly.TightZoomOut"), 1.8f, TEXT("Survol : facteur de recul dans un demi-tour (1 = aucun)"));
+	static TAutoConsoleVariable<float> CVarTightSlow(TEXT("ts.Fly.TightSlow"), 0.7f, TEXT("Survol : facteur de vitesse dans un demi-tour (1 = aucun ralenti)"));
 	static TAutoConsoleVariable<float> CVarUTurnRatio(TEXT("ts.Fly.UTurnRatio"), 0.35f, TEXT("Survol : rapport corde/longueur considere comme un demi-tour complet"));
-	static TAutoConsoleVariable<float> CVarPosTau(TEXT("ts.Fly.PosSmoothSec"), 0.8f, TEXT("Survol : temps de lissage de la position (s)"));
-	static TAutoConsoleVariable<float> CVarRotTau(TEXT("ts.Fly.RotSmoothSec"), 0.6f, TEXT("Survol : temps de lissage de la visee (s)"));
+	static TAutoConsoleVariable<float> CVarPosTau(TEXT("ts.Fly.PosSmoothSec"), 1.2f, TEXT("Survol : temps de lissage de la position (s)"));
+	static TAutoConsoleVariable<float> CVarRotTau(TEXT("ts.Fly.RotSmoothSec"), 1.0f, TEXT("Survol : temps de lissage de la visee (s)"));
+	static TAutoConsoleVariable<float> CVarRailSmooth(TEXT("ts.Fly.RailSmoothM"), 250.f, TEXT("Survol : lissage du rail (m, 0 = ancien rail simplifie). Pris en compte au prochain depart"));
+	static TAutoConsoleVariable<float> CVarPadHeight(TEXT("ts.Fly.PadHeightMps"), 80.f, TEXT("Survol : vitesse de montee / descente au pad (m/s)"));
+	static TAutoConsoleVariable<float> CVarPadZoom(TEXT("ts.Fly.PadZoomRate"), 0.8f, TEXT("Survol : vitesse du zoom au pad (facteur par seconde, logarithmique)"));
+	static TAutoConsoleVariable<float> CVarPadSpeedStep(TEXT("ts.Fly.PadSpeedStep"), 1.25f, TEXT("Survol : facteur de vitesse par appui sur X / B"));
 
 	constexpr int32 AheadSamples = 4;
+
+	/** Etat du survol en cours : une seule camera de survol est a l'antenne a la fois */
+	struct FState
+	{
+		float SpeedMult = 1.f;		// X / B
+		float ZoomMult = 1.f;		// LB / RB, multiplie recul et hauteur
+		float HeightM = 0.f;		// gachettes, ajoute a la hauteur
+		float Tight = 0.f;			// repli du trace, lisse (ralenti dans les demi-tours)
+		bool bSpeedUpHeld = false;
+		bool bSpeedDownHeld = false;
+	};
+	static FState State;
 
 	/** Part a rattraper cette image pour un lissage de constante Tau (independant de la cadence) */
 	static float Alpha(float DeltaTime, float Tau)
 	{
 		return (DeltaTime <= 0.f || Tau <= KINDA_SMALL_NUMBER) ? 1.f : 1.f - FMath::Exp(-DeltaTime / Tau);
 	}
+
+	static FInputActionValue ActionValue(const UEnhancedPlayerInput* Input, const TCHAR* Name)
+	{
+		static TMap<FString, TWeakObjectPtr<const UInputAction>> Actions;
+		TWeakObjectPtr<const UInputAction>* Found = Actions.Find(Name);
+		if (!Found)
+		{
+			const UInputAction* Loaded = LoadObject<UInputAction>(nullptr,
+				*FString::Printf(TEXT("/Game/LTVContent/Inputs/Actions/%s.%s"), Name, Name));
+			Found = &Actions.Add(FString(Name), TWeakObjectPtr<const UInputAction>(Loaded));
+		}
+		return Found->IsValid() ? Input->GetActionValue(Found->Get()) : FInputActionValue();
+	}
+
+	/** Memes actions que le pawn (IMC_Moves), lues directement : aucun binding a ajouter */
+	static void ReadPad(const UWorld* World, float DeltaTime)
+	{
+		const APlayerController* PC = World ? World->GetFirstPlayerController() : nullptr;
+		const UEnhancedPlayerInput* Input = PC ? Cast<UEnhancedPlayerInput>(PC->PlayerInput) : nullptr;
+		if (!Input) return;
+
+		// Gachettes : axe Z de IA_Moves, meme sens que le pawn
+		const float Height = CVarHeight.GetValueOnGameThread();
+		State.HeightM = FMath::Clamp(State.HeightM + ActionValue(Input, TEXT("IA_Moves")).Get<FVector>().Z * CVarPadHeight.GetValueOnGameThread() * DeltaTime,
+			-0.8f * Height, 20.f * FMath::Max(Height, 100.f));
+
+		// LB / RB : RB (+1) rapproche
+		State.ZoomMult = FMath::Clamp(State.ZoomMult * FMath::Exp(-ActionValue(Input, TEXT("IA_Zoom")).Get<float>() * CVarPadZoom.GetValueOnGameThread() * DeltaTime), 0.25f, 5.f);
+
+		// X / B : un cran par appui
+		const float Step = FMath::Max(1.01f, CVarPadSpeedStep.GetValueOnGameThread());
+		const bool bUp = ActionValue(Input, TEXT("IA_SpeedUp")).Get<bool>();
+		const bool bDown = ActionValue(Input, TEXT("IA_SpeedDown")).Get<bool>();
+		if (bUp && !State.bSpeedUpHeld) State.SpeedMult *= Step;
+		if (bDown && !State.bSpeedDownHeld) State.SpeedMult /= Step;
+		State.SpeedMult = FMath::Clamp(State.SpeedMult, 0.05f, 20.f);
+		State.bSpeedUpHeld = bUp;
+		State.bSpeedDownHeld = bDown;
+
+		if (ActionValue(Input, TEXT("IA_ResetZoom")).Get<bool>())
+		{
+			State.ZoomMult = 1.f;
+			State.HeightM = 0.f;
+		}
+		if (ActionValue(Input, TEXT("IA_ResetSpeed")).Get<bool>())
+		{
+			State.SpeedMult = 1.f;
+		}
+	}
+
+	static void ResetPad()
+	{
+		State = FState();
+	}
+
+	/**
+	 * Rail de camera : trace reechantillonne puis moyenne glissante gaussienne. Les virages serres
+	 * deviennent des courbes douces que la camera parcourt sans a-coup ; le cadrage vise le trace.
+	 * Les deux extremites restent sur le depart et l'arrivee.
+	 */
+	static void BuildSmoothRail(USplineComponent* Source, USplineComponent* Rail, float SmoothM)
+	{
+		const float Len = Source->GetSplineLength();
+		const float SigmaCm = SmoothM * 100.f;
+		const float StepCm = FMath::Max(2500.f, SigmaCm / 3.f);
+		const int32 Num = FMath::Max(2, FMath::CeilToInt(Len / StepCm) + 1);
+
+		TArray<FVector> Raw;
+		Raw.Reserve(Num);
+		for (int32 i = 0; i < Num; ++i)
+		{
+			Raw.Add(Source->GetLocationAtDistanceAlongSpline(Len * i / (Num - 1), ESplineCoordinateSpace::World));
+		}
+
+		const float StepReal = Len / (Num - 1);
+		const int32 Half = FMath::Max(1, FMath::CeilToInt(2.f * SigmaCm / FMath::Max(StepReal, 1.f)));
+		Rail->ClearSplinePoints(false);
+		for (int32 i = 0; i < Num; ++i)
+		{
+			FVector Sum = FVector::ZeroVector;
+			double Weight = 0.0;
+			if (i == 0 || i == Num - 1)
+			{
+				Sum = Raw[i];
+				Weight = 1.0;
+			}
+			else
+			{
+				for (int32 k = FMath::Max(0, i - Half); k <= FMath::Min(Num - 1, i + Half); ++k)
+				{
+					const double D = (k - i) * StepReal / SigmaCm;
+					const double W = FMath::Exp(-0.5 * D * D);
+					Sum += Raw[k] * W;
+					Weight += W;
+				}
+			}
+			Rail->AddSplinePoint(Sum / Weight, ESplineCoordinateSpace::World, false);
+			Rail->SetSplinePointType(i, ESplinePointType::Curve, false);
+		}
+		Rail->SetClosedLoop(false, false);
+		Rail->UpdateSpline();
+	}
+
+	/** Rail lisse (ts.Fly.RailSmoothM > 0) ou ancien rail simplifie qui garde les checkpoints */
+	static void BuildRail(USplineComponent* Source, USplineComponent* Rail, float ToleranceMeters,
+		const TArray<FVector>& LockedPoints, float SampleStepMeters)
+	{
+		if (!Source || !Rail || Source->GetNumberOfSplinePoints() < 2) return;
+		const float SmoothM = CVarRailSmooth.GetValueOnGameThread();
+		if (SmoothM > 0.f)
+		{
+			BuildSmoothRail(Source, Rail, SmoothM);
+		}
+		else
+		{
+			BuildSimplifiedRailLocked(Source, Rail, ToleranceMeters, LockedPoints, SampleStepMeters);
+		}
+	}
+
+	/** Pendant le survol le pad pilote la camera : le pawn ne doit plus bouger en coulisse */
+	static void SetPawnInput(UWorld* World, bool bEnabled)
+	{
+		APlayerController* PC = World ? World->GetFirstPlayerController() : nullptr;
+		APawn* Pawn = PC ? PC->GetPawn() : nullptr;
+		if (!Pawn) return;
+		if (bEnabled) Pawn->EnableInput(PC);
+		else Pawn->DisableInput(PC);
+	}
 }
 
 /**
  * @param Direction +1 en avant, -1 en arriere
  * @param DeltaTime 0 : place la camera sans lissage (depart, arret)
+ * @return Repli du trace devant la camera : 0 en ligne droite, 1 dans un demi-tour
  */
-static void FollowRail(USceneComponent* Arm, USceneComponent* Camera, USplineComponent* Rail,
+static float FollowRail(USceneComponent* Arm, USceneComponent* Camera, USplineComponent* Rail,
 	float DistanceCm, float Direction, float DeltaTime)
 {
-	if (!Arm || !Camera || !Rail) return;
+	if (!Arm || !Camera || !Rail) return 0.f;
 
 	const float Len = Rail->GetSplineLength();
 	const float LeadCm = FMath::Max(1000.f, PathFly::CVarLead.GetValueOnGameThread() * 100.f);
@@ -328,8 +481,11 @@ static void FollowRail(USceneComponent* Arm, USceneComponent* Camera, USplineCom
 		Heading = Flat(Camera->GetForwardVector()).GetSafeNormal();
 	}
 
-	const float Zoom = FMath::Lerp(1.f, FMath::Max(1.f, PathFly::CVarZoomOut.GetValueOnGameThread()), Tight);
-	const FVector DesiredOffset = (-Heading * PathFly::CVarBack.GetValueOnGameThread() + FVector::UpVector * PathFly::CVarHeight.GetValueOnGameThread()) * 100.f * Zoom;
+	// Recul et hauteur : reglages regie, agrandis dans les demi-tours, puis zoom et hauteur du pad
+	const float Zoom = FMath::Lerp(1.f, FMath::Max(1.f, PathFly::CVarZoomOut.GetValueOnGameThread()), Tight) * PathFly::State.ZoomMult;
+	const float BackM = PathFly::CVarBack.GetValueOnGameThread() * Zoom;
+	const float HeightM = PathFly::CVarHeight.GetValueOnGameThread() * Zoom + PathFly::State.HeightM;
+	const FVector DesiredOffset = (-Heading * BackM + FVector::UpVector * HeightM) * 100.f;
 
 	// Lissage depuis l'image precedente : decalage camera / point suivi, puis visee
 	const bool bSnap = DeltaTime <= 0.f;
@@ -343,6 +499,7 @@ static void FollowRail(USceneComponent* Arm, USceneComponent* Camera, USplineCom
 
 	Arm->SetWorldLocationAndRotation(Pivot, FRotator(0.f, CamRot.Yaw, 0.f));
 	Camera->SetWorldLocationAndRotation(CamPos, CamRot);
+	return Tight;
 }
 
 APath::APath()
@@ -656,7 +813,7 @@ void APath::DrawPath(int64 RaceID, FRacePath RacePathDatas)
 	SplinePath->UpdateSpline();
 	SlopePath->UpdateSpline();
 	
-	BuildSimplifiedRailLocked(SplinePath, TravelPath, ToleranceMeters, LockedPoints, SampleStepMeters);
+	PathFly::BuildRail(SplinePath, TravelPath, ToleranceMeters, LockedPoints, SampleStepMeters);
 	FollowRail(SpringArmComponent, CameraComponent, TravelPath, DistanceCm, bForward ? 1.f : -1.f, 0.f);
 	BuildKms(RaceID);
 		
@@ -952,6 +1109,13 @@ void APath::StartTravelForward()
 		BroadCastSubsystem->RequestViewTarget(PC, this, 1.f);
 	}
 	bForward = true;
+	if (DistanceCm <= 0.f)
+	{
+		// Depart (pas une reprise apres pause) : rail reconstruit avec le lissage courant de la regie
+		PathFly::BuildRail(SplinePath, TravelPath, ToleranceMeters, LockedPoints, SampleStepMeters);
+		FollowRail(SpringArmComponent, CameraComponent, TravelPath, DistanceCm, 1.f, 0.f);
+	}
+	PathFly::SetPawnInput(GetWorld(), false);
 	SetActorTickEnabled(true);
 }
 void APath::StartTravelBackward()
@@ -965,7 +1129,10 @@ void APath::StartTravelBackward()
 		BroadCastSubsystem->RequestViewTarget(PC, this, 1.f);
 	}
 	bForward = false;
+	PathFly::BuildRail(SplinePath, TravelPath, ToleranceMeters, LockedPoints, SampleStepMeters);
 	DistanceCm = TravelPath->GetSplineLength();
+	FollowRail(SpringArmComponent, CameraComponent, TravelPath, DistanceCm, -1.f, 0.f);
+	PathFly::SetPawnInput(GetWorld(), false);
 	SetActorTickEnabled(true);
 }
 void APath::StopTravel()
@@ -979,6 +1146,8 @@ void APath::StopTravel()
 		}
 	}
 	DistanceCm = 0.f;
+	PathFly::ResetPad();
+	PathFly::SetPawnInput(GetWorld(), true);
 	FollowRail(SpringArmComponent, CameraComponent, TravelPath, DistanceCm, 1.f, 0.f);
 	SetActorTickEnabled(false);
 }
@@ -1116,7 +1285,10 @@ void APath::Tick(float DeltaTime)
 
 	if (!TravelPath) return;
 
-	const float SpeedCmPerSec = SpeedMetersPerSec * 100.f;
+	// Vitesse regie (ts.Fly.SpeedMps, remplace SpeedMetersPerSec), crans du pad, ralenti dans les demi-tours
+	PathFly::ReadPad(GetWorld(), DeltaTime);
+	const float TightSpeed = FMath::Lerp(1.f, FMath::Clamp(PathFly::CVarTightSlow.GetValueOnGameThread(), 0.1f, 1.f), PathFly::State.Tight);
+	const float SpeedCmPerSec = FMath::Max(0.f, PathFly::CVarSpeed.GetValueOnGameThread()) * PathFly::State.SpeedMult * TightSpeed * 100.f;
 
 	if (bForward)
 	{
@@ -1131,7 +1303,8 @@ void APath::Tick(float DeltaTime)
 		DistanceCm = FMath::Clamp(DistanceCm, 0.f, MaxCm);
 	}
 
-	FollowRail(SpringArmComponent, CameraComponent, TravelPath, DistanceCm, bForward ? 1.f : -1.f, DeltaTime);
+	const float Tight = FollowRail(SpringArmComponent, CameraComponent, TravelPath, DistanceCm, bForward ? 1.f : -1.f, DeltaTime);
+	PathFly::State.Tight = FMath::Lerp(PathFly::State.Tight, Tight, PathFly::Alpha(DeltaTime, 1.f));
 }
 
 // HELPERS

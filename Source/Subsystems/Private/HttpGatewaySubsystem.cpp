@@ -6,6 +6,7 @@
 #include "HttpPath.h"
 #include "HttpServerResponse.h"   // FHttpServerResponse
 #include "Async/Async.h"
+#include "HAL/IConsoleManager.h"
 #include "SlateNotificationsBFL.h"
 #include "WorldAmbienceSubsystem.h"
 #include "TemplateSubsystem.h"
@@ -306,6 +307,40 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
             AsyncTask(ENamedThreads::GameThread,[this, idrace]()
             {
                 OnFlyStop.Broadcast(idrace);
+            });
+        }
+        // FlyOver Settings : reglages communs a toutes les courses (onglet Flyover de la regie)
+        // -> variables console ts.Fly.* lues par APath a chaque image
+        if (Action.Equals(TEXT("flyover"), ESearchCase::IgnoreCase))
+        {
+            static const TPair<const TCHAR*, const TCHAR*> Params[] = {
+                { TEXT("speed"),   TEXT("ts.Fly.SpeedMps") },
+                { TEXT("lead"),    TEXT("ts.Fly.LeadM") },
+                { TEXT("back"),    TEXT("ts.Fly.BackM") },
+                { TEXT("height"),  TEXT("ts.Fly.HeightM") },
+                { TEXT("zoomout"), TEXT("ts.Fly.TightZoomOut") },
+                { TEXT("slow"),    TEXT("ts.Fly.TightSlow") },
+                { TEXT("smooth"),  TEXT("ts.Fly.PosSmoothSec") },
+                { TEXT("smooth"),  TEXT("ts.Fly.RotSmoothSec") },
+                { TEXT("rail"),    TEXT("ts.Fly.RailSmoothM") },
+            };
+            TArray<TPair<FString, float>> Values;
+            for (const TPair<const TCHAR*, const TCHAR*>& P : Params)
+            {
+                if (const FString* Str = Request.QueryParams.Find(P.Key))
+                {
+                    if (Str->IsNumeric()) Values.Emplace(P.Value, FCString::Atof(**Str));
+                }
+            }
+            AsyncTask(ENamedThreads::GameThread, [Values]()
+            {
+                for (const TPair<FString, float>& V : Values)
+                {
+                    if (IConsoleVariable* CVar = IConsoleManager::Get().FindConsoleVariable(*V.Key))
+                    {
+                        CVar->Set(V.Value, ECVF_SetByConsole);
+                    }
+                }
             });
         }
         // FlyOver Play
