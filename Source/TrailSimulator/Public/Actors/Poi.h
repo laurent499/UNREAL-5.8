@@ -103,6 +103,15 @@ protected:
 	FRacePOI PoiDatas;
 	UPROPERTY()
 	FOpenWeatherResponse PoiWeatherDatas;
+
+	// Template graphique : course gardée pour réappliquer le template quand la régie le modifie
+	FRaceSetup TemplateRaceSetup;
+	/** Couleur du picto principal, reposée par UpdateDayNight. */
+	FLinearColor MainPictoColor = FLinearColor::White;
+	bool bHasDayNight = false;
+	bool bLastIsDay = true;
+	FDelegateHandle TemplateChangedHandle;
+	void HandleTemplateChanged(const FString& TemplateName);
 	
 	UPROPERTY()
 	TObjectPtr<class UPoiSubsystem> PoiSubsystem;

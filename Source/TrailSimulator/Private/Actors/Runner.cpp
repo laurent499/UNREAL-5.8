@@ -2,6 +2,9 @@
 
 
 #include "TrailSimulator/Public/Actors/Runner.h"
+#include "TemplateSubsystem.h"
+#include "Actors/GTWS/Runner_GTWS.h"
+#include "Actors/Generic/Runner_Generic.h"
 
 #include "BroadcastCaptureSubsystem.h"
 #include "TrailSimulator/Public/Actors/Path.h"
@@ -159,6 +162,10 @@ void ARunner::SetBroadcastCaptureEnabled_Implementation(bool bEnabled, class UTe
 void ARunner::BeginPlay()
 {
 	Super::BeginPlay();
+	if (UTemplateSubsystem* Templates = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTemplateSubsystem>() : nullptr)
+	{
+		TemplateChangedHandle = Templates->OnTemplateChanged.AddUObject(this, &ARunner::HandleTemplateChanged);
+	}
 	// Les textes (M_RawText) comparent leur profondeur a la CustomDepth des autres elements du
 	// runner : ils sont ainsi masques par les cartes et photos translucides placees devant eux.
 	TrailRawText::EnableOcclusion(this);
@@ -208,6 +215,10 @@ void ARunner::BeginPlay()
 
 void ARunner::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if (UTemplateSubsystem* Templates = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTemplateSubsystem>() : nullptr)
+	{
+		Templates->OnTemplateChanged.Remove(TemplateChangedHandle);
+	}
 	GetWorldTimerManager().ClearTimer(LookAtTimerHandle);
 	Super::EndPlay(EndPlayReason);
 }
@@ -341,6 +352,26 @@ bool ARunner::AdvanceTrackInterp(float DeltaTime)
  */
 void ARunner::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 {
+	// Copie seulement au changement de course : UpdateRunner est appele a chaque snapshot
+	if (TemplateRaceSetup.raceId != RaceSetup.raceId)
+	{
+		TemplateRaceSetup = RaceSetup;
+	}
+	{
+		// Éléments retirés ou remis dans le design : on rejoue les bascules pour que les
+		// composants suivent. Rien n'est appelé tant que le template garde tout (cas d'origine).
+		TOptional<FTrailTemplate> Storage;
+		const FTrailTemplateRunner& Style = UTemplateSubsystem::ResolveForRace(this, RaceSetup, Storage).Runner;
+		if (Style.ShowPhoto != bTemplateShowPhoto || Style.ShowClub != bTemplateShowClub || Style.ShowFlag != bTemplateShowFlag)
+		{
+			bTemplateShowPhoto = Style.ShowPhoto;
+			bTemplateShowClub = Style.ShowClub;
+			bTemplateShowFlag = Style.ShowFlag;
+			TogglePhoto(bShowPhoto);
+			ToggleClub(bShowClub);
+			ToggleFlag(bShowFlag);
+		}
+	}
 	RunnerDatas = MoveTemp(Runner);
 	// Des composants apparaissent / disparaissent pendant la partie (photo, drapeau, club...) :
 	// on repasse sur tous ceux presents a chaque mise a jour (idempotent, sans cout si deja actifs).
@@ -363,6 +394,8 @@ void ARunner::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 
 void ARunner::UpdateDayNight(bool bIsDay)
 {
+	bHasDayNight = true;
+	bLastIsDay = bIsDay;
 }
 
 void ARunner::AssignRunnerToTeam(int64 AssignedIdTeam)
@@ -661,7 +694,7 @@ void ARunner::ToggleClub(bool bDisplay)
 }
 bool ARunner::IsClubVisible()
 {
-	return bShowClub;
+	return bShowClub && bTemplateShowClub;
 }
 
 void ARunner::TogglePhoto(bool bDisplay)
@@ -671,7 +704,7 @@ void ARunner::TogglePhoto(bool bDisplay)
 
 bool ARunner::IsPhotoVisible()
 {
-	return bShowPhoto;
+	return bShowPhoto && bTemplateShowPhoto;
 }
 
 void ARunner::ToggleFlag(bool bDisplay)
@@ -681,5 +714,28 @@ void ARunner::ToggleFlag(bool bDisplay)
 
 bool ARunner::IsFlagVisible()
 {
-	return bShowFlag;
+	return bShowFlag && bTemplateShowFlag;
+}
+
+/**
+ * @brief Le template de la course a ete relu sur la regie : on le reapplique.
+ * @note Rejoue la mise a jour avec les dernieres donnees, puis l'etat jour/nuit qu'elle a ecrase.
+ */
+void ARunner::HandleTemplateChanged(const FString& TemplateName)
+{
+	// Seules les bases GTWS et Generic lisent le template ; rejouer la mise a jour des
+	// autres (Nike detruit des composants dans son constructeur) n'apporte rien et peut planter
+	if (!IsA<ARunner_GTWS>() && !IsA<ARunner_Generic>())
+	{
+		return;
+	}
+	if (TemplateRaceSetup.raceId == 0 || TemplateRaceSetup.templateName != TemplateName)
+	{
+		return;
+	}
+	UpdateRunner(RunnerDatas, TemplateRaceSetup);
+	if (bHasDayNight)
+	{
+		UpdateDayNight(bLastIsDay);
+	}
 }

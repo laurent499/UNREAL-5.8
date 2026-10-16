@@ -2,10 +2,29 @@
 
 
 #include "Actors/Generic/Checkpoint_Generic.h"
+#include "TemplateSubsystem.h"
+#include "Actors/RoundedPanel.h"
 
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
 #include "Components/TextRenderComponent.h"
+
+/**
+ * @brief Fond de panneau avec coins arrondis : M_PlainRounded (même rendu que M_Plain, qui
+ *        ignore son masque d'opacité). Primitive data : 0-3 couleur, 5 alpha, 6 arrondi, 7 coins.
+ */
+static void UseRoundedBkg_CheckpointGeneric(UPrimitiveComponent* Comp)
+{
+	static TWeakObjectPtr<UMaterialInterface> Rounded;
+	if (!Rounded.IsValid())
+	{
+		Rounded = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/LTVContent/Materials/Masters/M_PlainRounded.M_PlainRounded"));
+	}
+	if (Comp && Rounded.IsValid() && Comp->GetMaterial(0) != Rounded.Get())
+	{
+		Comp->SetMaterial(0, Rounded.Get());
+	}
+}
 
 
 // Sets default values
@@ -50,6 +69,20 @@ void ACheckpoint_Generic::Tick(float DeltaTime)
 void ACheckpoint_Generic::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, FRaceSetup NewRaceSetup)
 {
 	Super::UpdateCheckpoint(NewCheckpointDatas, NewRaceSetup);
+
+	// Couleurs et pictos lus dans le template de la course (régie, page Templates)
+	const FTrailTemplate Tpl = UTemplateSubsystem::GetForRace(this, NewRaceSetup);
+	const FTrailTemplateStack& Style = Tpl.Checkpoint;
+	auto Lin = [&NewRaceSetup](const FString& Value) { return FTrailTemplate::ToLinear(Value, NewRaceSetup.color); };
+	auto Srgb = [&NewRaceSetup](const FString& Value) { return FTrailTemplate::ToSRGB(Value, NewRaceSetup.color); };
+	MainPictoColor = Lin(Style.MainPicto);
+
+	// Fonds arrondis : filets recentrés entre les fonds et raccourcis aux arrondis
+	RoundedPanel::FitLine(Line1Component, NameBkgComponent, InfosBkgComponent, Tpl.Globals.CornerRadius);
+	RoundedPanel::FitLine(Line2Component, InfosBkgComponent, WeatherBkgComponent, Tpl.Globals.CornerRadius);
+	// Pictos distance et altitude un peu plus discrets dans leur bandeau (0,2 à l'origine)
+	if (DistPicto) DistPicto->SetRelativeScale3D(FVector(0.16f));
+	if (AltPicto) AltPicto->SetRelativeScale3D(FVector(0.16f));
 	
 	// MainPicto
 	if (MainPicto)
@@ -57,7 +90,7 @@ void ACheckpoint_Generic::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, F
 		const FString Type = CheckpointDatas.type;
 		if (Type.IsEmpty()) return;
 		const FString PictoPath = FString::Printf(
-			TEXT("/Game/LTVContent/2D/Pictos/Generic/%s.%s"), *Type, *Type);
+			TEXT("/Game/LTVContent/2D/Pictos/%s/%s.%s"), *Tpl.Globals.PictoSet, *Type, *Type);
 		
 		if(UTexture2D* Tex = LoadObject<UTexture2D>(
 		nullptr,
@@ -69,7 +102,7 @@ void ACheckpoint_Generic::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, F
 
 			MID->SetTextureParameterValue(TEXT("Photo"), Tex);
 			// M_Photo3D a une couleur noire par defaut : picto blanc des la creation, sans attendre UpdateDayNight
-			MID->SetVectorParameterValue(TEXT("Color"), FLinearColor::White);
+			MID->SetVectorParameterValue(TEXT("Color"), MainPictoColor);
 		} else
 		{
 			MainPicto->SetHiddenInGame(true);
@@ -81,25 +114,25 @@ void ACheckpoint_Generic::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, F
 	{		
 		UMaterialInterface* CoreMat = FootComponent->GetMaterial(0);
 		UMaterialInstanceDynamic* MID = FootComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, CoreMat);
-		FootComponent->SetColorParameterValueOnMaterials("BaseColor", FLinearColor::FromSRGBColor(FColor::FromHex(NewRaceSetup.color)));
+		FootComponent->SetColorParameterValueOnMaterials("BaseColor", Lin(Style.Foot));
 	}
 	
 	// Name
 	if (NameText)
 	{
-		NameText->SetTextRenderColor(FColor(255, 255, 255));
+		NameText->SetTextRenderColor(Srgb(Style.NameText));
 	}
 	
 	if (NameBkgComponent)
 	{		
 		UMaterialInterface* BorderMat = NameBkgComponent->GetMaterial(0);
 		UMaterialInstanceDynamic* BorderMID = NameBkgComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, BorderMat);
-		BorderMID->SetVectorParameterValue(TEXT("BaseColor"), FLinearColor::FromSRGBColor(FColor::FromHex(NewRaceSetup.color)));
+		BorderMID->SetVectorParameterValue(TEXT("BaseColor"), Lin(Style.NameBorder));
 		BorderMID->SetScalarParameterValue(TEXT("Alpha"), 1.f);
 		
 		UMaterialInterface* CoreMat = NameBkgComponent->GetMaterial(1);
 		UMaterialInstanceDynamic* MID = NameBkgComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(1, CoreMat);
-		MID->SetVectorParameterValue(TEXT("BaseColor"), FLinearColor::FromSRGBColor(FColor::FromHex("#000000ff")));
+		MID->SetVectorParameterValue(TEXT("BaseColor"), Lin(Style.NameBkg));
 		MID->SetScalarParameterValue(TEXT("Alpha"), 0.95f);
 	}
 	
@@ -113,7 +146,7 @@ void ACheckpoint_Generic::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, F
 		
 		UMaterialInterface* BorderMat = NameRightComponent->GetMaterial(0);
 		UMaterialInstanceDynamic* BorderMID = NameRightComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, BorderMat);
-		BorderMID->SetVectorParameterValue(TEXT("BaseColor"), FLinearColor::FromSRGBColor(FColor::FromHex(NewRaceSetup.color)));
+		BorderMID->SetVectorParameterValue(TEXT("BaseColor"), Lin(Style.NameBorder));
 	}
 	
 	if (NameLeftComponent)
@@ -126,18 +159,20 @@ void ACheckpoint_Generic::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, F
 		
 		UMaterialInterface* BorderMat = NameLeftComponent->GetMaterial(0);
 		UMaterialInstanceDynamic* BorderMID = NameLeftComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, BorderMat);
-		BorderMID->SetVectorParameterValue(TEXT("BaseColor"), FLinearColor::FromSRGBColor(FColor::FromHex(NewRaceSetup.color)));
+		BorderMID->SetVectorParameterValue(TEXT("BaseColor"), Lin(Style.NameBorder));
 	}
 	
 	// infos
 	if (InfosBkgComponent)
 	{
-		InfosBkgComponent->SetCustomPrimitiveDataVector4(0, FLinearColor::FromSRGBColor(FColor::FromHex(NewRaceSetup.color)));
+		InfosBkgComponent->SetCustomPrimitiveDataVector4(0, Lin(Style.InfosBkg));
 		InfosBkgComponent->SetCustomPrimitiveDataFloat(4,0.0625f);
 		InfosBkgComponent->SetCustomPrimitiveDataFloat(5, 1.f);
+		UseRoundedBkg_CheckpointGeneric(InfosBkgComponent);
+		InfosBkgComponent->SetCustomPrimitiveDataFloat(6, Tpl.Globals.CornerRadius); // arrondi des coins (M_Plain)
 				
 		const FString DistPath = FString::Printf(
-			TEXT("/Game/LTVContent/2D/Pictos/Generic/loc.loc"));
+			TEXT("/Game/LTVContent/2D/Pictos/%s/loc.loc"), *Tpl.Globals.PictoSet);
 		
 		UTexture2D* DistTex = LoadObject<UTexture2D>(
 		nullptr,
@@ -148,10 +183,10 @@ void ACheckpoint_Generic::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, F
 		if (!DistMID) return;
 
 		DistMID->SetTextureParameterValue(TEXT("Photo"), DistTex);
-		DistMID->SetVectorParameterValue(TEXT("Color"), FLinearColor::White); // pictos blancs, comme le picto principal
+		DistMID->SetVectorParameterValue(TEXT("Color"), Lin(Style.InfosPicto)); // pictos blancs, comme le picto principal
 		
 		const FString AltPath = FString::Printf(
-			TEXT("/Game/LTVContent/2D/Pictos/Generic/peak.peak"));
+			TEXT("/Game/LTVContent/2D/Pictos/%s/peak.peak"), *Tpl.Globals.PictoSet);
 		
 		UTexture2D* AltTex = LoadObject<UTexture2D>(
 		nullptr,
@@ -162,22 +197,22 @@ void ACheckpoint_Generic::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, F
 		if (!AltMID) return;
 
 		AltMID->SetTextureParameterValue(TEXT("Photo"), AltTex);
-		AltMID->SetVectorParameterValue(TEXT("Color"), FLinearColor::White); // pictos blancs, comme le picto principal
+		AltMID->SetVectorParameterValue(TEXT("Color"), Lin(Style.InfosPicto)); // pictos blancs, comme le picto principal
 	}
 	
 	if (DistText)
 	{
-		DistText->SetTextRenderColor(FColor(0, 0, 0, 255));
+		DistText->SetTextRenderColor(Srgb(Style.InfosText));
 	}
 	if (AltText)
 	{
-		AltText->SetTextRenderColor(FColor(0, 0, 0, 255));
+		AltText->SetTextRenderColor(Srgb(Style.InfosText));
 	}
 	
 	// Line1
 	if (Line1Component)
 	{
-		Line1Component->SetCustomPrimitiveDataVector4(0,FLinearColor::FromSRGBColor(FColor::FromHex("#000000ff")));
+		Line1Component->SetCustomPrimitiveDataVector4(0, Lin(Style.Line1));
 		Line1Component->SetCustomPrimitiveDataFloat(4,0.0625f);
 		Line1Component->SetCustomPrimitiveDataFloat(5, 1.f);
 }
@@ -185,32 +220,34 @@ void ACheckpoint_Generic::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, F
 	// WeatherBkg
 	if (WeatherBkgComponent)
 	{
-		WeatherBkgComponent->SetCustomPrimitiveDataVector4(0,FLinearColor::FromSRGBColor(FColor::FromHex(NewRaceSetup.color)));
+		WeatherBkgComponent->SetCustomPrimitiveDataVector4(0, Lin(Style.WeatherBkg));
 		WeatherBkgComponent->SetCustomPrimitiveDataFloat(4,0.0625f);
 		WeatherBkgComponent->SetCustomPrimitiveDataFloat(5, 1.f);
+		UseRoundedBkg_CheckpointGeneric(WeatherBkgComponent);
+		WeatherBkgComponent->SetCustomPrimitiveDataFloat(6, Tpl.Globals.CornerRadius); // arrondi des coins (M_Plain)
 	}
 	
 	if (TempText)
 	{
-		TempText->SetTextRenderColor(FColor(0, 0, 0, 255));
+		TempText->SetTextRenderColor(Srgb(Style.WeatherText));
 	}
 	if (Weather1Text)
 	{
-		Weather1Text->SetTextRenderColor(FColor(0, 0, 0, 255));
+		Weather1Text->SetTextRenderColor(Srgb(Style.WeatherText));
 	}
 	if (Weather2Text)
 	{
-		Weather2Text->SetTextRenderColor(FColor(0, 0, 0, 255));
+		Weather2Text->SetTextRenderColor(Srgb(Style.WeatherText));
 	}
 	if (Weather3Text)
 	{
-		Weather3Text->SetTextRenderColor(FColor(0, 0, 0, 255));
+		Weather3Text->SetTextRenderColor(Srgb(Style.WeatherText));
 	}
 	
 	// Line2
 	if (Line2Component)
 	{
-		Line2Component->SetCustomPrimitiveDataVector4(0,FLinearColor::FromSRGBColor(FColor::FromHex(NewRaceSetup.color)));
+		Line2Component->SetCustomPrimitiveDataVector4(0, Lin(Style.Line2));
 		Line2Component->SetCustomPrimitiveDataFloat(4,0.0625f);
 		Line2Component->SetCustomPrimitiveDataFloat(5, 1.f);
 
@@ -240,7 +277,7 @@ void ACheckpoint_Generic::UpdateDayNight(bool bIsDay)
 	if (bIsDay)
 	{
 		FootComponent->SetScalarParameterValueOnMaterials("Illum", 0.5f);
-		MainPictoMID->SetVectorParameterValue(TEXT("Color"), FLinearColor::White);
+		MainPictoMID->SetVectorParameterValue(TEXT("Color"), MainPictoColor);
 		NameBkgComponent->SetScalarParameterValueOnMaterials("Illum", 0.0625f);
 		InfosBkgComponent->SetCustomPrimitiveDataFloat(4, 0.5f);
 		WeatherBkgComponent->SetCustomPrimitiveDataFloat(4, 0.5f);
@@ -249,7 +286,7 @@ void ACheckpoint_Generic::UpdateDayNight(bool bIsDay)
 	} else
 	{
 		FootComponent->SetScalarParameterValueOnMaterials("Illum", 0.025f);
-		MainPictoMID->SetVectorParameterValue(TEXT("Color"), FLinearColor::White);
+		MainPictoMID->SetVectorParameterValue(TEXT("Color"), MainPictoColor);
 		NameBkgComponent->SetScalarParameterValueOnMaterials("Illum", 0.0625f);
 		InfosBkgComponent->SetCustomPrimitiveDataFloat(4, 0.025f);
 		WeatherBkgComponent->SetCustomPrimitiveDataFloat(4, 0.025f);

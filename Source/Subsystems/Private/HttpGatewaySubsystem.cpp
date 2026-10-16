@@ -8,8 +8,12 @@
 #include "Async/Async.h"
 #include "SlateNotificationsBFL.h"
 #include "WorldAmbienceSubsystem.h"
+#include "TemplateSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
+#include "Dom/JsonObject.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
 
 /**
  * @brief Initialize HttpGateway module
@@ -978,6 +982,71 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
     }
     
     
+    /*** SEGMENTS COMMANDS ***/
+    // group=segments&action=set&idrace=XX&data=[{"label":"Segment Downhill","color":"#1E6BFF","kmIn":7.2,"kmOut":8.5,"show":1}]
+    // Remplace tous les segments de la course (liste vide : plus aucun segment).
+    if (Group.Equals(TEXT("segments"), ESearchCase::IgnoreCase) && Action.Equals(TEXT("set"), ESearchCase::IgnoreCase))
+    {
+        int64 idrace = INDEX_NONE;
+        if (const FString* IdStr = Request.QueryParams.Find(TEXT("idrace")))
+        {
+            idrace = FCString::Atoi64(**IdStr);
+        }
+        TArray<FPathSegment> Segments;
+        bool bParsed = false;
+        if (const FString* DataStr = Request.QueryParams.Find(TEXT("data")))
+        {
+            TArray<TSharedPtr<FJsonValue>> Items;
+            const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(*DataStr);
+            bParsed = FJsonSerializer::Deserialize(Reader, Items);
+            for (const TSharedPtr<FJsonValue>& Item : Items)
+            {
+                const TSharedPtr<FJsonObject>* Obj = nullptr;
+                if (!Item.IsValid() || !Item->TryGetObject(Obj) || !Obj) continue;
+                FPathSegment Segment;
+                (*Obj)->TryGetStringField(TEXT("label"), Segment.Label);
+                (*Obj)->TryGetStringField(TEXT("color"), Segment.Color);
+                double Km = 0.0;
+                if ((*Obj)->TryGetNumberField(TEXT("kmIn"), Km)) Segment.KmIn = Km;
+                if ((*Obj)->TryGetNumberField(TEXT("kmOut"), Km)) Segment.KmOut = Km;
+                double Show = 1.0;
+                bool bShow = true;
+                if ((*Obj)->TryGetBoolField(TEXT("show"), bShow)) Segment.bVisible = bShow;
+                else if ((*Obj)->TryGetNumberField(TEXT("show"), Show)) Segment.bVisible = Show != 0.0;
+                Segments.Add(MoveTemp(Segment));
+            }
+        }
+        if (bParsed && idrace != INDEX_NONE)
+        {
+            AsyncTask(ENamedThreads::GameThread, [this, idrace, Segments]()
+            {
+                OnSetPathSegments.Broadcast(idrace, Segments);
+            });
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("[HTTP] segments/set ignore : idrace ou data invalide"));
+        }
+    }
+
+    /*** TEMPLATE COMMANDS ***/
+    // group=template&action=reload&name=GTWS : relit le template sur la regie et l'applique aux elements affiches
+    if (Group.Equals(TEXT("template"), ESearchCase::IgnoreCase) && Action.Equals(TEXT("reload"), ESearchCase::IgnoreCase))
+    {
+        if (const FString* NameStr = Request.QueryParams.Find(TEXT("name")))
+        {
+            TWeakObjectPtr<UGameInstance> WeakGI(GetGameInstance());
+            const FString TemplateName = *NameStr;
+            AsyncTask(ENamedThreads::GameThread, [WeakGI, TemplateName]()
+            {
+                if (UTemplateSubsystem* Templates = WeakGI.IsValid() ? WeakGI->GetSubsystem<UTemplateSubsystem>() : nullptr)
+                {
+                    Templates->ReloadTemplate(TemplateName);
+                }
+            });
+        }
+    }
+
     /*** MONDE VIVANT COMMANDS ***/
     // group=monde&action=autoweather&show=1 : meteo reelle automatique
     // group=monde&action=citylights&show=1[&value=1.0] : lumieres des villes la nuit (et leur intensite)

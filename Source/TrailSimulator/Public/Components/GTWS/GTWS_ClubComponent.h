@@ -16,5 +16,12 @@ public:
     UGTWS_ClubComponent(const FObjectInitializer& ObjectInitializer);
     virtual void UpdateClub(const FRunnerStruct& RunnerDatas) override;
 
+    /** Couleurs du template : fond et texte du club. Sans effet si elles n'ont pas changé. */
+    void SetColors(const FLinearColor& BkgColor, const FColor& InTextColor);
+
+private:
+    FLinearColor AppliedBkgColor = FLinearColor::Transparent;
+    FColor TextColor = FColor::White;
+
 
 };

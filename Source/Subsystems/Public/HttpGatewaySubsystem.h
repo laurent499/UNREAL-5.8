@@ -6,6 +6,7 @@
 #include "HttpRouteHandle.h"
 #include "HttpServerRequest.h"
 #include "HttpResultCallback.h"
+#include "TrailSharedTypes.h"
 #include "HttpGatewaySubsystem.generated.h"
 
 // Race Commands
@@ -18,6 +19,7 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDisplayKms, int64 RaceID, bool bShow);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSelectRaceTeams, int64 RaceID);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeselectRaceTeams, int64 RaceID);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnRefreshRace, int64 RaceID);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSetPathSegments, int64 RaceID, const TArray<FPathSegment>& Segments);
 
 // Teams Commands
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnDisplayTeam, int64 TeamID, int64 RaceID, bool bShow);
@@ -98,6 +100,7 @@ public:
 	FOnSelectRaceTeams OnSelectRaceTeams;
 	FOnDeselectRaceTeams OnDeselectRaceTeams;
 	FOnRefreshRace OnRefreshRace;
+	FOnSetPathSegments OnSetPathSegments;
 	FOnDeleteRaceTeam OnDeleteRaceTeam;
 	FOnFlyForward OnFlyForward;
 	FOnFlyStop OnFlyStop;

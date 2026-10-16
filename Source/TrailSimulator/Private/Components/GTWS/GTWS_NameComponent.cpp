@@ -25,7 +25,7 @@ UGTWS_NameComponent::UGTWS_NameComponent(const FObjectInitializer& ObjectInitial
 void UGTWS_NameComponent::UpdateName(const FString& RunnerName)
 {
 	Super::UpdateName(RunnerName);
-	NameTextComponent->SetTextRenderColor(FColor::Black);
+	NameTextComponent->SetTextRenderColor(TextColor);
 	NameTextComponent->SetRelativeLocation(FVector(10.f, 0.0f, 60.0f));
 	NameTextComponent->SetHorizontalAlignment(EHTA_Left);
 	NameTextComponent->AddRelativeLocation(FVector(0.f, 100.f, 0.f));
@@ -82,4 +82,15 @@ void UGTWS_NameComponent::UpdateDayNight(bool bIsDay)
 		NameBkgComponent->SetCustomPrimitiveDataFloat(4, 0.0625f);
 		
 	}
+}
+
+void UGTWS_NameComponent::SetColors(const FLinearColor& BkgColor, const FColor& InTextColor)
+{
+	// Appel a chaque snapshot : on ne touche au rendu que si la couleur change
+	if (NameBkgComponent && !AppliedBkgColor.Equals(BkgColor))
+	{
+		NameBkgComponent->SetCustomPrimitiveDataVector4(0, BkgColor);
+		AppliedBkgColor = BkgColor;
+	}
+	TextColor = InTextColor;
 }

@@ -34,6 +34,21 @@ void UGTWS_ClubComponent::UpdateClub(const FRunnerStruct& RunnerDatas)
 	// Forcer le texte du club en blanc
 	if (ClubTextComponent)
 	{
-		ClubTextComponent->SetTextRenderColor(FColor::White);
+		ClubTextComponent->SetTextRenderColor(TextColor);
 	}
+}
+
+void UGTWS_ClubComponent::SetColors(const FLinearColor& BkgColor, const FColor& InTextColor)
+{
+	// Appel a chaque snapshot : on ne touche au rendu que si la couleur change
+	if (ClubBkgComponent && !AppliedBkgColor.Equals(BkgColor))
+	{
+		ClubBkgComponent->SetCustomPrimitiveDataVector4(0, BkgColor);
+		AppliedBkgColor = BkgColor;
+	}
+	if (ClubTextComponent && TextColor != InTextColor)
+	{
+		ClubTextComponent->SetTextRenderColor(InTextColor);
+	}
+	TextColor = InTextColor;
 }

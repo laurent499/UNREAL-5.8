@@ -6,6 +6,8 @@
 #include "JsonObjectConverter.h"
 #include "LoadingStatusSubsystem.h"
 #include "PathSubsystem.h"
+#include "TemplateSubsystem.h"
+#include "Engine/GameInstance.h"
 // #include "TrailHttpDebug.h"
 #include "TrailHttpDebug.h"
 #include "Engine/World.h"
@@ -102,7 +104,24 @@ void URaceSubsystem::PerformHttpRequestForRaceSetup(const int64 RaceID, const FS
 							URaceSubsystem* Self = WeakThis.Get();
 							Self->CurrentRaceSetup = MoveTemp(NewSnapshot);
 							Self->RaceSetupDatasMap.Add(RaceID, Self->CurrentRaceSetup);
-							Self->OnRaceSetupDatasGathered.Broadcast(NewSnapshot.raceId, Self->CurrentRaceSetup);
+
+							// Le template doit être connu avant l'apparition des checkpoints, POI et coureurs
+							const FRaceSetup Setup = Self->CurrentRaceSetup;
+							auto Broadcast = [WeakThis, Setup]()
+							{
+								if (WeakThis.IsValid())
+								{
+									WeakThis->OnRaceSetupDatasGathered.Broadcast(Setup.raceId, Setup);
+								}
+							};
+							if (UTemplateSubsystem* Templates = Self->GetGameInstance()->GetSubsystem<UTemplateSubsystem>())
+							{
+								Templates->RequestTemplate(Setup.templateName, MoveTemp(Broadcast));
+							}
+							else
+							{
+								Broadcast();
+							}
 						});
 				},
 				UE::Tasks::ETaskPriority::BackgroundNormal);

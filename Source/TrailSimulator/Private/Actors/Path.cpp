@@ -1,6 +1,7 @@
 // All Rights Reserved
 
 #include "TrailSimulator/Public/Actors/Path.h"
+#include "TemplateSubsystem.h"
 #include "BroadcastCaptureSubsystem.h"
 #include "CesiumFlyToComponent.h"
 #include "CesiumGeoreference.h"
@@ -18,6 +19,7 @@
 #include "Actors/Checkpoint.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
+#include "Components/PathSegmentsComponent.h"
 #include "Actors/Km.h"
 #include "Actors/Generic/Checkpoint_Generic.h"
 #include "Actors/GTWS/Checkpoint_GTWS.h"
@@ -31,6 +33,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
+#include "WorldAmbienceSubsystem.h"
+#include "HAL/IConsoleManager.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 
@@ -38,6 +42,37 @@ THIRD_PARTY_INCLUDES_START
 #include <CesiumGeospatial/Cartographic.h>
 #include <CesiumGeospatial/EarthGravitationalModel1996Grid.h>
 THIRD_PARTY_INCLUDES_END
+
+// -------------------- Glow jour / nuit
+/**
+ * Le materiau du trace compense deja l'exposition (EyeAdaptationInverse) : sans dosage, la ligne garde le meme
+ * eclat a l'ecran, noyee dans un decor clair le jour et eblouissante sur un decor noir la nuit.
+ * La valeur regie (glow, pulse glow) est multipliee par un gain qui glisse du jour a la nuit avec
+ * UWorldAmbienceSubsystem::Night. Reglable a chaud a la console.
+ */
+namespace PathGlow
+{
+	static TAutoConsoleVariable<int32> CVarAuto(TEXT("ts.Glow.Auto"), 1, TEXT("Dosage automatique jour/nuit du glow et du pulse du trace (0 = valeurs regie brutes)"));
+	static TAutoConsoleVariable<float> CVarGlowDay(TEXT("ts.Glow.DayGain"), 1.5f, TEXT("Multiplicateur du glow du trace en plein jour"));
+	static TAutoConsoleVariable<float> CVarGlowNight(TEXT("ts.Glow.NightGain"), 0.4f, TEXT("Multiplicateur du glow du trace en nuit noire"));
+	static TAutoConsoleVariable<float> CVarPulseDay(TEXT("ts.Glow.PulseDayGain"), 1.5f, TEXT("Multiplicateur du pulse glow en plein jour"));
+	static TAutoConsoleVariable<float> CVarPulseNight(TEXT("ts.Glow.PulseNightGain"), 0.4f, TEXT("Multiplicateur du pulse glow en nuit noire"));
+
+	/** Derniere valeur pulse glow demandee par la regie (-1 : defaut de MPC_Trail) */
+	static float PulseBase = -1.f;
+	/** Composants mis a jour par passage : etale la reecriture du trace sur plusieurs images */
+	constexpr int32 MeshesPerStep = 300;
+
+	static float Gain(const UWorld* World, bool bPulse)
+	{
+		if (CVarAuto.GetValueOnGameThread() == 0) return 1.f;
+		const UWorldAmbienceSubsystem* Ambience = World ? World->GetSubsystem<UWorldAmbienceSubsystem>() : nullptr;
+		const float Night = Ambience ? Ambience->GetState().Night : 0.f;
+		return bPulse
+			? FMath::Lerp(CVarPulseDay.GetValueOnGameThread(), CVarPulseNight.GetValueOnGameThread(), Night)
+			: FMath::Lerp(CVarGlowDay.GetValueOnGameThread(), CVarGlowNight.GetValueOnGameThread(), Night);
+	}
+}
 
 // -------------------- Geoid EGM96
 /**
@@ -338,6 +373,56 @@ void APath::BeginPlay()
 	CheckpointSubsystem->OnCheckpointsDatasGathered.AddDynamic(this, &APath::HandleCheckpointsDatasGathered);
 	
 	DynaPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+	// Glow jour / nuit : suit la nuit de UWorldAmbienceSubsystem et reecrit le trace par paquets quand le gain bouge de plus de 3 %
+	PathGlow::PulseBase = -1.f;
+	FTimerHandle GlowTimer;
+	GetWorldTimerManager().SetTimer(GlowTimer, FTimerDelegate::CreateWeakLambda(this,
+		[this, AppliedGlowGain = -1.f, AppliedGlowBase = -1.f, AppliedPulseGain = -1.f, Cursor = MAX_int32]() mutable
+		{
+			const int32 Total = PathSplineMeshes.Num() + SlopeSplineMeshes.Num();
+			if (Total == 0 || !SettingsSubsystem) return;
+
+			if (UMaterialParameterCollection* MPC = PulseMPC.LoadSynchronous())
+			{
+				if (UMaterialParameterCollectionInstance* Inst = GetWorld()->GetParameterCollectionInstance(MPC))
+				{
+					if (PathGlow::PulseBase < 0.f)
+					{
+						// Pulse glow enregistre (commun a toutes les courses), sinon defaut de MPC_Trail
+						const float Saved = SettingsSubsystem->GetTrailSettingsById(RaceId).PulseGlowValue;
+						const FCollectionScalarParameter* Param = MPC->GetScalarParameterByName(TEXT("PulseIntensity"));
+						PathGlow::PulseBase = Saved > 0.f ? Saved : (Param ? Param->DefaultValue : 0.f);
+						AppliedPulseGain = -1.f;
+					}
+					const float PulseGain = PathGlow::Gain(GetWorld(), true);
+					if (!FMath::IsNearlyEqual(PulseGain, AppliedPulseGain, 0.01f))
+					{
+						AppliedPulseGain = PulseGain;
+						Inst->SetScalarParameterValue(TEXT("PulseIntensity"), PathGlow::PulseBase * PulseGain);
+					}
+				}
+			}
+
+			// Glow commun a toutes les courses : un reglage regie fait sur une course est repris ici par les autres traces
+			const float Base = SettingsSubsystem->GetGlowById(RaceId);
+			if (Base < 0.f) return;
+			const float GlowGain = PathGlow::Gain(GetWorld(), false);
+			if (Cursor >= Total && (Base != AppliedGlowBase || FMath::Abs(GlowGain - AppliedGlowGain) > 0.03f * FMath::Max(AppliedGlowGain, 0.1f)))
+			{
+				AppliedGlowBase = Base;
+				AppliedGlowGain = GlowGain;
+				Cursor = 0;
+			}
+			if (Cursor >= Total) return;
+
+			const float Dosed = Base * AppliedGlowGain;
+			for (const int32 End = FMath::Min(Cursor + PathGlow::MeshesPerStep, Total); Cursor < End; ++Cursor)
+			{
+				USplineMeshComponent* SMC = Cursor < PathSplineMeshes.Num() ? PathSplineMeshes[Cursor].Get() : SlopeSplineMeshes[Cursor - PathSplineMeshes.Num()].Get();
+				if (SMC) SMC->SetCustomPrimitiveDataFloat(16, Dosed);
+			}
+		}), 0.1f, true);
 }
 
 /**
@@ -348,15 +433,16 @@ void APath::BeginPlay()
 
 TSubclassOf<AActor> APath::GetCheckpointClassForRace(const FRaceSetup& RaceSetup) const
 {
-	if (RaceSetup.templateName == TEXT("UTMB"))
+	const FString Base = UTemplateSubsystem::GetForRace(this, RaceSetup).Base;
+	if (Base == TEXT("UTMB"))
 	{
 		return ACheckpoint_UTMB::StaticClass();
 	}
-	if (RaceSetup.templateName == TEXT("GTWS"))
+	if (Base == TEXT("GTWS"))
 	{
 		return ACheckpoint_GTWS::StaticClass();
 	}
-	if (RaceSetup.templateName == TEXT("Nike"))
+	if (Base == TEXT("Nike"))
 	{
 		return ACheckpoint_Nike::StaticClass();
 	}
@@ -551,7 +637,7 @@ void APath::RebuildPathSplineMeshes(int64 RaceID)
 		SMC->SetCustomPrimitiveDataFloat(10, 0.f); // Slope value
 		SMC->SetCustomPrimitiveDataFloat(11, 0.f); // UseSlope = 0	M_MasterPC
 		SMC->SetCustomPrimitiveDataVector4(12, LinearColor); // Color (12->15)
-		SMC->SetCustomPrimitiveDataFloat(16, SettingsSubsystem->GetGlowById(RaceID));
+		SMC->SetCustomPrimitiveDataFloat(16, SettingsSubsystem->GetGlowById(RaceID) * PathGlow::Gain(GetWorld(), false));
 		SMC->SetHiddenInGame(true);
 	}
 	Root->SetMobility(EComponentMobility::Movable);
@@ -700,7 +786,7 @@ void APath::RebuildSlopeSplineMeshes(int64 RaceID)
 			SMC->SetCustomPrimitiveDataFloat(12, Junction[A]);	// valeur a la jonction de debut
 			SMC->SetCustomPrimitiveDataFloat(13, Junction[B]);	// valeur a la jonction de fin
 			SMC->SetCustomPrimitiveDataFloat(11, 1.f);	// UseSlope = 1
-			SMC->SetCustomPrimitiveDataFloat(16, SettingsSubsystem->GetGlowById(RaceID));
+			SMC->SetCustomPrimitiveDataFloat(16, SettingsSubsystem->GetGlowById(RaceID) * PathGlow::Gain(GetWorld(), false));
 			SMC->SetHiddenInGame(true);
 		}
 	}
@@ -715,15 +801,16 @@ void APath::RebuildSlopeSplineMeshes(int64 RaceID)
 
 TSubclassOf<AActor> APath::GetKmClassForRace(const FRaceSetup& RaceSetup) const
 {
-	if (RaceSetup.templateName == TEXT("UTMB"))
+	const FString Base = UTemplateSubsystem::GetForRace(this, RaceSetup).Base;
+	if (Base == TEXT("UTMB"))
 	{
 		return AKm_UTMB::StaticClass();
 	}
-	if (RaceSetup.templateName == TEXT("GTWS"))
+	if (Base == TEXT("GTWS"))
 	{
 		return AKm_GTWS::StaticClass();
 	}
-	if (RaceSetup.templateName == TEXT("Nike"))
+	if (Base == TEXT("Nike"))
 	{
 		return AKm_Nike::StaticClass();
 	}
@@ -870,7 +957,8 @@ void APath::UpdatePulseGlow(float NewPulseGlow) const
 	{
 		if (UMaterialParameterCollectionInstance* Inst = GetWorld()->GetParameterCollectionInstance(MPC))
 		{
-			Inst->SetScalarParameterValue(TEXT("PulseIntensity"), NewPulseGlow);
+			PathGlow::PulseBase = NewPulseGlow;
+			Inst->SetScalarParameterValue(TEXT("PulseIntensity"), NewPulseGlow * PathGlow::Gain(World, true));
 		}
 	}
 	
@@ -882,6 +970,7 @@ void APath::UpdatePulseGlow(float NewPulseGlow) const
  */
 void APath::ChangePathVisibility(bool bShowPath)
 {
+	bPathShown = bShowPath;
 	if (PathSplineMeshes.Num() > 0)
 	{
 		for (TObjectPtr<USplineMeshComponent> SplineMeshComponent : PathSplineMeshes)
@@ -891,6 +980,11 @@ void APath::ChangePathVisibility(bool bShowPath)
 	} else
 	{
 		UE_LOG(LogTemp, Error, TEXT("No path components have been set"));
+	}
+	// Les segments visibles (onglet Segments de la regie) restent affiches
+	if (UPathSegmentsComponent* SegmentsComp = FindComponentByClass<UPathSegmentsComponent>())
+	{
+		SegmentsComp->OnPathVisibilityChanged(bShowPath);
 	}
 }
 void APath::ChangeSlopeVisibility(bool bShowPath)
@@ -922,13 +1016,14 @@ void APath::ChangeKmsVisibility(bool bShowKm)
  */
 void APath::UpdatePathGlow(float NewGlow, int64 RaceID)
 {
+	const float Dosed = NewGlow * PathGlow::Gain(GetWorld(), false);
 	for (TObjectPtr<USplineMeshComponent> SplineMeshComponent : PathSplineMeshes)
 	{
-		SplineMeshComponent->SetCustomPrimitiveDataFloat(16, NewGlow);
+		SplineMeshComponent->SetCustomPrimitiveDataFloat(16, Dosed);
 	}
 	for (TObjectPtr<USplineMeshComponent> SplineMeshComponent : SlopeSplineMeshes)
 	{
-		SplineMeshComponent->SetCustomPrimitiveDataFloat(16, NewGlow);
+		SplineMeshComponent->SetCustomPrimitiveDataFloat(16, Dosed);
 	}
 	SettingsSubsystem->SetGlowById(NewGlow, RaceID);
 }

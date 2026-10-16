@@ -25,6 +25,7 @@ UCLASS()
 class TRAILSIMULATOR_API APath : public AActor, public IPathInterface, public IBroadcastInterface
 {
 	GENERATED_BODY()
+	friend class UPathSegmentsComponent;
 
 public:
 	APath();
@@ -189,6 +190,8 @@ private:
 	TArray<TObjectPtr<class USplineMeshComponent>> PathSplineMeshes;
 	UPROPERTY()
 	TArray<TObjectPtr<class USplineMeshComponent>> SlopeSplineMeshes;
+	/** Dernier etat demande par la regie pour le trace complet (bouton Path) */
+	bool bPathShown = false;
 	UPROPERTY()
 	TArray<FVector> LockedPoints;
 	

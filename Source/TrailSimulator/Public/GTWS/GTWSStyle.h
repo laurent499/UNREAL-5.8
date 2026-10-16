@@ -32,11 +32,12 @@ namespace GTWSStyle
 	 * @note Le plus large des deux textes impose la largeur, pour que les deux barres
 	 *       restent alignées quel que soit celui qui déborde.
 	 */
-	inline FStartAndEnd MakeSharedBkgBounds(float NameTextWidth, float ClubTextWidth)
+	inline FStartAndEnd MakeSharedBkgBounds(float NameTextWidth, float ClubTextWidth,
+		float LeftMargin = BkgLeftMargin, float RightMargin = BkgRightMargin)
 	{
 		const float Width = FMath::Max(NameTextWidth, ClubTextWidth);
 		return FStartAndEnd(
-			FVector(0.f, BkgLeftMargin, 0.f),
-			FVector(0.f, -Width - BkgRightMargin, 0.f));
+			FVector(0.f, LeftMargin, 0.f),
+			FVector(0.f, -Width - RightMargin, 0.f));
 	}
 }

@@ -2,6 +2,9 @@
 
 
 #include "TrailSimulator/Public/Actors/Poi.h"
+#include "TemplateSubsystem.h"
+#include "Actors/GTWS/Poi_GTWS.h"
+#include "Actors/Generic/Poi_Generic.h"
 
 #include "BroadcastCaptureSubsystem.h"
 #include "PoiSubsystem.h"
@@ -22,6 +25,9 @@
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
+
+// Vrai pendant que le template est reapplique (HandleTemplateChanged) : couleurs seulement
+static bool GReapplyingPoiTemplate = false;
 
 #define ECC_CesiumChannel ECC_GameTraceChannel1
 
@@ -397,6 +403,10 @@ void APoi::SetBroadcastCaptureEnabled_Implementation(bool bEnabled, class UTextu
 void APoi::BeginPlay()
 {
 	Super::BeginPlay();
+	if (UTemplateSubsystem* Templates = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTemplateSubsystem>() : nullptr)
+	{
+		TemplateChangedHandle = Templates->OnTemplateChanged.AddUObject(this, &APoi::HandleTemplateChanged);
+	}
 	// Les panneaux masquent les textes des runners (M_RawText compare sa profondeur a la CustomDepth)
 	TrailRawText::EnableOcclusion(this);
 	TrailRawText::ApplyToAllTexts(this);
@@ -441,6 +451,10 @@ void APoi::BeginPlay()
 
 void APoi::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if (UTemplateSubsystem* Templates = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTemplateSubsystem>() : nullptr)
+	{
+		Templates->OnTemplateChanged.Remove(TemplateChangedHandle);
+	}
 	GetWorldTimerManager().ClearTimer(LookAtTimerHandle);
 	Super::EndPlay(EndPlayReason);
 }
@@ -483,14 +497,26 @@ void APoi::UpdateGlobeAnchor()
  */
 void APoi::UpdatePoi(FRacePOI NewPoiDatas, FRaceSetup NewRaceSetup)
 {
+	TemplateRaceSetup = NewRaceSetup;
 	PoiDatas = MoveTemp(NewPoiDatas);
+	// Template relu sur la regie : la mise en page est deja faite. La recalculer maintenant
+	// la casserait (bornes mesurees avec l'acteur tourne vers la camera et mis a l'echelle) ;
+	// seules les couleurs, posees par les classes filles, sont a reappliquer.
+	if (GReapplyingPoiTemplate)
+	{
+		return;
+	}
 	TrailRawText::EnableOcclusion(this);
 	Georeference = ACesiumGeoreference::GetDefaultGeoreference(GetWorld());
 	GlobeAnchorComponent->SetGeoreference(Georeference);
 	
 	ScaleSubsystem->SetActorScaleMinMax(this, SettingsSubsystem->GetMinMaxById(NewRaceSetup.raceId));
 	// Main Picto
-	MainPicto->SetRelativeLocation(FVector(0.f, 0.f, 120.f));
+	// Nike detruit MainPicto dans son constructeur : nul apres un passage du GC
+	if (IsValid(MainPicto))
+	{
+		MainPicto->SetRelativeLocation(FVector(0.f, 0.f, 120.f));
+	}
 	
 	// Name
 	if (NameText)
@@ -754,6 +780,8 @@ void APoi::TogglePoiWeather(bool bShow)
 
 void APoi::UpdateDayNight(bool bIsDay)
 {
+	bHasDayNight = true;
+	bLastIsDay = bIsDay;
 	if (bIsDay)
 	{
 		NameText->SetCustomPrimitiveDataFloat(0, 0.125);
@@ -1002,4 +1030,29 @@ void APoi::CameraControl_Reset_Implementation()
 	SpringArmComponent->TargetArmLength = 500000.f;
 	SpringArmComponent->SetRelativeRotation(FRotator(15.f, 180.f, 0.f));
 	SpringArmComponent->SetRelativeLocation(FVector(0.f, 0.f, 500.f));
+}
+
+/**
+ * @brief Le template de la course a ete relu sur la regie : on le reapplique.
+ * @note Rejoue la mise a jour avec les dernieres donnees, puis l'etat jour/nuit qu'elle a ecrase.
+ */
+void APoi::HandleTemplateChanged(const FString& TemplateName)
+{
+	// Seules les bases GTWS et Generic lisent le template ; rejouer la mise a jour des
+	// autres (Nike detruit des composants dans son constructeur) n'apporte rien et peut planter
+	if (!IsA<APoi_GTWS>() && !IsA<APoi_Generic>())
+	{
+		return;
+	}
+	if (TemplateRaceSetup.raceId == 0 || TemplateRaceSetup.templateName != TemplateName)
+	{
+		return;
+	}
+	GReapplyingPoiTemplate = true;
+	UpdatePoi(PoiDatas, TemplateRaceSetup);
+	GReapplyingPoiTemplate = false;
+	if (bHasDayNight)
+	{
+		UpdateDayNight(bLastIsDay);
+	}
 }

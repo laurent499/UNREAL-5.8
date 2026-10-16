@@ -1,6 +1,7 @@
 ﻿// All Rights Reserved
 
 #include "RaceManager.h"
+#include "TemplateSubsystem.h"
 #include "CesiumFlyToComponent.h"
 #include "CesiumGeoreference.h"
 #include "CesiumOriginShiftComponent.h"
@@ -23,6 +24,7 @@
 #include "TeamGroupSubsystem.h"
 #include "WeatherSubsystem.h"
 #include "Actors/Path.h"
+#include "Components/PathSegmentsComponent.h"
 #include "TrailsSubsystem.h"
 #include "TrailSharedTypes.h"
 #include "WorldUtils.h"
@@ -260,6 +262,7 @@ void ARaceManager::BeginPlay()
 	HttpGatewaySubsystem->OnDisplayPath.AddUObject(this, &ARaceManager::RtTogglePath);
 	HttpGatewaySubsystem->OnDisplaySlope.AddUObject(this, &ARaceManager::RtToggleSlope);
 	HttpGatewaySubsystem->OnDisplayKms.AddUObject(this, &ARaceManager::RtToggleKms);
+	HttpGatewaySubsystem->OnSetPathSegments.AddUObject(this, &ARaceManager::RtSetPathSegments);
 	HttpGatewaySubsystem->OnDisplayPulse.AddUObject(this, &ARaceManager::RtTogglePulse);
 	HttpGatewaySubsystem->OnFlyForward.AddUObject(this, &ARaceManager::RtStartTravelFwd);
 	HttpGatewaySubsystem->OnFlyStop.AddUObject(this, &ARaceManager::RtStopTravel);
@@ -600,6 +603,7 @@ void ARaceManager::HandlePathDatasGathered(int64 RaceID, FRacePath RacePathDatas
 			Path->OnPathEndDrawing.AddDynamic(this, &ARaceManager::GetPoisDatas);
 			Path->OnGeoRefLocation.AddDynamic(this, &ARaceManager::SaveGeorefLocation);
 			Path->DrawPath(RaceID, RacePathDatas);
+			ApplyPathSegments(RaceID);
 			LoadingSubsystem->Complete(IdPath, FText::FromString(FString::Printf(TEXT("Path for Race %lld drawn"), RaceID)));
 			
 		} else
@@ -696,15 +700,16 @@ void ARaceManager::HandleUpdateRunners(int64 RaceID, FRunners RunnersDatas)
 
 TSubclassOf<AActor> ARaceManager::GetPoiClassForRace(const FRaceSetup& RaceSetup) const
 {
-	if (RaceSetup.templateName == TEXT("UTMB"))
+	const FString Base = UTemplateSubsystem::GetForRace(this, RaceSetup).Base;
+	if (Base == TEXT("UTMB"))
 	{
 		return APoi_UTMB::StaticClass();
 	}
-	if (RaceSetup.templateName == TEXT("GTWS"))
+	if (Base == TEXT("GTWS"))
 	{
 		return APoi_GTWS::StaticClass();
 	}
-	if (RaceSetup.templateName == TEXT("Nike"))
+	if (Base == TEXT("Nike"))
 	{
 		return APoi_Nike::StaticClass();
 	}
@@ -811,35 +816,22 @@ void ARaceManager::PrepareRunnerRuntimeData(FRunnerStruct& Runner, const FRaceSe
 		Runner.MinMax = ScaleSubsystem->GetGlobalConfig().ScaleMinMax;
 	}
 
-	if (RaceSetup.templateName == TEXT("UTMB"))
-	{
-		Runner.VDelta = 230.f;
-	}
-	else if (RaceSetup.templateName == TEXT("GTWS"))
-	{
-		Runner.VDelta = 200.f;
-	}
-	else if (RaceSetup.templateName == TEXT("Nike"))
-	{
-		Runner.VDelta = 250.f;
-	}
-	else
-	{
-		Runner.VDelta = 100.f;
-	}
+	// Hauteur du cartouche au-dessus du coureur, réglée dans le template
+	Runner.VDelta = UTemplateSubsystem::GetRunnerHeight(this, RaceSetup);
 }
 
 TSubclassOf<AActor> ARaceManager::GetRunnerClassForRace(const FRaceSetup& RaceSetup) const
 {
-	if (RaceSetup.templateName == TEXT("UTMB"))
+	const FString Base = UTemplateSubsystem::GetForRace(this, RaceSetup).Base;
+	if (Base == TEXT("UTMB"))
 	{
 		return ARunner_UTMB::StaticClass();
 	}
-	if (RaceSetup.templateName == TEXT("GTWS"))
+	if (Base == TEXT("GTWS"))
 	{
 		return ARunner_GTWS::StaticClass();
 	}
-	if (RaceSetup.templateName == TEXT("Nike"))
+	if (Base == TEXT("Nike"))
 	{
 		return ARunner_Nike::StaticClass();
 	}
@@ -1376,6 +1368,32 @@ void ARaceManager::EdTogglePath() const
 	};
 	TogglePath_Internal(TestRaceID, bAfficher);
 }
+/**
+ * @brief Segments du trace : recolore des portions du trace et affiche leur nom
+ * @param RaceID 
+ * @param Segments liste complete des segments de la course (remplace la precedente)
+ */
+void ARaceManager::RtSetPathSegments(int64 RaceID, const TArray<FPathSegment>& Segments)
+{
+	PathSegmentsByRace.Add(RaceID, Segments);
+	ApplyPathSegments(RaceID);
+}
+void ARaceManager::ApplyPathSegments(int64 RaceID)
+{
+	const TArray<FPathSegment>* Segments = PathSegmentsByRace.Find(RaceID);
+	const TObjectPtr<APath>* PathRef = RacePaths.Find(RaceID);
+	if (!Segments || !PathRef || !IsValid(PathRef->Get())) return; // appliques a la construction du trace
+	APath* Path = PathRef->Get();
+	UPathSegmentsComponent* SegmentsComp = Path->FindComponentByClass<UPathSegmentsComponent>();
+	if (!SegmentsComp)
+	{
+		SegmentsComp = NewObject<UPathSegmentsComponent>(Path, TEXT("PathSegments"));
+		Path->AddInstanceComponent(SegmentsComp);
+		SegmentsComp->RegisterComponent();
+	}
+	SegmentsComp->SetSegments(*Segments);
+}
+
 void ARaceManager::RtTogglePath(int64 RaceID, bool bShow) const
 {
 	if (!RefreshSubsystems())

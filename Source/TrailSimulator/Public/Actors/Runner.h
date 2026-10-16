@@ -71,7 +71,11 @@ public:
 	bool bShowClub = true;
 	UPROPERTY()
 	bool bShowFlag = true;
-	
+	/** Éléments présents dans le design du template ; combinés aux choix de l'opérateur ci-dessus. */
+	bool bTemplateShowPhoto = true;
+	bool bTemplateShowClub = true;
+	bool bTemplateShowFlag = true;
+
 	// Contrôles
 	void CameraControl_Fwd_Implementation(float Value) override;
 	void CameraControl_SaveFwd_Implementation() override;
@@ -170,7 +174,14 @@ protected:
 	bool bSnapToPath;
 	
 	FRunnerStruct RunnerDatas;
-	
+
+	// Template graphique : course gardée pour réappliquer le template quand la régie le modifie
+	FRaceSetup TemplateRaceSetup;
+	bool bHasDayNight = false;
+	bool bLastIsDay = true;
+	FDelegateHandle TemplateChangedHandle;
+	void HandleTemplateChanged(const FString& TemplateName);
+
 	//Components
 	// GobeAnchor
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta=(AllowPrivateAccess=true))

@@ -99,6 +99,15 @@ protected:
 	FRaceCheckpoint CheckpointDatas;
 	UPROPERTY()
 	FOpenWeatherResponse CheckpointWeatherDatas;
+
+	// Template graphique : course gardée pour réappliquer le template quand la régie le modifie
+	FRaceSetup TemplateRaceSetup;
+	/** Couleur du picto principal, reposée par UpdateDayNight. */
+	FLinearColor MainPictoColor = FLinearColor::White;
+	bool bHasDayNight = false;
+	bool bLastIsDay = true;
+	FDelegateHandle TemplateChangedHandle;
+	void HandleTemplateChanged(const FString& TemplateName);
 	
 	UPROPERTY()
 	TObjectPtr<class UCheckpointSubsystem> CheckpointSubsystem;

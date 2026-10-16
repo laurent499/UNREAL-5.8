@@ -2,6 +2,9 @@
 
 
 #include "TrailSimulator/Public/Actors/Checkpoint.h"
+#include "TemplateSubsystem.h"
+#include "Actors/GTWS/Checkpoint_GTWS.h"
+#include "Actors/Generic/Checkpoint_Generic.h"
 #include "CheckpointSubsystem.h"
 #include "CesiumFlyToComponent.h"
 #include "CesiumGeoreference.h"
@@ -21,6 +24,9 @@
 #include "OWLCaptureComponent.h"
 #include "Components/RawTextMaterial.h"
 #include "TrailInputModeInterface.h"
+
+// Vrai pendant que le template est reapplique (HandleTemplateChanged) : couleurs seulement
+static bool GReapplyingCheckpointTemplate = false;
 
 #define ECC_CesiumChannel ECC_GameTraceChannel1
 
@@ -416,6 +422,10 @@ void ACheckpoint::SetBroadcastCaptureEnabled_Implementation(bool bEnabled, class
 void ACheckpoint::BeginPlay()
 {
 	Super::BeginPlay();
+	if (UTemplateSubsystem* Templates = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTemplateSubsystem>() : nullptr)
+	{
+		TemplateChangedHandle = Templates->OnTemplateChanged.AddUObject(this, &ACheckpoint::HandleTemplateChanged);
+	}
 	// Les panneaux masquent les textes des runners (M_RawText compare sa profondeur a la CustomDepth)
 	TrailRawText::EnableOcclusion(this);
 	TrailRawText::ApplyToAllTexts(this);
@@ -473,6 +483,10 @@ void ACheckpoint::BeginPlay()
 
 void ACheckpoint::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if (UTemplateSubsystem* Templates = GetGameInstance() ? GetGameInstance()->GetSubsystem<UTemplateSubsystem>() : nullptr)
+	{
+		Templates->OnTemplateChanged.Remove(TemplateChangedHandle);
+	}
 	GetWorldTimerManager().ClearTimer(LookAtTimerHandle);
 	Super::EndPlay(EndPlayReason);
 }
@@ -516,7 +530,15 @@ void ACheckpoint::UpdateGlobeAnchor()
  */
 void ACheckpoint::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, FRaceSetup NewRaceSetup)
 {
+	TemplateRaceSetup = NewRaceSetup;
 	CheckpointDatas = MoveTemp(NewCheckpointDatas);
+	// Template relu sur la regie : la mise en page est deja faite. La recalculer maintenant
+	// la casserait (bornes mesurees avec l'acteur tourne vers la camera et mis a l'echelle) ;
+	// seules les couleurs, posees par les classes filles, sont a reappliquer.
+	if (GReapplyingCheckpointTemplate)
+	{
+		return;
+	}
 	Georeference = ACesiumGeoreference::GetDefaultGeoreference(GetWorld());
 	GlobeAnchorComponent->SetGeoreference(Georeference);
 	
@@ -527,7 +549,11 @@ void ACheckpoint::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, FRaceSetu
 	SpringArmComponent->SetRelativeRotation(CameraRot);
 		
 	// Main Picto
-	MainPicto->SetRelativeLocation(FVector(0.f, 0.f, 120.f));
+	// Nike detruit MainPicto dans son constructeur : nul apres un passage du GC
+	if (IsValid(MainPicto))
+	{
+		MainPicto->SetRelativeLocation(FVector(0.f, 0.f, 120.f));
+	}
 	
 	// Name
 	if (NameText)
@@ -892,6 +918,8 @@ void ACheckpoint::StopAnimation()
 
 void ACheckpoint::UpdateDayNight(bool bIsDay)
 {
+	bHasDayNight = true;
+	bLastIsDay = bIsDay;
 	if (bIsDay)
 	{
 		NameText->SetCustomPrimitiveDataFloat(0, 0.125);
@@ -1058,4 +1086,29 @@ void ACheckpoint::CameraControl_Reset_Implementation()
 	SpringArmComponent->TargetArmLength = 500000.f;
 	SpringArmComponent->SetRelativeRotation(FRotator(15.f, 180.f, 0.f));
 	SpringArmComponent->SetRelativeLocation(FVector(0.f, 0.f, 500.f));
+}
+
+/**
+ * @brief Le template de la course a ete relu sur la regie : on le reapplique.
+ * @note Rejoue la mise a jour avec les dernieres donnees, puis l'etat jour/nuit qu'elle a ecrase.
+ */
+void ACheckpoint::HandleTemplateChanged(const FString& TemplateName)
+{
+	// Seules les bases GTWS et Generic lisent le template ; rejouer la mise a jour des
+	// autres (Nike detruit des composants dans son constructeur) n'apporte rien et peut planter
+	if (!IsA<ACheckpoint_GTWS>() && !IsA<ACheckpoint_Generic>())
+	{
+		return;
+	}
+	if (TemplateRaceSetup.raceId == 0 || TemplateRaceSetup.templateName != TemplateName)
+	{
+		return;
+	}
+	GReapplyingCheckpointTemplate = true;
+	UpdateCheckpoint(CheckpointDatas, TemplateRaceSetup);
+	GReapplyingCheckpointTemplate = false;
+	if (bHasDayNight)
+	{
+		UpdateDayNight(bLastIsDay);
+	}
 }

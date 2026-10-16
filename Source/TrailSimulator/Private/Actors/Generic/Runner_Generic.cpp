@@ -2,6 +2,7 @@
 
 
 #include "Actors/Generic/Runner_Generic.h"
+#include "TemplateSubsystem.h"
 
 #include "RaceManager.h"
 #include "RaceSubsystem.h"
@@ -64,13 +65,18 @@ ARunner_Generic::ARunner_Generic()
 void ARunner_Generic::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 {	
 	Super::UpdateRunner(Runner, RaceSetup);
+
+	// Couleurs et marges lues dans le template de la course (régie, page Templates)
+	TOptional<FTrailTemplate> TemplateStorage;
+	const FTrailTemplateRunner& Style = UTemplateSubsystem::ResolveForRace(this, RaceSetup, TemplateStorage).Runner;
+	auto Lin = [&RaceSetup](const FString& Value) { return FTrailTemplate::ToLinear(Value, RaceSetup.color); };
 	
 	// Foot
 	if (FootComponent)
 	{		
 		UMaterialInterface* CoreMat = FootComponent->GetMaterial(0);
 		UMaterialInstanceDynamic* MID = FootComponent->CreateAndSetMaterialInstanceDynamicFromMaterial(0, CoreMat);
-		FootComponent->SetColorParameterValueOnMaterials("BaseColor", FLinearColor::FromSRGBColor(FColor::FromHex(RaceSetup.color)));
+		FootComponent->SetColorParameterValueOnMaterials("BaseColor", Lin(Style.Foot));
 	}
 	
 	if (NameComponent)
@@ -106,7 +112,7 @@ void ARunner_Generic::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 		if(!MID) return;
 		if (GetGameInstance())
 		{
-			MID->SetVectorParameterValue(TEXT("BaseColor"), FLinearColor::FromSRGBColor(FColor::FromHex("#98BF16ff")));
+			MID->SetVectorParameterValue(TEXT("BaseColor"), Lin(Style.Slash));
 		}
 	}
 }
@@ -116,7 +122,7 @@ void ARunner_Generic::ToggleFlag(bool bDisplay)
 	Super::ToggleFlag(bDisplay);
 	if (FlagComponent)
 	{
-		FlagComponent->ToggleFlag(bDisplay);
+		FlagComponent->ToggleFlag(IsFlagVisible());
 	}
 }
 
@@ -125,7 +131,7 @@ void ARunner_Generic::TogglePhoto(bool bDisplay)
 	Super::TogglePhoto(bDisplay);
 	if (PhotoComponent)
 	{
-		PhotoComponent->TogglePhoto(bDisplay);
+		PhotoComponent->TogglePhoto(IsPhotoVisible());
 	}
 }
 

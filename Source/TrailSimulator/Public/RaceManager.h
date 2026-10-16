@@ -147,6 +147,12 @@ public:
 	void RtToggleKms(int64 RaceID, bool bShow) const;
 	UFUNCTION(CallInEditor, Category="Race")
 	void EdToggleKms() const;
+
+	// Segments du trace (onglet Segments de la regie)
+	void RtSetPathSegments(int64 RaceID, const TArray<FPathSegment>& Segments);
+	void ApplyPathSegments(int64 RaceID);
+	/** Derniers segments recus par course : appliques aussi quand le trace est (re)construit apres coup */
+	TMap<int64, TArray<FPathSegment>> PathSegmentsByRace;
 	
 	UFUNCTION()
 	void TogglePulse_Internal(int64 RaceID, bool bDisplay);
