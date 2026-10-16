@@ -866,3 +866,23 @@ struct FRaceLoaded
 	FString RaceTemplate;
 	
 };
+
+// Segment mis en valeur sur le trace (onglet Segments de la regie)
+USTRUCT(BlueprintType)
+struct SHAREDTYPES_API FPathSegment
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	FString Label;
+	/** Couleur hexadecimale, ex. #1E6BFF */
+	UPROPERTY(EditAnywhere)
+	FString Color;
+	/** Debut et fin du segment, en km le long du trace (memes km que les bornes) */
+	UPROPERTY(EditAnywhere)
+	float KmIn = 0.f;
+	UPROPERTY(EditAnywhere)
+	float KmOut = 0.f;
+	UPROPERTY(EditAnywhere)
+	bool bVisible = true;
+};
