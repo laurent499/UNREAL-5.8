@@ -83,7 +83,16 @@ void USettingsSubsystem::CreateTrailSettingsById(int64 NewRaceID, const FSetting
 	FSettings* TmpSettings = TrailSettingsMap.Find(NewRaceID);
 	if (!TmpSettings)
 	{
-		TrailSettingsMap.Add(NewRaceID, NewTrailSettings);
+		FSettings Settings = NewTrailSettings;
+		// Glow, pulse glow et vitesse du pulse sont communs a toutes les courses : la nouvelle course reprend ceux deja regles
+		for (const TPair<int64, FSettings>& Pair : TrailSettingsMap)
+		{
+			Settings.GlowValue = Pair.Value.GlowValue;
+			Settings.PulseGlowValue = Pair.Value.PulseGlowValue;
+			Settings.PulseFrequency = Pair.Value.PulseFrequency;
+			break;
+		}
+		TrailSettingsMap.Add(NewRaceID, Settings);
 		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Settings for Race %lld saved"), NewRaceID)), EMessageType::Success);
 		Save();
 	} else
@@ -214,10 +223,13 @@ void USettingsSubsystem::SetGlowById(float NewGlowValue, int64 RaceID)
 		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("No Settings found for Race %lld"), RaceID)), EMessageType::Error);
 		return;
 	}
-	Tmp->GlowValue = NewGlowValue;
-	TrailSettingsMap.Add(RaceID, *Tmp);
+	// Valeur commune a toutes les courses : un seul reglage a faire
+	for (TPair<int64, FSettings>& Pair : TrailSettingsMap)
+	{
+		Pair.Value.GlowValue = NewGlowValue;
+	}
 	Save();
-	USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Glow for Race %lld saved"), RaceID)), EMessageType::Success);
+	USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Glow %.2f saved for all races"), NewGlowValue)), EMessageType::Success);
 }
 
 /**
@@ -249,9 +261,12 @@ void USettingsSubsystem::SetPulseFrequencyById(float NewPulseFrequency, int64 Ra
 		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("No Settings found for Race %lld"), RaceID)), EMessageType::Error);
 		return;
 	}
-	Tmp->PulseFrequency = NewPulseFrequency;
-	TrailSettingsMap.Add(RaceID, *Tmp);
-	USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Pulse for Race %lld saved"), RaceID)), EMessageType::Success);
+	// Valeur commune a toutes les courses : un seul reglage a faire
+	for (TPair<int64, FSettings>& Pair : TrailSettingsMap)
+	{
+		Pair.Value.PulseFrequency = NewPulseFrequency;
+	}
+	USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Pulse speed %.2f saved for all races"), NewPulseFrequency)), EMessageType::Success);
 	Save();
 }
 
@@ -285,9 +300,12 @@ void USettingsSubsystem::SetPulseGlowById(float NewPulseGlow, int64 RaceID)
 		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("No Settings found for Race %lld"), RaceID)), EMessageType::Error);
 		return;
 	}
-	Tmp->PulseGlowValue = NewPulseGlow;
-	TrailSettingsMap.Add(RaceID, *Tmp);
-	USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Pulse for Race %lld saved"), RaceID)), EMessageType::Success);
+	// Valeur commune a toutes les courses : un seul reglage a faire
+	for (TPair<int64, FSettings>& Pair : TrailSettingsMap)
+	{
+		Pair.Value.PulseGlowValue = NewPulseGlow;
+	}
+	USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Pulse glow %.2f saved for all races"), NewPulseGlow)), EMessageType::Success);
 	Save();
 }
 
