@@ -62,6 +62,8 @@ public:
 	
 	UFUNCTION()
 	void SetRaceSetup(int64 RaceID, FRaceSetup NewCurrentRaceSetup);
+	/** Checkpoint deplace sur le trace : ses nouvelles valeurs remplacent les anciennes */
+	void UpdateCheckpointDatas(int64 RaceID, const FRaceCheckpoint& NewDatas);
 
 	TObjectPtr<AActor> GetCheckpointActor(int64 RaceID, int64 CheckpointID);
 	UFUNCTION()

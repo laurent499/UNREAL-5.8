@@ -883,6 +883,11 @@ struct SHAREDTYPES_API FPathSegment
 	float KmIn = 0.f;
 	UPROPERTY(EditAnywhere)
 	float KmOut = 0.f;
+	/** Bornes posees sur un checkpoint (checkpointId, 0 = km libre) : elles suivent le point du trace du checkpoint */
+	UPROPERTY(EditAnywhere)
+	int64 CheckpointIn = 0;
+	UPROPERTY(EditAnywhere)
+	int64 CheckpointOut = 0;
 	UPROPERTY(EditAnywhere)
 	bool bVisible = true;
 };

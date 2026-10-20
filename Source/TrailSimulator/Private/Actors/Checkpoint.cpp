@@ -524,6 +524,29 @@ void ACheckpoint::UpdateGlobeAnchor()
 }
 
 /**
+ * @brief Checkpoint deplace sur le trace : on reecrit la distance et l'altitude affichees
+ * @note La mise en page n'est pas refaite (voir UpdateCheckpoint) ; la meteo suit les nouvelles coordonnees
+ */
+void ACheckpoint::RefreshCheckpointValues(const FRaceCheckpoint& NewCheckpointDatas)
+{
+	CheckpointDatas = NewCheckpointDatas;
+	if (IsValid(DistText))
+	{
+		FString S = FString::Printf(TEXT("%.1f km"), CheckpointDatas.distance);
+		S.ReplaceInline(TEXT("."), TEXT(","));
+		DistText->SetText(FText::FromString(S));
+	}
+	if (IsValid(AltText))
+	{
+		AltText->SetText(FText::FromString(FString::Printf(TEXT("%.0f m"), CheckpointDatas.altitude)));
+	}
+	if (bShowWeather)
+	{
+		FetchWeather();
+	}
+}
+
+/**
  * @brief Updating the Checkpoint visuals & datas
  * @param NewCheckpointDatas 
  * @param NewRaceSetup 

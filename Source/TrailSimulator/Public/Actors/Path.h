@@ -82,6 +82,13 @@ public:
 	// Checkpoints
 	UFUNCTION()
 	void HandleCheckpointsDatasGathered(int64 RaceID, FCheckpoints CheckpointsDatas);
+	/**
+	 * @brief Deplace un checkpoint sur un autre point du trace, sans recharger la course
+	 * @return false si le point ou le checkpoint est introuvable, ou si le point est deja pris
+	 */
+	bool MoveCheckpoint(int64 CheckpointID, int32 PathIndex, float Distance, float Elevation, float Altitude, const FString& Lat, const FString& Lon);
+	/** Cree l'acteur d'un checkpoint sur le trace, cache jusqu'a ce que la regie l'affiche */
+	AActor* SpawnCheckpointAt(int64 RaceID, const FRaceCheckpoint& Datas, const FVector& Location);
 	UPROPERTY()
 	int32 NbCheckpoints;
 	

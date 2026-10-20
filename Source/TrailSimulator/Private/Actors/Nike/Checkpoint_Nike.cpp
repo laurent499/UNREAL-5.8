@@ -118,6 +118,22 @@ ACheckpoint_Nike::ACheckpoint_Nike()
     } 
 }
 
+/**
+ * @brief Checkpoint deplace sur le trace : Nike affiche distance et D+ dans ses propres textes
+ */
+void ACheckpoint_Nike::RefreshCheckpointValues(const FRaceCheckpoint& NewCheckpointDatas)
+{
+    Super::RefreshCheckpointValues(NewCheckpointDatas);
+    if (Infos1WidgetComponent)
+    {
+        Infos1WidgetComponent->SetLabelText(FText::FromString(FString::Printf(TEXT("Distance %.1f km"), CheckpointDatas.distance)));
+    }
+    if (Infos2WidgetComponent)
+    {
+        Infos2WidgetComponent->SetLabelText(FText::FromString(FString::Printf(TEXT("Next Station %.0f+ feet"), CheckpointDatas.elevation)));
+    }
+}
+
 void ACheckpoint_Nike::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, FRaceSetup NewRaceSetup)
 {
     Super::UpdateCheckpoint(NewCheckpointDatas, NewRaceSetup);

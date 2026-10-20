@@ -20,6 +20,10 @@
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
 #include "Components/PathSegmentsComponent.h"
+#include "EnhancedPlayerInput.h"
+#include "InputAction.h"
+#include "GameFramework/Pawn.h"
+#include "GameFramework/PlayerController.h"
 #include "Actors/Km.h"
 #include "Actors/Generic/Checkpoint_Generic.h"
 #include "Actors/GTWS/Checkpoint_GTWS.h"
@@ -251,16 +255,251 @@ void BuildSimplifiedRailLocked(
 	Rail->UpdateSpline();
 }
 
-// -------------------- Runtime follow (Option A): tangent + WorldUp
-static void FollowRail(USceneComponent* Follower, USplineComponent* Rail, float DistanceCm)
+// -------------------- Survol : suivi anticipatif du rail
+/**
+ * La camera ne suit plus la tangente instantanee du rail (saccade dans les virages serres, tangage qui suit
+ * chaque pente) : elle vise un point moyen en avance sur le trace et s'eloigne quand le trace se replie
+ * (epingle, demi-tour) pour garder les deux branches dans le cadre. Le rail lui-meme est lisse (moyenne
+ * glissante), la vitesse ralentit dans les demi-tours, position et visee sont lissees depuis l'image precedente.
+ * Pendant le survol, le pad pilote la camera (le pawn ne recoit plus ses entrees) :
+ * gachettes = monter / descendre, LB / RB = zoom, X / B = vitesse, boutons speciaux = remise a zero.
+ * Les reglages ts.Fly.* sont envoyes par la regie (onglet Flyover, commun a toutes les courses).
+ */
+namespace PathFly
 {
-	if (!Follower || !Rail) return;
+	static TAutoConsoleVariable<float> CVarSpeed(TEXT("ts.Fly.SpeedMps"), 100.f, TEXT("Survol : vitesse le long du trace (m/s)"));
+	static TAutoConsoleVariable<float> CVarLead(TEXT("ts.Fly.LeadM"), 800.f, TEXT("Survol : distance d'anticipation sur le trace (m)"));
+	static TAutoConsoleVariable<float> CVarBack(TEXT("ts.Fly.BackM"), 130.f, TEXT("Survol : recul de la camera derriere le point suivi (m)"));
+	static TAutoConsoleVariable<float> CVarHeight(TEXT("ts.Fly.HeightM"), 120.f, TEXT("Survol : hauteur de la camera au-dessus du point suivi (m)"));
+	static TAutoConsoleVariable<float> CVarZoomOut(TEXT("ts.Fly.TightZoomOut"), 1.8f, TEXT("Survol : facteur de recul dans un demi-tour (1 = aucun)"));
+	static TAutoConsoleVariable<float> CVarTightSlow(TEXT("ts.Fly.TightSlow"), 0.7f, TEXT("Survol : facteur de vitesse dans un demi-tour (1 = aucun ralenti)"));
+	static TAutoConsoleVariable<float> CVarUTurnRatio(TEXT("ts.Fly.UTurnRatio"), 0.35f, TEXT("Survol : rapport corde/longueur considere comme un demi-tour complet"));
+	static TAutoConsoleVariable<float> CVarPosTau(TEXT("ts.Fly.PosSmoothSec"), 1.2f, TEXT("Survol : temps de lissage de la position (s)"));
+	static TAutoConsoleVariable<float> CVarRotTau(TEXT("ts.Fly.RotSmoothSec"), 1.0f, TEXT("Survol : temps de lissage de la visee (s)"));
+	static TAutoConsoleVariable<float> CVarRailSmooth(TEXT("ts.Fly.RailSmoothM"), 250.f, TEXT("Survol : lissage du rail (m, 0 = ancien rail simplifie). Pris en compte au prochain depart"));
+	static TAutoConsoleVariable<float> CVarPadHeight(TEXT("ts.Fly.PadHeightMps"), 80.f, TEXT("Survol : vitesse de montee / descente au pad (m/s)"));
+	static TAutoConsoleVariable<float> CVarPadZoom(TEXT("ts.Fly.PadZoomRate"), 0.8f, TEXT("Survol : vitesse du zoom au pad (facteur par seconde, logarithmique)"));
+	static TAutoConsoleVariable<float> CVarPadSpeedStep(TEXT("ts.Fly.PadSpeedStep"), 1.25f, TEXT("Survol : facteur de vitesse par appui sur X / B"));
 
-	const FVector Pos = Rail->GetLocationAtDistanceAlongSpline(DistanceCm, ESplineCoordinateSpace::World);
-	const FVector Fwd = Rail->GetDirectionAtDistanceAlongSpline(DistanceCm, ESplineCoordinateSpace::World);
-	const FRotator Rot = FRotationMatrix::MakeFromXZ(Fwd, FVector::UpVector).Rotator();
+	constexpr int32 AheadSamples = 4;
 
-	Follower->SetWorldLocationAndRotation(Pos, Rot);
+	/** Etat du survol en cours : une seule camera de survol est a l'antenne a la fois */
+	struct FState
+	{
+		float SpeedMult = 1.f;		// X / B
+		float ZoomMult = 1.f;		// LB / RB, multiplie recul et hauteur
+		float HeightM = 0.f;		// gachettes, ajoute a la hauteur
+		float Tight = 0.f;			// repli du trace, lisse (ralenti dans les demi-tours)
+		bool bSpeedUpHeld = false;
+		bool bSpeedDownHeld = false;
+	};
+	static FState State;
+
+	/** Part a rattraper cette image pour un lissage de constante Tau (independant de la cadence) */
+	static float Alpha(float DeltaTime, float Tau)
+	{
+		return (DeltaTime <= 0.f || Tau <= KINDA_SMALL_NUMBER) ? 1.f : 1.f - FMath::Exp(-DeltaTime / Tau);
+	}
+
+	static FInputActionValue ActionValue(const UEnhancedPlayerInput* Input, const TCHAR* Name)
+	{
+		static TMap<FString, TWeakObjectPtr<const UInputAction>> Actions;
+		TWeakObjectPtr<const UInputAction>* Found = Actions.Find(Name);
+		if (!Found)
+		{
+			const UInputAction* Loaded = LoadObject<UInputAction>(nullptr,
+				*FString::Printf(TEXT("/Game/LTVContent/Inputs/Actions/%s.%s"), Name, Name));
+			Found = &Actions.Add(FString(Name), TWeakObjectPtr<const UInputAction>(Loaded));
+		}
+		return Found->IsValid() ? Input->GetActionValue(Found->Get()) : FInputActionValue();
+	}
+
+	/** Memes actions que le pawn (IMC_Moves), lues directement : aucun binding a ajouter */
+	static void ReadPad(const UWorld* World, float DeltaTime)
+	{
+		const APlayerController* PC = World ? World->GetFirstPlayerController() : nullptr;
+		const UEnhancedPlayerInput* Input = PC ? Cast<UEnhancedPlayerInput>(PC->PlayerInput) : nullptr;
+		if (!Input) return;
+
+		// Gachettes : axe Z de IA_Moves, meme sens que le pawn
+		const float Height = CVarHeight.GetValueOnGameThread();
+		State.HeightM = FMath::Clamp(State.HeightM + ActionValue(Input, TEXT("IA_Moves")).Get<FVector>().Z * CVarPadHeight.GetValueOnGameThread() * DeltaTime,
+			-0.8f * Height, 20.f * FMath::Max(Height, 100.f));
+
+		// LB / RB : RB (+1) rapproche
+		State.ZoomMult = FMath::Clamp(State.ZoomMult * FMath::Exp(-ActionValue(Input, TEXT("IA_Zoom")).Get<float>() * CVarPadZoom.GetValueOnGameThread() * DeltaTime), 0.25f, 5.f);
+
+		// X / B : un cran par appui
+		const float Step = FMath::Max(1.01f, CVarPadSpeedStep.GetValueOnGameThread());
+		const bool bUp = ActionValue(Input, TEXT("IA_SpeedUp")).Get<bool>();
+		const bool bDown = ActionValue(Input, TEXT("IA_SpeedDown")).Get<bool>();
+		if (bUp && !State.bSpeedUpHeld) State.SpeedMult *= Step;
+		if (bDown && !State.bSpeedDownHeld) State.SpeedMult /= Step;
+		State.SpeedMult = FMath::Clamp(State.SpeedMult, 0.05f, 20.f);
+		State.bSpeedUpHeld = bUp;
+		State.bSpeedDownHeld = bDown;
+
+		if (ActionValue(Input, TEXT("IA_ResetZoom")).Get<bool>())
+		{
+			State.ZoomMult = 1.f;
+			State.HeightM = 0.f;
+		}
+		if (ActionValue(Input, TEXT("IA_ResetSpeed")).Get<bool>())
+		{
+			State.SpeedMult = 1.f;
+		}
+	}
+
+	static void ResetPad()
+	{
+		State = FState();
+	}
+
+	/**
+	 * Rail de camera : trace reechantillonne puis moyenne glissante gaussienne. Les virages serres
+	 * deviennent des courbes douces que la camera parcourt sans a-coup ; le cadrage vise le trace.
+	 * Les deux extremites restent sur le depart et l'arrivee.
+	 */
+	static void BuildSmoothRail(USplineComponent* Source, USplineComponent* Rail, float SmoothM)
+	{
+		const float Len = Source->GetSplineLength();
+		const float SigmaCm = SmoothM * 100.f;
+		const float StepCm = FMath::Max(2500.f, SigmaCm / 3.f);
+		const int32 Num = FMath::Max(2, FMath::CeilToInt(Len / StepCm) + 1);
+
+		TArray<FVector> Raw;
+		Raw.Reserve(Num);
+		for (int32 i = 0; i < Num; ++i)
+		{
+			Raw.Add(Source->GetLocationAtDistanceAlongSpline(Len * i / (Num - 1), ESplineCoordinateSpace::World));
+		}
+
+		const float StepReal = Len / (Num - 1);
+		const int32 Half = FMath::Max(1, FMath::CeilToInt(2.f * SigmaCm / FMath::Max(StepReal, 1.f)));
+		Rail->ClearSplinePoints(false);
+		for (int32 i = 0; i < Num; ++i)
+		{
+			FVector Sum = FVector::ZeroVector;
+			double Weight = 0.0;
+			if (i == 0 || i == Num - 1)
+			{
+				Sum = Raw[i];
+				Weight = 1.0;
+			}
+			else
+			{
+				for (int32 k = FMath::Max(0, i - Half); k <= FMath::Min(Num - 1, i + Half); ++k)
+				{
+					const double D = (k - i) * StepReal / SigmaCm;
+					const double W = FMath::Exp(-0.5 * D * D);
+					Sum += Raw[k] * W;
+					Weight += W;
+				}
+			}
+			Rail->AddSplinePoint(Sum / Weight, ESplineCoordinateSpace::World, false);
+			Rail->SetSplinePointType(i, ESplinePointType::Curve, false);
+		}
+		Rail->SetClosedLoop(false, false);
+		Rail->UpdateSpline();
+	}
+
+	/** Rail lisse (ts.Fly.RailSmoothM > 0) ou ancien rail simplifie qui garde les checkpoints */
+	static void BuildRail(USplineComponent* Source, USplineComponent* Rail, float ToleranceMeters,
+		const TArray<FVector>& LockedPoints, float SampleStepMeters)
+	{
+		if (!Source || !Rail || Source->GetNumberOfSplinePoints() < 2) return;
+		const float SmoothM = CVarRailSmooth.GetValueOnGameThread();
+		if (SmoothM > 0.f)
+		{
+			BuildSmoothRail(Source, Rail, SmoothM);
+		}
+		else
+		{
+			BuildSimplifiedRailLocked(Source, Rail, ToleranceMeters, LockedPoints, SampleStepMeters);
+		}
+	}
+
+	/** Pendant le survol le pad pilote la camera : le pawn ne doit plus bouger en coulisse */
+	static void SetPawnInput(UWorld* World, bool bEnabled)
+	{
+		APlayerController* PC = World ? World->GetFirstPlayerController() : nullptr;
+		APawn* Pawn = PC ? PC->GetPawn() : nullptr;
+		if (!Pawn) return;
+		if (bEnabled) Pawn->EnableInput(PC);
+		else Pawn->DisableInput(PC);
+	}
+}
+
+/**
+ * @param Direction +1 en avant, -1 en arriere
+ * @param DeltaTime 0 : place la camera sans lissage (depart, arret)
+ * @return Repli du trace devant la camera : 0 en ligne droite, 1 dans un demi-tour
+ */
+static float FollowRail(USceneComponent* Arm, USceneComponent* Camera, USplineComponent* Rail,
+	float DistanceCm, float Direction, float DeltaTime)
+{
+	if (!Arm || !Camera || !Rail) return 0.f;
+
+	const float Len = Rail->GetSplineLength();
+	const float LeadCm = FMath::Max(1000.f, PathFly::CVarLead.GetValueOnGameThread() * 100.f);
+	auto At = [&](float Offset)
+	{
+		return Rail->GetLocationAtDistanceAlongSpline(FMath::Clamp(DistanceCm + Direction * Offset, 0.f, Len), ESplineCoordinateSpace::World);
+	};
+	auto Flat = [](const FVector& V) { return FVector(V.X, V.Y, 0.f); };
+
+	// Fenetre du trace : un peu derriere, le point suivi, puis l'avance
+	const FVector Pivot = At(0.f);
+	const FVector Behind = At(-0.5f * LeadCm);
+	FVector Ahead = FVector::ZeroVector;
+	FVector End = Pivot;
+	for (int32 i = 1; i <= PathFly::AheadSamples; ++i)
+	{
+		End = At(LeadCm * i / PathFly::AheadSamples);
+		Ahead += End;
+	}
+	Ahead /= PathFly::AheadSamples;
+	const FVector Window = (Behind + Pivot + Ahead * PathFly::AheadSamples) / (PathFly::AheadSamples + 2);
+
+	// Repli du trace sur la fenetre : 0 en ligne droite, 1 dans un demi-tour
+	const float Arc = FMath::Abs(FMath::Clamp(DistanceCm + Direction * LeadCm, 0.f, Len) - FMath::Clamp(DistanceCm - Direction * 0.5f * LeadCm, 0.f, Len));
+	const float Straightness = Arc > 100.f ? FVector::Dist(Flat(Behind), Flat(End)) / Arc : 1.f;
+	const float UTurn = FMath::Clamp(PathFly::CVarUTurnRatio.GetValueOnGameThread(), 0.f, 0.95f);
+	const float Tight = FMath::Clamp((1.f - Straightness) / (1.f - UTurn), 0.f, 1.f);
+
+	// Visee : point moyen en avance, glisse vers le centre du virage quand il se replie
+	const FVector Aim = FMath::Lerp(Ahead, Window, Tight);
+	FVector Heading = Flat(Aim - Pivot);
+	if (Heading.Size() < 5000.f)
+	{
+		// Fin du rail ou visee trop proche : tangente du rail
+		Heading += Flat(Rail->GetDirectionAtDistanceAlongSpline(FMath::Clamp(DistanceCm, 0.f, Len), ESplineCoordinateSpace::World)) * Direction * 5000.f;
+	}
+	Heading = Heading.GetSafeNormal();
+	if (Heading.IsNearlyZero())
+	{
+		Heading = Flat(Camera->GetForwardVector()).GetSafeNormal();
+	}
+
+	// Recul et hauteur : reglages regie, agrandis dans les demi-tours, puis zoom et hauteur du pad
+	const float Zoom = FMath::Lerp(1.f, FMath::Max(1.f, PathFly::CVarZoomOut.GetValueOnGameThread()), Tight) * PathFly::State.ZoomMult;
+	const float BackM = PathFly::CVarBack.GetValueOnGameThread() * Zoom;
+	const float HeightM = PathFly::CVarHeight.GetValueOnGameThread() * Zoom + PathFly::State.HeightM;
+	const FVector DesiredOffset = (-Heading * BackM + FVector::UpVector * HeightM) * 100.f;
+
+	// Lissage depuis l'image precedente : decalage camera / point suivi, puis visee
+	const bool bSnap = DeltaTime <= 0.f;
+	const FVector PrevOffset = Camera->GetComponentLocation() - Arm->GetComponentLocation();
+	const FVector Offset = bSnap ? DesiredOffset : FMath::Lerp(PrevOffset, DesiredOffset, PathFly::Alpha(DeltaTime, PathFly::CVarPosTau.GetValueOnGameThread()));
+	const FVector CamPos = Pivot + Offset;
+
+	const FQuat DesiredRot = FRotationMatrix::MakeFromXZ(Aim - CamPos, FVector::UpVector).ToQuat();
+	FRotator CamRot = (bSnap ? DesiredRot : FQuat::Slerp(Camera->GetComponentQuat(), DesiredRot, PathFly::Alpha(DeltaTime, PathFly::CVarRotTau.GetValueOnGameThread()))).Rotator();
+	CamRot.Roll = 0.f;
+
+	Arm->SetWorldLocationAndRotation(Pivot, FRotator(0.f, CamRot.Yaw, 0.f));
+	Camera->SetWorldLocationAndRotation(CamPos, CamRot);
+	return Tight;
 }
 
 APath::APath()
@@ -541,27 +780,10 @@ void APath::DrawPath(int64 RaceID, FRacePath RacePathDatas)
 			int32 ChkIndex = 0;
 			if (!RacePathDatas.Points[cpt].datas.name.IsEmpty())
 			{
-				UWorld* World = GetWorld();
-				if (!World) return;
-		
-				const FVector Location = UE;
+				if (!GetWorld()) return;
 				LockedPoints.Add(UE);
-				
-				const FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
-				const FVector Scale = FVector(40.0f);
-				
-				const FTransform SpawnTransform = FTransform(Rotation, Location, Scale);
-				const FRaceSetup& RaceSetup = RaceSubsystem->GetRaceSetupById(RaceID);
-				TObjectPtr<AActor> SpawnedActor = nullptr;
-				
-				const TSubclassOf<AActor> CheckpointClass = GetCheckpointClassForRace(RaceSetup); 
-				SpawnedActor = CheckpointSubsystem->SpawnCheckpointActor(RaceID, RacePathDatas.Points[cpt].datas.checkpointId, World, CheckpointClass, SpawnTransform);
-				
-				if (ICheckpointInterface* CheckpointInterface = Cast<ICheckpointInterface>(SpawnedActor))
+				if (SpawnCheckpointAt(RaceID, RacePathDatas.Points[cpt].datas, UE))
 				{
-					CheckpointInterface->UpdateCheckpoint(RacePathDatas.Points[cpt].datas, RaceSetup);
-					SpawnedActor->SetActorHiddenInGame(true);
-					SpawnedActor->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 					LoadingSubsystem->Update(IdCheckpoints, 1.f, FText::FromString(FString::Printf(TEXT("Checkpoint %s spawned"), *RacePathDatas.Points[cpt].datas.name)));
 				}
 				ChkIndex++;
@@ -574,8 +796,8 @@ void APath::DrawPath(int64 RaceID, FRacePath RacePathDatas)
 	SplinePath->UpdateSpline();
 	SlopePath->UpdateSpline();
 	
-	BuildSimplifiedRailLocked(SplinePath, TravelPath, ToleranceMeters, LockedPoints, SampleStepMeters);
-	FollowRail(SpringArmComponent, TravelPath, DistanceCm);
+	PathFly::BuildRail(SplinePath, TravelPath, ToleranceMeters, LockedPoints, SampleStepMeters);
+	FollowRail(SpringArmComponent, CameraComponent, TravelPath, DistanceCm, bForward ? 1.f : -1.f, 0.f);
 	BuildKms(RaceID);
 		
 	LoadingSubsystem->Complete(IdKm, FText::FromString(FString::Printf(TEXT("Kms %lld built"), RaceID)));
@@ -870,6 +1092,13 @@ void APath::StartTravelForward()
 		BroadCastSubsystem->RequestViewTarget(PC, this, 1.f);
 	}
 	bForward = true;
+	if (DistanceCm <= 0.f)
+	{
+		// Depart (pas une reprise apres pause) : rail reconstruit avec le lissage courant de la regie
+		PathFly::BuildRail(SplinePath, TravelPath, ToleranceMeters, LockedPoints, SampleStepMeters);
+		FollowRail(SpringArmComponent, CameraComponent, TravelPath, DistanceCm, 1.f, 0.f);
+	}
+	PathFly::SetPawnInput(GetWorld(), false);
 	SetActorTickEnabled(true);
 }
 void APath::StartTravelBackward()
@@ -883,7 +1112,10 @@ void APath::StartTravelBackward()
 		BroadCastSubsystem->RequestViewTarget(PC, this, 1.f);
 	}
 	bForward = false;
+	PathFly::BuildRail(SplinePath, TravelPath, ToleranceMeters, LockedPoints, SampleStepMeters);
 	DistanceCm = TravelPath->GetSplineLength();
+	FollowRail(SpringArmComponent, CameraComponent, TravelPath, DistanceCm, -1.f, 0.f);
+	PathFly::SetPawnInput(GetWorld(), false);
 	SetActorTickEnabled(true);
 }
 void APath::StopTravel()
@@ -897,7 +1129,9 @@ void APath::StopTravel()
 		}
 	}
 	DistanceCm = 0.f;
-	FollowRail(SpringArmComponent, TravelPath, DistanceCm);
+	PathFly::ResetPad();
+	PathFly::SetPawnInput(GetWorld(), true);
+	FollowRail(SpringArmComponent, CameraComponent, TravelPath, DistanceCm, 1.f, 0.f);
 	SetActorTickEnabled(false);
 }
 
@@ -1034,7 +1268,10 @@ void APath::Tick(float DeltaTime)
 
 	if (!TravelPath) return;
 
-	const float SpeedCmPerSec = SpeedMetersPerSec * 100.f;
+	// Vitesse regie (ts.Fly.SpeedMps, remplace SpeedMetersPerSec), crans du pad, ralenti dans les demi-tours
+	PathFly::ReadPad(GetWorld(), DeltaTime);
+	const float TightSpeed = FMath::Lerp(1.f, FMath::Clamp(PathFly::CVarTightSlow.GetValueOnGameThread(), 0.1f, 1.f), PathFly::State.Tight);
+	const float SpeedCmPerSec = FMath::Max(0.f, PathFly::CVarSpeed.GetValueOnGameThread()) * PathFly::State.SpeedMult * TightSpeed * 100.f;
 
 	if (bForward)
 	{
@@ -1049,7 +1286,8 @@ void APath::Tick(float DeltaTime)
 		DistanceCm = FMath::Clamp(DistanceCm, 0.f, MaxCm);
 	}
 
-	FollowRail(SpringArmComponent, TravelPath, DistanceCm);
+	const float Tight = FollowRail(SpringArmComponent, CameraComponent, TravelPath, DistanceCm, bForward ? 1.f : -1.f, DeltaTime);
+	PathFly::State.Tight = FMath::Lerp(PathFly::State.Tight, Tight, PathFly::Alpha(DeltaTime, 1.f));
 }
 
 // HELPERS
@@ -1075,6 +1313,115 @@ void APath::SetRacePath(const FRacePath& NewRacePath)
 void APath::HandleCheckpointsDatasGathered(int64 RaceID, FCheckpoints CheckpointsDatas)
 {
 	NbCheckpoints = CheckpointsDatas.Checkpoints.Num(); 
+}
+
+AActor* APath::SpawnCheckpointAt(int64 RaceID, const FRaceCheckpoint& Datas, const FVector& Location)
+{
+	UWorld* World = GetWorld();
+	if (!World) return nullptr;
+
+	const FTransform SpawnTransform = FTransform(FRotator(0.0f, 0.0f, 0.0f), Location, FVector(40.0f));
+	const FRaceSetup& RaceSetup = RaceSubsystem->GetRaceSetupById(RaceID);
+	const TSubclassOf<AActor> CheckpointClass = GetCheckpointClassForRace(RaceSetup);
+	AActor* SpawnedActor = CheckpointSubsystem->SpawnCheckpointActor(RaceID, Datas.checkpointId, World, CheckpointClass, SpawnTransform);
+
+	ICheckpointInterface* CheckpointInterface = Cast<ICheckpointInterface>(SpawnedActor);
+	if (!CheckpointInterface) return nullptr;
+	CheckpointInterface->UpdateCheckpoint(Datas, RaceSetup);
+	SpawnedActor->SetActorHiddenInGame(true);
+	SpawnedActor->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+	return SpawnedActor;
+}
+
+/** Remplace la valeur d'un parametre (lat=..., lon=...) dans l'URL meteo d'un checkpoint */
+static FString ReplaceUrlParam(const FString& Url, const FString& Key, const FString& Value)
+{
+	const FString Needle = Key + TEXT("=");
+	int32 Start = Url.Find(Needle);
+	if (Value.IsEmpty() || Start == INDEX_NONE) return Url;
+	Start += Needle.Len();
+	int32 End = Url.Find(TEXT("&"), ESearchCase::CaseSensitive, ESearchDir::FromStart, Start);
+	if (End == INDEX_NONE) End = Url.Len();
+	return Url.Left(Start) + Value + Url.Mid(End);
+}
+
+bool APath::MoveCheckpoint(int64 CheckpointID, int32 PathIndex, float Distance, float Elevation, float Altitude, const FString& Lat, const FString& Lon)
+{
+	if (!SplinePath || !CheckpointSubsystem || !RacePath.Points.IsValidIndex(PathIndex) || PathIndex >= SplinePath->GetNumberOfSplinePoints())
+	{
+		return false;
+	}
+	const int32 OldIndex = RacePath.Points.IndexOfByPredicate([CheckpointID](const FRacePathPoint& Point)
+	{
+		return !Point.datas.name.IsEmpty() && Point.datas.checkpointId == CheckpointID;
+	});
+	if (OldIndex == PathIndex) return true;
+	if (!RacePath.Points[PathIndex].datas.name.IsEmpty()) return false; // point deja pris par un autre checkpoint
+
+	// Checkpoint jamais rattache au trace : ses donnees viennent de la liste des checkpoints
+	FRaceCheckpoint Datas;
+	if (OldIndex != INDEX_NONE)
+	{
+		Datas = RacePath.Points[OldIndex].datas;
+	}
+	else if (const FCheckpoints* Chks = CheckpointSubsystem->GetCheckpointsByRaceId(RaceId))
+	{
+		if (const FRaceCheckpoint* Found = Chks->Checkpoints.FindByPredicate([CheckpointID](const FRaceCheckpoint& Chk) { return Chk.checkpointId == CheckpointID; }))
+		{
+			Datas = *Found;
+		}
+	}
+	if (Datas.name.IsEmpty()) return false;
+
+	Datas.distance = Distance;
+	Datas.elevation = Elevation;
+	Datas.altitude = Altitude;
+	Datas.weather = ReplaceUrlParam(ReplaceUrlParam(Datas.weather, TEXT("lat"), Lat), TEXT("lon"), Lon);
+
+	const FVector NewLocation = SplinePath->GetLocationAtSplinePoint(PathIndex, ESplineCoordinateSpace::World);
+	AActor* CheckpointActor = nullptr;
+	if (OldIndex != INDEX_NONE)
+	{
+		CheckpointActor = CheckpointSubsystem->GetCheckpointActor(RaceId, CheckpointID);
+		if (!CheckpointActor) return false;
+		CheckpointActor->SetActorLocation(NewLocation);
+
+		// Le rail du travelling passe par les checkpoints : il prend le nouveau point a son prochain depart
+		const FVector OldLocation = SplinePath->GetLocationAtSplinePoint(OldIndex, ESplineCoordinateSpace::World);
+		int32 Locked = INDEX_NONE;
+		double BestDistSq = TNumericLimits<double>::Max();
+		for (int32 i = 0; i < LockedPoints.Num(); ++i)
+		{
+			const double DistSq = FVector::DistSquared(LockedPoints[i], OldLocation);
+			if (DistSq < BestDistSq)
+			{
+				BestDistSq = DistSq;
+				Locked = i;
+			}
+		}
+		if (Locked != INDEX_NONE) LockedPoints[Locked] = NewLocation;
+		else LockedPoints.Add(NewLocation);
+		RacePath.Points[OldIndex].datas = FRaceCheckpoint();
+	}
+	else
+	{
+		CheckpointActor = SpawnCheckpointAt(RaceId, Datas, NewLocation);
+		if (!CheckpointActor) return false;
+		LockedPoints.Add(NewLocation);
+	}
+	RacePath.Points[PathIndex].datas = Datas;
+
+	if (ACheckpoint* Checkpoint = Cast<ACheckpoint>(CheckpointActor))
+	{
+		Checkpoint->RefreshCheckpointValues(Datas);
+	}
+	// Segments du trace dont une borne est posee sur ce checkpoint : ils le suivent
+	if (UPathSegmentsComponent* SegmentsComp = FindComponentByClass<UPathSegmentsComponent>())
+	{
+		SegmentsComp->Refresh();
+	}
+	CheckpointSubsystem->UpdateCheckpointDatas(RaceId, Datas);
+	return true;
 }
 
 void APath::SetBroadcastCaptureEnabled_Implementation(bool bEnabled, class UTextureRenderTarget2D* SharedRT)

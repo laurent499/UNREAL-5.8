@@ -8,6 +8,8 @@
 #include "TrailSharedTypes.h"
 #include "RaceManager.generated.h"
 
+struct FCheckpointMove;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeDayNight, bool, bIsDay);
 
 UCLASS()
@@ -271,6 +273,8 @@ public:
 	void RtStopAnimCheckpoint(int64 CheckpointID, int64 RaceID) const;
 	UFUNCTION(CallInEditor, Category="Checkpoints")
 	void EdStopAnimCheckpoint() const;
+	/** Deplace un checkpoint le long du trace, sans recharger la course */
+	void RtMoveCheckpoint(const FCheckpointMove& Move);
 	
 	// Groups
 	UFUNCTION() 

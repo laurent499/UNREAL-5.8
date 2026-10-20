@@ -57,6 +57,19 @@ DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnDisplayCheckpointWeather, int64 Checkp
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCheckpointTeleport, int64 CheckpointID, int64 RaceID);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCheckpointAnimation, int64 CheckpointID, int64 RaceID);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCheckpointStopAnimation, int64 CheckpointID, int64 RaceID);
+/** Deplacement d'un checkpoint sur un autre point du trace (regie, page Modifier la course) */
+struct FCheckpointMove
+{
+	int64 CheckpointID = INDEX_NONE;
+	int64 RaceID = INDEX_NONE;
+	int32 PathIndex = INDEX_NONE;	// index du point du trace, donc du point du spline
+	float Distance = 0.f;			// valeurs recalculees sur le trace par le serveur
+	float Elevation = 0.f;
+	float Altitude = 0.f;
+	FString Lat;					// coordonnees du point, pour recaler l'URL meteo
+	FString Lon;
+};
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnCheckpointMove, const FCheckpointMove& Move);
 
 // Pois Commands
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnDisplayPoi, int64 PoiID, int64 RaceID, bool bShow);
@@ -131,6 +144,7 @@ public:
 	FOnCheckpointTeleport OnCheckpointTeleport;
 	FOnCheckpointAnimation OnCheckpointAnimation;
 	FOnCheckpointStopAnimation OnCheckpointStopAnimation;
+	FOnCheckpointMove OnCheckpointMove;
 	
 	/*** POIS COMMANDS ***/
 	FOnDisplayPoi OnDisplayPoi;

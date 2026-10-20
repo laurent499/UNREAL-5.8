@@ -6,6 +6,7 @@
 #include "HttpPath.h"
 #include "HttpServerResponse.h"   // FHttpServerResponse
 #include "Async/Async.h"
+#include "HAL/IConsoleManager.h"
 #include "SlateNotificationsBFL.h"
 #include "WorldAmbienceSubsystem.h"
 #include "TemplateSubsystem.h"
@@ -306,6 +307,40 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
             AsyncTask(ENamedThreads::GameThread,[this, idrace]()
             {
                 OnFlyStop.Broadcast(idrace);
+            });
+        }
+        // FlyOver Settings : reglages communs a toutes les courses (onglet Flyover de la regie)
+        // -> variables console ts.Fly.* lues par APath a chaque image
+        if (Action.Equals(TEXT("flyover"), ESearchCase::IgnoreCase))
+        {
+            static const TPair<const TCHAR*, const TCHAR*> Params[] = {
+                { TEXT("speed"),   TEXT("ts.Fly.SpeedMps") },
+                { TEXT("lead"),    TEXT("ts.Fly.LeadM") },
+                { TEXT("back"),    TEXT("ts.Fly.BackM") },
+                { TEXT("height"),  TEXT("ts.Fly.HeightM") },
+                { TEXT("zoomout"), TEXT("ts.Fly.TightZoomOut") },
+                { TEXT("slow"),    TEXT("ts.Fly.TightSlow") },
+                { TEXT("smooth"),  TEXT("ts.Fly.PosSmoothSec") },
+                { TEXT("smooth"),  TEXT("ts.Fly.RotSmoothSec") },
+                { TEXT("rail"),    TEXT("ts.Fly.RailSmoothM") },
+            };
+            TArray<TPair<FString, float>> Values;
+            for (const TPair<const TCHAR*, const TCHAR*>& P : Params)
+            {
+                if (const FString* Str = Request.QueryParams.Find(P.Key))
+                {
+                    if (Str->IsNumeric()) Values.Emplace(P.Value, FCString::Atof(**Str));
+                }
+            }
+            AsyncTask(ENamedThreads::GameThread, [Values]()
+            {
+                for (const TPair<FString, float>& V : Values)
+                {
+                    if (IConsoleVariable* CVar = IConsoleManager::Get().FindConsoleVariable(*V.Key))
+                    {
+                        CVar->Set(V.Value, ECVF_SetByConsole);
+                    }
+                }
             });
         }
         // FlyOver Play
@@ -688,6 +723,47 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
                 OnCheckpointStopAnimation.Broadcast(idcheckpoint, idrace);
             });
         }
+        // Move Checkpoint along the path
+        if (Action.Equals(TEXT("move"), ESearchCase::IgnoreCase))
+        {
+            FCheckpointMove Move;
+            if (const FString* IdStr = Request.QueryParams.Find(TEXT("idcheckpoint")))
+            {
+                Move.CheckpointID = FCString::Atoi64(**IdStr);
+            }
+            if (const FString* idraceStr = Request.QueryParams.Find(TEXT("idrace")))
+            {
+                Move.RaceID = FCString::Atoi64(**idraceStr);
+            }
+            if (const FString* IndexStr = Request.QueryParams.Find(TEXT("index")))
+            {
+                Move.PathIndex = FCString::Atoi(**IndexStr);
+            }
+            if (const FString* DistanceStr = Request.QueryParams.Find(TEXT("distance")))
+            {
+                Move.Distance = FCString::Atof(**DistanceStr);
+            }
+            if (const FString* ElevationStr = Request.QueryParams.Find(TEXT("elevation")))
+            {
+                Move.Elevation = FCString::Atof(**ElevationStr);
+            }
+            if (const FString* AltitudeStr = Request.QueryParams.Find(TEXT("altitude")))
+            {
+                Move.Altitude = FCString::Atof(**AltitudeStr);
+            }
+            if (const FString* LatStr = Request.QueryParams.Find(TEXT("lat")))
+            {
+                Move.Lat = *LatStr;
+            }
+            if (const FString* LonStr = Request.QueryParams.Find(TEXT("lon")))
+            {
+                Move.Lon = *LonStr;
+            }
+            AsyncTask(ENamedThreads::GameThread,[this, Move]()
+            {
+                OnCheckpointMove.Broadcast(Move);
+            });
+        }
     }
     
     /*** POIS GROUPS ***/
@@ -983,7 +1059,8 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
     
     
     /*** SEGMENTS COMMANDS ***/
-    // group=segments&action=set&idrace=XX&data=[{"label":"Segment Downhill","color":"#1E6BFF","kmIn":7.2,"kmOut":8.5,"show":1}]
+    // group=segments&action=set&idrace=XX&data=[{"label":"Segment Downhill","color":"#1E6BFF","kmIn":7.2,"kmOut":8.5,"cpIn":0,"cpOut":0,"show":1}]
+    // cpIn / cpOut : checkpointId sur lequel la borne est posee (0 = km libre)
     // Remplace tous les segments de la course (liste vide : plus aucun segment).
     if (Group.Equals(TEXT("segments"), ESearchCase::IgnoreCase) && Action.Equals(TEXT("set"), ESearchCase::IgnoreCase))
     {
@@ -1009,6 +1086,9 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
                 double Km = 0.0;
                 if ((*Obj)->TryGetNumberField(TEXT("kmIn"), Km)) Segment.KmIn = Km;
                 if ((*Obj)->TryGetNumberField(TEXT("kmOut"), Km)) Segment.KmOut = Km;
+                double CheckpointId = 0.0;
+                if ((*Obj)->TryGetNumberField(TEXT("cpIn"), CheckpointId)) Segment.CheckpointIn = static_cast<int64>(CheckpointId);
+                if ((*Obj)->TryGetNumberField(TEXT("cpOut"), CheckpointId)) Segment.CheckpointOut = static_cast<int64>(CheckpointId);
                 double Show = 1.0;
                 bool bShow = true;
                 if ((*Obj)->TryGetBoolField(TEXT("show"), bShow)) Segment.bVisible = bShow;

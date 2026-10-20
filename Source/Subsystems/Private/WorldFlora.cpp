@@ -23,7 +23,9 @@ namespace WorldFlora
 	const TCHAR* Folders[] = { TEXT("/Game/LTVContent/Flora/Grass"), TEXT("/Game/LTVContent/Flora/Shrubs"), TEXT("/Game/LTVContent/Flora/Rocks") };
 	constexpr float CellSize = 1000.f;                    // 10 m
 	constexpr float MaxCameraHeightAboveGround = 8000.f;  // 80 m
-	constexpr int32 TracesPerFrame = 300;                 // budget de lancers de rayon par image
+	// Temps max par image pour la construction : 300 lancers par image laissaient passer jusqu'a 12 000 touffes
+	// d'herbe testees (trace, eau, altitude), soit 20 a 45 ms d'image (trace Insights du 14/10)
+	constexpr double BuildBudgetSeconds = 0.002;
 	// Nombre de tentatives par cellule de 10 m a densite 1 (touffes d'herbe, buissons, rochers)
 	constexpr float SamplesPerCell[] = { 40.f, 1.2f, 0.35f };
 	constexpr float TreelineM = 2300.f;
@@ -207,8 +209,8 @@ void AWorldFlora::StartBuild(const FVector& Center, float RadiusCm, float Densit
 
 void AWorldFlora::ContinueBuild()
 {
-	int32 Budget = WorldFlora::TracesPerFrame;
-	while (Budget > 0 && PendingCells.Num() > 0)
+	const double Deadline = FPlatformTime::Seconds() + WorldFlora::BuildBudgetSeconds;
+	while (PendingCells.Num() > 0 && FPlatformTime::Seconds() < Deadline)
 	{
 		const FPendingCell Cell = PendingCells.Pop(EAllowShrinking::No); // la liste est triee : on prend par la fin
 		for (int32 Kind = 0; Kind < static_cast<int32>(EKind::Count); ++Kind)
@@ -229,7 +231,6 @@ void AWorldFlora::ContinueBuild()
 			{
 				const FVector2D CellCenter2D((Cell.X + 0.5f) * WorldFlora::CellSize, (Cell.Y + 0.5f) * WorldFlora::CellSize);
 				if (FVector2D::Distance(CellCenter2D, FVector2D(BuildCenter)) > 6000.f) continue;
-				--Budget;
 				const FVector CellCenter((Cell.X + 0.5f) * WorldFlora::CellSize, (Cell.Y + 0.5f) * WorldFlora::CellSize, BuildCenter.Z);
 				if (!TraceGround(CellCenter, CellHit) || CellHit.ImpactNormal.Z < 0.5) continue;
 			}
@@ -253,7 +254,6 @@ void AWorldFlora::ContinueBuild()
 				}
 				else
 				{
-					--Budget;
 					if (!TraceGround(XY, Hit)) continue;
 				}
 				if (IsOnTrail(Hit.ImpactPoint)) continue;

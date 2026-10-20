@@ -88,3 +88,5 @@ Plugins/VisualStudioTools/
 *.lnk
 .vs/
 *.DotSettings.user
+
+graphify-out/

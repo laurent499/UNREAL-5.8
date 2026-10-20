@@ -159,6 +159,19 @@ AActor* UCheckpointSubsystem::SpawnCheckpointActor(
 	return SpawnedActor;
 }
 
+void UCheckpointSubsystem::UpdateCheckpointDatas(int64 RaceID, const FRaceCheckpoint& NewDatas)
+{
+	FCheckpoints* Chks = CheckpointsMap.Find(RaceID);
+	if (!Chks) return;
+	for (FRaceCheckpoint& Chk : Chks->Checkpoints)
+	{
+		if (Chk.checkpointId == NewDatas.checkpointId)
+		{
+			Chk = NewDatas;
+		}
+	}
+}
+
 bool UCheckpointSubsystem::DoesChkBelongsToRace(int64 ChkID, int64 RaceID)
 {
 	FCheckpoints* TmpChks = CheckpointsMap.Find(RaceID); 

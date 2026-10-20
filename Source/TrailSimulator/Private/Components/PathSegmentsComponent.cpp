@@ -57,12 +57,22 @@ void UPathSegmentsComponent::SetSegments(const TArray<FPathSegment>& InSegments)
 	Apply();
 }
 
+void UPathSegmentsComponent::Refresh()
+{
+	Apply();
+}
+
 void UPathSegmentsComponent::OnPathVisibilityChanged(bool bShowPath)
 {
-	// APath vient de tout masquer ou afficher : les segments visibles restent affiches
+	// APath vient de tout masquer ou afficher : les segments visibles restent affiches,
+	// le trace recouvert par un segment reste masque
 	for (USplineMeshComponent* Piece : HighlightedPieces)
 	{
 		if (Piece) Piece->SetHiddenInGame(false);
+	}
+	for (USplineMeshComponent* Piece : OverlappedPieces)
+	{
+		if (Piece) Piece->SetHiddenInGame(true);
 	}
 }
 
@@ -74,6 +84,12 @@ void UPathSegmentsComponent::RestoreTrace()
 {
 	APath* Path = Cast<APath>(GetOwner());
 	if (!Path) return;
+
+	for (USplineMeshComponent* Piece : OverlappedPieces)
+	{
+		if (IsValid(Piece)) Piece->SetHiddenInGame(!Path->bPathShown);
+	}
+	OverlappedPieces.Reset();
 
 	for (USplineMeshComponent* Piece : ExtraPieces)
 	{
@@ -95,14 +111,21 @@ void UPathSegmentsComponent::RestoreTrace()
 	if (HighlightedPieces.Num() > 0 && Path->RaceSubsystem)
 	{
 		const FLinearColor RaceColor = FLinearColor::FromSRGBColor(FColor::FromHex(Path->RaceSubsystem->GetRaceSetupById(Path->RaceId).color));
-		for (USplineMeshComponent* Piece : HighlightedPieces)
+		for (int32 i = 0; i < HighlightedPieces.Num(); ++i)
 		{
+			USplineMeshComponent* Piece = HighlightedPieces[i];
 			if (!Piece || !IsValid(Piece)) continue;
 			Piece->SetCustomPrimitiveDataVector4(12, RaceColor);
 			Piece->SetHiddenInGame(!Path->bPathShown);
+			if (HighlightedBaseScales.IsValidIndex(i))
+			{
+				Piece->SetStartScale(HighlightedBaseScales[i].Key, false);
+				Piece->SetEndScale(HighlightedBaseScales[i].Value, true);
+			}
 		}
 	}
 	HighlightedPieces.Reset();
+	HighlightedBaseScales.Reset();
 
 	for (UStaticMeshComponent* Plate : Plates)
 	{
@@ -190,10 +213,27 @@ void UPathSegmentsComponent::Apply()
 	struct FRange { float D0; float D1; FLinearColor Color; FString Label; };
 	TArray<FRange> Ranges;
 	const float TotalLen = Spline->GetSplineLength();
+	// Borne posee sur un checkpoint : distance du point du trace qui le porte (il a pu etre deplace),
+	// sinon le km recu de la regie
+	auto BoundCm = [Path, Spline](int64 CheckpointID, float Km)
+	{
+		if (CheckpointID != 0)
+		{
+			const int32 Index = Path->RacePath.Points.IndexOfByPredicate([CheckpointID](const FRacePathPoint& Point)
+			{
+				return !Point.datas.name.IsEmpty() && Point.datas.checkpointId == CheckpointID;
+			});
+			if (Index != INDEX_NONE && Index < Spline->GetNumberOfSplinePoints())
+			{
+				return Spline->GetDistanceAlongSplineAtSplinePoint(Index);
+			}
+		}
+		return Km * 100000.f;
+	};
 	for (const FPathSegment& Segment : Segments)
 	{
-		const float D0 = FMath::Clamp(Segment.KmIn * 100000.f, 0.f, TotalLen);
-		const float D1 = FMath::Clamp(Segment.KmOut * 100000.f, 0.f, TotalLen);
+		const float D0 = FMath::Clamp(BoundCm(Segment.CheckpointIn, Segment.KmIn), 0.f, TotalLen);
+		const float D1 = FMath::Clamp(BoundCm(Segment.CheckpointOut, Segment.KmOut), 0.f, TotalLen);
 		if (!Segment.bVisible || D1 - D0 < PathSegments::MinPieceCm) continue;
 		const FColor Color = FColor::FromHex(Segment.Color);
 		Ranges.Add({ D0, D1, FLinearColor::FromSRGBColor(Color), Segment.Label });
@@ -201,12 +241,18 @@ void UPathSegmentsComponent::Apply()
 
 	if (Ranges.Num() > 0)
 	{
+		const FLinearColor RaceColor = Path->RaceSubsystem
+			? FLinearColor::FromSRGBColor(FColor::FromHex(Path->RaceSubsystem->GetRaceSetupById(Path->RaceId).color))
+			: FLinearColor::White;
 		TArray<float> Cuts;
 		for (const FRange& Range : Ranges)
 		{
 			Cuts.Add(Range.D0);
 			Cuts.Add(Range.D1);
 		}
+		// Morceaux restes de la couleur de la course, avec leur portion du trace (cm le long de la spline)
+		struct FPlainPiece { USplineMeshComponent* Piece; float D0; float D1; };
+		TArray<FPlainPiece> PlainPieces;
 
 		for (int32 i = 0; i < NumOriginal; ++i)
 		{
@@ -234,7 +280,11 @@ void UPathSegmentsComponent::Apply()
 				{
 					if (Mid >= Range.D0 && Mid <= Range.D1) Match = &Range; // le dernier segment l'emporte
 				}
-				if (!bSplit && !Match) break; // morceau entier hors segment : on n'y touche pas
+				if (!bSplit && !Match)
+				{
+					PlainPieces.Add({ Original, D0, D1 });
+					break; // morceau entier hors segment : on n'y touche pas
+				}
 
 				USplineMeshComponent* Piece = p == 0 ? Original : CreatePiece(Original);
 				if (!Piece) continue;
@@ -252,9 +302,87 @@ void UPathSegmentsComponent::Apply()
 				}
 				else
 				{
+					// Une copie faite par CreatePiece herite de la couleur du morceau d'origine,
+					// deja recolore s'il est dans le segment : on lui remet la couleur de la course
+					Piece->SetCustomPrimitiveDataVector4(12, RaceColor);
 					Piece->SetHiddenInGame(!Path->bPathShown);
+					PlainPieces.Add({ Piece, Bounds[p], Bounds[p + 1] });
 				}
 			}
+		}
+
+		// Trace qui repasse au meme endroit (aller-retour) : les morceaux de l'autre passage qui
+		// recouvrent un segment visible sont masques, sinon les deux traces se chevauchent et clignotent
+		if (OverlapRadius > 0.f)
+		{
+			constexpr float StepCm = 500.f;
+			auto CellOf = [this](const FVector& P)
+			{
+				return FIntVector(FMath::FloorToInt32(P.X / OverlapRadius), FMath::FloorToInt32(P.Y / OverlapRadius), FMath::FloorToInt32(P.Z / OverlapRadius));
+			};
+			// Points des segments tous les 5 m, ranges par cases de la taille du rayon
+			TMap<FIntVector, TArray<FVector>> Grid;
+			for (const FRange& Range : Ranges)
+			{
+				for (float D = Range.D0; D <= Range.D1; D += StepCm)
+				{
+					const FVector P = Spline->GetLocationAtDistanceAlongSpline(D, ESplineCoordinateSpace::World);
+					Grid.FindOrAdd(CellOf(P)).Add(P);
+				}
+			}
+			const float RadiusSq = FMath::Square(OverlapRadius);
+			auto IsCovered = [&Grid, &CellOf, RadiusSq](const FVector& P)
+			{
+				const FIntVector Cell = CellOf(P);
+				for (int32 X = -1; X <= 1; ++X)
+				for (int32 Y = -1; Y <= 1; ++Y)
+				for (int32 Z = -1; Z <= 1; ++Z)
+				{
+					if (const TArray<FVector>* Samples = Grid.Find(Cell + FIntVector(X, Y, Z)))
+					{
+						for (const FVector& S : *Samples)
+						{
+							if (FVector::DistSquared(S, P) <= RadiusSq) return true;
+						}
+					}
+				}
+				return false;
+			};
+			for (const FPlainPiece& Plain : PlainPieces)
+			{
+				// Trace juste avant ou apres un segment (meme passage) : il le prolonge, on le garde
+				bool bAdjacent = false;
+				for (const FRange& Range : Ranges)
+				{
+					if (Plain.D1 > Range.D0 - 2.f * OverlapRadius && Plain.D0 < Range.D1 + 2.f * OverlapRadius) bAdjacent = true;
+				}
+				if (bAdjacent) continue;
+
+				// Masque seulement si tout le morceau est sur le segment : pas de trou la ou les passages se separent
+				const int32 NumSamples = FMath::Max(2, FMath::CeilToInt((Plain.D1 - Plain.D0) / StepCm) + 1);
+				bool bCovered = true;
+				for (int32 s = 0; s < NumSamples && bCovered; ++s)
+				{
+					const float D = FMath::Lerp(Plain.D0, Plain.D1, float(s) / float(NumSamples - 1));
+					bCovered = IsCovered(Spline->GetLocationAtDistanceAlongSpline(D, ESplineCoordinateSpace::World));
+				}
+				if (bCovered)
+				{
+					Plain.Piece->SetHiddenInGame(true);
+					OverlappedPieces.Add(Plain.Piece);
+				}
+			}
+		}
+
+		// Trace epaissi dans les segments. Apres la boucle de coupure : CreatePiece copie
+		// l'echelle du morceau d'origine, qui doit encore etre l'echelle normale
+		for (USplineMeshComponent* Piece : HighlightedPieces)
+		{
+			const FVector2D Start = Piece->GetStartScale();
+			const FVector2D End = Piece->GetEndScale();
+			HighlightedBaseScales.Add({ Start, End });
+			Piece->SetStartScale(Start * HighlightThickness, false);
+			Piece->SetEndScale(End * HighlightThickness, true);
 		}
 
 		// Noms au-dessus du milieu de chaque segment

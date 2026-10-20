@@ -4,9 +4,13 @@ rem pour piloter la meteo depuis RemoteControl\Meteo.html (port 30010).
 rem -StartSRT demarre le flux SRT OWL (destination : SRTStreamURL du RaceManager, ou -SRTURL=srt://hote:port).
 rem -BroadcastResY=720 : flux en 1280x720 (24,6 i/s contre 23,3 en 1080p, mesure du 2026-10-09).
 rem -SRTAudio ajoute la piste audio (sortie audio Windows stereo obligatoire, sinon audio coupe).
+rem -DisablePython : l'executable de l'editeur charge Python meme en jeu, et son ramasse-miettes cale le jeu
+rem 30 a 45 ms toutes les 60 s (traces Insights des 14 et 16/10). Le jeu ne s'en sert pas.
+rem -ini:Engine:... : ramasse-miettes toutes les 5 min au lieu de toutes les 60 s (un pic de ~80 ms a chaque fois).
+rem Le mode incremental (essai du 16/10) etalait le travail mais donnait des micro-saccades en continu.
 rem Les arguments passes au .bat sont ajoutes a la ligne de commande (ex. : Lancer_Standalone.bat -SRTURL=srt://127.0.0.1:7029).
 set UE="C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\Win64\UnrealEditor.exe"
 set PROJ="%~dp0..\TrailSimulator.uproject"
-start "" %UE% %PROJ% -game -windowed -resx=1280 -resy=720 -BroadcastResY=720 -RCWebControlEnable -StartSRT -SRTAudio -log %*
+start "" %UE% %PROJ% -game -windowed -resx=1280 -resy=720 -BroadcastResY=720 -RCWebControlEnable -DisablePython -ini:Engine:[ConsoleVariables]:gc.TimeBetweenPurgingPendingKillObjects=300 -StartSRT -SRTAudio -log %*
 rem La page est aussi servie par Unreal : http://<IP de ce PC>:30010/meteo
 timeout /t 20 /nobreak >nul

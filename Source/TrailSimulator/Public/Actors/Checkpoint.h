@@ -38,6 +38,8 @@ public:
 	void UpdateZAnchor(float NewZ);
 
 	virtual void UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, FRaceSetup NewRaceSetup) override;
+	/** Checkpoint deplace sur le trace : nouvelles distance et altitude, sans refaire la mise en page */
+	virtual void RefreshCheckpointValues(const FRaceCheckpoint& NewCheckpointDatas);
 	UFUNCTION()
 	FString CapitalizeFirst(const FString& In);
 	UFUNCTION()

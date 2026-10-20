@@ -15,6 +15,7 @@ public:
     ACheckpoint_Nike();
     
     virtual void UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, FRaceSetup NewRaceSetup) override;
+    virtual void RefreshCheckpointValues(const FRaceCheckpoint& NewCheckpointDatas) override;
     
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TObjectPtr<class UTrailTextWidgetComponent> NameWidgetComponent;

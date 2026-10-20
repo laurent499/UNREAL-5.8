@@ -293,6 +293,7 @@ void ARaceManager::BeginPlay()
 	HttpGatewaySubsystem->OnCheckpointTeleport.AddUObject(this, &ARaceManager::RtTeleportToCheckpoint);
 	HttpGatewaySubsystem->OnCheckpointAnimation.AddUObject(this, &ARaceManager::RtAnimCheckpoint);
 	HttpGatewaySubsystem->OnCheckpointStopAnimation.AddUObject(this, &ARaceManager::RtStopAnimCheckpoint);
+	HttpGatewaySubsystem->OnCheckpointMove.AddUObject(this, &ARaceManager::RtMoveCheckpoint);
 	
 	// Pois
 	HttpGatewaySubsystem->OnDisplayPoi.AddUObject(this, &ARaceManager::RtTogglePoi);
@@ -1977,6 +1978,24 @@ void ARaceManager::RtStopAnimCheckpoint(int64 CheckpointID, int64 RaceID) const
 		return;
 	}
 	StopAnimCheckpoint_Internal(CheckpointID, RaceID);
+}
+
+/**
+ * @brief Move Checkpoint along the path
+ * @param Move nouveau point du trace et valeurs recalculees par le serveur
+ * @note Course pas chargee : rien a faire, le checkpoint sera a sa nouvelle place au prochain chargement
+ */
+void ARaceManager::RtMoveCheckpoint(const FCheckpointMove& Move)
+{
+	const TObjectPtr<APath>* PathRef = RacePaths.Find(Move.RaceID);
+	if (!PathRef || !IsValid(PathRef->Get()))
+	{
+		return;
+	}
+	if (!PathRef->Get()->MoveCheckpoint(Move.CheckpointID, Move.PathIndex, Move.Distance, Move.Elevation, Move.Altitude, Move.Lat, Move.Lon))
+	{
+		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("[MoveCheckpoint] Deplacement impossible (RaceID=%lld CheckpointID=%lld Point=%d)"), Move.RaceID, Move.CheckpointID, Move.PathIndex)), EMessageType::Error);
+	}
 }
 
 /**
