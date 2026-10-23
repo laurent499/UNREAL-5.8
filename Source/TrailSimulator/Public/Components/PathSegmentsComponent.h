@@ -32,10 +32,10 @@ public:
 
 	/** Hauteur du texte (cm) */
 	UPROPERTY(EditAnywhere, Category="Segments")
-	float LabelWorldSize = 4000.f;
+	float LabelWorldSize = 5200.f;
 	/** Hauteur du bas du fond au-dessus du trace (cm) */
 	UPROPERTY(EditAnywhere, Category="Segments")
-	float LabelHeight = 3000.f;
+	float LabelHeight = 4500.f;
 	/** Marge du fond autour du texte, en fraction de la hauteur du texte */
 	UPROPERTY(EditAnywhere, Category="Segments")
 	float LabelPadding = 0.3f;
