@@ -890,4 +890,7 @@ struct SHAREDTYPES_API FPathSegment
 	int64 CheckpointOut = 0;
 	UPROPERTY(EditAnywhere)
 	bool bVisible = true;
+	/** Hauteur du label au-dessus du trace, en m (0 = LabelHeight du composant) */
+	UPROPERTY(EditAnywhere)
+	float LabelHeight = 0.f;
 };

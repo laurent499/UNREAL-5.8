@@ -210,7 +210,7 @@ void UPathSegmentsComponent::Apply()
 	const int32 NumOriginal = Spline->GetNumberOfSplinePoints() - 1;
 	if (NumOriginal < 1 || Path->PathSplineMeshes.Num() < NumOriginal) return; // trace pas encore construit
 
-	struct FRange { float D0; float D1; FLinearColor Color; FString Label; };
+	struct FRange { float D0; float D1; FLinearColor Color; FString Label; float LabelHeight; };
 	TArray<FRange> Ranges;
 	const float TotalLen = Spline->GetSplineLength();
 	// Borne posee sur un checkpoint : distance du point du trace qui le porte (il a pu etre deplace),
@@ -236,7 +236,7 @@ void UPathSegmentsComponent::Apply()
 		const float D1 = FMath::Clamp(BoundCm(Segment.CheckpointOut, Segment.KmOut), 0.f, TotalLen);
 		if (!Segment.bVisible || D1 - D0 < PathSegments::MinPieceCm) continue;
 		const FColor Color = FColor::FromHex(Segment.Color);
-		Ranges.Add({ D0, D1, FLinearColor::FromSRGBColor(Color), Segment.Label });
+		Ranges.Add({ D0, D1, FLinearColor::FromSRGBColor(Color), Segment.Label, Segment.LabelHeight > 0.f ? Segment.LabelHeight * 100.f : LabelHeight });
 	}
 
 	if (Ranges.Num() > 0)
@@ -434,7 +434,7 @@ void UPathSegmentsComponent::Apply()
 				Plates.Add(Plate);
 			}
 			const FVector Anchor = Spline->GetLocationAtDistanceAlongSpline(0.5f * (Range.D0 + Range.D1), ESplineCoordinateSpace::World);
-			Label->SetWorldLocation(Anchor + FVector::UpVector * (LabelHeight + 0.5f * (TextHeight + Pad)));
+			Label->SetWorldLocation(Anchor + FVector::UpVector * (Range.LabelHeight + 0.5f * (TextHeight + Pad)));
 			Labels.Add(Label);
 		}
 	}
