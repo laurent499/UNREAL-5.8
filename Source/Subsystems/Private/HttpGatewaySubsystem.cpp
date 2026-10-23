@@ -1086,6 +1086,7 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
                 double Km = 0.0;
                 if ((*Obj)->TryGetNumberField(TEXT("kmIn"), Km)) Segment.KmIn = Km;
                 if ((*Obj)->TryGetNumberField(TEXT("kmOut"), Km)) Segment.KmOut = Km;
+                if ((*Obj)->TryGetNumberField(TEXT("labelHeight"), Km)) Segment.LabelHeight = Km;
                 double CheckpointId = 0.0;
                 if ((*Obj)->TryGetNumberField(TEXT("cpIn"), CheckpointId)) Segment.CheckpointIn = static_cast<int64>(CheckpointId);
                 if ((*Obj)->TryGetNumberField(TEXT("cpOut"), CheckpointId)) Segment.CheckpointOut = static_cast<int64>(CheckpointId);
