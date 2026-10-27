@@ -1,17 +1,17 @@
 # Graph Report - UNREAL 5.8  (2026-10-27)
 
 ## Corpus Check
-- 542 files · ~1,780,322 words
+- 544 files · ~1,781,952 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 5284 file(s) not represented in the graph (top: .uasset 4702, .tex 369, .eps 71)
+- Unclassified: 5286 file(s) not represented in the graph (top: .uasset 4702, .tex 369, .eps 71)
 
 ## Summary
-- 4833 nodes · 7044 edges · 541 communities (162 shown, 379 thin omitted)
-- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 563 edges (avg confidence: 0.85)
+- 4872 nodes · 7103 edges · 553 communities (172 shown, 381 thin omitted)
+- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 572 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `10080c7a`
+- Built from commit: `ded490a3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -35,7 +35,7 @@
 - Runner.cpp
 - UNameComponent
 - SearchBox
-- gameplaystatics
+- FlagComponent.h
 - AWorldFauna
 - ULoadingStatusSubsystem
 - jquery.js
@@ -60,17 +60,17 @@
 - AKm
 - ICameraControlInterface
 - unrealbuildtool
-- TeamSubsystem.cpp
+- ACinematicGeoAnchor
 - UBroadcastCaptureSubsystem
 - FAutoWeatherInfo
 - UClubComponent
-- FMinMax
+- FEntry
 - RunnerSubsystem.cpp
 - UTrailTextWidgetComponent
 - FOpenWeatherCurrent
 - UScaleSubsystem
 - FWorldAmbienceSettings
-- FSettings
+- FWeatherSample
 - PoiSubsystem.cpp
 - ScaleSubsystem.cpp
 - ARunner_UTMB
@@ -93,12 +93,12 @@
 - ACheckpoint_Generic
 - ACheckpoint_Nike
 - initResizable
-- UPhotoComponent
+- PhotoComponent.cpp
 - RunnerStackingSubsystem.cpp
 - APoi_GTWS
 - AWorldHeadlamps
 - APoi_Nike
-- UUTMB_NameComponent
+- TSubclassOf
 - UPathSegmentsComponent
 - Ee
 - e
@@ -109,19 +109,19 @@
 - APoi_Generic
 - SBroadcastMirror
 - TrailSharedTypes.h
-- ICheckpointInterface
+- CheckpointInterface.h
 - UCameraControlComponent
 - UMeteoPageSubsystem
 - UTeamGroupSubsystem
-- RaceSubsystem.h
+- Km.cpp
 - ACheckpoint_GTWS
 - ACheckpoint_UTMB
 - UTemplateSubsystem
-- AWorldFauna::Tick
+- CinematicGeoAnchor.cpp
 - WaterMaskSubsystem.cpp
-- TrailsSubsystem.cpp
-- .GetWorld
-- WorldAmbienceSubsystem.h
+- WeatherSubsystem.cpp
+- .GetGameInstance
+- FWorldAmbienceState
 - UWorld
 - ARunner_Generic
 - APoi_UTMB
@@ -132,10 +132,10 @@
 - TrailHttpDebug.h
 - FTrailHttpDebug::LogAndIsSuccess
 - UTrailsSubsystem
-- WorldHeadlamps.cpp
-- MeteoPageSubsystem.cpp
+- .GetWorld
+- JsonResponse
 - USettingsSaveGame
-- int64
+- FSettings
 - TemplateSubsystem.cpp
 - FBenchShot
 - FSubmixEffectSanitizer
@@ -146,18 +146,18 @@
 - CheckpointSubsystem.cpp
 - UTemplateGeneratorUtilityWidget
 - FPointIndexSegment
-- CesiumBudgetSubsystem.cpp
+- FMinMax
 - FRunnerStackingConfig
-- UGeneric_NameComponent
-- coreminimal
+- Runner_GTWS.cpp
+- Runner.h
 - FRaceCard
 - UGTWS_NameComponent
 - UFlagComponent
-- FWaterMaskBounds
+- FTrailTemplateRunner
 - FString
 - FTrailLabelStyle
-- Level cinéma : export vidéo d'un survol de course
-- HttpGatewaySubsystem.cpp
+- NameComponent.h
+- MeteoPageSubsystem.cpp
 - FRaceSetup
 - PathSegmentsComponent.cpp
 - WorldFlora.h
@@ -168,26 +168,28 @@
 - RunnerStackingSubsystem.h
 - DisplayController
 - ClubComponent.cpp
-- Runner_GTWS.cpp
+- UGeneric_NameComponent
 - BuildMesh
-- UTMB_NameComponent.cpp
-- PhotoComponent.cpp
-- FWaterPolygon
-- IPoiInterface
+- splinecomponent
+- FGroupStruct
+- FSlateNotificationsModule
+- PoiInterface.h
+- UUTMB_NameComponent
 - PlacementCalculator
 - KmInterface.h
 - FRunnerState
 - ARaceManager::HideLoadingOverlay
-- IPathInterface
-- UNike_NameComponent
+- PathInterface.h
+- FRunners
 - Piecewise
 - FlagComponent.cpp
+- coreminimal
 - UWorldAmbienceSubsystem::OnWorldBeginPlay
-- WorldFauna.h
+- URunnerStackingSubsystem::RegisterRunner
 - FPendingCell
 - EKind
-- UPoiSubsystem::SpawnPoi
-- URunnerStackingSubsystem::RegisterRunner
+- ACheckpoint::GetBoundsLocation
+- FTrailTemplateStack
 - SlateNotificationsBFL.h
 - dynsections.js
 - UWorldAmbienceSubsystem::Initialize
@@ -195,32 +197,43 @@
 - AWorldFlora::Tick
 - EBenchPhase
 - IRunnerStackableInterface
-- ACinematicTrail::SpawnRaceActors
-- ACinematicTrailCamera::OnConstruction
+- ACinematicTrail::BeginPlay
 - makeTree
 - ARaceManager::BeginPlay
 - MakeStep
 - CLAUDE.md
-- TrailUtilsLog.h
 - ARaceManager::ToggleRace_Internal
 - FState
 - FTrackSample
 - cookie.js
 - .mcp.json
-- BroadcastCaptureSubsystem.h
+- UBroadcastCaptureSubsystem::RequestViewTarget
 - URunnerSubsystem::Deinitialize
 - USettingsSubsystem::Initialize
 - USettingsSubsystem::Save
 - Automation_TrailSimulator.slnx
 - TrailSimulator.slnx
-- URunnerSubsystem::PerformHttpRequestForRunners
-- UWorldAmbienceSubsystem::TickBench
-- ACinematicTrail::BeginPlay
+- RawTextMaterial.h
+- FOpenWeatherResponse
+- int64
+- GTWS_FlagComponent.h
+- Generic_FlagComponent.h
+- SharedTypes.h
 - ARaceManager::RtTeleportToTeam
+- FWaterMaskBounds
 - ARaceManager::RtTogglePhoto
 - ARaceManager::RtUpdateMinMax
 - ARaceManager::EndPlay
-- ACinematicTrail::Rebuild
+- WorldAmbienceSubsystem.h
+- FWeatherResult
+- ACinematicTrail::SpawnRaceActors
+- TrailInterfaces.h
+- TrailUtils.h
+- Nike_FlagComponent.h
+- BroadcastCaptureSubsystem.h
+- UPathSegmentsComponent::Apply
+- AWorldFlora::BeginPlay
+- UScaleSubsystem::Tick
 
 ## God Nodes (most connected - your core abstractions)
 1. `ARaceManager` - 276 edges
@@ -243,13 +256,13 @@
   Plugins/TemplateGenerator/Source/TemplateGenerator/Public/TemplateGeneratorUtilityWidget.h → Source/TrailUtils/Public/WorldUtils.h
 - `ACheckpoint_Nike::RefreshCheckpointValues()` --references--> `FRaceCheckpoint`  [EXTRACTED]
   Source/TrailSimulator/Private/Actors/Nike/Checkpoint_Nike.cpp → Source/SharedTypes/Public/TrailSharedTypes.h
-- `APath::SetRacePath()` --references--> `FRacePath`  [EXTRACTED]
-  Source/TrailSimulator/Private/Actors/Path.cpp → Source/SharedTypes/Public/TrailSharedTypes.h
+- `UClubComponent::UpdateClub()` --references--> `FRunnerStruct`  [EXTRACTED]
+  Source/TrailSimulator/Private/Components/ClubComponent.cpp → Source/SharedTypes/Public/TrailSharedTypes.h
 
 ## Import Cycles
 - None detected.
 
-## Communities (541 total, 379 thin omitted)
+## Communities (553 total, 381 thin omitted)
 
 ### Community 0 - "ARaceManager"
 Cohesion: 0.01
@@ -285,39 +298,35 @@ Nodes (55): APoi, AltPicto, AltText, ArmLength, bHasDayNight, bLastIsDay, bLookA
 
 ### Community 8 - "UWorldAmbienceSubsystem"
 Cohesion: 0.02
-Nodes (56): UWorldAmbienceSubsystem::UpdateState(), UWorldAmbienceSubsystem, AppliedWeather, AutoWeather, bBegunPlay, bBenchGrounded, BenchCsvPath, BenchFrameSamples (+48 more)
+Nodes (57): UWorldAmbienceSubsystem::TickBench(), UWorldAmbienceSubsystem::UpdateState(), UWorldAmbienceSubsystem, AppliedWeather, AutoWeather, bBegunPlay, bBenchGrounded, BenchCsvPath (+49 more)
 
 ### Community 9 - "USettingsSubsystem"
 Cohesion: 0.03
 Nodes (24): USettingsSubsystem, CachedSave, LookAtInterpSpeed, LookAtIntervalSeconds, OnFetchUpdate, OnLengthChanged, OnMinMaxDirty, OnMinMaxSet (+16 more)
 
 ### Community 10 - "WorldAmbienceSubsystem.cpp"
-Cohesion: 0.04
-Nodes (22): Average(), ExportProperty(), FindActorByClassToken(), ImportProperty(), JsonResponse(), Percentile(), ReadNumber(), SettingsFilePath() (+14 more)
+Cohesion: 0.05
+Nodes (20): Average(), ExportProperty(), ImportProperty(), JsonResponse(), Percentile(), SettingsFilePath(), UWorldAmbienceSubsystem::ApplySetting(), UWorldAmbienceSubsystem::BenchJson() (+12 more)
 
 ### Community 11 - "UCheckpointSubsystem"
 Cohesion: 0.06
 Nodes (9): UCheckpointSubsystem, ActiveCheckpointRequests, Checkpoint, CheckpointActorMap, Checkpoints, CheckpointsMap, CurrentRaceSetup, OnCheckpointsDatasGathered (+1 more)
-
-### Community 12 - "modulemanager"
-Cohesion: 0.05
-Nodes (5): FSlateNotificationsModule, FTemplateGeneratorModule, FSharedTypesModule, FTrailInterfacesModule, FTrailUtilsModule
 
 ### Community 13 - "URunnerSubsystem"
 Cohesion: 0.04
 Nodes (16): URunnerSubsystem, ActiveRunnerRequests, CurrentRaceSetup, CurrentRunnerId, MaxRunnersFetchAttempts, OnRunnerDatasGathered, OnRunnersDatasGathered, OnRunnersUpdateDatas (+8 more)
 
 ### Community 14 - "FRunnerStruct"
-Cohesion: 0.07
-Nodes (28): FGroupStruct, groupId, Teams, FRaceTeamRunnerIndex, RunnerToTeam, TeamToRunner, FRunnerStruct, canal (+20 more)
+Cohesion: 0.10
+Nodes (21): FRunnerStruct, canal, canalId, club, dossard, elevation, IndexM, kmActuel (+13 more)
 
 ### Community 15 - "TemplateSubsystem.h"
-Cohesion: 0.08
-Nodes (8): ACheckpoint_Generic::UpdateCheckpoint(), UseRoundedBkg_CheckpointGeneric(), APoi_Generic::UpdatePoi(), UseRoundedBkg_PoiGeneric(), ACheckpoint_GTWS::BeginPlay(), ACheckpoint_GTWS::UpdateCheckpoint(), UseRoundedBkg_CheckpointGTWS(), FitLine()
+Cohesion: 0.06
+Nodes (14): ACheckpoint_Generic::UpdateCheckpoint(), UseRoundedBkg_CheckpointGeneric(), APoi_Generic::UpdatePoi(), UseRoundedBkg_PoiGeneric(), ACheckpoint_GTWS::BeginPlay(), ACheckpoint_GTWS::UpdateCheckpoint(), UseRoundedBkg_CheckpointGTWS(), APoi_GTWS::BeginPlay() (+6 more)
 
 ### Community 16 - "Runner.cpp"
 Cohesion: 0.05
-Nodes (9): ARunner::AssignRunnerToTeam(), ARunner::GetStackAttachComponent(), ARunner::GetStackHookComponent(), ARunner::HandleTemplateChanged(), ARunner::SetMinMax(), ARunner::TriggerUpdateAfterHidden(), ARunner::UpdateRunnerLocation(), UCesiumFlyToComponent (+1 more)
+Nodes (8): ARunner::AssignRunnerToTeam(), ARunner::GetStackAttachComponent(), ARunner::GetStackHookComponent(), ARunner::HandleTemplateChanged(), ARunner::SetMinMax(), ARunner::TriggerUpdateAfterHidden(), UCesiumFlyToComponent, USettingsSubsystem
 
 ### Community 17 - "UNameComponent"
 Cohesion: 0.08
@@ -327,13 +336,9 @@ Nodes (11): UNameComponent, bShow3DText, bShowWidgetText, LabelFont, LastLocatio
 Cohesion: 0.13
 Nodes (7): createResults(), init_search(), SearchBox(), getXPos(), getYPos(), searchResults, convertToId()
 
-### Community 19 - "gameplaystatics"
-Cohesion: 0.08
-Nodes (9): APoi_GTWS::BeginPlay(), APoi_GTWS::UpdatePoi(), UseRoundedBkg_PoiGTWS(), ACheckpoint_UTMB::BeginPlay(), ACheckpoint_UTMB::UpdateCheckpoint(), APoi_UTMB::BeginPlay(), APoi_UTMB::UpdatePoi(), ARunner_UTMB::BeginPlay() (+1 more)
-
 ### Community 20 - "AWorldFauna"
-Cohesion: 0.07
-Nodes (21): AWorldFauna, Ambience, Anchor, AnchorGroundZ, AnchorTimer, AppliedDensity, bHasAnchor, BirdMaterial (+13 more)
+Cohesion: 0.06
+Nodes (25): AWorldFauna::Tick(), AWorldFauna, Ambience, Anchor, AnchorGroundZ, AnchorTimer, AppliedDensity, bHasAnchor (+17 more)
 
 ### Community 21 - "ULoadingStatusSubsystem"
 Cohesion: 0.08
@@ -345,7 +350,7 @@ Nodes (13): at(), getEventsNS(), getViewportDimensions(), initMouseDetection(), 
 
 ### Community 23 - "URaceSubsystem"
 Cohesion: 0.06
-Nodes (12): UCheckpointSubsystem::Initialize(), UPoiSubsystem::Initialize(), URunnerSubsystem::Initialize(), UTeamSubsystem::Initialize(), URaceSubsystem, CurrentRaceId, CurrentRaceSetup, MainURL (+4 more)
+Nodes (11): UTeamGroupSubsystem::Initialize(), UTeamSubsystem::Initialize(), UWeatherSubsystem::Initialize(), URaceSubsystem, CurrentRaceId, CurrentRaceSetup, MainURL, OnRaceSetupDatasGathered (+3 more)
 
 ### Community 24 - "UPoiSubsystem"
 Cohesion: 0.06
@@ -356,8 +361,8 @@ Cohesion: 0.06
 Nodes (21): AWorldFlora, AllComponents, Ambience, bBuilding, bShown, BuildCenter, BuildDensity, BuildRadius (+13 more)
 
 ### Community 26 - "Checkpoint.cpp"
-Cohesion: 0.06
-Nodes (6): ACheckpoint::ACheckpoint(), ACheckpoint::CapitalizeFirst(), ACheckpoint::GetBoundsLocation(), ACheckpoint::HandleTemplateChanged(), ACheckpoint::OnLookAtTimerTick(), ACheckpoint::SetMinMax()
+Cohesion: 0.07
+Nodes (3): ACheckpoint::CapitalizeFirst(), ACheckpoint::HandleTemplateChanged(), ACheckpoint::SetMinMax()
 
 ### Community 27 - "APath::DrawPath"
 Cohesion: 0.17
@@ -365,7 +370,7 @@ Nodes (6): APath::BeginPlay(), APath::DrawPath(), APath::GetGeoidUndulationM(), 
 
 ### Community 28 - "UWaterMaskSubsystem"
 Cohesion: 0.07
-Nodes (12): UWaterMaskSubsystem::HandlePathDatasGathered(), UWaterMaskSubsystem::IsWaterAt(), UWaterMaskSubsystem::OnRaceWaterReady(), UWaterMaskSubsystem::RequestOverpass(), UWaterMaskSubsystem::SendOverpassRequest(), UWaterMaskSubsystem, ActiveRequests, bWaterPolygonsDirty (+4 more)
+Nodes (12): UWaterMaskSubsystem::HandlePathDatasGathered(), UWaterMaskSubsystem::IsWaterAt(), FWaterPolygon, Bounds, Rings, UWaterMaskSubsystem, ActiveRequests, bWaterPolygonsDirty (+4 more)
 
 ### Community 29 - "UAudioSanitizerSubsystem"
 Cohesion: 0.06
@@ -373,19 +378,19 @@ Nodes (19): UAudioSanitizerSubsystem, bCulpritRetrying, BeginPlayTime, bSoundOpe
 
 ### Community 30 - "Path.cpp"
 Cohesion: 0.06
-Nodes (20): ActionValue(), APath::APath(), APath::BuildKms(), APath::HandleCheckpointsDatasGathered(), APath::RebuildPathSplineMeshes(), APath::RebuildSlopeSplineMeshes(), APath::SetRacePath(), APath::SpawnCheckpointAt() (+12 more)
+Nodes (20): ActionValue(), APath::APath(), APath::BuildKms(), APath::GetCheckpointClassForRace(), APath::HandleCheckpointsDatasGathered(), APath::RebuildPathSplineMeshes(), APath::RebuildSlopeSplineMeshes(), APath::SpawnCheckpointAt() (+12 more)
 
 ### Community 31 - "Poi.cpp"
 Cohesion: 0.06
 Nodes (5): APoi::CapitalizeFirst(), APoi::GetBoundsLocation(), APoi::HandleTemplateChanged(), APoi::OnLookAtTimerTick(), APoi::SetMinMax()
 
 ### Community 32 - "CinematicTrail.cpp"
-Cohesion: 0.18
-Nodes (6): ACinematicTrail::GetCheckpointLocation(), ACinematicTrail::GetPoiLocation(), ACinematicTrail::OnConstruction(), Get(), Notify(), ParseSetup()
+Cohesion: 0.07
+Nodes (15): FRacePOI, elevation, lat, lon, name, poiId, type, weather (+7 more)
 
 ### Community 33 - "splinemeshcomponent"
-Cohesion: 0.06
-Nodes (12): ACinematicTrailCamera::ACinematicTrailCamera(), ACheckpoint_Nike::RefreshCheckpointValues(), ACheckpoint_Nike::UpdateCheckpoint(), APoi_Nike::UpdatePoi(), UGeneric_NameComponent::GetMiddle(), UGeneric_NameComponent::UGeneric_NameComponent(), UGeneric_NameComponent::UpdateName(), UNike_ClubComponent::UNike_ClubComponent() (+4 more)
+Cohesion: 0.08
+Nodes (11): ACheckpoint_Nike::RefreshCheckpointValues(), ACheckpoint_Nike::UpdateCheckpoint(), APoi_Nike::UpdatePoi(), UGeneric_NameComponent::GetMiddle(), UGeneric_NameComponent::UGeneric_NameComponent(), UGeneric_NameComponent::UpdateName(), UNike_ClubComponent::UNike_ClubComponent(), UNike_ClubComponent::UpdateClub() (+3 more)
 
 ### Community 34 - "UPathSubsystem"
 Cohesion: 0.07
@@ -408,12 +413,12 @@ Cohesion: 0.09
 Nodes (9): URunnerStackingSubsystem::TickSubsystem(), URunnerStackingSubsystem, bDirty, bHasLastCamLoc, CameraMoveThresholdCm, Config, Entries, LastCamLoc (+1 more)
 
 ### Community 39 - "UTeamSubsystem"
-Cohesion: 0.08
-Nodes (6): UTeamSubsystem, CurrentRaceSetup, HttpGatewaySubsystem, RaceSubsystem, RaceTeamsRunnersMap, RunnerSubsystem
+Cohesion: 0.06
+Nodes (25): FRaceTeamRunnerIndex, RunnerToTeam, TeamToRunner, UCesiumFlyToComponent, UTeamSubsystem::Animation(), UTeamSubsystem::ClearRaceTeamIndex(), UTeamSubsystem::DisplayClub(), UTeamSubsystem::DisplayFlag() (+17 more)
 
 ### Community 40 - "UWeatherSubsystem"
-Cohesion: 0.06
-Nodes (20): FOpenWeatherResponse, current, lat, lon, timezone, timezone_offset, FWeatherResult, bSuccess (+12 more)
+Cohesion: 0.12
+Nodes (6): UWeatherSubsystem, ActiveWeatherRequests, CurrentRaceSetup, OnWeatherGathered, RaceSubsystem, WeatherResponse
 
 ### Community 41 - "AKm"
 Cohesion: 0.05
@@ -423,9 +428,9 @@ Nodes (16): APath::GetKmClassForRace(), AKm_Generic, AKm_GTWS, AKm, DynaPawn, Ge
 Cohesion: 0.11
 Nodes (9): SlateNotifications, TemplateGenerator, SharedTypes, Subsystems, TrailInterfaces, TrailSimulatorTarget, TrailSimulator, TrailSimulatorEditorTarget (+1 more)
 
-### Community 44 - "TeamSubsystem.cpp"
-Cohesion: 0.17
-Nodes (16): UCesiumFlyToComponent, UTeamSubsystem::Animation(), UTeamSubsystem::ClearRaceTeamIndex(), UTeamSubsystem::DisplayClub(), UTeamSubsystem::DisplayFlag(), UTeamSubsystem::DisplayPhoto(), UTeamSubsystem::DisplayTeam(), UTeamSubsystem::DisplayTeams() (+8 more)
+### Community 44 - "ACinematicGeoAnchor"
+Cohesion: 0.12
+Nodes (11): ACinematicGeoAnchor::Align(), ACinematicGeoAnchor::ClipCesium(), ACinematicGeoAnchor::LambertToUnreal(), ACinematicGeoAnchor, CenterLonLatHeight, ClipMarginM, ClipPolygon, HeightOffsetM (+3 more)
 
 ### Community 45 - "UBroadcastCaptureSubsystem"
 Cohesion: 0.08
@@ -439,13 +444,13 @@ Nodes (24): FAutoWeatherInfo, AgeMinutes, bHasData, CameraAltitudeM, CameraTempC
 Cohesion: 0.06
 Nodes (15): UClubComponent, bShow3DText, bShowWidgetText, ClubBkgComponent, ClubFont, ClubSplineComponent, ClubTextComponent, LastLocation (+7 more)
 
-### Community 48 - "FMinMax"
-Cohesion: 0.13
-Nodes (11): FEntry, Actor, CurrentMinMax, OriginalScale, OverrideConfig, FMinMax, Max, Min (+3 more)
+### Community 48 - "FEntry"
+Cohesion: 0.20
+Nodes (7): FEntry, Actor, CurrentMinMax, OriginalScale, OverrideConfig, UScaleSubsystem::ComputeTargetScale(), UScaleSubsystem::GetCameraLocation()
 
 ### Community 49 - "RunnerSubsystem.cpp"
-Cohesion: 0.18
-Nodes (16): URunnerSubsystem::Animation(), URunnerSubsystem::AnimationByTeam(), URunnerSubsystem::CancelRunnersRetry(), URunnerSubsystem::DoesRunnerBelongsToRace(), URunnerSubsystem::GetRunnerActor(), URunnerSubsystem::GetRunnerActorByTeam(), URunnerSubsystem::GetRunnersByRaceId(), URunnerSubsystem::RemoveTeamsNotInSnapshot() (+8 more)
+Cohesion: 0.20
+Nodes (14): URunnerSubsystem::Animation(), URunnerSubsystem::AnimationByTeam(), URunnerSubsystem::CancelRunnersRetry(), URunnerSubsystem::DoesRunnerBelongsToRace(), URunnerSubsystem::GetRunnerActor(), URunnerSubsystem::GetRunnerActorByTeam(), URunnerSubsystem::SetRaceSetup(), URunnerSubsystem::SpawnRunnerActor() (+6 more)
 
 ### Community 50 - "UTrailTextWidgetComponent"
 Cohesion: 0.09
@@ -456,27 +461,27 @@ Cohesion: 0.09
 Nodes (22): FOpenWeatherCondition, description, icon, id, main, FOpenWeatherCurrent, clouds, dew_point (+14 more)
 
 ### Community 52 - "UScaleSubsystem"
-Cohesion: 0.08
-Nodes (4): UScaleSubsystem::Tick(), UScaleSubsystem, Entries, GlobalConfig
+Cohesion: 0.09
+Nodes (3): UScaleSubsystem, Entries, GlobalConfig
 
 ### Community 53 - "FWorldAmbienceSettings"
 Cohesion: 0.08
 Nodes (23): UWorldAmbienceSubsystem::SetSettings(), FWorldAmbienceSettings, AutoWeatherRefreshMinutes, bAutoWeather, bCityLights, bFauna, bFlora, bHeadlamps (+15 more)
 
-### Community 54 - "FSettings"
-Cohesion: 0.12
-Nodes (14): FSettings, bGeoidCorrected, FetchFrequency, GlowValue, Length, MinMax, Pitch, PulseFrequency (+6 more)
+### Community 54 - "FWeatherSample"
+Cohesion: 0.11
+Nodes (15): FBenchResult, FrameAvg, FrameP99, GpuAvg, GpuP99, Name, Samples, FWeatherSample (+7 more)
 
 ### Community 55 - "PoiSubsystem.cpp"
-Cohesion: 0.25
-Nodes (11): ConvertPOIJson(), ConvertPOIsJson(), UPoiSubsystem::Animation(), UPoiSubsystem::DoesPoiBelongsToRace(), UPoiSubsystem::PerformHttpRequestForPOIs(), UPoiSubsystem::SetRaceSetup(), UPoiSubsystem::StopAnimation(), UPoiSubsystem::Teleport() (+3 more)
+Cohesion: 0.18
+Nodes (13): ConvertPOIJson(), ConvertPOIsJson(), UPoiSubsystem::Animation(), UPoiSubsystem::DoesPoiBelongsToRace(), UPoiSubsystem::GetPoiActor(), UPoiSubsystem::PerformHttpRequestForPOIs(), UPoiSubsystem::SetRaceSetup(), UPoiSubsystem::SpawnPoi() (+5 more)
 
 ### Community 56 - "ScaleSubsystem.cpp"
-Cohesion: 0.11
-Nodes (9): UScaleSubsystem::ComputeTargetScale(), UScaleSubsystem::GetCameraLocation(), UScaleSubsystem::GetStatId(), UScaleSubsystem::HandleActorEndPlay(), UScaleSubsystem::Initialize(), UScaleSubsystem::IsTickable(), UScaleSubsystem::RegisterScalableActor(), UScaleSubsystem::SetActorScaleMinMax() (+1 more)
+Cohesion: 0.12
+Nodes (8): UScaleSubsystem::GetStatId(), UScaleSubsystem::HandleActorEndPlay(), UScaleSubsystem::Initialize(), UScaleSubsystem::IsTickable(), UScaleSubsystem::RegisterScalableActor(), UScaleSubsystem::SetActorScaleMinMax(), UScaleSubsystem::SetGlobalConfig(), UScaleSubsystem::UnregisterScalableActor()
 
 ### Community 57 - "ARunner_UTMB"
-Cohesion: 0.10
+Cohesion: 0.09
 Nodes (15): ARunner_UTMB, FlagComponent, FlagHook, IndexBarreComponent, IndexBkgComponent, IndexBkgHook, IndexLabelComponent, IndexLeftComponent (+7 more)
 
 ### Community 58 - "AudioSanitizer.cpp"
@@ -488,16 +493,16 @@ Cohesion: 0.13
 Nodes (15): FRaceCheckpoint, altitude, checkpointId, distance, elevation, name, type, weather (+7 more)
 
 ### Community 60 - "PathSubsystem.cpp"
-Cohesion: 0.14
-Nodes (8): UPathSubsystem::CreatePathRequest(), UPathSubsystem::GetPathById(), UPathSubsystem::Initialize(), UPathSubsystem::ParsePathJson(), UPathSubsystem::PerformHttpRequestForPath(), UPathSubsystem::SetRaceSetup(), UPathSubsystem::SpawnKmActor(), UPathSubsystem::SpawnPathActor()
+Cohesion: 0.16
+Nodes (7): UPathSubsystem::CreatePathRequest(), UPathSubsystem::GetPathById(), UPathSubsystem::ParsePathJson(), UPathSubsystem::PerformHttpRequestForPath(), UPathSubsystem::SetRaceSetup(), UPathSubsystem::SpawnKmActor(), UPathSubsystem::SpawnPathActor()
 
 ### Community 61 - "TrailTextWidgetComponent.cpp"
 Cohesion: 0.12
 Nodes (9): UTrailTextWidgetComponent::GetFontInfo(), UTrailTextWidgetComponent::OnRegister(), UTrailTextWidgetComponent::SetLabelCasseToLower(), UTrailTextWidgetComponent::SetLabelCasseToUpper(), UTrailTextWidgetComponent::SetLabelColor(), UTrailTextWidgetComponent::SetLabelFont(), UTrailTextWidgetComponent::SetLabelHJustification(), UTrailTextWidgetComponent::SetLabelText() (+1 more)
 
 ### Community 62 - "WorldFlora.cpp"
-Cohesion: 0.12
-Nodes (6): AWorldFlora::BeginPlay(), AWorldFlora::HandlePathGathered(), AWorldFlora::IsOnTrail(), AWorldFlora::StartBuild(), AWorldFlora::TraceGround(), Hash()
+Cohesion: 0.14
+Nodes (5): AWorldFlora::HandlePathGathered(), AWorldFlora::IsOnTrail(), AWorldFlora::StartBuild(), AWorldFlora::TraceGround(), Hash()
 
 ### Community 63 - "SLoadingOverlay.cpp"
 Cohesion: 0.10
@@ -508,7 +513,7 @@ Cohesion: 0.05
 Nodes (25): ACinematicTrail, bCenterGeoreferenceOnStart, bShowTrail, bSpawnCheckpoints, bSpawnPois, CheckpointPointIndices, Checkpoints, Glow (+17 more)
 
 ### Community 66 - "ARunner_GTWS"
-Cohesion: 0.11
+Cohesion: 0.10
 Nodes (11): ARunner_GTWS, ClubComponent, ClubHook, DefaultClubLocation, DefaultNameLocation, FlagComponent, FlagHook, NameComponent (+3 more)
 
 ### Community 67 - "Templates Unreal (TrailSimulator) servis par OnGraphics"
@@ -516,12 +521,12 @@ Cohesion: 0.11
 Nodes (18): 1. Le contexte en deux minutes, 2. Réponse à « conventions Figma ou JSON de template ? », 3.1 Routes attendues sur OnGraphics, 3.2 Format (version 1), 3.3 Règles de valeur, 3.4 Ce qu'Unreal ne lit pas (inutile de l'envoyer), 3. Le contrat : `GET /unreal/template/{nom}`, 4.1 Trois graphics de plus (+10 more)
 
 ### Community 68 - "BroadcastCaptureSubsystem.cpp"
-Cohesion: 0.13
-Nodes (6): UBroadcastCaptureSubsystem::ActivateSource(), UBroadcastCaptureSubsystem::Deinitialize(), UBroadcastCaptureSubsystem::Initialize(), UBroadcastCaptureSubsystem::ResolveCaptureSourceFromViewTarget(), UBroadcastCaptureSubsystem::UpdateViewportMirror(), IBroadcastInterface
+Cohesion: 0.15
+Nodes (5): UBroadcastCaptureSubsystem::ActivateSource(), UBroadcastCaptureSubsystem::Deinitialize(), UBroadcastCaptureSubsystem::Initialize(), UBroadcastCaptureSubsystem::ResolveCaptureSourceFromViewTarget(), UBroadcastCaptureSubsystem::UpdateViewportMirror()
 
 ### Community 69 - "FTrailTemplate"
-Cohesion: 0.05
-Nodes (42): FTrailTemplate, Base, Checkpoint, Globals, Name, Poi, Runner, FTrailTemplateGlobals (+34 more)
+Cohesion: 0.12
+Nodes (16): FTrailTemplate, Base, Checkpoint, Globals, Name, Poi, Runner, FTrailTemplateGlobals (+8 more)
 
 ### Community 70 - "FLoadingTaskInfo"
 Cohesion: 0.12
@@ -551,9 +556,9 @@ Nodes (14): ACheckpoint_Nike, Infos1BkgComponent, Infos1SplineComponent, Infos1W
 Cohesion: 0.16
 Nodes (10): initNavTree(), initPageToc(), render(), initResizable(), constrainPanelWidths(), resizeHeight(), resizeWidth(), restoreWidth() (+2 more)
 
-### Community 77 - "UPhotoComponent"
-Cohesion: 0.13
-Nodes (7): UPhotoComponent, BaseMat, CurrentPhotoTexture, CurrentPhotoUrl, PendingPhotoUrl, PhotoMID, PhotoSMC
+### Community 77 - "PhotoComponent.cpp"
+Cohesion: 0.08
+Nodes (10): UPhotoComponent::ClearPhoto(), UPhotoComponent::UpdateDayNight(), UPhotoComponent::UpdatePhoto(), UPhotoComponent, BaseMat, CurrentPhotoTexture, CurrentPhotoUrl, PendingPhotoUrl (+2 more)
 
 ### Community 78 - "RunnerStackingSubsystem.cpp"
 Cohesion: 0.13
@@ -564,20 +569,20 @@ Cohesion: 0.12
 Nodes (12): AWorldFauna::BuildMeshes(), UMaterialInstanceDynamic, UPhotoComponent::EnsurePhotoMID(), APoi_GTWS, AltPictoMat, AltPictoMID, DistPictoMat, MainPictoMat (+4 more)
 
 ### Community 80 - "AWorldHeadlamps"
-Cohesion: 0.12
-Nodes (9): AWorldHeadlamps::GetLamp(), AWorldHeadlamps, Ambience, Lamps, LitCount, RefreshTimer, Runners, UPointLightComponent (+1 more)
+Cohesion: 0.08
+Nodes (11): AWorldHeadlamps::BeginPlay(), AWorldHeadlamps::GetLamp(), AWorldHeadlamps::Tick(), AWorldHeadlamps, Ambience, Lamps, LitCount, RefreshTimer (+3 more)
 
 ### Community 81 - "APoi_Nike"
 Cohesion: 0.12
 Nodes (13): APoi_Nike, Infos1BkgComponent, Infos1SplineComponent, Infos1WidgetComponent, Infos2BkgComponent, Infos2SplineComponent, Infos2WidgetComponent, InfosFont (+5 more)
 
-### Community 82 - "UUTMB_NameComponent"
-Cohesion: 0.25
-Nodes (3): UUTMB_NameComponent, RightSlashComponent, SplineComponent
+### Community 82 - "TSubclassOf"
+Cohesion: 0.33
+Nodes (3): UCheckpointSubsystem::GetCheckpointActor(), UCheckpointSubsystem::SpawnCheckpointActor(), TSubclassOf
 
 ### Community 83 - "UPathSegmentsComponent"
 Cohesion: 0.06
-Nodes (20): UPathSegmentsComponent::Apply(), UPathSegmentsComponent::RestoreTrace(), UPathSegmentsComponent, ExtraPieces, HighlightedBaseScales, HighlightedPieces, HighlightThickness, LabelHeight (+12 more)
+Nodes (18): UPathSegmentsComponent, ExtraPieces, HighlightedBaseScales, HighlightedPieces, HighlightThickness, LabelHeight, LabelIllum, LabelPadding (+10 more)
 
 ### Community 84 - "Ee"
 Cohesion: 0.16
@@ -596,12 +601,12 @@ Cohesion: 0.31
 Nodes (4): ARaceManager::ProcessPendingRunnerUpdates(), ARaceManager::SpawnInitialRunners(), ARaceManager::UpdateRunnersFromSnapshot(), LogRaceTeamIndex()
 
 ### Community 88 - "GTWS_NameComponent.cpp"
-Cohesion: 0.07
-Nodes (15): FStartAndEnd, EndLocation, StartLocation, UClubComponent::GetStartAndEnd(), UGTWS_ClubComponent::SetColors(), UGTWS_ClubComponent::UGTWS_ClubComponent(), UGTWS_ClubComponent::UpdateClub(), UGTWS_NameComponent::GetSplineLastPoint() (+7 more)
+Cohesion: 0.08
+Nodes (10): UGTWS_ClubComponent::SetColors(), UGTWS_ClubComponent::UGTWS_ClubComponent(), UGTWS_ClubComponent::UpdateClub(), UGTWS_NameComponent::GetSplineLastPoint(), UGTWS_NameComponent::GetStartAndEnd(), UGTWS_NameComponent::SetColors(), UGTWS_NameComponent::UGTWS_NameComponent(), UGTWS_NameComponent::UpdateName() (+2 more)
 
 ### Community 89 - "ACinematicTrailCamera"
-Cohesion: 0.13
-Nodes (10): ACinematicTrailCamera, AimAtPivot, BackM, HeightM, LeadM, OrbitDeg, PitchOffsetDeg, Progress (+2 more)
+Cohesion: 0.07
+Nodes (19): Ce que fait le code, Importer et caler un nuage, Le « décalottage », Level cinéma : export vidéo d'un survol de course, Limites connues, Nuages de points et modèles géoréférencés (film Mont Blanc), Rendu, Tracé de la voie normale (+11 more)
 
 ### Community 90 - "APoi_Generic"
 Cohesion: 0.12
@@ -612,8 +617,8 @@ Cohesion: 0.14
 Nodes (5): SBroadcastMirror, Background, bLogged, Brush, Target
 
 ### Community 92 - "TrailSharedTypes.h"
-Cohesion: 0.07
-Nodes (31): ERunnerTemplate, DisplayName, FCheckpoints, Checkpoints, FGroups, Groups, RaceId, FPOIs (+23 more)
+Cohesion: 0.08
+Nodes (29): ERunnerTemplate, DisplayName, FCheckpoints, Checkpoints, FPOIs, POIs, FRaceEntries, RacesEntries (+21 more)
 
 ### Community 94 - "UCameraControlComponent"
 Cohesion: 0.15
@@ -627,13 +632,13 @@ Nodes (8): FHttpServerRequest, IHttpRouter, UMeteoPageSubsystem, GeoRouteHandle,
 Cohesion: 0.13
 Nodes (5): UTeamGroupSubsystem, CurrentRaceSetup, RaceGroupTeamMap, RaceSubsystem, TeamSubsystem
 
-### Community 97 - "RaceSubsystem.h"
-Cohesion: 0.13
-Nodes (3): AKm::AKm(), AKm::OnLookAtTimerTick(), AKm::UpdateKm()
+### Community 97 - "Km.cpp"
+Cohesion: 0.14
+Nodes (4): AKm::AKm(), AKm::BeginPlay(), AKm::OnLookAtTimerTick(), AKm::UpdateKm()
 
 ### Community 98 - "ACheckpoint_GTWS"
-Cohesion: 0.12
-Nodes (11): APath::GetCheckpointClassForRace(), ACheckpoint_GTWS, AltPictoMat, AltPictoMID, DistPictoMat, DistPictoMID, MainPictoMat, MainPictoMID (+3 more)
+Cohesion: 0.13
+Nodes (10): ACheckpoint_GTWS, AltPictoMat, AltPictoMID, DistPictoMat, DistPictoMID, MainPictoMat, MainPictoMID, RaceManager (+2 more)
 
 ### Community 99 - "ACheckpoint_UTMB"
 Cohesion: 0.13
@@ -643,41 +648,45 @@ Nodes (10): ACheckpoint_UTMB, AltPictoMat, AltPictoMID, DistPictoMat, DistPictoM
 Cohesion: 0.11
 Nodes (6): UTemplateSubsystem, ActiveRequests, OnTemplateChanged, Templates, ARunner::UpdateRunner(), ARaceManager::PrepareRunnerRuntimeData()
 
+### Community 101 - "CinematicGeoAnchor.cpp"
+Cohesion: 0.10
+Nodes (5): ACinematicGeoAnchor::GetLocalBounds(), ACinematicGeoAnchor::Lambert93ToLonLat(), ACinematicGeoAnchor::LocalToLambert(), UCesiumBudgetSubsystem::DoesSupportWorldType(), UCesiumBudgetSubsystem::GetStatId()
+
 ### Community 102 - "WaterMaskSubsystem.cpp"
 Cohesion: 0.14
 Nodes (10): BufferLine(), IsClosed(), LineWidthMeters(), OverpassToFeatures(), PointInRing(), ReadGeometry(), RingToJson(), StitchRings() (+2 more)
 
-### Community 103 - "TrailsSubsystem.cpp"
-Cohesion: 0.11
-Nodes (5): ConvertRacesJson(), UTrailsSubsystem::Initialize(), UTrailsSubsystem::PerformHttpRequestForRaces(), UTrailsSubsystem::SetRaceSetup(), FSubsystemsModule
+### Community 103 - "WeatherSubsystem.cpp"
+Cohesion: 0.12
+Nodes (6): ConvertRacesJson(), UTrailsSubsystem::Initialize(), UTrailsSubsystem::PerformHttpRequestForRaces(), ConvertWeatherJson(), UWeatherSubsystem::Deinitialize(), UWeatherSubsystem::PerformHttpRequestForWeather()
 
-### Community 104 - ".GetWorld"
-Cohesion: 0.11
-Nodes (23): URunnerSubsystem::CancelAllRunnersRetries(), UWorldAmbienceSubsystem::DoesSupportWorldType(), Type, ITrailInputModeInterface, ACheckpoint::BeginPlay(), ACheckpoint::EndPlay(), ACheckpoint::StartAnimation(), ACheckpoint::StopAnimation() (+15 more)
+### Community 104 - ".GetGameInstance"
+Cohesion: 0.10
+Nodes (17): UCheckpointSubsystem::Initialize(), UPathSubsystem::Initialize(), UPoiSubsystem::Initialize(), URunnerSubsystem::CancelAllRunnersRetries(), URunnerSubsystem::Initialize(), UWorldAmbienceSubsystem::DoesSupportWorldType(), Type, ACheckpoint::BeginPlay() (+9 more)
 
-### Community 105 - "WorldAmbienceSubsystem.h"
-Cohesion: 0.07
-Nodes (26): UWorldAmbienceSubsystem::FindSunLight(), FBenchResult, FrameAvg, FrameP99, GpuAvg, GpuP99, Name, Samples (+18 more)
+### Community 105 - "FWorldAmbienceState"
+Cohesion: 0.14
+Nodes (13): FWorldAmbienceState, CloudCoverage, Fog, FrameMs, GpuMs, GuardLevel, Night, Rain (+5 more)
 
 ### Community 106 - "UWorld"
-Cohesion: 0.20
-Nodes (14): FindPlayWorld(), SetPawnInput(), UAudioSanitizerSubsystem::OnWorldBeginPlay(), UAudioSanitizerSubsystem::ShouldCreateSubsystem(), FWorldUtils::GetGameInstance(), FWorldUtils::GetGameInstanceChecked(), FWorldUtils::GetRuntimeWorldFallback(), FWorldUtils::GetWorld() (+6 more)
+Cohesion: 0.14
+Nodes (16): FindPlayWorld(), FindActorByClassToken(), ReadNumber(), SetPawnInput(), UAudioSanitizerSubsystem::OnWorldBeginPlay(), UAudioSanitizerSubsystem::ShouldCreateSubsystem(), FWorldUtils::GetGameInstance(), FWorldUtils::GetGameInstanceChecked() (+8 more)
 
 ### Community 107 - "ARunner_Generic"
-Cohesion: 0.14
+Cohesion: 0.12
 Nodes (7): ARunner_Generic, FlagComponent, NameComponent, PhotoComponent, PhotoHook, RaceManager, SlashComponent
 
 ### Community 108 - "APoi_UTMB"
-Cohesion: 0.12
-Nodes (11): ARaceManager::GetPoiClassForRace(), ARaceManager::TrackRunnerInterp(), APoi_UTMB, AltPictoMat, AltPictoMID, DistPictoMat, MainPictoMat, MainPictoMID (+3 more)
+Cohesion: 0.14
+Nodes (9): APoi_UTMB, AltPictoMat, AltPictoMID, DistPictoMat, MainPictoMat, MainPictoMID, RaceManager, WeatherPictoMat (+1 more)
 
 ### Community 110 - "FVector"
 Cohesion: 0.25
 Nodes (10): APath::BuildSmoothCameraRail(), APath::GetClosestSplineLocation(), APath::GetDistanceAlongSpline(), APath::GetLocationAtDistance(), BuildRail(), BuildSimplifiedRailLocked(), BuildSmoothRail(), DistPointSegment3D() (+2 more)
 
 ### Community 111 - "TeamGroupSubsystem.cpp"
-Cohesion: 0.21
-Nodes (6): UTeamGroupSubsystem::AddTeamToGroup(), UTeamGroupSubsystem::GetTeamsInGroup(), UTeamGroupSubsystem::Initialize(), UTeamGroupSubsystem::RemoveTeamFromGroup(), UTeamGroupSubsystem::SetRaceSetup(), UTeamGroupSubsystem::ToggleGroup()
+Cohesion: 0.25
+Nodes (5): UTeamGroupSubsystem::AddTeamToGroup(), UTeamGroupSubsystem::GetTeamsInGroup(), UTeamGroupSubsystem::RemoveTeamFromGroup(), UTeamGroupSubsystem::SetRaceSetup(), UTeamGroupSubsystem::ToggleGroup()
 
 ### Community 112 - "showTip"
 Cohesion: 0.28
@@ -692,36 +701,40 @@ Cohesion: 0.27
 Nodes (3): FTrailHttpDebug::LogAndIsSuccess(), FTrailHttpDebug::LogStart(), IsLikelyBinaryContent()
 
 ### Community 115 - "UTrailsSubsystem"
-Cohesion: 0.13
+Cohesion: 0.15
 Nodes (6): UTrailsSubsystem, CurrentRaceSetup, LoadingSubsystem, OnRacesDatasGathered, RacesArray, RaceSubsystem
 
-### Community 117 - "MeteoPageSubsystem.cpp"
-Cohesion: 0.18
-Nodes (7): FindGeoreference(), GeoJson(), JsonResponse(), UMeteoPageSubsystem::HandleGeoRequest(), UMeteoPageSubsystem::HandleGeoSetRequest(), UMeteoPageSubsystem::HandlePageRequest(), UMeteoPageSubsystem::Initialize()
+### Community 116 - ".GetWorld"
+Cohesion: 0.13
+Nodes (12): ITrailInputModeInterface, ACheckpoint::ACheckpoint(), ACheckpoint::OnLookAtTimerTick(), ACheckpoint::StartAnimation(), ACheckpoint::StopAnimation(), APoi::StartAnimation(), APoi::StopAnimation(), ARunner::AdvanceTrackInterp() (+4 more)
+
+### Community 117 - "JsonResponse"
+Cohesion: 0.27
+Nodes (6): FindGeoreference(), GeoJson(), JsonResponse(), UMeteoPageSubsystem::HandleGeoRequest(), UMeteoPageSubsystem::HandleGeoSetRequest(), UMeteoPageSubsystem::HandlePageRequest()
 
 ### Community 118 - "USettingsSaveGame"
 Cohesion: 0.15
 Nodes (7): USettingsSubsystem::Load(), USettingsSubsystem::SetMainURL(), USettingsSaveGame, GlobalLength, GlobalPitch, GlobalZAnchor, MainURL
 
-### Community 119 - "int64"
-Cohesion: 0.09
-Nodes (22): FRaceEntry, name, raceId, templateName, FRaceLoaded, RaceID, RaceName, RaceTemplate (+14 more)
+### Community 119 - "FSettings"
+Cohesion: 0.13
+Nodes (14): FSettings, bGeoidCorrected, FetchFrequency, GlowValue, Length, MinMax, Pitch, PulseFrequency (+6 more)
 
 ### Community 120 - "TemplateSubsystem.cpp"
-Cohesion: 0.18
+Cohesion: 0.20
 Nodes (8): UTemplateSubsystem::Fetch(), UTemplateSubsystem::GetBase(), UTemplateSubsystem::GetBuiltin(), UTemplateSubsystem::GetForRace(), UTemplateSubsystem::GetRunnerHeight(), UTemplateSubsystem::GetTemplate(), UTemplateSubsystem::ReloadTemplate(), UTemplateSubsystem::RequestTemplate()
 
 ### Community 121 - "FBenchShot"
-Cohesion: 0.09
-Nodes (20): UWorldAmbienceSubsystem::ApplyBenchShot(), UWorldAmbienceSubsystem::PlaceCameraOnGround(), FBenchShot, AboveGroundM, HeightM, Lat, Lon, Name (+12 more)
+Cohesion: 0.15
+Nodes (12): UWorldAmbienceSubsystem::ApplyBenchShot(), UWorldAmbienceSubsystem::PlaceCameraOnGround(), FBenchShot, AboveGroundM, HeightM, Lat, Lon, Name (+4 more)
 
 ### Community 122 - "FSubmixEffectSanitizer"
 Cohesion: 0.17
 Nodes (5): FSubmixEffectSanitizer, BadSamples, ClippedSamples, CurrentGain, TargetGain
 
 ### Community 123 - "FDistanceScaleConfig"
-Cohesion: 0.15
-Nodes (12): FDistanceScaleConfig, bInterp, bSmoothStep, bUseActorOriginalScaleAsMax, bUseXYOnly, FarDistanceCm, InterpSpeed, NearDistanceCm (+4 more)
+Cohesion: 0.17
+Nodes (11): FDistanceScaleConfig, bInterp, bSmoothStep, bUseActorOriginalScaleAsMax, bUseXYOnly, FarDistanceCm, InterpSpeed, NearDistanceCm (+3 more)
 
 ### Community 124 - "FStackEntry"
 Cohesion: 0.17
@@ -736,24 +749,32 @@ Cohesion: 0.18
 Nodes (7): ARaceManager::EdUpdateMainUrl(), ARaceManager::HandleRacesDatasGathered(), ARaceManager::RtUpdateMainUrl(), ARaceManager::UpdateMainUrl_Internal(), ARaceManager::UpdateUdsTime(), CallBP_GetFloatOut(), SanitizeKey()
 
 ### Community 127 - "CheckpointSubsystem.cpp"
-Cohesion: 0.15
-Nodes (17): ConvertCheckpointJson(), ConvertCheckpointsJson(), UCheckpointSubsystem::Animation(), UCheckpointSubsystem::DoesChkBelongsToRace(), UCheckpointSubsystem::GetCheckpointActor(), UCheckpointSubsystem::GetCheckpointByChkIdRaceId(), UCheckpointSubsystem::GetCheckpointsByRaceId(), UCheckpointSubsystem::PerformHttpRequestForCheckpoints() (+9 more)
+Cohesion: 0.22
+Nodes (13): ConvertCheckpointJson(), ConvertCheckpointsJson(), UCheckpointSubsystem::Animation(), UCheckpointSubsystem::DoesChkBelongsToRace(), UCheckpointSubsystem::GetCheckpointByChkIdRaceId(), UCheckpointSubsystem::PerformHttpRequestForCheckpoints(), UCheckpointSubsystem::SetRaceSetup(), UCheckpointSubsystem::StopAnimation() (+5 more)
 
 ### Community 128 - "UTemplateGeneratorUtilityWidget"
-Cohesion: 0.15
+Cohesion: 0.22
 Nodes (4): UTemplateGeneratorUtilityWidget, CheckpointParentClass, PoiParentClass, TeamParentClass
 
 ### Community 129 - "FPointIndexSegment"
 Cohesion: 0.29
 Nodes (6): FPointIndexSegment, EndDistanceCm, EndIndex, Indices, StartDistanceCm, StartIndex
 
+### Community 130 - "FMinMax"
+Cohesion: 0.15
+Nodes (11): FMinMax, Max, Min, FStartAndEnd, EndLocation, StartLocation, ACheckpoint::GetMinMax(), APoi::GetMinMax() (+3 more)
+
 ### Community 131 - "FRunnerStackingConfig"
 Cohesion: 0.18
 Nodes (8): FRunnerStackingConfig, Gamma, HysteresisCm, RadiusFarCm, RadiusNearCm, UpdateIntervalSec, URunnerStackingSubsystem::Initialize(), URunnerStackingSubsystem::SetConfig()
 
-### Community 132 - "UGeneric_NameComponent"
-Cohesion: 0.29
-Nodes (3): UGeneric_NameComponent, NameLeftComponent, NameRightComponent
+### Community 132 - "Runner_GTWS.cpp"
+Cohesion: 0.07
+Nodes (14): ARunner_Generic::BeginPlay(), ARunner_Generic::ToggleFlag(), ARunner_Generic::TogglePhoto(), ARunner_Generic::UpdateRunner(), ARunner_GTWS::BeginPlay(), ARunner_GTWS::ToggleClub(), ARunner_GTWS::ToggleFlag(), ARunner_GTWS::TogglePhoto() (+6 more)
+
+### Community 133 - "Runner.h"
+Cohesion: 0.08
+Nodes (3): IBroadcastInterface, IScaleInterface, ITeamInterface
 
 ### Community 134 - "FRaceCard"
 Cohesion: 0.18
@@ -764,36 +785,32 @@ Cohesion: 0.17
 Nodes (3): UGTWS_NameComponent, AppliedBkgColor, TextColor
 
 ### Community 136 - "UFlagComponent"
-Cohesion: 0.06
-Nodes (14): UGeneric_FlagComponent::UGeneric_FlagComponent(), UGTWS_FlagComponent::UGTWS_FlagComponent(), UNike_FlagComponent::UNike_FlagComponent(), UUTMB_FlagComponent::UUTMB_FlagComponent(), UFlagComponent, bIsDayCached, CurrentCountry, FlagMID (+6 more)
+Cohesion: 0.18
+Nodes (5): UFlagComponent, bIsDayCached, CurrentCountry, FlagMID, FlagSMC
 
-### Community 137 - "FWaterMaskBounds"
-Cohesion: 0.29
-Nodes (7): UWaterMaskSubsystem::ComputeBounds(), UWaterMaskSubsystem::GetCacheFilePath(), FWaterMaskBounds, East, North, South, West
+### Community 137 - "FTrailTemplateRunner"
+Cohesion: 0.15
+Nodes (13): FTrailTemplateRunner, BkgLeftMargin, BkgRightMargin, ClubBkg, ClubText, Foot, Height, NameBkg (+5 more)
 
 ### Community 138 - "FString"
-Cohesion: 0.43
-Nodes (5): ConvertRunnerJson(), ConvertRunnersJson(), URunnerSubsystem::PerformHttpRequestForRunner(), URunnerSubsystem::RequestRunnersWithRetry(), URunnerSubsystem::ScheduleRunnersRetry()
+Cohesion: 0.27
+Nodes (6): ConvertRunnerJson(), ConvertRunnersJson(), URunnerSubsystem::PerformHttpRequestForRunner(), URunnerSubsystem::PerformHttpRequestForRunners(), URunnerSubsystem::RequestRunnersWithRetry(), URunnerSubsystem::ScheduleRunnersRetry()
 
 ### Community 139 - "FTrailLabelStyle"
 Cohesion: 0.29
 Nodes (4): FTrailLabelStyle, Color, DrawSize, Font
 
-### Community 140 - "Level cinéma : export vidéo d'un survol de course"
-Cohesion: 0.33
-Nodes (5): Ce que fait le code, Level cinéma : export vidéo d'un survol de course, Limites connues, Rendu, À faire à la main (une fois)
-
-### Community 141 - "HttpGatewaySubsystem.cpp"
-Cohesion: 0.10
-Nodes (7): UHttpGatewaySubsystem::HandleCommandRequest(), UHttpGatewaySubsystem::Initialize(), ConvertWeatherJson(), UWeatherSubsystem::Deinitialize(), UWeatherSubsystem::Initialize(), UWeatherSubsystem::PerformHttpRequestForWeather(), UWeatherSubsystem::SetRaceSetup()
+### Community 141 - "MeteoPageSubsystem.cpp"
+Cohesion: 0.14
+Nodes (3): UHttpGatewaySubsystem::HandleCommandRequest(), UHttpGatewaySubsystem::Initialize(), UMeteoPageSubsystem::Initialize()
 
 ### Community 142 - "FRaceSetup"
-Cohesion: 0.09
-Nodes (27): FRaceSetup, arrivalCity, arrivalCountry, arrivalCountryFlag, cat, color, departureCity, departureCountry (+19 more)
+Cohesion: 0.07
+Nodes (29): FRaceSetup, arrivalCity, arrivalCountry, arrivalCountryFlag, cat, color, departureCity, departureCountry (+21 more)
 
 ### Community 143 - "PathSegmentsComponent.cpp"
-Cohesion: 0.17
-Nodes (4): UPathSegmentsComponent::BeginPlay(), UPathSegmentsComponent::ConfigurePiece(), UPathSegmentsComponent::CreatePiece(), UPathSegmentsComponent::OnLookAtTimerTick()
+Cohesion: 0.10
+Nodes (9): ACheckpoint_UTMB::BeginPlay(), ACheckpoint_UTMB::UpdateCheckpoint(), APoi_UTMB::BeginPlay(), APoi_UTMB::UpdatePoi(), UPathSegmentsComponent::BeginPlay(), UPathSegmentsComponent::ConfigurePiece(), UPathSegmentsComponent::CreatePiece(), UPathSegmentsComponent::OnLookAtTimerTick() (+1 more)
 
 ### Community 144 - "WorldFlora.h"
 Cohesion: 0.22
@@ -801,7 +818,7 @@ Nodes (5): FKindSet, Components, UHierarchicalInstancedStaticMeshComponent, USta
 
 ### Community 145 - "ARunner_Nike"
 Cohesion: 0.18
-Nodes (8): ARaceManager::GetRunnerClassForRace(), ARunner_Nike, ClubComponent, ClubFont, ClubHook, FlagComponent, LabelFont, NameComponent
+Nodes (7): ARunner_Nike, ClubComponent, ClubFont, ClubHook, FlagComponent, LabelFont, NameComponent
 
 ### Community 146 - "AudioSanitizer.h"
 Cohesion: 0.22
@@ -820,24 +837,24 @@ Cohesion: 0.54
 Nodes (7): DisplayController(), cancelClose(), cancelTimer(), checkForIntent(), closeAnyDelayed(), closeTooltip(), openTooltip()
 
 ### Community 151 - "ClubComponent.cpp"
-Cohesion: 0.10
-Nodes (8): UClubComponent::GetLocalSize(), UClubComponent::UClubComponent(), UClubComponent::UpdateClub(), UClubComponent::UpdateMesh(), Apply(), ApplyToAllTexts(), EnableOcclusion(), GetMaterial()
-
-### Community 152 - "Runner_GTWS.cpp"
-Cohesion: 0.07
-Nodes (13): ARunner_Generic::BeginPlay(), ARunner_Generic::ToggleFlag(), ARunner_Generic::TogglePhoto(), ARunner_Generic::UpdateRunner(), ARunner_GTWS::BeginPlay(), ARunner_GTWS::ToggleClub(), ARunner_GTWS::ToggleFlag(), ARunner_GTWS::TogglePhoto() (+5 more)
-
-### Community 155 - "UTMB_NameComponent.cpp"
 Cohesion: 0.18
-Nodes (3): UUTMB_NameComponent::UpdateMesh(), UUTMB_NameComponent::UpdateName(), UUTMB_NameComponent::UUTMB_NameComponent()
+Nodes (4): UClubComponent::GetLocalSize(), UClubComponent::UClubComponent(), UClubComponent::UpdateClub(), UClubComponent::UpdateMesh()
 
-### Community 156 - "PhotoComponent.cpp"
-Cohesion: 0.19
-Nodes (3): UPhotoComponent::ClearPhoto(), UPhotoComponent::UpdateDayNight(), UPhotoComponent::UpdatePhoto()
+### Community 152 - "UGeneric_NameComponent"
+Cohesion: 0.22
+Nodes (3): UGeneric_NameComponent, NameLeftComponent, NameRightComponent
 
-### Community 157 - "FWaterPolygon"
-Cohesion: 0.33
-Nodes (3): FWaterPolygon, Bounds, Rings
+### Community 155 - "splinecomponent"
+Cohesion: 0.11
+Nodes (6): ACinematicTrailCamera::ACinematicTrailCamera(), ACinematicTrailCamera::OnConstruction(), ACinematicTrailCamera::Tick(), UUTMB_NameComponent::UpdateMesh(), UUTMB_NameComponent::UpdateName(), UUTMB_NameComponent::UUTMB_NameComponent()
+
+### Community 156 - "FGroupStruct"
+Cohesion: 0.22
+Nodes (6): FGroups, Groups, RaceId, FGroupStruct, groupId, Teams
+
+### Community 159 - "UUTMB_NameComponent"
+Cohesion: 0.25
+Nodes (3): UUTMB_NameComponent, RightSlashComponent, SplineComponent
 
 ### Community 160 - "PlacementCalculator"
 Cohesion: 0.47
@@ -847,13 +864,13 @@ Nodes (5): isSvgElement(), PlacementCalculator(), computePlacementCoords(), getH
 Cohesion: 0.33
 Nodes (4): FRunnerState, CurrentOffset, CurrentScale, Runner
 
+### Community 165 - "FRunners"
+Cohesion: 0.33
+Nodes (5): FRunners, Runners, URunnerSubsystem::GetRunnersByRaceId(), URunnerSubsystem::RemoveTeamsNotInSnapshot(), UTeamSubsystem::RebuildRaceTeamIndex()
+
 ### Community 167 - "FlagComponent.cpp"
 Cohesion: 0.20
 Nodes (3): UFlagComponent::UFlagComponent(), UFlagComponent::UpdateDayNight(), UFlagComponent::UpdateFlag()
-
-### Community 170 - "WorldFauna.h"
-Cohesion: 0.40
-Nodes (3): UInstancedStaticMeshComponent, UStaticMesh, UWorldAmbienceSubsystem
 
 ### Community 171 - "FPendingCell"
 Cohesion: 0.40
@@ -862,6 +879,10 @@ Nodes (3): FPendingCell, X, Y
 ### Community 172 - "EKind"
 Cohesion: 0.40
 Nodes (5): EKind, Count, Grass, Rock, Shrub
+
+### Community 174 - "FTrailTemplateStack"
+Cohesion: 0.15
+Nodes (13): FTrailTemplateStack, Foot, InfosBkg, InfosPicto, InfosText, Line1, Line2, MainPicto (+5 more)
 
 ### Community 176 - "dynsections.js"
 Cohesion: 0.50
@@ -887,9 +908,9 @@ Nodes (8): FState, bSpeedDownHeld, bSpeedUpHeld, HeightM, SpeedMult, Tight, Zoom
 Cohesion: 0.67
 Nodes (3): FTrackSample, Dist, Time
 
-### Community 194 - "BroadcastCaptureSubsystem.h"
-Cohesion: 0.20
-Nodes (5): UBroadcastCaptureSubsystem::RequestViewTarget(), UBroadcastCaptureSubsystem::Tick(), APlayerController, UGameViewportClient, UTextureRenderTarget2D
+### Community 194 - "UBroadcastCaptureSubsystem::RequestViewTarget"
+Cohesion: 0.40
+Nodes (3): UBroadcastCaptureSubsystem::RequestViewTarget(), UBroadcastCaptureSubsystem::Tick(), APlayerController
 
 ### Community 201 - "Automation_TrailSimulator.slnx"
 Cohesion: 0.06
@@ -899,25 +920,57 @@ Nodes (35): Apple.Automation, AutomationTool, AutomationUtils.Automation, Cooked
 Cohesion: 0.06
 Nodes (34): Android.Automation, AutomationScripts.Automation, BuildGraph.Automation, EpicGames.Analytics.Generators, EpicGames.Analytics.PerformanceTrends, EpicGames.AspNet, EpicGames.Benchmarks, EpicGames.BuildGraph (+26 more)
 
+### Community 533 - "RawTextMaterial.h"
+Cohesion: 0.24
+Nodes (4): Apply(), ApplyToAllTexts(), EnableOcclusion(), GetMaterial()
+
+### Community 535 - "FOpenWeatherResponse"
+Cohesion: 0.22
+Nodes (8): FOpenWeatherResponse, current, lat, lon, timezone, timezone_offset, ACheckpoint::UpdateCheckpointWeather(), APoi::UpdatePoiWeather()
+
+### Community 536 - "int64"
+Cohesion: 0.13
+Nodes (12): FRaceEntry, name, raceId, templateName, FTeams, RaceId, Teams, FTeamStruct (+4 more)
+
+### Community 538 - "Generic_FlagComponent.h"
+Cohesion: 0.25
+Nodes (3): UGeneric_FlagComponent::UGeneric_FlagComponent(), UGeneric_FlagComponent, FlagHook
+
+### Community 541 - "FWaterMaskBounds"
+Cohesion: 0.15
+Nodes (10): UWaterMaskSubsystem::ComputeBounds(), UWaterMaskSubsystem::GetCacheFilePath(), UWaterMaskSubsystem::OnRaceWaterReady(), UWaterMaskSubsystem::RequestOverpass(), UWaterMaskSubsystem::SendOverpassRequest(), FWaterMaskBounds, East, North (+2 more)
+
+### Community 545 - "WorldAmbienceSubsystem.h"
+Cohesion: 0.25
+Nodes (6): UWorldAmbienceSubsystem::FindSunLight(), FHttpServerRequest, IHttpRouter, UDirectionalLightComponent, UMaterialParameterCollection, UVolumetricCloudComponent
+
+### Community 546 - "FWeatherResult"
+Cohesion: 0.25
+Nodes (6): FWeatherResult, bSuccess, Data, Error, HttpCode, RequestKey
+
+### Community 547 - "ACinematicTrail::SpawnRaceActors"
+Cohesion: 0.25
+Nodes (3): ACinematicTrail::BuildMarkers(), ACinematicTrail::Rebuild(), ACinematicTrail::SpawnRaceActors()
+
 ## Knowledge Gaps
-- **1206 isolated node(s):** `TeamParentClass`, `PoiParentClass`, `CheckpointParentClass`, `Queued`, `Running` (+1201 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3214 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **379 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **1213 isolated node(s):** `TeamParentClass`, `PoiParentClass`, `CheckpointParentClass`, `Queued`, `Running` (+1208 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 3238 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **381 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `FRaceSetup` connect `FRaceSetup` to `ARaceManager`, `ARunner`, `RaceManager.cpp`, `ACheckpoint`, `APoi`, `UCheckpointSubsystem`, `HttpGatewaySubsystem.cpp`, `URunnerSubsystem`, `TemplateSubsystem.h`, `ARunner_Nike`, `gameplaystatics`, `URaceSubsystem`, `UPoiSubsystem`, `Runner_GTWS.cpp`, `CinematicTrail.cpp`, `splinemeshcomponent`, `UPathSubsystem`, `UTeamSubsystem`, `UWeatherSubsystem`, `AKm`, `TeamSubsystem.cpp`, `RunnerSubsystem.cpp`, `PoiSubsystem.cpp`, `FRaceCheckpoint`, `PathSubsystem.cpp`, `ACinematicTrail`, `TrailSharedTypes.h`, `UTeamGroupSubsystem`, `ACheckpoint_GTWS`, `UTemplateSubsystem`, `TrailsSubsystem.cpp`, `APoi_UTMB`, `TeamGroupSubsystem.cpp`, `UTrailsSubsystem`, `int64`, `TemplateSubsystem.cpp`, `CheckpointSubsystem.cpp`?**
-  _High betweenness centrality (0.105) - this node is a cross-community bridge._
+- **Why does `FRaceSetup` connect `FRaceSetup` to `ARaceManager`, `ARunner`, `Runner_GTWS.cpp`, `RaceManager.cpp`, `ACheckpoint`, `APoi`, `UCheckpointSubsystem`, `URunnerSubsystem`, `TemplateSubsystem.h`, `PathSegmentsComponent.cpp`, `URaceSubsystem`, `int64`, `UPoiSubsystem`, `Path.cpp`, `CinematicTrail.cpp`, `splinemeshcomponent`, `UPathSubsystem`, `UTeamSubsystem`, `UWeatherSubsystem`, `AKm`, `RunnerSubsystem.cpp`, `PoiSubsystem.cpp`, `FRaceCheckpoint`, `PathSubsystem.cpp`, `ACinematicTrail`, `TrailSharedTypes.h`, `UTeamGroupSubsystem`, `UTemplateSubsystem`, `TeamGroupSubsystem.cpp`, `UTrailsSubsystem`, `TemplateSubsystem.cpp`, `CheckpointSubsystem.cpp`?**
+  _High betweenness centrality (0.102) - this node is a cross-community bridge._
 - **What connects `TeamParentClass`, `PoiParentClass`, `CheckpointParentClass` to the rest of the system?**
-  _1206 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1213 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `ARaceManager` be split into smaller, more focused modules?**
   _Cohesion score 0.01 - nodes in this community are weakly interconnected._
-- **Why does `UWorldAmbienceSubsystem` connect `UWorldAmbienceSubsystem` to `Piecewise`, `FHttpResultCallback`, `WorldAmbienceSubsystem.h`, `WorldAmbienceSubsystem.cpp`, `UWorldAmbienceSubsystem::OnWorldBeginPlay`, `FAutoWeatherInfo`, `UWorldAmbienceSubsystem::Initialize`, `EBenchPhase`, `FWorldAmbienceSettings`, `UWorldAmbienceSubsystem::TickBench`, `FBenchShot`, `TrailSharedTypes.h`?**
-  _High betweenness centrality (0.093) - this node is a cross-community bridge._
+- **Why does `ARaceManager` connect `ARaceManager` to `.SlateNotify`, `Runner_GTWS.cpp`, `APath`, `RaceManager.cpp`, `FRaceSetup`, `PathSegmentsComponent.cpp`, `TemplateSubsystem.h`, `FRunnerStruct`, `FPathSegment`, `ARaceManager::RtTeleportToTeam`, `ARaceManager::RtTogglePhoto`, `ARaceManager::RtUpdateMinMax`, `ARaceManager::EndPlay`, `ARaceManager::HideLoadingOverlay`, `ARaceManager::BeginPlay`, `ARaceManager::ToggleRace_Internal`, `TSubclassOf`, `ARaceManager::SpawnInitialRunners`, `TrailSharedTypes.h`, `Km.cpp`, `CallBP_GetFloatOut`?**
+  _High betweenness centrality (0.095) - this node is a cross-community bridge._
 - **Should `UHttpGatewaySubsystem` be split into smaller, more focused modules?**
   _Cohesion score 0.017241379310344827 - nodes in this community are weakly interconnected._
-- **Why does `ARaceManager` connect `ARaceManager` to `.SlateNotify`, `RaceManager.cpp`, `APath`, `FRaceSetup`, `PathSegmentsComponent.cpp`, `TemplateSubsystem.h`, `FRunnerStruct`, `gameplaystatics`, `FPathSegment`, `Runner_GTWS.cpp`, `ARaceManager::RtTeleportToTeam`, `ARaceManager::RtTogglePhoto`, `ARaceManager::RtUpdateMinMax`, `ARaceManager::EndPlay`, `ARaceManager::HideLoadingOverlay`, `ARaceManager::BeginPlay`, `ARaceManager::ToggleRace_Internal`, `ARaceManager::SpawnInitialRunners`, `TrailSharedTypes.h`, `.GetWorld`, `int64`, `CallBP_GetFloatOut`, `CheckpointSubsystem.cpp`?**
-  _High betweenness centrality (0.087) - this node is a cross-community bridge._
+- **Why does `UWorldAmbienceSubsystem` connect `UWorldAmbienceSubsystem` to `WorldAmbienceSubsystem.h`, `Piecewise`, `FHttpResultCallback`, `FWorldAmbienceState`, `WorldAmbienceSubsystem.cpp`, `UWorldAmbienceSubsystem::OnWorldBeginPlay`, `FAutoWeatherInfo`, `UWorldAmbienceSubsystem::Initialize`, `EBenchPhase`, `FWorldAmbienceSettings`, `FWeatherSample`, `FBenchShot`, `TrailSharedTypes.h`?**
+  _High betweenness centrality (0.093) - this node is a cross-community bridge._
 - **Should `.SlateNotify` be split into smaller, more focused modules?**
   _Cohesion score 0.036017669045191984 - nodes in this community are weakly interconnected._

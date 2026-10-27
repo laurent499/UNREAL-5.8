@@ -3096,10 +3096,10 @@
     "semantic_hash": "3f1e3d714d9b098821d7ea147d40f2db"
   },
   "Source/TrailSimulator/TrailSimulator.Build.cs": {
-    "mtime": 1791986592.593635,
-    "seen": 1791987750.9857738,
-    "ast_hash": "fe814d1c746513e04be7ba4d49ded109",
-    "semantic_hash": "fe814d1c746513e04be7ba4d49ded109"
+    "mtime": 1793118786.0388782,
+    "seen": 1793119319.2499247,
+    "ast_hash": "5f3cff36a6f687f82c2beb70b5a21cd9",
+    "semantic_hash": ""
   },
   "Source/TrailSimulator/TrailSimulator.cpp": {
     "mtime": 1776770048.9642997,
@@ -15414,9 +15414,21 @@
     "semantic_hash": ""
   },
   "Docs/Cinematique/RENDU_CINEMATIQUE.md": {
-    "mtime": 1793115938.7835746,
-    "seen": 1793115966.56906,
-    "ast_hash": "103504f15ab3e10b908dffe7e0a15af9",
+    "mtime": 1793119308.7078323,
+    "seen": 1793119319.2499397,
+    "ast_hash": "4eb70b651344bf89eb89b8ec7f5b65df",
+    "semantic_hash": ""
+  },
+  "Source/TrailSimulator/Private/Actors/Cinematic/CinematicGeoAnchor.cpp": {
+    "mtime": 1793118778.5744524,
+    "seen": 1793119319.2498343,
+    "ast_hash": "e27562ee66f0cac8191699822e3c9f9f",
+    "semantic_hash": ""
+  },
+  "Source/TrailSimulator/Public/Actors/Cinematic/CinematicGeoAnchor.h": {
+    "mtime": 1793118729.847243,
+    "seen": 1793119319.2498791,
+    "ast_hash": "e6ad4da8928048b8d77a16860adc0f84",
     "semantic_hash": ""
   }
 }
