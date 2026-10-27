@@ -39,3 +39,39 @@ Puis **Render (Local)**. Le rendu se fait depuis l'éditeur, qui a Internet (Ces
 - Les panneaux n'existent qu'au rendu (et en Play In Editor) : pour vérifier leur aspect avant un long rendu, lancer un rendu court de quelques images, ou Play (Simulate ne suffit pas, il faut le pawn).
 - La taille des panneaux suit la distance caméra comme en live (réglages Min/Max de la course enregistrés sur ce poste).
 - Le cap de la caméra se calcule sur le plan horizontal du départ. Pour une course très longue (plus de 100 km) on peut voir une légère inclinaison loin du départ.
+
+## Nuages de points et modèles géoréférencés (film Mont Blanc)
+
+Le plugin **LiDAR Point Cloud** est activé. Il lit les formats LAS, LAZ et E57. Les OBJ s'importent comme des meshes ; pour les PLY, passer par Blender ou CloudCompare vers OBJ ou FBX.
+
+Fichiers reçus (dossier `cinema/`, en Lambert-93 avec altitudes IGN69) :
+
+| Fichier | Contenu | Points | Emprise | Altitudes |
+|---|---|---|---|---|
+| `GEOSNAP-Mont_Blanc_2026.laz` | photogrammétrie du sommet (Metashape), en couleur | 55 M | 440 × 350 m | 4 665 à 4 809 m |
+| `lidar_HD_nuage.laz` | dalle LiDAR HD IGN, sans couleur | 20 M | 3 × 2 km | 3 523 à 4 807 m |
+
+Le socle rocheux sous la glace (mesures radar) n'est dans aucun de ces fichiers : il faut le demander aux géomètres, de préférence dans le même système (Lambert-93 / IGN69).
+
+### Importer et caler un nuage
+
+1. Glisser le `.laz` dans le Content Browser (par exemple `/Game/Cinematics/MontBlanc/`). L'import du fichier de 55 M points prend quelques minutes. Laisser les réglages par défaut : le plugin recentre le nuage et garde ses coordonnées Lambert d'origine dans l'asset.
+2. Glisser l'asset dans CinematicMap (cela crée un LidarPointCloudActor).
+3. Place Actors, poser un **Calage Lambert-93**. Dans Détails : `Target` = le nuage, puis cliquer **Caler sur Cesium**. Une notification donne la position trouvée : pour le sommet, environ 6.8654 E, 45.8325 N.
+4. Si le nuage flotte ou s'enfonce de quelques dizaines de centimètres par rapport à Cesium (écart entre les géoïdes IGN69 et EGM96), régler `HeightOffsetM`, puis caler de nouveau.
+5. **Découper Cesium** masque les tuiles Google sous l'emprise du nuage, qui les remplace. `ClipMarginM` élargit la découpe. À utiliser pour le sommet. Pour la dalle LiDAR HD, ça découperait 3 × 2 km : à voir selon le plan.
+6. Si on recharge ensuite une course avec `bCenterGeoreferenceOnStart`, l'origine Cesium bouge : recliquer **Caler sur Cesium**. Le plus simple est de charger la course d'abord et de caler les nuages ensuite.
+
+Pour un mesh (OBJ) au lieu d'un nuage, renseigner `ManualLambert93Origin` : les coordonnées Lambert-93 (est, nord, altitude, en m) du point (0, 0, 0) du mesh, axes X est, Y sud, Z haut, en cm.
+
+### Le « décalottage »
+
+Idée de mise en scène, à monter quand on aura le socle :
+
+- Glace = nuage GEOSNAP (ou LiDAR HD), socle = nuage ou mesh radar, calés tous les deux avec un Calage Lambert-93.
+- Le plugin LiDAR fournit des **Lidar Clipping Volumes** (Place Actors, « Lidar Clipping Volume », mode Clip Inside) : les points de la glace à l'intérieur du volume disparaissent. On anime la position ou l'échelle du volume dans Sequencer pour « soulever » la calotte, de haut en bas ou en tranche.
+- Variante : animer l'opacité ou la taille des points du nuage de glace (réglages de rendu de l'acteur) pour un fondu vers le socle.
+
+### Tracé de la voie normale
+
+La course 218 (MONT BLANC) est dans la régie : poser un Trace cinema avec `RaceID` = 218 et cliquer **Charger la course**. Le tracé va du Nid d'Aigle au sommet. Les refuges de Tête Rousse et du Goûter s'afficheront comme panneaux dès qu'ils seront saisis dans la régie, en checkpoints (sur le tracé) ou en POI.

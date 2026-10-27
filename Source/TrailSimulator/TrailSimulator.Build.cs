@@ -40,7 +40,8 @@ public class TrailSimulator : ModuleRules
 			"ImageWrapper",
 			"OWLCamera",
 			"OWLMedia",
-			"AudioMixer"	// nombre de canaux du mixeur (audio du flux OWL)
+			"AudioMixer",	// nombre de canaux du mixeur (audio du flux OWL)
+			"LidarPointCloudRuntime"	// calage des nuages de points du level cinema
 			
 		});
 

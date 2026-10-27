@@ -183,6 +183,10 @@
 			"Enabled": true
 		},
 		{
+			"Name": "LidarPointCloud",
+			"Enabled": true
+		},
+		{
 			"Name": "WindowsMoviePlayer",
 			"Enabled": true
 		},
