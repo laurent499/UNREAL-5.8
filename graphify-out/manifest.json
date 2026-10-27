@@ -2028,8 +2028,8 @@
     "semantic_hash": "f5d7e724828ab06fff758074dd89a58b"
   },
   "Plugins/SlateNotifications/Source/SlateNotifications/Private/SlateNotificationsBFL.cpp": {
-    "mtime": 1792165682.7536914,
-    "seen": 1792165811.2318652,
+    "mtime": 1792506088.94128,
+    "seen": 1792759082.3889518,
     "ast_hash": "963947001206ba22f706cc6d6fbb4698",
     "semantic_hash": ""
   },
@@ -2112,9 +2112,9 @@
     "semantic_hash": "538e883b9736ead86fd73f4fd51f7152"
   },
   "Source/SharedTypes/Public/TrailSharedTypes.h": {
-    "mtime": 1792502659.8226383,
-    "seen": 1792505879.0127764,
-    "ast_hash": "41eec75b1c01fefcee187663cbab4aa8",
+    "mtime": 1792759515.9097314,
+    "seen": 1792759573.9043288,
+    "ast_hash": "b9ea67f1c576ea20780db8fb2c05903c",
     "semantic_hash": ""
   },
   "Source/SharedTypes/SharedTypes.Build.cs": {
@@ -2136,15 +2136,15 @@
     "semantic_hash": "58da539366f15006de98edf44a32a76e"
   },
   "Source/Subsystems/Private/CheckpointSubsystem.cpp": {
-    "mtime": 1792499602.9239876,
-    "seen": 1792505879.0127842,
+    "mtime": 1792506088.9382308,
+    "seen": 1792759082.3890245,
     "ast_hash": "47bcb000266050f4aefd8fa0fb62ea7d",
     "semantic_hash": ""
   },
   "Source/Subsystems/Private/HttpGatewaySubsystem.cpp": {
-    "mtime": 1792502659.823637,
-    "seen": 1792505879.0127852,
-    "ast_hash": "d409c9f78e397f2de2c6118fcf1059c5",
+    "mtime": 1792759515.9107888,
+    "seen": 1792759573.9043381,
+    "ast_hash": "b5c5498d61eb5302de2e4f67e895b296",
     "semantic_hash": ""
   },
   "Source/Subsystems/Private/LoadingStatusSubsystem.cpp": {
@@ -2160,10 +2160,10 @@
     "semantic_hash": "cb1a43476b597d92631de147159cb2d8"
   },
   "Source/Subsystems/Private/PathSubsystem.cpp": {
-    "mtime": 1791364644.8310637,
-    "seen": 1791987750.9856699,
-    "ast_hash": "6e577c780fb50624d83d1a91ec368625",
-    "semantic_hash": "6e577c780fb50624d83d1a91ec368625"
+    "mtime": 1793114746.7055728,
+    "seen": 1793114776.9278111,
+    "ast_hash": "730f11d5aeed5733a753193c3e652b79",
+    "semantic_hash": ""
   },
   "Source/Subsystems/Private/PoiSubsystem.cpp": {
     "mtime": 1791358794.704678,
@@ -2262,8 +2262,8 @@
     "semantic_hash": "5c39d56fc73d743c1865bd6509752728"
   },
   "Source/Subsystems/Private/WorldFlora.cpp": {
-    "mtime": 1792165693.043619,
-    "seen": 1792165811.232014,
+    "mtime": 1792506088.9364426,
+    "seen": 1792759082.3890927,
     "ast_hash": "9afef45a5f1def5c5d51f3c190fb6dbe",
     "semantic_hash": ""
   },
@@ -2286,14 +2286,14 @@
     "semantic_hash": "bb8a251c2ffaa13f45fca157be625c6e"
   },
   "Source/Subsystems/Public/CheckpointSubsystem.h": {
-    "mtime": 1792499602.9229882,
-    "seen": 1792505879.0128098,
+    "mtime": 1792506088.9351292,
+    "seen": 1792759082.3891022,
     "ast_hash": "bc3bdcb0c244a59cd2c7b1d77a7919f8",
     "semantic_hash": ""
   },
   "Source/Subsystems/Public/HttpGatewaySubsystem.h": {
-    "mtime": 1792499576.7048414,
-    "seen": 1792505879.0128105,
+    "mtime": 1792506088.9345741,
+    "seen": 1792759082.389105,
     "ast_hash": "52a3fb76f408ca5385f00e4ff97cc49f",
     "semantic_hash": ""
   },
@@ -2310,10 +2310,10 @@
     "semantic_hash": "9c0db98aaaf67a12de514edca75ae849"
   },
   "Source/Subsystems/Public/PathSubsystem.h": {
-    "mtime": 1776770048.9213164,
-    "seen": 1791987750.9856865,
-    "ast_hash": "576f0ce06896d3299146f0d5f0f37ecf",
-    "semantic_hash": "576f0ce06896d3299146f0d5f0f37ecf"
+    "mtime": 1793114746.7055728,
+    "seen": 1793114776.927852,
+    "ast_hash": "6f724a44df36581506e5728105327edc",
+    "semantic_hash": ""
   },
   "Source/Subsystems/Public/PoiSubsystem.h": {
     "mtime": 1776770048.9223154,
@@ -2592,8 +2592,8 @@
     "semantic_hash": "bf9aa829324c6be568f33216e71a8977"
   },
   "Source/TrailSimulator/Private/Actors/Checkpoint.cpp": {
-    "mtime": 1792499602.924987,
-    "seen": 1792505879.0128586,
+    "mtime": 1792506088.9335067,
+    "seen": 1792759082.3892393,
     "ast_hash": "1b42749fb6f946d9b978ce92ff4bd1aa",
     "semantic_hash": ""
   },
@@ -2652,8 +2652,8 @@
     "semantic_hash": "b1eae397b00ce837f3dc1673b07253cc"
   },
   "Source/TrailSimulator/Private/Actors/Nike/Checkpoint_Nike.cpp": {
-    "mtime": 1792499602.924987,
-    "seen": 1792505879.0128682,
+    "mtime": 1792506088.932366,
+    "seen": 1792759082.3892663,
     "ast_hash": "04d9f5fd10126fa567fa303954792d63",
     "semantic_hash": ""
   },
@@ -2676,9 +2676,9 @@
     "semantic_hash": "0b0bc7449e65490c2cd81d0cac3330e1"
   },
   "Source/TrailSimulator/Private/Actors/Path.cpp": {
-    "mtime": 1792502659.8256457,
-    "seen": 1792505879.0128717,
-    "ast_hash": "35c832790b8172913a695a7c4c5f88a2",
+    "mtime": 1793114757.870739,
+    "seen": 1793114776.9279428,
+    "ast_hash": "a5c435a81feade39c2ef1511341d6f9c",
     "semantic_hash": ""
   },
   "Source/TrailSimulator/Private/Actors/Poi.cpp": {
@@ -2826,8 +2826,8 @@
     "semantic_hash": "2c855d65f4aa875609b97a49a887849b"
   },
   "Source/TrailSimulator/Private/RaceManager.cpp": {
-    "mtime": 1792499576.7068455,
-    "seen": 1792505879.0128984,
+    "mtime": 1792506088.9279826,
+    "seen": 1792759082.3893595,
     "ast_hash": "58dcabefac13fed2cd4d71f87714f983",
     "semantic_hash": ""
   },
@@ -2838,8 +2838,8 @@
     "semantic_hash": "cdef3a6cd2a19a8315f2e3e258bb3ee8"
   },
   "Source/TrailSimulator/Public/Actors/Checkpoint.h": {
-    "mtime": 1792499602.9239876,
-    "seen": 1792505879.0129004,
+    "mtime": 1792506088.9267094,
+    "seen": 1792759082.3893669,
     "ast_hash": "0e52c028c935f64556906b6a8b53d28b",
     "semantic_hash": ""
   },
@@ -2898,8 +2898,8 @@
     "semantic_hash": "7bcd26f7d5b5416392d1ce1d20608845"
   },
   "Source/TrailSimulator/Public/Actors/Nike/Checkpoint_Nike.h": {
-    "mtime": 1792499602.924987,
-    "seen": 1792505879.01291,
+    "mtime": 1792506088.925705,
+    "seen": 1792759082.3893938,
     "ast_hash": "e87c80c11dc1c63e5fdb7266741e4a57",
     "semantic_hash": ""
   },
@@ -2922,9 +2922,9 @@
     "semantic_hash": "f9a5a4a4525634dd9c863f5034a931d9"
   },
   "Source/TrailSimulator/Public/Actors/Path.h": {
-    "mtime": 1792499576.7068455,
-    "seen": 1792505879.012914,
-    "ast_hash": "5fb0946d400beb9784f16ab9fa019a86",
+    "mtime": 1793114757.870739,
+    "seen": 1793114776.9280064,
+    "ast_hash": "715b4a307970e6c94bb57eab2638bc10",
     "semantic_hash": ""
   },
   "Source/TrailSimulator/Public/Actors/Poi.h": {
@@ -3084,8 +3084,8 @@
     "semantic_hash": ""
   },
   "Source/TrailSimulator/Public/RaceManager.h": {
-    "mtime": 1792499576.7058408,
-    "seen": 1792505879.0129461,
+    "mtime": 1792506088.9213426,
+    "seen": 1792759082.3894866,
     "ast_hash": "7088432e548d17c0f57783383da14e3e",
     "semantic_hash": ""
   },
@@ -15342,15 +15342,15 @@
     "semantic_hash": ""
   },
   "Source/TrailSimulator/Private/Components/PathSegmentsComponent.cpp": {
-    "mtime": 1792503518.6021712,
-    "seen": 1792505879.0128932,
-    "ast_hash": "cbffb846c328d5f8e03f3b73fd055310",
+    "mtime": 1792759515.9377582,
+    "seen": 1792759573.904445,
+    "ast_hash": "83d1f351b9eeb97d3616315ff3e22983",
     "semantic_hash": ""
   },
   "Source/TrailSimulator/Public/Components/PathSegmentsComponent.h": {
-    "mtime": 1792503508.493853,
-    "seen": 1792505879.0129385,
-    "ast_hash": "d6db807aa1a72525f9cfe778d944c0de",
+    "mtime": 1792758913.8832672,
+    "seen": 1792759082.38947,
+    "ast_hash": "0c1b6bdb2bdfe080fef06b75ddd3f3a0",
     "semantic_hash": ""
   },
   "Source/SharedTypes/Public/TrailTemplateTypes.h": {
@@ -15387,6 +15387,36 @@
     "mtime": 1792069187.465403,
     "seen": 1792072401.6448245,
     "ast_hash": "b16cd036044e59fe3794aab265801b31",
+    "semantic_hash": ""
+  },
+  "Source/TrailSimulator/Private/Actors/Cinematic/CinematicTrail.cpp": {
+    "mtime": 1793114879.7884223,
+    "seen": 1793115054.726653,
+    "ast_hash": "e015cef42e11a46193b72774b41f7af3",
+    "semantic_hash": ""
+  },
+  "Source/TrailSimulator/Private/Actors/Cinematic/CinematicTrailCamera.cpp": {
+    "mtime": 1793114910.3203175,
+    "seen": 1793115054.7266545,
+    "ast_hash": "3b079312a4288be4b5f1f87375f608e4",
+    "semantic_hash": ""
+  },
+  "Source/TrailSimulator/Public/Actors/Cinematic/CinematicTrail.h": {
+    "mtime": 1793114879.789415,
+    "seen": 1793115054.7267358,
+    "ast_hash": "76e7f7395466fd86532827d4ca294937",
+    "semantic_hash": ""
+  },
+  "Source/TrailSimulator/Public/Actors/Cinematic/CinematicTrailCamera.h": {
+    "mtime": 1793114893.7361858,
+    "seen": 1793115054.7267385,
+    "ast_hash": "18cc42879123df27a8b774843cdcc65b",
+    "semantic_hash": ""
+  },
+  "Docs/Cinematique/RENDU_CINEMATIQUE.md": {
+    "mtime": 1793115031.431162,
+    "seen": 1793115054.7268486,
+    "ast_hash": "ee823df46d7ded33387b286c6de18c4d",
     "semantic_hash": ""
   }
 }
