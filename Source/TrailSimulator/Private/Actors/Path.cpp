@@ -502,6 +502,17 @@ static float FollowRail(USceneComponent* Arm, USceneComponent* Camera, USplineCo
 	return Tight;
 }
 
+double APath::GetGeoidUndulationM(double LonDeg, double LatDeg)
+{
+	return FGeoidGrid::UndulationM(LonDeg, LatDeg);
+}
+
+void APath::BuildSmoothCameraRail(USplineComponent* Source, USplineComponent* Rail, float SmoothM)
+{
+	if (!Source || !Rail || Source->GetNumberOfSplinePoints() < 2) return;
+	PathFly::BuildSmoothRail(Source, Rail, FMath::Max(SmoothM, 1.f));
+}
+
 APath::APath()
 {
 	PrimaryActorTick.bCanEverTick = true;

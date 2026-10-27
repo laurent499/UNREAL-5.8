@@ -38,7 +38,7 @@ void UPathSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
-bool ConvertPathJson(const FString& JsonString, FRacePath& OutRoot)
+bool UPathSubsystem::ParsePathJson(const FString& JsonString, FRacePath& OutRoot)
 {
 	TArray<FRacePathPoint> RacePath;
 	const bool bOK = FJsonObjectConverter::JsonArrayStringToUStruct(
@@ -57,7 +57,7 @@ bool ConvertPathJson(const FString& JsonString, FRacePath& OutRoot)
  * @param RaceID 
  * @param PathEndpoint 
  */
-void UPathSubsystem::PerformHttpRequestForPath(int64 RaceID, const FString& PathEndpoint)
+TSharedRef<IHttpRequest, ESPMode::ThreadSafe> UPathSubsystem::CreatePathRequest(const FString& PathEndpoint)
 {
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Req = FHttpModule::Get().CreateRequest();
 	Req->SetURL(PathEndpoint);
@@ -65,6 +65,12 @@ void UPathSubsystem::PerformHttpRequestForPath(int64 RaceID, const FString& Path
 	Req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	Req->SetHeader(TEXT("CF-Access-Client-Id"), TEXT("590a6f4ead75fa83b8f1c3c7b2962461.access"));
 	Req->SetHeader(TEXT("CF-Access-Client-Secret"), TEXT("27f032892b5c8669ccce1edaba9e4a9b64964f53e7a4fc96ccf135a9cc6e7474"));
+	return Req;
+}
+
+void UPathSubsystem::PerformHttpRequestForPath(int64 RaceID, const FString& PathEndpoint)
+{
+	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Req = CreatePathRequest(PathEndpoint);
 
 	ActivePathRequests.Add(PathEndpoint, Req);
 	TWeakObjectPtr<UPathSubsystem> WeakThis(this);
@@ -111,7 +117,7 @@ void UPathSubsystem::PerformHttpRequestForPath(int64 RaceID, const FString& Path
 			{
 				// UE_LOG(LogTemp, Warning, TEXT("[PerformHttpRequestForPath Lambda] IsInGameThread() %d"), IsInGameThread());
 				FRacePath NewSnapshot;
-				ConvertPathJson(JsonString, NewSnapshot);
+				ParsePathJson(JsonString, NewSnapshot);
 				AsyncTask(ENamedThreads::GameThread,
 					[WeakThis, NewSnapshot = MoveTemp(NewSnapshot), RaceID]() mutable
 					{

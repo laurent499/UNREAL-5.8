@@ -179,6 +179,10 @@
 			"Enabled": true
 		},
 		{
+			"Name": "MovieRenderPipeline",
+			"Enabled": true
+		},
+		{
 			"Name": "WindowsMoviePlayer",
 			"Enabled": true
 		},

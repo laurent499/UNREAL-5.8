@@ -102,6 +102,11 @@ public:
 	UPROPERTY(EditAnywhere, Category="Orbit")
 	AActor* OriginalViewTarget = nullptr;
 	
+	/** Ecart geoide EGM96 / ellipsoide WGS84 (m) : a ajouter a l'altitude GPS avant Cesium, 0 si la grille manque */
+	static double GetGeoidUndulationM(double LonDeg, double LatDeg);
+	/** Rail de camera lisse (moyenne glissante gaussienne sur SmoothM metres), le meme que le survol */
+	static void BuildSmoothCameraRail(class USplineComponent* Source, class USplineComponent* Rail, float SmoothM);
+
 	// Broadcast
 	void SetBroadcastCaptureEnabled_Implementation(bool bEnabled, class UTextureRenderTarget2D* SharedRT) override;
 	
