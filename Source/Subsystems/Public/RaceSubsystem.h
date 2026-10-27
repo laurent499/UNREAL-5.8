@@ -44,6 +44,8 @@ public:
 	FRaceSetup GetRaceSetupByName(const FString& RaceName) const;
 	UFUNCTION()
 	const FRaceSetup GetRaceSetupById(int64 RaceID) const;
+	/** Enregistre un setup connu sans requete (level cinema : setup sauvegarde avec le level) */
+	void AddRaceSetup(const FRaceSetup& NewRaceSetup);
 
 	/**
 	 * @brief Triggers the request to the API

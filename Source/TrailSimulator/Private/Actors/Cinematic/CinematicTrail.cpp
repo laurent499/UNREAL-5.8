@@ -2,6 +2,23 @@
 
 #include "Actors/Cinematic/CinematicTrail.h"
 #include "Actors/Path.h"
+#include "Actors/Generic/Checkpoint_Generic.h"
+#include "Actors/Generic/Poi_Generic.h"
+#include "Actors/GTWS/Checkpoint_GTWS.h"
+#include "Actors/GTWS/Poi_GTWS.h"
+#include "Actors/Nike/Checkpoint_Nike.h"
+#include "Actors/Nike/Poi_Nike.h"
+#include "Actors/UTMB/Checkpoint_UTMB.h"
+#include "Actors/UTMB/Poi_UTMB.h"
+#include "CheckpointInterface.h"
+#include "CheckpointSubsystem.h"
+#include "JsonObjectConverter.h"
+#include "PoiInterface.h"
+#include "PoiSubsystem.h"
+#include "RaceSubsystem.h"
+#include "TemplateSubsystem.h"
+#include "Components/TextRenderComponent.h"
+#include "Engine/GameInstance.h"
 #include "CesiumGeoreference.h"
 #include "PathSubsystem.h"
 #include "SlateNotificationsBFL.h"
@@ -41,48 +58,121 @@ void ACinematicTrail::OnConstruction(const FTransform& Transform)
 	Rebuild();
 }
 
+namespace CinematicTrail
+{
+	/** GET sur la regie avec les en-tetes d'acces ; OnOk recoit le corps si la reponse est 2xx */
+	static void Get(const FString& Endpoint, TFunction<void(const FString&)> OnOk, TFunction<void(int32)> OnFail)
+	{
+		TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Req = UPathSubsystem::CreatePathRequest(Endpoint);
+		Req->OnProcessRequestComplete().BindLambda(
+			[OnOk = MoveTemp(OnOk), OnFail = MoveTemp(OnFail)](FHttpRequestPtr, const FHttpResponsePtr Response, bool bWasSuccessful)
+			{
+				if (bWasSuccessful && Response.IsValid() && EHttpResponseCodes::IsOk(Response->GetResponseCode()))
+				{
+					OnOk(Response->GetContentAsString());
+				}
+				else
+				{
+					OnFail(Response.IsValid() ? Response->GetResponseCode() : -1);
+				}
+			});
+		Req->ProcessRequest();
+	}
+
+	static void Notify(const FString& Msg, bool bError)
+	{
+		if (bError) UE_LOG(LogTemp, Error, TEXT("%s"), *Msg);
+		USlateNotificationsBFL::SlateNotify(FText::FromString(Msg), bError ? EMessageType::Error : EMessageType::Success);
+	}
+
+	/** race/<id> renvoie { "setup": {...} } */
+	static bool ParseSetup(const FString& Json, FRaceSetup& Out)
+	{
+		TSharedPtr<FJsonObject> Root;
+		const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Json);
+		if (!FJsonSerializer::Deserialize(Reader, Root) || !Root.IsValid()) return false;
+		const TSharedPtr<FJsonObject>* Setup = nullptr;
+		return Root->TryGetObjectField(TEXT("setup"), Setup)
+			&& FJsonObjectConverter::JsonObjectToUStruct(Setup->ToSharedRef(), &Out, 0, 0);
+	}
+}
+
 void ACinematicTrail::LoadRace()
 {
-	const FString Endpoint = MainURL / TEXT("race") / LexToString(RaceID) / TEXT("path");
-	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Req = UPathSubsystem::CreatePathRequest(Endpoint);
+	// Trace (qui porte les checkpoints), puis setup de la course, puis POI
+	const FString Base = MainURL / TEXT("race") / LexToString(RaceID);
 	TWeakObjectPtr<ACinematicTrail> WeakThis(this);
-	Req->OnProcessRequestComplete().BindLambda(
-		[WeakThis, Endpoint](FHttpRequestPtr, const FHttpResponsePtr Response, bool bWasSuccessful)
+	CinematicTrail::Get(Base / TEXT("path"), [WeakThis, Base](const FString& PathJson)
+	{
+		ACinematicTrail* Self = WeakThis.Get();
+		if (!Self) return;
+		FRacePath Path;
+		if (!UPathSubsystem::ParsePathJson(PathJson, Path) || Path.Points.Num() < 2)
+		{
+			CinematicTrail::Notify(FString::Printf(TEXT("Trace cinema : trace de la course %lld vide ou illisible"), Self->RaceID), true);
+			return;
+		}
+
+		Self->Modify();
+		Self->PointsLLH.Reset(Path.Points.Num());
+		Self->Checkpoints.Reset();
+		Self->CheckpointPointIndices.Reset();
+		for (int32 i = 0; i < Path.Points.Num(); ++i)
+		{
+			const FRacePathPoint& P = Path.Points[i];
+			Self->PointsLLH.Add(FVector(P.lon, P.lat, P.ele));
+			// Comme APath::DrawPath : un point qui porte un nom est un checkpoint
+			if (!P.datas.name.IsEmpty())
+			{
+				Self->Checkpoints.Add(P.datas);
+				Self->CheckpointPointIndices.Add(i);
+			}
+		}
+
+		if (Self->bCenterGeoreferenceOnStart)
+		{
+			if (ACesiumGeoreference* Georef = ACesiumGeoreference::GetDefaultGeoreference(Self))
+			{
+				Georef->Modify();
+				Georef->SetOriginLongitudeLatitudeHeight(Self->PointsLLH[0]);
+			}
+		}
+
+		CinematicTrail::Get(Base, [WeakThis, Base](const FString& SetupJson)
 		{
 			ACinematicTrail* Self = WeakThis.Get();
 			if (!Self) return;
-
-			FRacePath Path;
-			if (!bWasSuccessful || !Response.IsValid() || !EHttpResponseCodes::IsOk(Response->GetResponseCode())
-				|| !UPathSubsystem::ParsePathJson(Response->GetContentAsString(), Path) || Path.Points.Num() < 2)
+			if (!CinematicTrail::ParseSetup(SetupJson, Self->RaceSetup))
 			{
-				const FString Msg = FString::Printf(TEXT("Trace cinema : echec du chargement de %s (code %d)"),
-					*Endpoint, Response.IsValid() ? Response->GetResponseCode() : -1);
-				UE_LOG(LogTemp, Error, TEXT("%s"), *Msg);
-				USlateNotificationsBFL::SlateNotify(FText::FromString(Msg), EMessageType::Error);
-				return;
+				CinematicTrail::Notify(TEXT("Trace cinema : setup de la course illisible, template par defaut au rendu"), true);
 			}
 
-			Self->Modify();
-			Self->PointsLLH.Reset(Path.Points.Num());
-			for (const FRacePathPoint& P : Path.Points)
+			CinematicTrail::Get(Base / TEXT("pois"), [WeakThis](const FString& PoisJson)
 			{
-				Self->PointsLLH.Add(FVector(P.lon, P.lat, P.ele));
-			}
-
-			if (Self->bCenterGeoreferenceOnStart)
+				ACinematicTrail* Self = WeakThis.Get();
+				if (!Self) return;
+				Self->Pois.Reset();
+				FJsonObjectConverter::JsonArrayStringToUStruct(PoisJson, &Self->Pois, 0, 0);
+				Self->Rebuild();
+				CinematicTrail::Notify(FString::Printf(TEXT("Trace cinema : %s chargee (%.1f km, %d checkpoints, %d POI)"),
+					*Self->RaceSetup.raceName, Self->Trail->GetSplineLength() / 100000.f, Self->Checkpoints.Num(), Self->Pois.Num()), false);
+			},
+			[WeakThis](int32 Code)
 			{
-				if (ACesiumGeoreference* Georef = ACesiumGeoreference::GetDefaultGeoreference(Self))
-				{
-					Georef->Modify();
-					Georef->SetOriginLongitudeLatitudeHeight(Self->PointsLLH[0]);
-				}
-			}
-			Self->Rebuild();
-			USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Trace cinema : course %lld chargee (%d points, %.1f km)"),
-				Self->RaceID, Self->PointsLLH.Num(), Self->Trail->GetSplineLength() / 100000.f)), EMessageType::Success);
+				if (ACinematicTrail* Self = WeakThis.Get()) Self->Rebuild();
+				CinematicTrail::Notify(FString::Printf(TEXT("Trace cinema : POI non charges (code %d)"), Code), true);
+			});
+		},
+		[WeakThis](int32 Code)
+		{
+			if (ACinematicTrail* Self = WeakThis.Get()) Self->Rebuild();
+			CinematicTrail::Notify(FString::Printf(TEXT("Trace cinema : setup et POI non charges (code %d)"), Code), true);
 		});
-	Req->ProcessRequest();
+	},
+	[Base](int32 Code)
+	{
+		CinematicTrail::Notify(FString::Printf(TEXT("Trace cinema : echec du chargement de %s/path (code %d)"), *Base, Code), true);
+	});
 }
 
 void ACinematicTrail::Rebuild()
@@ -109,6 +199,7 @@ void ACinematicTrail::Rebuild()
 		Rail->UpdateSpline();
 	}
 	BuildTrailMeshes();
+	BuildMarkers();
 }
 
 void ACinematicTrail::BuildTrailMeshes()
@@ -163,5 +254,138 @@ void ACinematicTrail::BuildTrailMeshes()
 		SMC->SetCustomPrimitiveDataVector4(12, TrailColor);
 		SMC->SetCustomPrimitiveDataFloat(16, Glow);
 		SMC->RegisterComponent();
+	}
+}
+
+FVector ACinematicTrail::GetCheckpointLocation(int32 Index) const
+{
+	const int32 Point = CheckpointPointIndices.IsValidIndex(Index) ? CheckpointPointIndices[Index] : INDEX_NONE;
+	return Point >= 0 && Point < Trail->GetNumberOfSplinePoints()
+		? Trail->GetLocationAtSplinePoint(Point, ESplineCoordinateSpace::World)
+		: GetActorLocation();
+}
+
+FVector ACinematicTrail::GetPoiLocation(const FRacePOI& Poi) const
+{
+	// Comme ARaceManager::HandleRacePoisDatasGathered : altitude brute, sans geoide ni decalage
+	const ACesiumGeoreference* Georef = ACesiumGeoreference::GetDefaultGeoreference(this);
+	return Georef ? Georef->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(Poi.lon, Poi.lat, Poi.elevation)) : GetActorLocation();
+}
+
+void ACinematicTrail::BuildMarkers()
+{
+	for (UTextRenderComponent* Marker : Markers)
+	{
+		if (IsValid(Marker)) Marker->DestroyComponent();
+	}
+	Markers.Reset();
+	const UWorld* World = GetWorld();
+	if (!World || World->IsGameWorld() || !HasTrail()) return;
+
+	// Reperes de cadrage pour l'editeur seulement : au rendu, les vrais panneaux les remplacent
+	auto Add = [this](const FString& Text, const FVector& Location, const FColor& Color)
+	{
+		UTextRenderComponent* Marker = NewObject<UTextRenderComponent>(this, NAME_None, RF_Transient);
+		Marker->bIsEditorOnly = true;
+		Marker->SetHiddenInGame(true);
+		Marker->SetupAttachment(Root);
+		Marker->SetText(FText::FromString(Text));
+		Marker->SetTextRenderColor(Color);
+		Marker->SetWorldSize(MarkerTextSize);
+		Marker->SetHorizontalAlignment(EHTA_Center);
+		Marker->SetVerticalAlignment(EVRTA_TextBottom);
+		Marker->RegisterComponent();
+		Marker->SetWorldLocation(Location + FVector(0.f, 0.f, MarkerTextSize));
+		Markers.Add(Marker);
+	};
+	if (bSpawnCheckpoints)
+	{
+		for (int32 i = 0; i < Checkpoints.Num(); ++i)
+		{
+			Add(Checkpoints[i].name, GetCheckpointLocation(i), FColor(255, 90, 40));
+		}
+	}
+	if (bSpawnPois)
+	{
+		for (const FRacePOI& Poi : Pois)
+		{
+			Add(Poi.name, GetPoiLocation(Poi), FColor(60, 140, 255));
+		}
+	}
+}
+
+void ACinematicTrail::BeginPlay()
+{
+	Super::BeginPlay();
+	UGameInstance* GI = GetGameInstance();
+	if (!GI || (!bSpawnCheckpoints && !bSpawnPois) || (Checkpoints.IsEmpty() && Pois.IsEmpty())) return;
+
+	// Les acteurs du live retrouvent le setup par son id ; le template est relu sur la regie, sinon valeurs d'origine
+	if (RaceSetup.raceId == 0)
+	{
+		RaceSetup.raceId = RaceID;
+	}
+	if (URaceSubsystem* Races = GI->GetSubsystem<URaceSubsystem>())
+	{
+		Races->AddRaceSetup(RaceSetup);
+	}
+	UTemplateSubsystem* Templates = GI->GetSubsystem<UTemplateSubsystem>();
+	if (Templates && !RaceSetup.templateName.IsEmpty())
+	{
+		Templates->RequestTemplate(RaceSetup.templateName, [WeakThis = TWeakObjectPtr<ACinematicTrail>(this)]()
+		{
+			if (ACinematicTrail* Self = WeakThis.Get()) Self->SpawnRaceActors();
+		});
+	}
+	else
+	{
+		SpawnRaceActors();
+	}
+}
+
+void ACinematicTrail::SpawnRaceActors()
+{
+	UWorld* World = GetWorld();
+	UGameInstance* GI = GetGameInstance();
+	if (!World || !GI) return;
+
+	// Memes classes que APath::GetCheckpointClassForRace et ARaceManager::GetPoiClassForRace
+	const FString Base = UTemplateSubsystem::GetForRace(this, RaceSetup).Base;
+	const FVector Scale(40.f);
+
+	UCheckpointSubsystem* CheckpointSubsystem = GI->GetSubsystem<UCheckpointSubsystem>();
+	if (bSpawnCheckpoints && CheckpointSubsystem)
+	{
+		const TSubclassOf<AActor> Class = Base == TEXT("UTMB") ? ACheckpoint_UTMB::StaticClass()
+			: Base == TEXT("GTWS") ? ACheckpoint_GTWS::StaticClass()
+			: Base == TEXT("Nike") ? ACheckpoint_Nike::StaticClass()
+			: ACheckpoint_Generic::StaticClass();
+		for (int32 i = 0; i < Checkpoints.Num(); ++i)
+		{
+			AActor* Actor = CheckpointSubsystem->SpawnCheckpointActor(RaceSetup.raceId, Checkpoints[i].checkpointId, World, Class,
+				FTransform(FRotator::ZeroRotator, GetCheckpointLocation(i), Scale));
+			if (ICheckpointInterface* Checkpoint = Cast<ICheckpointInterface>(Actor))
+			{
+				Checkpoint->UpdateCheckpoint(Checkpoints[i], RaceSetup);
+			}
+		}
+	}
+
+	UPoiSubsystem* PoiSubsystem = GI->GetSubsystem<UPoiSubsystem>();
+	if (bSpawnPois && PoiSubsystem)
+	{
+		const TSubclassOf<AActor> Class = Base == TEXT("UTMB") ? APoi_UTMB::StaticClass()
+			: Base == TEXT("GTWS") ? APoi_GTWS::StaticClass()
+			: Base == TEXT("Nike") ? APoi_Nike::StaticClass()
+			: APoi_Generic::StaticClass();
+		for (const FRacePOI& Poi : Pois)
+		{
+			AActor* Actor = PoiSubsystem->SpawnPoi(RaceSetup.raceId, Poi.poiId, World, Class,
+				FTransform(FRotator::ZeroRotator, GetPoiLocation(Poi), Scale));
+			if (IPoiInterface* PoiActor = Cast<IPoiInterface>(Actor))
+			{
+				PoiActor->UpdatePoi(Poi, RaceSetup);
+			}
+		}
 	}
 }

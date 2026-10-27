@@ -4,13 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "TrailSharedTypes.h"
 #include "CinematicTrail.generated.h"
 
 /**
  * @brief Trace d'une course pour les levels cinema (rendu Movie Render Queue, hors live)
- * Charge race/<id>/path depuis la regie dans l'editeur (bouton Charger la course), garde les points
- * avec le level et redessine le trace et le rail de camera a chaque construction : rien ne depend
- * des subsystems du live, le trace est la en edition comme pendant le rendu.
+ * Charge le trace, le setup, les checkpoints et les POI de la course depuis la regie dans l'editeur
+ * (bouton Charger la course) et les garde avec le level. Le trace et le rail sont redessines a chaque
+ * construction ; dans l'editeur, checkpoints et POI ne sont que des reperes nommes. Au lancement du
+ * rendu (PIE de Movie Render Queue), les vrais acteurs du live apparaissent avec le template de la course.
  */
 UCLASS(meta=(DisplayName="Trace cinema"))
 class TRAILSIMULATOR_API ACinematicTrail : public AActor
@@ -20,6 +22,7 @@ class TRAILSIMULATOR_API ACinematicTrail : public AActor
 public:
 	ACinematicTrail();
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void BeginPlay() override;
 
 	/** Id de la course dans la regie */
 	UPROPERTY(EditAnywhere, Category="Course")
@@ -45,6 +48,16 @@ public:
 	/** Longueur d'un morceau de trace (m) : plus court = plus fidele, plus de composants */
 	UPROPERTY(EditAnywhere, Category="Trace", meta=(ClampMin=5))
 	float TrailStepM = 25.f;
+
+	/** Fait apparaitre au rendu les checkpoints du live (classe selon le template de la course) */
+	UPROPERTY(EditAnywhere, Category="Panneaux")
+	bool bSpawnCheckpoints = true;
+	/** Fait apparaitre au rendu les POI du live */
+	UPROPERTY(EditAnywhere, Category="Panneaux")
+	bool bSpawnPois = true;
+	/** Taille du texte des reperes de l'editeur (cm) */
+	UPROPERTY(EditAnywhere, Category="Panneaux", meta=(ClampMin=100))
+	float MarkerTextSize = 4000.f;
 
 	/** Lissage du rail suivi par la camera (m), meme principe que le survol live */
 	UPROPERTY(EditAnywhere, Category="Rail", meta=(ClampMin=1))
@@ -75,6 +88,24 @@ private:
 	/** Points du trace (lon, lat, altitude GPS en m), sauvegardes avec le level */
 	UPROPERTY()
 	TArray<FVector> PointsLLH;
+	/** Setup de la course (couleur, template), sauvegarde avec le level */
+	UPROPERTY(VisibleAnywhere, Category="Course")
+	FRaceSetup RaceSetup;
+	/** Checkpoints du trace et index du point du trace ou ils sont poses */
+	UPROPERTY()
+	TArray<FRaceCheckpoint> Checkpoints;
+	UPROPERTY()
+	TArray<int32> CheckpointPointIndices;
+	UPROPERTY()
+	TArray<FRacePOI> Pois;
+
+	/** Reperes de l'editeur, recrees a chaque construction */
+	UPROPERTY(Transient)
+	TArray<TObjectPtr<class UTextRenderComponent>> Markers;
 
 	void BuildTrailMeshes();
+	void BuildMarkers();
+	FVector GetCheckpointLocation(int32 Index) const;
+	FVector GetPoiLocation(const FRacePOI& Poi) const;
+	void SpawnRaceActors();
 };
