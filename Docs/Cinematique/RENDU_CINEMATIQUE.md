@@ -64,6 +64,19 @@ Le socle rocheux sous la glace (mesures radar) n'est dans aucun de ces fichiers 
 
 Pour un mesh (OBJ) au lieu d'un nuage, renseigner `ManualLambert93Origin` : les coordonnées Lambert-93 (est, nord, altitude, en m) du point (0, 0, 0) du mesh, axes X est, Y sud, Z haut, en cm.
 
+### Version documentaire (sans points, sans trou)
+
+Les nuages de points ne sont pas exploitables tels quels à l'antenne : on les transforme en meshes texturés (scripts dans `Tools/Cinematique`, `pip install "laspy[lazrs]" numpy pillow opencv-python-headless`), tous recentrés sur la même origine Lambert-93 `999911 6533232 4779` :
+
+1. `laz_to_mesh.py GEOSNAP-Mont_Blanc_2026.laz glace_sommet --origine 999911 6533232 4779` : sommet au pas de 50 cm + orthophoto du relevé.
+2. `recentre_obj.py socle.obj socle_local.obj` : socle rocheux recentré.
+3. `terrain_lidar.py lidar_HD_nuage.laz terrain_lidarhd --origine 999911 6533232 4779 --dessous glace_sommet.obj --socle socle_local.obj` : terrain 3 × 2 km au pas de 2 m, texturé avec l'orthophoto IGN (téléchargée), qui passe sous le sommet et sous le socle, plonge sous Google sur son bord, et écrit le contour de découpe Google (`terrain_lidarhd_decoupe.json`).
+4. `masque_socle.py socle.obj GEOSNAP-Mont_Blanc_2026.laz masque_socle.png` : emprise du socle pour le décalottage.
+
+Dans CinematicMap : chaque mesh a son Calage Lambert-93 (`ManualLambert93Origin` = l'origine ci-dessus). Le tileset Google utilise `MI_CesiumCinema` (copie découpable du matériau du live). Le contour de découpe est collé dans `ClipOutlineLambert93` d'un Calage, puis **Découper Cesium**. Matériaux : `M_GlaceSommet` (neige du relevé sans ses ombres photo ; réglages CouleurNeige, ForceDetail, FlouOmbres ; translucide au-dessus du socle selon `MPC_Decalottage.Decalottage`), `M_Terrain`, `M_Socle`.
+
+La séquence `LS_MontBlanc` (45 s à 25 i/s) : `Reveal` du Trace cinema de 0 à 1 en 30 s (le tracé se déroule depuis le Nid d'Aigle, `bReverseDirection`), la caméra suit la tête du tracé (`bFollowTrailReveal`) et tourne autour du sommet à la fin. La piste « Material Parameter Collection » (MPC_Decalottage) est en place, mais ses clés sont à poser à la main : + sur la piste > Decalottage, clé 0 à l'image 800, clé 1 à l'image 1050.
+
 ### Le « décalottage »
 
 Idée de mise en scène, à monter quand on aura le socle :
