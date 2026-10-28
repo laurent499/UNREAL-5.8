@@ -189,6 +189,7 @@ void ACinematicGeoAnchor::ClipCesium()
 	Overlay->Modify();
 	Overlay->Polygons.AddUnique(TSoftObjectPtr<ACesiumCartographicPolygon>(ClipPolygon.Get()));
 	Tileset->RefreshTileset();
+	// La cible est facultative quand un contour est fourni
 	USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Calage Lambert-93 : tuiles Cesium masquees sous %s"),
-		*Target->GetActorNameOrLabel())), EMessageType::Success);
+		IsValid(Target) ? *Target->GetActorNameOrLabel() : TEXT("le contour"))), EMessageType::Success);
 }

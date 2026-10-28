@@ -48,11 +48,14 @@ def fill(grid, mask, radius):
         known = m.astype(np.float32)
         acc = np.zeros_like(g)
         cnt = np.zeros(m.shape, np.float32)
+        # voisins par decalage avec bord a zero (np.roll reboucle : le bord est prenait les valeurs du bord ouest)
+        gk = np.pad(g * known, 1)
+        kp = np.pad(known, 1)
         for dy in (-1, 0, 1):
             for dx in (-1, 0, 1):
                 if dx or dy:
-                    acc += np.roll(np.roll(g * known, dy, 0), dx, 1)
-                    cnt += np.roll(np.roll(known, dy, 0), dx, 1)
+                    acc += gk[1 + dy:gk.shape[0] - 1 + dy, 1 + dx:gk.shape[1] - 1 + dx]
+                    cnt += kp[1 + dy:kp.shape[0] - 1 + dy, 1 + dx:kp.shape[1] - 1 + dx]
         new = (~m) & (cnt >= 3)
         if not new.any():
             break
@@ -94,7 +97,9 @@ print(f'{len(x):,} points, grille {nx} x {ny} au pas de {a.pas} m, {m.mean() * 1
 
 # Points aberrants (oiseaux, bruit en bord de dalle) : cellule a plus de 20 m de la mediane de ses voisines
 med = cv2.medianBlur(h.astype(np.float32), 5)
-spikes = np.abs(h - med) > 20.0
+# seulement la ou les 5 x 5 voisines sont des donnees : au bord d'une zone vide, la mediane n'a pas de sens
+full = cv2.erode(m.astype(np.uint8), np.ones((5, 5), np.uint8), borderType=cv2.BORDER_REPLICATE).astype(bool)
+spikes = full & (np.abs(h - med) > 20.0)
 h = np.where(spikes, med, h)
 print(f'{int(spikes.sum())} cellules aberrantes corrigees')
 
