@@ -3,13 +3,15 @@
 - Altitude : mediane des points par cellule (--pas m), trous bouches par diffusion.
 - Sous un mesh plus detaille deja pose (--dessous : OBJ issu de laz_to_mesh.py, meme origine), le terrain
   passe sous ce mesh (min des deux - --retrait m) pour ne pas le traverser.
-- Bord exterieur : le terrain plonge de --plongee m sur --bande m pour passer sous Google, a decouper
-  plus a l'interieur (voir le contour Lambert-93 ecrit a cote : <sortie>_decoupe.json).
+- Zones sans donnees (dalle manquante) : hors du mesh.
+- Bord : le terrain plonge de --plongee m sur --bande m pour passer sous Google, decoupe --decoupe m plus a
+  l'interieur (contour Lambert-93 ecrit a cote : <sortie>_decoupe.json, pour ClipOutlineLambert93).
+- Orthophoto deja telechargee (<sortie>.png) : reutilisee.
 - Texture : orthophoto IGN (Geoplateforme, WMS ORTHOIMAGERY.ORTHOPHOTOS) en mosaique, 8192 x 4096 px.
 Sortie : OBJ (cm, Z haut, recentre sur --origine), MTL, PNG.
 
 Usage : python -I terrain_lidar.py dalle.laz sortie --origine 999911 6533232 4779 --dessous glace_sommet.obj
-Dependances : pip install "laspy[lazrs]" numpy pillow
+Dependances : pip install "laspy[lazrs]" numpy pillow opencv-python-headless
 """
 import argparse
 import io
@@ -17,6 +19,7 @@ import json
 import pathlib
 import urllib.request
 
+import cv2
 import laspy
 import numpy as np
 from PIL import Image
@@ -75,6 +78,14 @@ h[cs[starts]] = zs[(starts + ends) // 2]
 m = np.zeros(nx * ny, bool)
 m[cs[starts]] = True
 h, m = fill(h.reshape(ny, nx), m.reshape(ny, nx), 30)
+# Zone utile : plus grande zone couverte, trous interieurs bouches
+n_lab, lab, stats, _ = cv2.connectedComponentsWithStats(m.astype(np.uint8))
+m = lab == 1 + np.argmax(stats[1:, cv2.CC_STAT_AREA])
+# petits trous interieurs bouches (< 1 ha) ; une dalle manquante reste hors du mesh
+n_hole, hole, hstats, _ = cv2.connectedComponentsWithStats((~m).astype(np.uint8), connectivity=4)
+small = np.isin(hole, 1 + np.flatnonzero(hstats[1:, cv2.CC_STAT_AREA] * a.pas * a.pas < 10000))
+m |= small
+h, _ = fill(h, ~small & m, 60)
 print(f'{len(x):,} points, grille {nx} x {ny} au pas de {a.pas} m, {m.mean() * 100:.1f} % couverte')
 
 east = x0 + np.arange(nx) * a.pas
@@ -114,8 +125,9 @@ if a.socle:
     h = np.where(near, np.minimum(h, sh.min() - 3.0), h)
     print(f'{near.sum():,} cellules sous le socle')
 
-# --- Plongee du bord sous Google
-dist = np.minimum.reduce([E - x0, x1 - E, N - y0, y1 - N])
+# --- Plongee du bord sous Google (distance au bord de la zone utile)
+border = np.pad(m, 1).astype(np.uint8)
+dist = cv2.distanceTransform(border, cv2.DIST_L2, 5)[1:-1, 1:-1] * a.pas
 w = np.clip(1 - dist / a.bande, 0, 1)
 h = h - a.plongee * w * w
 
@@ -124,7 +136,7 @@ tw, th = a.texture
 tiles_x, tiles_y = int(np.ceil(tw / 2048)), int(np.ceil(th / 2048))
 mosaic = Image.new('RGB', (tiles_x * 2048, tiles_y * 2048))
 sx, sy = (x1 - x0) / tw, (y1 - y0) / th
-for ty in range(tiles_y):
+for ty in range(tiles_y if not pathlib.Path(a.sortie + '.png').exists() else 0):
     for tx in range(tiles_x):
         bx0, by1 = x0 + tx * 2048 * sx, y1 - ty * 2048 * sy
         bbox = f'{bx0},{by1 - 2048 * sy},{bx0 + 2048 * sx},{by1}'
@@ -138,7 +150,8 @@ for ty in range(tiles_y):
                 print('nouvel essai', tx, ty, ex)
         mosaic.paste(Image.open(io.BytesIO(data)).convert('RGB'), (tx * 2048, ty * 2048))
         print('tuile', tx, ty)
-mosaic.crop((0, 0, tw, th)).save(a.sortie + '.png')
+if not pathlib.Path(a.sortie + '.png').exists():
+    mosaic.crop((0, 0, tw, th)).save(a.sortie + '.png')
 
 # --- OBJ
 out = pathlib.Path(a.sortie)
@@ -154,14 +167,23 @@ with open(out.with_suffix('.obj'), 'w', newline='\n') as f:
     t = ((N - y0) / (y1 - y0)).ravel()
     f.write(''.join(f'vt {a_:.6f} {b_:.6f}\n' for a_, b_ in zip(u, t)))
     idx = np.arange(nx * ny).reshape(ny, nx) + 1
-    a00, a01, a10, a11 = idx[:-1, :-1].ravel(), idx[:-1, 1:].ravel(), idx[1:, :-1].ravel(), idx[1:, 1:].ravel()
+    # seuls les carres entierement dans la zone utile
+    quad = (m[:-1, :-1] & m[:-1, 1:] & m[1:, :-1] & m[1:, 1:]).ravel()
+    a00, a01, a10, a11 = (q.ravel()[quad] for q in (idx[:-1, :-1], idx[:-1, 1:], idx[1:, :-1], idx[1:, 1:]))
     f.write(''.join(f'f {q0}/{q0} {q2}/{q2} {q1}/{q1}\nf {q1}/{q1} {q2}/{q2} {q3}/{q3}\n'
                     for q0, q1, q2, q3 in zip(a00, a01, a10, a11)))
 with open(str(out) + '.mtl', 'w', newline='\n') as f:
     f.write(f'newmtl {out.name}\nKd 1 1 1\nmap_Kd {out.name}.png\n')
 
-# --- Contour de decoupe Google (rectangle rentre de --decoupe m), pour ClipOutlineLambert93
-d = a.decoupe
-json.dump([{'X': x0 + d, 'Y': y0 + d}, {'X': x1 - d, 'Y': y0 + d}, {'X': x1 - d, 'Y': y1 - d}, {'X': x0 + d, 'Y': y1 - d}],
-          open(a.sortie + '_decoupe.json', 'w'))
-print(f'{nx * ny:,} sommets, {2 * (nx - 1) * (ny - 1):,} triangles -> {out.with_suffix(".obj")}')
+# --- Contour de decoupe Google : zone utile rentree de --decoupe m, pour ClipOutlineLambert93
+k = int(round(a.decoupe / a.pas))
+# ouverture de 100 m : les bandes etroites autour d'une dalle manquante sortent de la decoupe (un polygone sans trou)
+o = int(round(50 / a.pas))
+clip = cv2.morphologyEx(m.astype(np.uint8), cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_RECT, (2 * o + 1, 2 * o + 1)),
+                        borderType=cv2.BORDER_CONSTANT, borderValue=0)
+clip = np.pad(clip, 1)
+inner = cv2.erode(clip, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * k + 1, 2 * k + 1)))[1:-1, 1:-1]
+cs_, _ = cv2.findContours(inner, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+c = cv2.approxPolyDP(max(cs_, key=cv2.contourArea), 1.0, True)[:, 0, :]
+json.dump([{'X': float(x0 + px * a.pas), 'Y': float(y1 - py * a.pas)} for px, py in c], open(a.sortie + '_decoupe.json', 'w'))
+print(f'{nx * ny:,} sommets, {2 * int(quad.sum()):,} triangles, contour de decoupe {len(c)} points -> {out.with_suffix(".obj")}')
