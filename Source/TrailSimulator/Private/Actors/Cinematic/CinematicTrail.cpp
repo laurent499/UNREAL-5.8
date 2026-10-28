@@ -16,6 +16,7 @@
 #include "PoiInterface.h"
 #include "PoiSubsystem.h"
 #include "RaceSubsystem.h"
+#include "ScaleSubsystem.h"
 #include "TemplateSubsystem.h"
 #include "Components/TextRenderComponent.h"
 #include "Engine/GameInstance.h"
@@ -302,15 +303,16 @@ void ACinematicTrail::BuildTrailMeshes()
 		SMC->SetStartAndEnd(P1, T1, P2, T2, false);
 		SMC->SetTranslucentSortPriority(-20);
 
-		// Memes donnees que le trace live (APath::RebuildPathSplineMeshes)
-		SMC->SetCustomPrimitiveDataFloat(0, StartDist / Len);
-		SMC->SetCustomPrimitiveDataFloat(1, Step / Len);
-		SMC->SetCustomPrimitiveDataVector3(2, P1);
-		SMC->SetCustomPrimitiveDataVector3(6, P2);
-		SMC->SetCustomPrimitiveDataFloat(10, 0.f);
-		SMC->SetCustomPrimitiveDataFloat(11, 0.f);
-		SMC->SetCustomPrimitiveDataVector4(12, StartDist + 0.5f * Step >= SplitDist ? TrailColor2 : TrailColor);
-		SMC->SetCustomPrimitiveDataFloat(16, Glow);
+		// Memes donnees que le trace live (APath::RebuildPathSplineMeshes), en valeurs par defaut : elles sont
+		// sauvegardees avec le level et recopiees dans le PIE du rendu (les valeurs dynamiques ne le sont pas)
+		SMC->SetDefaultCustomPrimitiveDataFloat(0, StartDist / Len);
+		SMC->SetDefaultCustomPrimitiveDataFloat(1, Step / Len);
+		SMC->SetDefaultCustomPrimitiveDataVector3(2, P1);
+		SMC->SetDefaultCustomPrimitiveDataVector3(6, P2);
+		SMC->SetDefaultCustomPrimitiveDataFloat(10, 0.f);
+		SMC->SetDefaultCustomPrimitiveDataFloat(11, 0.f);
+		SMC->SetDefaultCustomPrimitiveDataVector4(12, StartDist + 0.5f * Step >= SplitDist ? TrailColor2 : TrailColor);
+		SMC->SetDefaultCustomPrimitiveDataFloat(16, Glow);
 		SMC->RegisterComponent();
 	}
 }
@@ -418,6 +420,12 @@ void ACinematicTrail::SpawnRaceActors()
 	// Memes classes que APath::GetCheckpointClassForRace et ARaceManager::GetPoiClassForRace
 	const FString Base = UTemplateSubsystem::GetForRace(this, RaceSetup).Base;
 	const FVector Scale(40.f);
+	// Sans reglages de la course dans la regie, les panneaux prennent une echelle min/max nulle : on garde celle par defaut du live
+	UScaleSubsystem* ScaleSubsystem = World->GetSubsystem<UScaleSubsystem>();
+	auto KeepDefaultScale = [ScaleSubsystem](AActor* Actor)
+	{
+		if (ScaleSubsystem) ScaleSubsystem->SetActorScaleMinMax(Actor, ScaleSubsystem->GetGlobalConfig().ScaleMinMax);
+	};
 
 	UCheckpointSubsystem* CheckpointSubsystem = GI->GetSubsystem<UCheckpointSubsystem>();
 	if (bSpawnCheckpoints && CheckpointSubsystem)
@@ -433,6 +441,7 @@ void ACinematicTrail::SpawnRaceActors()
 			if (ICheckpointInterface* Checkpoint = Cast<ICheckpointInterface>(Actor))
 			{
 				Checkpoint->UpdateCheckpoint(Checkpoints[i], RaceSetup);
+				KeepDefaultScale(Actor);
 				RevealActors.Emplace(Actor, GetDistanceOnTrail(GetCheckpointLocation(i)));
 			}
 		}
@@ -452,6 +461,7 @@ void ACinematicTrail::SpawnRaceActors()
 			if (IPoiInterface* PoiActor = Cast<IPoiInterface>(Actor))
 			{
 				PoiActor->UpdatePoi(Poi, RaceSetup);
+				KeepDefaultScale(Actor);
 				RevealActors.Emplace(Actor, GetDistanceOnTrail(GetPoiLocation(Poi)));
 			}
 		}
