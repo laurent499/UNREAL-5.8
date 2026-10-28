@@ -86,6 +86,10 @@ n_hole, hole, hstats, _ = cv2.connectedComponentsWithStats((~m).astype(np.uint8)
 small = np.isin(hole, 1 + np.flatnonzero(hstats[1:, cv2.CC_STAT_AREA] * a.pas * a.pas < 10000))
 m |= small
 h, _ = fill(h, ~small & m, 60)
+# ouverture de 100 m : les bandes etroites (autour d'une dalle manquante) sortent du mesh, sinon elles traversent Google
+o = int(round(50 / a.pas))
+m = cv2.morphologyEx(m.astype(np.uint8), cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_RECT, (2 * o + 1, 2 * o + 1)),
+                     borderType=cv2.BORDER_CONSTANT, borderValue=0).astype(bool)
 print(f'{len(x):,} points, grille {nx} x {ny} au pas de {a.pas} m, {m.mean() * 100:.1f} % couverte')
 
 east = x0 + np.arange(nx) * a.pas
