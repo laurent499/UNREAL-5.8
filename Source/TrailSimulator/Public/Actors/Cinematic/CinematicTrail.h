@@ -95,6 +95,9 @@ public:
 	/** Fait apparaitre au rendu les POI du live */
 	UPROPERTY(EditAnywhere, Category="Panneaux")
 	bool bSpawnPois = true;
+	/** Checkpoints et POI visibles des le debut ; decoche : chacun apparait quand le trace l'atteint */
+	UPROPERTY(EditAnywhere, Category="Panneaux")
+	bool bAlwaysShowPanels = true;
 	/** Taille du texte des reperes de l'editeur (cm) */
 	UPROPERTY(EditAnywhere, Category="Panneaux", meta=(ClampMin=100))
 	float MarkerTextSize = 4000.f;

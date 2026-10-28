@@ -579,14 +579,14 @@ void ACinematicTrail::ApplyReveal()
 	{
 		if (Markers[i] && MarkerDistances.IsValidIndex(i))
 		{
-			Markers[i]->SetVisibility(MarkerDistances[i] <= Dist);
+			Markers[i]->SetVisibility(bAlwaysShowPanels || MarkerDistances[i] <= Dist);
 		}
 	}
 	for (const TPair<TWeakObjectPtr<AActor>, float>& Pair : RevealActors)
 	{
 		if (AActor* Actor = Pair.Key.Get())
 		{
-			Actor->SetActorHiddenInGame(Pair.Value > Dist);
+			Actor->SetActorHiddenInGame(!bAlwaysShowPanels && Pair.Value > Dist);
 		}
 	}
 }
