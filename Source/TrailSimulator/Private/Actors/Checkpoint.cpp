@@ -453,8 +453,11 @@ void ACheckpoint::BeginPlay()
 	}
 	
 	DynaPawn = UGameplayStatics::GetPlayerPawn(this, 0);
-	UCesiumFlyToComponent* FlyToComponent = DynaPawn->GetComponentByClass<UCesiumFlyToComponent>();
-	FlyToComponent->OnFlightComplete.AddDynamic(this, &ACheckpoint::UpdateGlobeAnchor);
+	// Pas de pawn pendant un rendu Movie Render Queue (level cinema) : pas de vol a suivre
+	if (UCesiumFlyToComponent* FlyToComponent = DynaPawn ? DynaPawn->GetComponentByClass<UCesiumFlyToComponent>() : nullptr)
+	{
+		FlyToComponent->OnFlightComplete.AddDynamic(this, &ACheckpoint::UpdateGlobeAnchor);
+	}
 	
 	SettingsSubsystem = FWorldUtils::GetGISubsystemOrLog<USettingsSubsystem>(this, TEXT(__FUNCTION__), false);
 	SettingsSubsystem->OnMinMaxSet.AddDynamic(this, &ACheckpoint::SetMinMax);
@@ -975,7 +978,7 @@ void ACheckpoint::OnLookAtTimerTick()
 
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 	UCineCameraComponent* ActiveCam = nullptr;
-	AActor* ViewTarget = PC->GetViewTarget();
+	AActor* ViewTarget = PC ? PC->GetViewTarget() : nullptr;
 	if (AActor* VT = ViewTarget)
 	{
 		ActiveCam = VT->FindComponentByClass<UCineCameraComponent>();
