@@ -77,6 +77,25 @@ Dans CinematicMap : chaque mesh a son Calage Lambert-93 (`ManualLambert93Origin`
 
 La séquence `LS_MontBlanc` (45 s à 25 i/s) : `Reveal` du Trace cinema de 0 à 1 en 30 s (le tracé se déroule depuis le Nid d'Aigle, `bReverseDirection`), la caméra suit la tête du tracé (`bFollowTrailReveal`) et tourne autour du sommet à la fin. La piste « Material Parameter Collection » (MPC_Decalottage) est en place, mais ses clés sont à poser à la main : + sur la piste > Decalottage, clé 0 à l'image 800, clé 1 à l'image 1050.
 
+### Export propre (documentaire)
+
+**Avant le rendu, dans CinematicMap :**
+- Tileset Google (`Cesium3DTileset_0`) : `Forbid Holes` coché (déjà fait), `Preload Siblings` coché (déjà fait). Pour le rendu final, `Maximum Screen Space Error` à 4 (au lieu de 16) : tuiles plus fines, chargement plus long. Revenir à 16 pour travailler dans l'éditeur.
+- Trace cinema : bouton **Draper sur le relief** relancé si le tracé ou les meshes ont bougé (meshes dans `DrapeMeshes`).
+- Enregistrer le niveau et la séquence.
+
+**Movie Render Queue** (Window > Cinematics > Movie Render Queue) : **+ Render**, choisir `LS_MontBlanc`, carte CinematicMap. Cliquer sur « Unsaved Config » et régler :
+1. **Output** : résolution 3840 × 2160 (UHD) ou 1920 × 1080 ; dossier de sortie ; nom `{sequence_name}.{frame_number}`. Laisser « Use Custom Frame Rate » décoché (25 i/s de la séquence).
+2. **Format** (+ Setting) : pour l'étalonnage, **EXR 16 bits** ; pour un fichier direct, **Apple ProRes 422 HQ** (plugin « Apple ProRes Media » à activer) ; à défaut, PNG 16 bits. Retirer le JPG par défaut.
+3. **Anti-aliasing** : Spatial Sample Count 1, **Temporal Sample Count 16** (lisse le tramage de la glace qui s'efface, le flou de mouvement et les apparitions de tuiles), **Engine Warm Up Count 150**, Render Warm Up Count 64, cocher « Use Camera Cut for Warm Up ».
+4. **Game Overrides** : laisser « Cinematic Quality Settings » et « Flush Grass Streaming » cochés.
+5. **Console Variables** (facultatif) : `r.MotionBlurQuality 4`, `r.ScreenPercentage 100`.
+6. Enregistrer ce réglage comme préréglage (« Save as Preset », par exemple `Doc_MontBlanc_UHD`) pour les prochains rendus.
+
+**Rendu** : d'abord un test court (Output > Custom Playback Range, par exemple images 2500 à 2700 pour le décalottage), puis **Render (Local)**. L'éditeur doit avoir Internet (tuiles Google). Les points colorés et les textes orange de l'éditeur ne sortent pas au rendu.
+
+**Montage** : importer la séquence d'images à 25 i/s. Les passes séparées (tracé seul, glace seule) sont possibles avec les « Stencil Layers » de MRQ si le monteur veut les retoucher.
+
 ### Le « décalottage »
 
 Idée de mise en scène, à monter quand on aura le socle :
