@@ -385,6 +385,14 @@ void ACinematicTrail::BuildMarkers()
 void ACinematicTrail::BeginPlay()
 {
 	Super::BeginPlay();
+	if (bWaitForTiles)
+	{
+		// Cesium ne branche ce mode que sur les sequences presentes au BeginPlay du tileset ; celle du rendu est creee apres
+		for (TActorIterator<ACesium3DTileset> It(GetWorld()); It; ++It)
+		{
+			It->PlayMovieSequencer();
+		}
+	}
 	UGameInstance* GI = GetGameInstance();
 	if (!GI || (!bSpawnCheckpoints && !bSpawnPois) || (Checkpoints.IsEmpty() && Pois.IsEmpty())) return;
 

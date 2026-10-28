@@ -41,6 +41,10 @@ public:
 	UPROPERTY(EditAnywhere, Category="Course")
 	bool bCenterGeoreferenceOnStart = true;
 
+	/** Au lancement du jeu (rendu Movie Render Queue), met les tilesets Cesium en mode capture : chaque image attend que
+	 * toutes les tuiles de la vue soient chargees et raffinees. Le rendu est plus lent mais sans tuiles floues ni apparitions. */
+	UPROPERTY(EditAnywhere, Category="Trace")
+	bool bWaitForTiles = true;
 	UPROPERTY(EditAnywhere, Category="Trace")
 	bool bShowTrail = true;
 	UPROPERTY(EditAnywhere, Category="Trace")
