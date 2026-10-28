@@ -51,9 +51,21 @@ public:
 	/** Nom (ou partie du nom) du checkpoint ou le trace passe a TrailColor2 */
 	UPROPERTY(EditAnywhere, Category="Trace")
 	FString ColorSplitCheckpoint;
-	/** Hauteur du trace drape au-dessus du relief (m) */
+	/** Jour entre le bas du tube et le relief drape (m) ; le rayon du tube s'y ajoute */
 	UPROPERTY(EditAnywhere, Category="Trace")
-	float DrapeOffsetM = 3.f;
+	float DrapeOffsetM = 4.f;
+	/** Pas du drape (m) : un point du trace sur le relief tous les DrapeStepM, pour ne pas couper les bosses */
+	UPROPERTY(EditAnywhere, Category="Trace", meta=(ClampMin=1))
+	float DrapeStepM = 10.f;
+	/** Diametre de la boule lumineuse en tete du trace qui se deroule (m, 0 : pas de boule) */
+	UPROPERTY(EditAnywhere, Category="Trace")
+	float HeadSizeM = 8.f;
+	/** Intensite lumineuse de la boule (emissif) */
+	UPROPERTY(EditAnywhere, Category="Trace")
+	float HeadGlow = 40.f;
+	/** Materiau de la boule : parametres Couleur (vecteur) et Intensite (scalaire) */
+	UPROPERTY(EditAnywhere, Category="Trace")
+	TSoftObjectPtr<class UMaterialInterface> HeadMaterial;
 	/** Meshes cales sur Cesium (terrain, glace) : le trace s'y pose la ou ils existent, ailleurs sur les tuiles Cesium */
 	UPROPERTY(EditAnywhere, Category="Trace")
 	TArray<TObjectPtr<AActor>> DrapeMeshes;
@@ -120,6 +132,10 @@ private:
 	TObjectPtr<class USplineComponent> Trail;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USplineComponent> Rail;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<class UStaticMeshComponent> Head;
+	UPROPERTY(Transient)
+	TObjectPtr<class UMaterialInstanceDynamic> HeadMID;
 	UPROPERTY()
 	TObjectPtr<class UStaticMesh> TrailMesh;
 	UPROPERTY()
@@ -128,9 +144,11 @@ private:
 	/** Points du trace (lon, lat, altitude GPS en m), sauvegardes avec le level */
 	UPROPERTY()
 	TArray<FVector> PointsLLH;
-	/** Hauteur ellipsoidale du relief sous chaque point (m), apres Draper sur le relief ; vide : altitudes GPS */
+	/** Trace drape et redecoupe tous les DrapeStepM (lon, lat, hauteur ellipsoidale du relief en m) ; vide : altitudes GPS */
 	UPROPERTY()
-	TArray<double> DrapedHeightsM;
+	TArray<FVector> DrapedLLH;
+	/** Distance (cm) ou le trace passe a TrailColor2 */
+	float SplitDistCm = TNumericLimits<float>::Max();
 	/** Setup de la course (couleur, template), sauvegarde avec le level */
 	UPROPERTY(VisibleAnywhere, Category="Course")
 	FRaceSetup RaceSetup;

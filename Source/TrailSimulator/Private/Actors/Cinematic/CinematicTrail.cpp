@@ -21,6 +21,7 @@
 #include "Engine/GameInstance.h"
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "CesiumGeoreference.h"
 #include "Cesium3DTileset.h"
 #include "CesiumSampleHeightResult.h"
@@ -49,6 +50,18 @@ ACinematicTrail::ACinematicTrail()
 	Rail = CreateDefaultSubobject<USplineComponent>(TEXT("Rail"));
 	Rail->SetupAttachment(Root);
 	Rail->ClearSplinePoints();
+
+	// Boule lumineuse en tete du trace : evite une fin de tube coupee net pendant qu'il se deroule
+	Head = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TeteTrace"));
+	Head->SetupAttachment(Root);
+	Head->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Head->SetCastShadow(false);
+	ConstructorHelpers::FObjectFinder<UStaticMesh> Sphere(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
+	if (Sphere.Succeeded())
+	{
+		Head->SetStaticMesh(Sphere.Object);
+	}
+	HeadMaterial = TSoftObjectPtr<UMaterialInterface>(FSoftObjectPath(TEXT("/Game/Cinematics/MontBlanc/M_TeteTrace.M_TeteTrace")));
 
 	// Meme cylindre (et donc meme materiau) que le trace live
 	ConstructorHelpers::FObjectFinder<UStaticMesh> SM(
@@ -194,16 +207,27 @@ void ACinematicTrail::Rebuild()
 	ACesiumGeoreference* Georef = HasTrail() ? ACesiumGeoreference::GetDefaultGeoreference(this) : nullptr;
 	if (Georef)
 	{
-		// Altitude GPS (niveau de la mer) -> hauteur ellipsoidale attendue par Cesium, comme APath
-		for (int32 i = 0; i < PointsLLH.Num(); ++i)
+		if (DrapedLLH.Num() >= 2)
 		{
-			const int32 Index = bReverseDirection ? PointsLLH.Num() - 1 - i : i;
-			const FVector& LLH = PointsLLH[Index];
-			const double HeightM = DrapedHeightsM.Num() == PointsLLH.Num()
-				? DrapedHeightsM[Index] + DrapeOffsetM
-				: LLH.Z + APath::GetGeoidUndulationM(LLH.X, LLH.Y) + HeightOffsetM;
-			Trail->AddSplinePoint(Georef->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(LLH.X, LLH.Y, HeightM)),
-				ESplineCoordinateSpace::World, false);
+			// Trace drape : le bas du tube passe DrapeOffsetM au-dessus du relief
+			const double RadiusM = TrailMesh ? TrailMesh->GetBounds().BoxExtent.X * TrailWidth / 100.0 : 0.0;
+			for (int32 i = 0; i < DrapedLLH.Num(); ++i)
+			{
+				const FVector& LLH = DrapedLLH[bReverseDirection ? DrapedLLH.Num() - 1 - i : i];
+				Trail->AddSplinePoint(Georef->TransformLongitudeLatitudeHeightPositionToUnreal(
+					FVector(LLH.X, LLH.Y, LLH.Z + DrapeOffsetM + RadiusM)), ESplineCoordinateSpace::World, false);
+			}
+		}
+		else
+		{
+			// Altitude GPS (niveau de la mer) -> hauteur ellipsoidale attendue par Cesium, comme APath
+			for (int32 i = 0; i < PointsLLH.Num(); ++i)
+			{
+				const FVector& LLH = PointsLLH[bReverseDirection ? PointsLLH.Num() - 1 - i : i];
+				const double HeightM = LLH.Z + APath::GetGeoidUndulationM(LLH.X, LLH.Y) + HeightOffsetM;
+				Trail->AddSplinePoint(Georef->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(LLH.X, LLH.Y, HeightM)),
+					ESplineCoordinateSpace::World, false);
+			}
 		}
 		Trail->UpdateSpline();
 		APath::BuildSmoothCameraRail(Trail, Rail, RailSmoothM);
@@ -243,14 +267,15 @@ void ACinematicTrail::BuildTrailMeshes()
 	// Morceaux de longueur fixe le long du trace : beaucoup moins de composants qu'un par point GPS
 	const float Len = Trail->GetSplineLength();
 	const int32 Num = FMath::Max(1, FMath::CeilToInt(Len / (TrailStepM * 100.f)));
-	float SplitDist = TNumericLimits<float>::Max();
+	SplitDistCm = TNumericLimits<float>::Max();
 	for (int32 i = 0; i < Checkpoints.Num(); ++i)
 	{
 		if (!ColorSplitCheckpoint.IsEmpty() && Checkpoints[i].name.Contains(ColorSplitCheckpoint))
 		{
-			SplitDist = GetDistanceOnTrail(GetCheckpointLocation(i));
+			SplitDistCm = GetDistanceOnTrail(GetCheckpointLocation(i));
 		}
 	}
+	const float SplitDist = SplitDistCm;
 	const float Step = Len / Num;
 	for (int32 i = 0; i < Num; ++i)
 	{
@@ -292,14 +317,16 @@ void ACinematicTrail::BuildTrailMeshes()
 
 FVector ACinematicTrail::GetCheckpointLocation(int32 Index) const
 {
-	int32 Point = CheckpointPointIndices.IsValidIndex(Index) ? CheckpointPointIndices[Index] : INDEX_NONE;
-	if (Point >= 0 && bReverseDirection)
+	const int32 Point = CheckpointPointIndices.IsValidIndex(Index) ? CheckpointPointIndices[Index] : INDEX_NONE;
+	const ACesiumGeoreference* Georef = ACesiumGeoreference::GetDefaultGeoreference(this);
+	if (!PointsLLH.IsValidIndex(Point) || !Georef || Trail->GetNumberOfSplinePoints() < 2)
 	{
-		Point = PointsLLH.Num() - 1 - Point;
+		return GetActorLocation();
 	}
-	return Point >= 0 && Point < Trail->GetNumberOfSplinePoints()
-		? Trail->GetLocationAtSplinePoint(Point, ESplineCoordinateSpace::World)
-		: GetActorLocation();
+	const FVector& LLH = PointsLLH[Point];
+	const FVector Gps = Georef->TransformLongitudeLatitudeHeightPositionToUnreal(
+		FVector(LLH.X, LLH.Y, LLH.Z + APath::GetGeoidUndulationM(LLH.X, LLH.Y)));
+	return Trail->FindLocationClosestToWorldLocation(Gps, ESplineCoordinateSpace::World);
 }
 
 FVector ACinematicTrail::GetPoiLocation(const FRacePOI& Poi) const
@@ -516,6 +543,28 @@ void ACinematicTrail::ApplyReveal()
 		AppliedVisible = Visible;
 	}
 
+	// Boule en tete, de la couleur du troncon, tant que le trace se deroule
+	const bool bShowHead = HeadSizeM > 0.f && Reveal > 0.001f && Reveal < 0.999f && Trail->GetNumberOfSplinePoints() >= 2;
+	Head->SetVisibility(bShowHead);
+	if (bShowHead)
+	{
+		if (!HeadMID)
+		{
+			if (UMaterialInterface* Base = HeadMaterial.LoadSynchronous())
+			{
+				HeadMID = UMaterialInstanceDynamic::Create(Base, this);
+				Head->SetMaterial(0, HeadMID);
+			}
+		}
+		Head->SetWorldLocation(GetRevealLocation());
+		Head->SetWorldScale3D(FVector(HeadSizeM));
+		if (HeadMID)
+		{
+			HeadMID->SetVectorParameterValue(TEXT("Couleur"), Dist >= SplitDistCm ? TrailColor2 : TrailColor);
+			HeadMID->SetScalarParameterValue(TEXT("Intensite"), HeadGlow);
+		}
+	}
+
 	for (int32 i = 0; i < Markers.Num(); ++i)
 	{
 		if (Markers[i] && MarkerDistances.IsValidIndex(i))
@@ -535,7 +584,7 @@ void ACinematicTrail::ApplyReveal()
 void ACinematicTrail::ClearDrape()
 {
 	Modify();
-	DrapedHeightsM.Reset();
+	DrapedLLH.Reset();
 	Rebuild();
 }
 
@@ -551,9 +600,19 @@ void ACinematicTrail::DrapeOnTerrain()
 	}
 
 	TArray<FVector> Query;
-	for (const FVector& LLH : PointsLLH)
+	for (int32 i = 0; i < PointsLLH.Num(); ++i)
 	{
-		Query.Add(FVector(LLH.X, LLH.Y, LLH.Z + APath::GetGeoidUndulationM(LLH.X, LLH.Y)));
+		const FVector A(PointsLLH[i].X, PointsLLH[i].Y, PointsLLH[i].Z + APath::GetGeoidUndulationM(PointsLLH[i].X, PointsLLH[i].Y));
+		Query.Add(A);
+		if (i + 1 == PointsLLH.Num()) break;
+		const FVector B(PointsLLH[i + 1].X, PointsLLH[i + 1].Y, PointsLLH[i + 1].Z + APath::GetGeoidUndulationM(PointsLLH[i + 1].X, PointsLLH[i + 1].Y));
+		const double Dx = (B.X - A.X) * 111320.0 * FMath::Cos(FMath::DegreesToRadians(A.Y));
+		const double Dy = (B.Y - A.Y) * 110540.0;
+		const int32 Steps = FMath::CeilToInt(FMath::Sqrt(Dx * Dx + Dy * Dy) / FMath::Max(DrapeStepM, 1.f));
+		for (int32 k = 1; k < Steps; ++k)
+		{
+			Query.Add(FMath::Lerp(A, B, double(k) / Steps));
+		}
 	}
 	TWeakObjectPtr<ACinematicTrail> WeakThis(this);
 	Tileset->SampleHeightMostDetailed(Query, FCesiumSampleHeightMostDetailedCallback::CreateLambda(
@@ -575,7 +634,7 @@ void ACinematicTrail::DrapeOnTerrain()
 			}
 
 			int32 OnMeshes = 0, OnCesium = 0;
-			TArray<double> Heights;
+			TArray<FVector> Draped;
 			for (int32 i = 0; i < Query.Num(); ++i)
 			{
 				const bool bCesium = Results.IsValidIndex(i) && Results[i].SampleSuccess;
@@ -600,11 +659,11 @@ void ACinematicTrail::DrapeOnTerrain()
 					Height = Georef->TransformUnrealPositionToLongitudeLatitudeHeight(FVector(Pos.X, Pos.Y, BestZ)).Z;
 					++OnMeshes;
 				}
-				Heights.Add(Height);
+				Draped.Add(FVector(Query[i].X, Query[i].Y, Height));
 			}
 
 			Self->Modify();
-			Self->DrapedHeightsM = MoveTemp(Heights);
+			Self->DrapedLLH = MoveTemp(Draped);
 			Self->Rebuild();
 			CinematicTrail::Notify(FString::Printf(TEXT("Trace cinema : %d points drapes (%d sur les meshes, %d sur Cesium)"),
 				Query.Num(), OnMeshes, OnCesium), false);
