@@ -92,6 +92,12 @@ m = cv2.morphologyEx(m.astype(np.uint8), cv2.MORPH_OPEN, cv2.getStructuringEleme
                      borderType=cv2.BORDER_CONSTANT, borderValue=0).astype(bool)
 print(f'{len(x):,} points, grille {nx} x {ny} au pas de {a.pas} m, {m.mean() * 100:.1f} % couverte')
 
+# Points aberrants (oiseaux, bruit en bord de dalle) : cellule a plus de 20 m de la mediane de ses voisines
+med = cv2.medianBlur(h.astype(np.float32), 5)
+spikes = np.abs(h - med) > 20.0
+h = np.where(spikes, med, h)
+print(f'{int(spikes.sum())} cellules aberrantes corrigees')
+
 east = x0 + np.arange(nx) * a.pas
 north = y1 - np.arange(ny) * a.pas
 E, N = np.meshgrid(east, north)
