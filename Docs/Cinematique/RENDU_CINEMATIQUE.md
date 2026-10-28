@@ -87,9 +87,9 @@ La séquence `LS_MontBlanc` (45 s à 25 i/s) : `Reveal` du Trace cinema de 0 à 
 **Movie Render Queue** (Window > Cinematics > Movie Render Queue) : **+ Render**, choisir `LS_MontBlanc`, carte CinematicMap. Cliquer sur « Unsaved Config » et régler :
 1. **Output** : résolution 3840 × 2160 (UHD) ou 1920 × 1080 ; dossier de sortie ; nom `{sequence_name}.{frame_number}`. Laisser « Use Custom Frame Rate » décoché (25 i/s de la séquence).
 2. **Format** (+ Setting) : pour l'étalonnage, **EXR 16 bits** ; pour un fichier direct, **Apple ProRes 422 HQ** (plugin « Apple ProRes Media » à activer) ; à défaut, PNG 16 bits. Retirer le JPG par défaut.
-3. **Anti-aliasing** : Spatial Sample Count 1, **Temporal Sample Count 16** (lisse le tramage de la glace qui s'efface, le flou de mouvement et les apparitions de tuiles), **Engine Warm Up Count 150**, Render Warm Up Count 64, cocher « Use Camera Cut for Warm Up ».
-4. **Game Overrides** : laisser « Cinematic Quality Settings » et « Flush Grass Streaming » cochés.
-5. **Console Variables** (facultatif) : `r.MotionBlurQuality 4`, `r.ScreenPercentage 100`.
+3. **Anti-aliasing** : Spatial Sample Count 1, **Temporal Sample Count 16** (lisse le tramage de la glace qui s'efface, le flou de mouvement et les apparitions de tuiles), **Engine Warm Up Count 150**, Render Warm Up Count 64, « Use Camera Cut for Warm Up » **décoché** (la coupe caméra commence à l'image 0).
+4. **Game Overrides** : **Game Mode Override = `GM_Trail`** (indispensable : avec le mode de jeu par défaut de Movie Render Queue, il n'y a pas de pawn du live et l'image sort noire). Laisser « Cinematic Quality Settings » et « Flush Grass Streaming » cochés.
+5. **Console Variables** (facultatif) : le nom dans la première colonne, la valeur dans la seconde (`r.MotionBlurQuality` / `4`), pas sur la même ligne.
 6. Enregistrer ce réglage comme préréglage (« Save as Preset », par exemple `Doc_MontBlanc_UHD`) pour les prochains rendus.
 
 **Rendu** : d'abord un test court (Output > Custom Playback Range, par exemple images 2500 à 2700 pour le décalottage), puis **Render (Local)**. L'éditeur doit avoir Internet (tuiles Google). Les points colorés et les textes orange de l'éditeur ne sortent pas au rendu.
