@@ -426,6 +426,25 @@ void ACinematicTrail::SpawnRaceActors()
 	if (!World || !GI) return;
 
 	// Memes classes que APath::GetCheckpointClassForRace et ARaceManager::GetPoiClassForRace
+	if (PanelCornerRadius >= 0.f)
+	{
+		if (UTemplateSubsystem* Templates = GI->GetSubsystem<UTemplateSubsystem>())
+		{
+			FTrailTemplate Template = Templates->GetTemplate(RaceSetup.templateName);
+			Template.Globals.CornerRadius = PanelCornerRadius;
+			Templates->SetTemplate(RaceSetup.templateName, Template);
+		}
+	}
+	// Couleur de la course des panneaux : celle de leur portion du trace
+	auto SetupAt = [this](float DistCm)
+	{
+		FRaceSetup Setup = RaceSetup;
+		if (bTintPanelsBySection)
+		{
+			Setup.color = TEXT("#") + (DistCm >= SplitDistCm ? TrailColor2 : TrailColor).ToFColor(true).ToHex();
+		}
+		return Setup;
+	};
 	const FString Base = UTemplateSubsystem::GetForRace(this, RaceSetup).Base;
 	const FVector Scale(40.f);
 	// Sans reglages de la course dans la regie, les panneaux prennent une echelle min/max nulle : on garde celle par defaut du live
@@ -448,9 +467,10 @@ void ACinematicTrail::SpawnRaceActors()
 				FTransform(FRotator::ZeroRotator, GetCheckpointLocation(i), Scale));
 			if (ICheckpointInterface* Checkpoint = Cast<ICheckpointInterface>(Actor))
 			{
-				Checkpoint->UpdateCheckpoint(Checkpoints[i], RaceSetup);
+				const float Dist = GetDistanceOnTrail(GetCheckpointLocation(i));
+				Checkpoint->UpdateCheckpoint(Checkpoints[i], SetupAt(Dist));
 				KeepDefaultScale(Actor);
-				RevealActors.Emplace(Actor, GetDistanceOnTrail(GetCheckpointLocation(i)));
+				RevealActors.Emplace(Actor, Dist);
 			}
 		}
 	}
@@ -468,9 +488,10 @@ void ACinematicTrail::SpawnRaceActors()
 				FTransform(FRotator::ZeroRotator, GetPoiLocation(Poi), Scale));
 			if (IPoiInterface* PoiActor = Cast<IPoiInterface>(Actor))
 			{
-				PoiActor->UpdatePoi(Poi, RaceSetup);
+				const float Dist = GetDistanceOnTrail(GetPoiLocation(Poi));
+				PoiActor->UpdatePoi(Poi, SetupAt(Dist));
 				KeepDefaultScale(Actor);
-				RevealActors.Emplace(Actor, GetDistanceOnTrail(GetPoiLocation(Poi)));
+				RevealActors.Emplace(Actor, Dist);
 			}
 		}
 	}
@@ -509,6 +530,8 @@ void ACinematicTrail::ApplyDecalottage()
 	if (!Instance) return;
 	Instance->SetScalarParameterValue(TEXT("Decalottage"), Decalottage);
 	AppliedDecalottage = Decalottage;
+	// Les panneaux se masquent avec le decalottage : relance ApplyReveal
+	AppliedReveal = -1.f;
 }
 
 void ACinematicTrail::SetSegmentEnd(int32 Index, float EndDist)
@@ -587,14 +610,14 @@ void ACinematicTrail::ApplyReveal()
 	{
 		if (Markers[i] && MarkerDistances.IsValidIndex(i))
 		{
-			Markers[i]->SetVisibility(bAlwaysShowPanels || MarkerDistances[i] <= Dist);
+			Markers[i]->SetVisibility(!(bHidePanelsOnDecalottage && Decalottage > 0.001f) && (bAlwaysShowPanels || MarkerDistances[i] <= Dist));
 		}
 	}
 	for (const TPair<TWeakObjectPtr<AActor>, float>& Pair : RevealActors)
 	{
 		if (AActor* Actor = Pair.Key.Get())
 		{
-			Actor->SetActorHiddenInGame(!bAlwaysShowPanels && Pair.Value > Dist);
+			Actor->SetActorHiddenInGame((bHidePanelsOnDecalottage && Decalottage > 0.001f) || (!bAlwaysShowPanels && Pair.Value > Dist));
 		}
 	}
 }

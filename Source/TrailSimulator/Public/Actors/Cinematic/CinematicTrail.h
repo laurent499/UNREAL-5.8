@@ -102,6 +102,16 @@ public:
 	/** Checkpoints et POI visibles des le debut ; decoche : chacun apparait quand le trace l'atteint */
 	UPROPERTY(EditAnywhere, Category="Panneaux")
 	bool bAlwaysShowPanels = true;
+	/** Arrondi des coins des panneaux (0 = angles vifs, 1 = maximal) ; negatif : celui du template de la regie.
+	 * La regie n'etant souvent pas joignable au rendu, le template d'origine a des angles vifs. */
+	UPROPERTY(EditAnywhere, Category="Panneaux", meta=(ClampMax=1))
+	float PanelCornerRadius = 0.5f;
+	/** Panneaux aux couleurs de leur portion du trace (TrailColor avant ColorSplitCheckpoint, TrailColor2 apres) */
+	UPROPERTY(EditAnywhere, Category="Panneaux")
+	bool bTintPanelsBySection = true;
+	/** Masque checkpoints et POI pendant le decalottage, pour degager le sommet */
+	UPROPERTY(EditAnywhere, Category="Panneaux")
+	bool bHidePanelsOnDecalottage = true;
 	/** Taille du texte des reperes de l'editeur (cm) */
 	UPROPERTY(EditAnywhere, Category="Panneaux", meta=(ClampMin=100))
 	float MarkerTextSize = 4000.f;
