@@ -109,8 +109,8 @@ with open(out.with_suffix('.obj'), 'w', newline='\n') as f:
     a00, a01, a10, a11 = vid[:-1, :-1], vid[:-1, 1:], vid[1:, :-1], vid[1:, 1:]
     quad = (a00 > 0) & (a01 > 0) & (a10 > 0) & (a11 > 0)
     q = np.stack([a00[quad], a01[quad], a10[quad], a11[quad]], 1)
-    # Sens anti-horaire vu du dessus (est, nord)
-    f.write(''.join(f'f {s[0]}/{s[0]} {s[2]}/{s[2]} {s[1]}/{s[1]}\nf {s[1]}/{s[1]} {s[2]}/{s[2]} {s[3]}/{s[3]}\n' for s in q))
+    # Sens horaire vu du dessus (est, nord) : l'import inverse Y, la face avant pointe alors vers le ciel
+    f.write(''.join(f'f {s[0]}/{s[0]} {s[1]}/{s[1]} {s[2]}/{s[2]}\nf {s[1]}/{s[1]} {s[3]}/{s[3]} {s[2]}/{s[2]}\n' for s in q))
 with open(str(out) + '.mtl', 'w', newline='\n') as f:
     f.write(f'newmtl {out.name}\nKd 1 1 1\n' + (f'map_Kd {out.name}.png\n' if has_rgb else ''))
 print(f'{len(v):,} sommets, {2 * len(q):,} triangles -> {out.with_suffix(".obj")}')

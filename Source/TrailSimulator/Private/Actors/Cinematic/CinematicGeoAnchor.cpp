@@ -128,7 +128,7 @@ void ACinematicGeoAnchor::Align()
 void ACinematicGeoAnchor::ClipCesium()
 {
 	const FBox Bounds = GetLocalBounds();
-	if (!Bounds.IsValid)
+	if (!Bounds.IsValid && ClipOutlineLambert93.Num() < 3)
 	{
 		USlateNotificationsBFL::SlateNotify(FText::FromString(TEXT("Calage Lambert-93 : choisir la cible (Target)")), EMessageType::Error);
 		return;
@@ -140,17 +140,28 @@ void ACinematicGeoAnchor::ClipCesium()
 	}
 	if (!Tileset) return;
 
-	// Emprise de la cible, agrandie de la marge, en longitude / latitude
-	const FVector M(ClipMarginM * 100.0, ClipMarginM * 100.0, 0.0);
-	const FVector Min = Bounds.Min - M;
-	const FVector Max = Bounds.Max + M;
+	// Contour fourni, sinon emprise de la cible agrandie de la marge ; en longitude / latitude
 	TArray<FVector> Points;
-	for (const FVector& Corner : { FVector(Min.X, Min.Y, Min.Z), FVector(Max.X, Min.Y, Min.Z), FVector(Max.X, Max.Y, Min.Z), FVector(Min.X, Max.Y, Min.Z) })
+	if (ClipOutlineLambert93.Num() >= 3)
 	{
-		FVector Lambert;
-		LocalToLambert(Corner, Lambert);
-		const FVector2D LonLat = Lambert93ToLonLat(Lambert.X, Lambert.Y);
-		Points.Add(FVector(LonLat.X, LonLat.Y, Lambert.Z));
+		for (const FVector2D& EastNorth : ClipOutlineLambert93)
+		{
+			const FVector2D LonLat = Lambert93ToLonLat(EastNorth.X, EastNorth.Y);
+			Points.Add(FVector(LonLat.X, LonLat.Y, 0.0));
+		}
+	}
+	else
+	{
+		const FVector M(ClipMarginM * 100.0, ClipMarginM * 100.0, 0.0);
+		const FVector Min = Bounds.Min - M;
+		const FVector Max = Bounds.Max + M;
+		for (const FVector& Corner : { FVector(Min.X, Min.Y, Min.Z), FVector(Max.X, Min.Y, Min.Z), FVector(Max.X, Max.Y, Min.Z), FVector(Min.X, Max.Y, Min.Z) })
+		{
+			FVector Lambert;
+			LocalToLambert(Corner, Lambert);
+			const FVector2D LonLat = Lambert93ToLonLat(Lambert.X, Lambert.Y);
+			Points.Add(FVector(LonLat.X, LonLat.Y, Lambert.Z));
+		}
 	}
 
 	Modify();

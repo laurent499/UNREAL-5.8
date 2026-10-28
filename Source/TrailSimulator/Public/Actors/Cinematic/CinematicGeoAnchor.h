@@ -34,6 +34,10 @@ public:
 	/** Tileset a decouper sous la cible (vide : le premier du level) */
 	UPROPERTY(EditAnywhere, Category="Decoupe Cesium")
 	TObjectPtr<class ACesium3DTileset> Tileset;
+	/** Contour de la decoupe (Lambert-93 : est, nord en m), par exemple celui d'un mesh issu de laz_to_mesh.py ;
+	 * vide : rectangle d'emprise de la cible */
+	UPROPERTY(EditAnywhere, Category="Decoupe Cesium")
+	TArray<FVector2D> ClipOutlineLambert93;
 	/** Marge autour de l'emprise de la cible (m) */
 	UPROPERTY(EditAnywhere, Category="Decoupe Cesium")
 	float ClipMarginM = 0.f;
