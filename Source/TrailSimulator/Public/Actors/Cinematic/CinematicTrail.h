@@ -45,6 +45,12 @@ public:
 	bool bShowTrail = true;
 	UPROPERTY(EditAnywhere, Category="Trace")
 	FLinearColor TrailColor = FLinearColor(1.f, 0.35f, 0.f);
+	/** Couleur du trace a partir du checkpoint ColorSplitCheckpoint (vide : une seule couleur) */
+	UPROPERTY(EditAnywhere, Category="Trace")
+	FLinearColor TrailColor2 = FLinearColor(0.05f, 0.35f, 1.f);
+	/** Nom (ou partie du nom) du checkpoint ou le trace passe a TrailColor2 */
+	UPROPERTY(EditAnywhere, Category="Trace")
+	FString ColorSplitCheckpoint;
 	/** Echelle du cylindre du trace, 50 comme en live */
 	UPROPERTY(EditAnywhere, Category="Trace", meta=(ClampMin=1))
 	float TrailWidth = 50.f;
@@ -67,6 +73,16 @@ public:
 	/** Taille du texte des reperes de l'editeur (cm) */
 	UPROPERTY(EditAnywhere, Category="Panneaux", meta=(ClampMin=100))
 	float MarkerTextSize = 4000.f;
+
+	/** Valeur de Reveal ou le trace atteint chaque checkpoint (meme ordre que la regie), pour caler les cles de Sequencer */
+	UPROPERTY(VisibleAnywhere, Category="Panneaux")
+	TArray<float> CheckpointReveal;
+
+	/** Decalottage (0 a 1), animable : recopie dans le parametre Decalottage de DecalottageCollection */
+	UPROPERTY(EditAnywhere, Interp, Category="Decalottage", meta=(ClampMin=0, ClampMax=1, UIMin=0, UIMax=1))
+	float Decalottage = 0.f;
+	UPROPERTY(EditAnywhere, Category="Decalottage")
+	TSoftObjectPtr<class UMaterialParameterCollection> DecalottageCollection;
 
 	/** Lissage du rail suivi par la camera (m), meme principe que le survol live */
 	UPROPERTY(EditAnywhere, Category="Rail", meta=(ClampMin=1))
@@ -118,6 +134,8 @@ private:
 	TArray<float> MarkerDistances;
 	TArray<TPair<TWeakObjectPtr<AActor>, float>> RevealActors;
 	float AppliedReveal = -1.f;
+	float AppliedDecalottage = -1.f;
+	void ApplyDecalottage();
 	int32 AppliedVisible = -1;
 	int32 PartialIndex = INDEX_NONE;
 

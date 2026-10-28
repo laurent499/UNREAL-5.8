@@ -19,6 +19,8 @@
 #include "TemplateSubsystem.h"
 #include "Components/TextRenderComponent.h"
 #include "Engine/GameInstance.h"
+#include "Materials/MaterialParameterCollection.h"
+#include "Materials/MaterialParameterCollectionInstance.h"
 #include "CesiumGeoreference.h"
 #include "PathSubsystem.h"
 #include "SlateNotificationsBFL.h"
@@ -52,12 +54,16 @@ ACinematicTrail::ACinematicTrail()
 	{
 		TrailMesh = SM.Object;
 	}
+	DecalottageCollection = TSoftObjectPtr<UMaterialParameterCollection>(
+		FSoftObjectPath(TEXT("/Game/Cinematics/MontBlanc/MPC_Decalottage.MPC_Decalottage")));
 }
 
 void ACinematicTrail::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	Rebuild();
+	AppliedDecalottage = -1.f;
+	ApplyDecalottage();
 }
 
 namespace CinematicTrail
@@ -204,6 +210,13 @@ void ACinematicTrail::Rebuild()
 	BuildTrailMeshes();
 	BuildMarkers();
 	ApplyReveal();
+
+	CheckpointReveal.Reset();
+	const float TrailLen = Trail->GetSplineLength();
+	for (int32 i = 0; i < Checkpoints.Num(); ++i)
+	{
+		CheckpointReveal.Add(TrailLen > 0.f ? GetDistanceOnTrail(GetCheckpointLocation(i)) / TrailLen : 0.f);
+	}
 }
 
 void ACinematicTrail::BuildTrailMeshes()
@@ -224,6 +237,14 @@ void ACinematicTrail::BuildTrailMeshes()
 	// Morceaux de longueur fixe le long du trace : beaucoup moins de composants qu'un par point GPS
 	const float Len = Trail->GetSplineLength();
 	const int32 Num = FMath::Max(1, FMath::CeilToInt(Len / (TrailStepM * 100.f)));
+	float SplitDist = TNumericLimits<float>::Max();
+	for (int32 i = 0; i < Checkpoints.Num(); ++i)
+	{
+		if (!ColorSplitCheckpoint.IsEmpty() && Checkpoints[i].name.Contains(ColorSplitCheckpoint))
+		{
+			SplitDist = GetDistanceOnTrail(GetCheckpointLocation(i));
+		}
+	}
 	const float Step = Len / Num;
 	for (int32 i = 0; i < Num; ++i)
 	{
@@ -257,7 +278,7 @@ void ACinematicTrail::BuildTrailMeshes()
 		SMC->SetCustomPrimitiveDataVector3(6, P2);
 		SMC->SetCustomPrimitiveDataFloat(10, 0.f);
 		SMC->SetCustomPrimitiveDataFloat(11, 0.f);
-		SMC->SetCustomPrimitiveDataVector4(12, TrailColor);
+		SMC->SetCustomPrimitiveDataVector4(12, StartDist + 0.5f * Step >= SplitDist ? TrailColor2 : TrailColor);
 		SMC->SetCustomPrimitiveDataFloat(16, Glow);
 		SMC->RegisterComponent();
 	}
@@ -423,6 +444,20 @@ void ACinematicTrail::Tick(float DeltaTime)
 	{
 		ApplyReveal();
 	}
+	if (Decalottage != AppliedDecalottage)
+	{
+		ApplyDecalottage();
+	}
+}
+
+void ACinematicTrail::ApplyDecalottage()
+{
+	UWorld* World = GetWorld();
+	UMaterialParameterCollection* Collection = DecalottageCollection.LoadSynchronous();
+	UMaterialParameterCollectionInstance* Instance = World && Collection ? World->GetParameterCollectionInstance(Collection) : nullptr;
+	if (!Instance) return;
+	Instance->SetScalarParameterValue(TEXT("Decalottage"), Decalottage);
+	AppliedDecalottage = Decalottage;
 }
 
 void ACinematicTrail::SetSegmentEnd(int32 Index, float EndDist)
