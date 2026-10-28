@@ -23,6 +23,8 @@ public:
 	ACinematicTrail();
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual bool ShouldTickIfViewportsOnly() const override { return true; }
 
 	/** Id de la course dans la regie */
 	UPROPERTY(EditAnywhere, Category="Course")
@@ -32,6 +34,9 @@ public:
 	/** Decalage vertical du trace (m), comme le ZOffset de la regie */
 	UPROPERTY(EditAnywhere, Category="Course")
 	float HeightOffsetM = 0.f;
+	/** Parcourt le trace a l'envers de la regie (course saisie de l'arrivee vers le depart) */
+	UPROPERTY(EditAnywhere, Category="Course")
+	bool bReverseDirection = false;
 	/** Recentre le geo-referencement Cesium sur le depart au chargement (precision des coordonnees) */
 	UPROPERTY(EditAnywhere, Category="Course")
 	bool bCenterGeoreferenceOnStart = true;
@@ -45,6 +50,10 @@ public:
 	float TrailWidth = 50.f;
 	UPROPERTY(EditAnywhere, Category="Trace", meta=(ClampMin=0))
 	float Glow = 1.f;
+	/** Part du trace dessinee depuis le depart (0 a 1), animable dans Sequencer : le trace se deroule
+	 * et les checkpoints, POI et reperes apparaissent quand il les atteint */
+	UPROPERTY(EditAnywhere, Interp, Category="Trace", meta=(ClampMin=0, ClampMax=1, UIMin=0, UIMax=1))
+	float Reveal = 1.f;
 	/** Longueur d'un morceau de trace (m) : plus court = plus fidele, plus de composants */
 	UPROPERTY(EditAnywhere, Category="Trace", meta=(ClampMin=5))
 	float TrailStepM = 25.f;
@@ -71,6 +80,8 @@ public:
 	void Rebuild();
 
 	class USplineComponent* GetRail() const { return Rail; }
+	/** Position de la tete du trace dessine (monde) */
+	FVector GetRevealLocation() const;
 	bool HasTrail() const { return PointsLLH.Num() >= 2; }
 
 private:
@@ -103,7 +114,18 @@ private:
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<class UTextRenderComponent>> Markers;
 
+	/** Distances (cm) le long du trace des reperes et des acteurs du rendu, pour les faire apparaitre avec Reveal */
+	TArray<float> MarkerDistances;
+	TArray<TPair<TWeakObjectPtr<AActor>, float>> RevealActors;
+	float AppliedReveal = -1.f;
+	int32 AppliedVisible = -1;
+	int32 PartialIndex = INDEX_NONE;
+
 	void BuildTrailMeshes();
+	void ApplyReveal();
+	/** Redessine le morceau Index de son debut jusqu'a EndDist (cm le long du trace) */
+	void SetSegmentEnd(int32 Index, float EndDist);
+	float GetDistanceOnTrail(const FVector& WorldLocation) const;
 	void BuildMarkers();
 	FVector GetCheckpointLocation(int32 Index) const;
 	FVector GetPoiLocation(const FRacePOI& Poi) const;

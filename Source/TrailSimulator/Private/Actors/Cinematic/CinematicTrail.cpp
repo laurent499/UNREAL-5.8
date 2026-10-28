@@ -29,7 +29,9 @@
 
 ACinematicTrail::ACinematicTrail()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
+	// Apres l'evaluation de Sequencer, comme la camera
+	PrimaryActorTick.TickGroup = TG_PostUpdateWork;
 	SetActorEnableCollision(false);
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
@@ -184,8 +186,9 @@ void ACinematicTrail::Rebuild()
 	if (Georef)
 	{
 		// Altitude GPS (niveau de la mer) -> hauteur ellipsoidale attendue par Cesium, comme APath
-		for (const FVector& LLH : PointsLLH)
+		for (int32 i = 0; i < PointsLLH.Num(); ++i)
 		{
+			const FVector& LLH = PointsLLH[bReverseDirection ? PointsLLH.Num() - 1 - i : i];
 			const double HeightM = LLH.Z + APath::GetGeoidUndulationM(LLH.X, LLH.Y) + HeightOffsetM;
 			Trail->AddSplinePoint(Georef->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(LLH.X, LLH.Y, HeightM)),
 				ESplineCoordinateSpace::World, false);
@@ -200,6 +203,7 @@ void ACinematicTrail::Rebuild()
 	}
 	BuildTrailMeshes();
 	BuildMarkers();
+	ApplyReveal();
 }
 
 void ACinematicTrail::BuildTrailMeshes()
@@ -213,6 +217,8 @@ void ACinematicTrail::BuildTrailMeshes()
 		}
 	}
 	TrailMeshes.Reset();
+	AppliedVisible = -1;
+	PartialIndex = INDEX_NONE;
 	if (!bShowTrail || !TrailMesh || Trail->GetNumberOfSplinePoints() < 2) return;
 
 	// Morceaux de longueur fixe le long du trace : beaucoup moins de composants qu'un par point GPS
@@ -259,7 +265,11 @@ void ACinematicTrail::BuildTrailMeshes()
 
 FVector ACinematicTrail::GetCheckpointLocation(int32 Index) const
 {
-	const int32 Point = CheckpointPointIndices.IsValidIndex(Index) ? CheckpointPointIndices[Index] : INDEX_NONE;
+	int32 Point = CheckpointPointIndices.IsValidIndex(Index) ? CheckpointPointIndices[Index] : INDEX_NONE;
+	if (Point >= 0 && bReverseDirection)
+	{
+		Point = PointsLLH.Num() - 1 - Point;
+	}
 	return Point >= 0 && Point < Trail->GetNumberOfSplinePoints()
 		? Trail->GetLocationAtSplinePoint(Point, ESplineCoordinateSpace::World)
 		: GetActorLocation();
@@ -279,6 +289,7 @@ void ACinematicTrail::BuildMarkers()
 		if (IsValid(Marker)) Marker->DestroyComponent();
 	}
 	Markers.Reset();
+	MarkerDistances.Reset();
 	const UWorld* World = GetWorld();
 	if (!World || World->IsGameWorld() || !HasTrail()) return;
 
@@ -297,6 +308,7 @@ void ACinematicTrail::BuildMarkers()
 		Marker->RegisterComponent();
 		Marker->SetWorldLocation(Location + FVector(0.f, 0.f, MarkerTextSize));
 		Markers.Add(Marker);
+		MarkerDistances.Add(GetDistanceOnTrail(Location));
 	};
 	if (bSpawnCheckpoints)
 	{
@@ -367,6 +379,7 @@ void ACinematicTrail::SpawnRaceActors()
 			if (ICheckpointInterface* Checkpoint = Cast<ICheckpointInterface>(Actor))
 			{
 				Checkpoint->UpdateCheckpoint(Checkpoints[i], RaceSetup);
+				RevealActors.Emplace(Actor, GetDistanceOnTrail(GetCheckpointLocation(i)));
 			}
 		}
 	}
@@ -385,7 +398,95 @@ void ACinematicTrail::SpawnRaceActors()
 			if (IPoiInterface* PoiActor = Cast<IPoiInterface>(Actor))
 			{
 				PoiActor->UpdatePoi(Poi, RaceSetup);
+				RevealActors.Emplace(Actor, GetDistanceOnTrail(GetPoiLocation(Poi)));
 			}
+		}
+	}
+	AppliedReveal = -1.f;
+}
+
+float ACinematicTrail::GetDistanceOnTrail(const FVector& WorldLocation) const
+{
+	return Trail->GetNumberOfSplinePoints() < 2 ? 0.f
+		: Trail->GetDistanceAlongSplineAtSplineInputKey(Trail->FindInputKeyClosestToWorldLocation(WorldLocation));
+}
+
+FVector ACinematicTrail::GetRevealLocation() const
+{
+	return Trail->GetLocationAtDistanceAlongSpline(FMath::Clamp(Reveal, 0.f, 1.f) * Trail->GetSplineLength(), ESplineCoordinateSpace::World);
+}
+
+void ACinematicTrail::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (Reveal != AppliedReveal)
+	{
+		ApplyReveal();
+	}
+}
+
+void ACinematicTrail::SetSegmentEnd(int32 Index, float EndDist)
+{
+	USplineMeshComponent* SMC = TrailMeshes.IsValidIndex(Index) ? TrailMeshes[Index].Get() : nullptr;
+	if (!SMC) return;
+	const float Step = Trail->GetSplineLength() / TrailMeshes.Num();
+	const float StartDist = Step * Index;
+	const float Length = FMath::Max(EndDist - StartDist, 1.f);
+	const FVector P1 = Trail->GetLocationAtDistanceAlongSpline(StartDist, ESplineCoordinateSpace::Local);
+	const FVector P2 = Trail->GetLocationAtDistanceAlongSpline(StartDist + Length, ESplineCoordinateSpace::Local);
+	SMC->SetStartAndEnd(P1, Trail->GetDirectionAtDistanceAlongSpline(StartDist, ESplineCoordinateSpace::Local) * Length,
+		P2, Trail->GetDirectionAtDistanceAlongSpline(StartDist + Length, ESplineCoordinateSpace::Local) * Length, true);
+	SMC->SetCustomPrimitiveDataVector3(6, P2);
+}
+
+void ACinematicTrail::ApplyReveal()
+{
+	AppliedReveal = Reveal;
+	const float Len = Trail->GetSplineLength();
+	const float Dist = FMath::Clamp(Reveal, 0.f, 1.f) * Len;
+	const int32 Num = TrailMeshes.Num();
+
+	if (Num > 0)
+	{
+		// Morceaux derriere la tete visibles ; celui qui la contient est raccourci jusqu'a elle
+		const float Step = Len / Num;
+		const int32 Visible = Reveal >= 1.f ? Num : FMath::Clamp(FMath::CeilToInt(Dist / Step), 0, Num);
+		const bool bFull = AppliedVisible < 0;
+		const int32 From = bFull ? 0 : FMath::Min(Visible, AppliedVisible);
+		const int32 To = bFull ? Num : FMath::Max(Visible, AppliedVisible);
+		for (int32 i = From; i < To; ++i)
+		{
+			if (TrailMeshes[i])
+			{
+				TrailMeshes[i]->SetVisibility(i < Visible);
+				if (bFull) SetSegmentEnd(i, Step * (i + 1));
+			}
+		}
+		if (PartialIndex != INDEX_NONE && PartialIndex != Visible - 1)
+		{
+			SetSegmentEnd(PartialIndex, Step * (PartialIndex + 1));
+			PartialIndex = INDEX_NONE;
+		}
+		if (Visible > 0 && Dist < Step * Visible)
+		{
+			SetSegmentEnd(Visible - 1, Dist);
+			PartialIndex = Visible - 1;
+		}
+		AppliedVisible = Visible;
+	}
+
+	for (int32 i = 0; i < Markers.Num(); ++i)
+	{
+		if (Markers[i] && MarkerDistances.IsValidIndex(i))
+		{
+			Markers[i]->SetVisibility(MarkerDistances[i] <= Dist);
+		}
+	}
+	for (const TPair<TWeakObjectPtr<AActor>, float>& Pair : RevealActors)
+	{
+		if (AActor* Actor = Pair.Key.Get())
+		{
+			Actor->SetActorHiddenInGame(Pair.Value > Dist);
 		}
 	}
 }

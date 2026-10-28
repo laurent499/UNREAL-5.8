@@ -26,6 +26,10 @@ public:
 	UPROPERTY(EditAnywhere, Category="Trace cinema")
 	TObjectPtr<class ACinematicTrail> Trail;
 
+	/** Suit la tete du trace qui se deroule (Reveal du Trace cinema) au lieu de Progress */
+	UPROPERTY(EditAnywhere, Category="Trace cinema")
+	bool bFollowTrailReveal = false;
+
 	/** Position le long du rail : 0 depart, 1 arrivee */
 	UPROPERTY(EditAnywhere, Interp, Category="Trace cinema", meta=(ClampMin=0, ClampMax=1, UIMin=0, UIMax=1))
 	float Progress = 0.f;
