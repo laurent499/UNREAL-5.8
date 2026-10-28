@@ -51,6 +51,19 @@ public:
 	/** Nom (ou partie du nom) du checkpoint ou le trace passe a TrailColor2 */
 	UPROPERTY(EditAnywhere, Category="Trace")
 	FString ColorSplitCheckpoint;
+	/** Hauteur du trace drape au-dessus du relief (m) */
+	UPROPERTY(EditAnywhere, Category="Trace")
+	float DrapeOffsetM = 3.f;
+	/** Meshes cales sur Cesium (terrain, glace) : le trace s'y pose la ou ils existent, ailleurs sur les tuiles Cesium */
+	UPROPERTY(EditAnywhere, Category="Trace")
+	TArray<TObjectPtr<AActor>> DrapeMeshes;
+
+	/** Recale chaque point du trace sur le relief affiche (meshes de DrapeMeshes, sinon tuiles Cesium les plus detaillees) */
+	UFUNCTION(CallInEditor, Category="Trace", meta=(DisplayName="Draper sur le relief"))
+	void DrapeOnTerrain();
+	/** Revient aux altitudes GPS de la regie */
+	UFUNCTION(CallInEditor, Category="Trace", meta=(DisplayName="Annuler le drape"))
+	void ClearDrape();
 	/** Echelle du cylindre du trace, 50 comme en live */
 	UPROPERTY(EditAnywhere, Category="Trace", meta=(ClampMin=1))
 	float TrailWidth = 50.f;
@@ -115,6 +128,9 @@ private:
 	/** Points du trace (lon, lat, altitude GPS en m), sauvegardes avec le level */
 	UPROPERTY()
 	TArray<FVector> PointsLLH;
+	/** Hauteur ellipsoidale du relief sous chaque point (m), apres Draper sur le relief ; vide : altitudes GPS */
+	UPROPERTY()
+	TArray<double> DrapedHeightsM;
 	/** Setup de la course (couleur, template), sauvegarde avec le level */
 	UPROPERTY(VisibleAnywhere, Category="Course")
 	FRaceSetup RaceSetup;

@@ -22,6 +22,9 @@
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
 #include "CesiumGeoreference.h"
+#include "Cesium3DTileset.h"
+#include "CesiumSampleHeightResult.h"
+#include "EngineUtils.h"
 #include "PathSubsystem.h"
 #include "SlateNotificationsBFL.h"
 #include "Components/SplineComponent.h"
@@ -194,8 +197,11 @@ void ACinematicTrail::Rebuild()
 		// Altitude GPS (niveau de la mer) -> hauteur ellipsoidale attendue par Cesium, comme APath
 		for (int32 i = 0; i < PointsLLH.Num(); ++i)
 		{
-			const FVector& LLH = PointsLLH[bReverseDirection ? PointsLLH.Num() - 1 - i : i];
-			const double HeightM = LLH.Z + APath::GetGeoidUndulationM(LLH.X, LLH.Y) + HeightOffsetM;
+			const int32 Index = bReverseDirection ? PointsLLH.Num() - 1 - i : i;
+			const FVector& LLH = PointsLLH[Index];
+			const double HeightM = DrapedHeightsM.Num() == PointsLLH.Num()
+				? DrapedHeightsM[Index] + DrapeOffsetM
+				: LLH.Z + APath::GetGeoidUndulationM(LLH.X, LLH.Y) + HeightOffsetM;
 			Trail->AddSplinePoint(Georef->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(LLH.X, LLH.Y, HeightM)),
 				ESplineCoordinateSpace::World, false);
 		}
@@ -524,4 +530,83 @@ void ACinematicTrail::ApplyReveal()
 			Actor->SetActorHiddenInGame(Pair.Value > Dist);
 		}
 	}
+}
+
+void ACinematicTrail::ClearDrape()
+{
+	Modify();
+	DrapedHeightsM.Reset();
+	Rebuild();
+}
+
+void ACinematicTrail::DrapeOnTerrain()
+{
+	ACesiumGeoreference* Georef = ACesiumGeoreference::GetDefaultGeoreference(this);
+	TActorIterator<ACesium3DTileset> It(GetWorld());
+	ACesium3DTileset* Tileset = It ? *It : nullptr;
+	if (!Georef || !Tileset || !HasTrail())
+	{
+		CinematicTrail::Notify(TEXT("Trace cinema : pas de trace ou pas de tileset Cesium pour le drape"), true);
+		return;
+	}
+
+	TArray<FVector> Query;
+	for (const FVector& LLH : PointsLLH)
+	{
+		Query.Add(FVector(LLH.X, LLH.Y, LLH.Z + APath::GetGeoidUndulationM(LLH.X, LLH.Y)));
+	}
+	TWeakObjectPtr<ACinematicTrail> WeakThis(this);
+	Tileset->SampleHeightMostDetailed(Query, FCesiumSampleHeightMostDetailedCallback::CreateLambda(
+		[WeakThis, Query](ACesium3DTileset*, const TArray<FCesiumSampleHeightResult>& Results, const TArray<FString>&)
+		{
+			ACinematicTrail* Self = WeakThis.Get();
+			ACesiumGeoreference* Georef = Self ? ACesiumGeoreference::GetDefaultGeoreference(Self) : nullptr;
+			if (!Georef) return;
+
+			TArray<UPrimitiveComponent*> Meshes;
+			for (AActor* Actor : Self->DrapeMeshes)
+			{
+				if (IsValid(Actor))
+				{
+					TArray<UPrimitiveComponent*> Components;
+					Actor->GetComponents(Components);
+					Meshes.Append(Components);
+				}
+			}
+
+			int32 OnMeshes = 0, OnCesium = 0;
+			TArray<double> Heights;
+			for (int32 i = 0; i < Query.Num(); ++i)
+			{
+				const bool bCesium = Results.IsValidIndex(i) && Results[i].SampleSuccess;
+				double Height = bCesium ? Results[i].LongitudeLatitudeHeight.Z : Query[i].Z;
+				OnCesium += bCesium ? 1 : 0;
+
+				// Les meshes cales (terrain LiDAR, glace) remplacent Google la ou ils existent : on prend leur surface
+				const FVector Pos = Georef->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(Query[i].X, Query[i].Y, Height));
+				const FVector Start = Pos + FVector(0, 0, 300000.0);
+				const FVector End = Pos - FVector(0, 0, 300000.0);
+				double BestZ = -UE_DOUBLE_BIG_NUMBER;
+				for (UPrimitiveComponent* Mesh : Meshes)
+				{
+					FHitResult Hit;
+					if (Mesh->LineTraceComponent(Hit, Start, End, FCollisionQueryParams(NAME_None, true)) && Hit.ImpactPoint.Z > BestZ)
+					{
+						BestZ = Hit.ImpactPoint.Z;
+					}
+				}
+				if (BestZ > -UE_DOUBLE_BIG_NUMBER)
+				{
+					Height = Georef->TransformUnrealPositionToLongitudeLatitudeHeight(FVector(Pos.X, Pos.Y, BestZ)).Z;
+					++OnMeshes;
+				}
+				Heights.Add(Height);
+			}
+
+			Self->Modify();
+			Self->DrapedHeightsM = MoveTemp(Heights);
+			Self->Rebuild();
+			CinematicTrail::Notify(FString::Printf(TEXT("Trace cinema : %d points drapes (%d sur les meshes, %d sur Cesium)"),
+				Query.Num(), OnMeshes, OnCesium), false);
+		}));
 }
