@@ -21,9 +21,6 @@ with open(dst, 'w', encoding='latin-1', newline='\n') as out:
         if l.startswith('v '):
             e, n, h = (float(c) - o for c, o in zip(l.split()[1:4], origin))
             out.write(f'v {e * 100:.2f} {n * 100:.2f} {h * 100:.2f}\n')
-        elif l.startswith('f '):
-            # L'inversion de Y a l'import retourne les faces : on inverse l'ordre des sommets
-            out.write('f ' + ' '.join(reversed(l.split()[1:])) + '\n')
         else:
             out.write(l + '\n')
 print('origine', origin, 'sommets', len(verts))
