@@ -163,6 +163,9 @@ public:
 	FVector2D ZoneCenter = FVector2D(-2976.0, 1135.0);
 	UPROPERTY(EditAnywhere, Category="Decalottage")
 	FVector2D ZoneRadius = FVector2D(9500.0, 6500.0);
+	/** Tout le trace s'efface avec le decalottage (sinon seulement dans la zone) */
+	UPROPERTY(EditAnywhere, Category="Decalottage")
+	bool bFadeWholeTrail = true;
 	/** Decalottage a partir duquel le trace dans la zone commence a s'amincir, puis a avoir disparu */
 	UPROPERTY(EditAnywhere, Category="Decalottage", meta=(ClampMin=0, ClampMax=1))
 	float TrailFadeStart = 0.05f;

@@ -598,7 +598,7 @@ void ACinematicTrail::ApplyZoneFade()
 		if (!SMC) continue;
 		const FVector P = Trail->GetLocationAtDistanceAlongSpline(Step * (i + 0.5f), ESplineCoordinateSpace::World);
 		const FVector2D Q((P.X - ZoneCenter.X) / ZoneRadius.X, (P.Y - ZoneCenter.Y) / ZoneRadius.Y);
-		const float Scale = TrailWidth * (Q.SizeSquared() < 1.0 ? Fade : 1.f);
+		const float Scale = TrailWidth * ((bFadeWholeTrail || Q.SizeSquared() < 1.0) ? Fade : 1.f);
 		SMC->SetStartScale(FVector2D(Scale), false);
 		SMC->SetEndScale(FVector2D(Scale), true);
 	}
