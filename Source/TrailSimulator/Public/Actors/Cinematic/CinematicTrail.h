@@ -74,6 +74,20 @@ public:
 	UPROPERTY(EditAnywhere, Category="Trace")
 	TArray<TObjectPtr<AActor>> DrapeMeshes;
 
+	/** Ecart max (m) entre un point drape et la mediane de ses voisins : au-dela, le point est ramene sur elle (pics, mesures aberrantes) */
+	UPROPERTY(EditAnywhere, Category="Trace", meta=(ClampMin=1))
+	float MaxGroundJumpM = 12.f;
+	/** Numeros des points drapes a supprimer a la main (voir Afficher les numeros), puis Recalculer */
+	UPROPERTY(EditAnywhere, Category="Trace")
+	TArray<int32> RemovedPoints;
+	/** Affiche dans la vue de l'editeur le numero des points drapes entre PointNumbersFrom et PointNumbersTo (1 sur 3) */
+	UPROPERTY(EditAnywhere, Category="Trace")
+	bool bShowPointNumbers = false;
+	UPROPERTY(EditAnywhere, Category="Trace", meta=(EditCondition="bShowPointNumbers", ClampMin=0))
+	int32 PointNumbersFrom = 0;
+	UPROPERTY(EditAnywhere, Category="Trace", meta=(EditCondition="bShowPointNumbers", ClampMin=0))
+	int32 PointNumbersTo = 150;
+
 	/** Recale chaque point du trace sur le relief affiche (meshes de DrapeMeshes, sinon tuiles Cesium les plus detaillees) */
 	UFUNCTION(CallInEditor, Category="Trace", meta=(DisplayName="Draper sur le relief"))
 	void DrapeOnTerrain();
@@ -112,6 +126,21 @@ public:
 	/** Masque checkpoints et POI pendant le decalottage, pour degager le sommet */
 	UPROPERTY(EditAnywhere, Category="Panneaux")
 	bool bHidePanelsOnDecalottage = true;
+	/** Echelle des panneaux selon la distance a la camera, comme le live (regie : min/max). Au sommet la camera est
+	 * pres des panneaux : baisser PanelScaleMin si le dernier checkpoint est trop gros. */
+	UPROPERTY(EditAnywhere, Category="Panneaux", meta=(ClampMin=0.1))
+	float PanelScaleMin = 20.f;
+	UPROPERTY(EditAnywhere, Category="Panneaux", meta=(ClampMin=0.1))
+	float PanelScaleMax = 200.f;
+	/** Distance (m) en dessous de laquelle les panneaux sont a PanelScaleMin */
+	UPROPERTY(EditAnywhere, Category="Panneaux", meta=(ClampMin=0))
+	float PanelScaleNearM = 500.f;
+	/** Distance (m) au-dela de laquelle les panneaux sont a PanelScaleMax */
+	UPROPERTY(EditAnywhere, Category="Panneaux", meta=(ClampMin=1))
+	float PanelScaleFarM = 10000.f;
+	/** Couleur de chaque checkpoint selon sa portion du trace, pour verification (rempli par Recalculer) */
+	UPROPERTY(VisibleAnywhere, Category="Panneaux")
+	TArray<FString> CheckpointSections;
 	/** Taille du texte des reperes de l'editeur (cm) */
 	UPROPERTY(EditAnywhere, Category="Panneaux", meta=(ClampMin=100))
 	float MarkerTextSize = 4000.f;
@@ -164,7 +193,8 @@ private:
 	/** Trace drape et redecoupe tous les DrapeStepM (lon, lat, hauteur ellipsoidale du relief en m) ; vide : altitudes GPS */
 	UPROPERTY()
 	TArray<FVector> DrapedLLH;
-	/** Distance (cm) ou le trace passe a TrailColor2 */
+	/** Distance (cm) ou le trace passe a TrailColor2 ; sauvegardee : le PIE du rendu ne relance pas la construction */
+	UPROPERTY()
 	float SplitDistCm = TNumericLimits<float>::Max();
 	/** Setup de la course (couleur, template), sauvegarde avec le level */
 	UPROPERTY(VisibleAnywhere, Category="Course")
@@ -190,6 +220,7 @@ private:
 	int32 AppliedVisible = -1;
 	int32 PartialIndex = INDEX_NONE;
 
+	void ComputeSplit();
 	void BuildTrailMeshes();
 	void ApplyReveal();
 	/** Redessine le morceau Index de son debut jusqu'a EndDist (cm le long du trace) */

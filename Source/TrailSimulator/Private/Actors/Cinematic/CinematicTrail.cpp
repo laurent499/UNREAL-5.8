@@ -27,6 +27,7 @@
 #include "Cesium3DTileset.h"
 #include "CesiumSampleHeightResult.h"
 #include "EngineUtils.h"
+#include "DrawDebugHelpers.h"
 #include "PathSubsystem.h"
 #include "SlateNotificationsBFL.h"
 #include "Components/SplineComponent.h"
@@ -214,7 +215,8 @@ void ACinematicTrail::Rebuild()
 			const double RadiusM = TrailMesh ? TrailMesh->GetBounds().BoxExtent.X * TrailWidth / 100.0 : 0.0;
 			for (int32 i = 0; i < DrapedLLH.Num(); ++i)
 			{
-				const FVector& LLH = DrapedLLH[bReverseDirection ? DrapedLLH.Num() - 1 - i : i];
+			if (RemovedPoints.Contains(bReverseDirection ? DrapedLLH.Num() - 1 - i : i)) continue;
+			const FVector& LLH = DrapedLLH[bReverseDirection ? DrapedLLH.Num() - 1 - i : i];
 				Trail->AddSplinePoint(Georef->TransformLongitudeLatitudeHeightPositionToUnreal(
 					FVector(LLH.X, LLH.Y, LLH.Z + DrapeOffsetM + RadiusM)), ESplineCoordinateSpace::World, false);
 			}
@@ -242,11 +244,29 @@ void ACinematicTrail::Rebuild()
 	BuildMarkers();
 	ApplyReveal();
 
+	ComputeSplit();
 	CheckpointReveal.Reset();
+	CheckpointSections.Reset();
 	const float TrailLen = Trail->GetSplineLength();
 	for (int32 i = 0; i < Checkpoints.Num(); ++i)
 	{
-		CheckpointReveal.Add(TrailLen > 0.f ? GetDistanceOnTrail(GetCheckpointLocation(i)) / TrailLen : 0.f);
+	const float Dist = TrailLen > 0.f ? GetDistanceOnTrail(GetCheckpointLocation(i)) : 0.f;
+	CheckpointReveal.Add(TrailLen > 0.f ? Dist / TrailLen : 0.f);
+	CheckpointSections.Add(FString::Printf(TEXT("%s : %s (a %.0f m)"), *Checkpoints[i].name,
+	Dist >= SplitDistCm ? TEXT("couleur 2 (bleu)") : TEXT("couleur 1 (rouge)"), Dist / 100.f));
+	}
+}
+
+void ACinematicTrail::ComputeSplit()
+{
+	SplitDistCm = TNumericLimits<float>::Max();
+	if (Trail->GetNumberOfSplinePoints() < 2) return;
+	for (int32 i = 0; i < Checkpoints.Num(); ++i)
+	{
+		if (!ColorSplitCheckpoint.IsEmpty() && Checkpoints[i].name.Contains(ColorSplitCheckpoint))
+		{
+			SplitDistCm = GetDistanceOnTrail(GetCheckpointLocation(i));
+		}
 	}
 }
 
@@ -268,14 +288,7 @@ void ACinematicTrail::BuildTrailMeshes()
 	// Morceaux de longueur fixe le long du trace : beaucoup moins de composants qu'un par point GPS
 	const float Len = Trail->GetSplineLength();
 	const int32 Num = FMath::Max(1, FMath::CeilToInt(Len / (TrailStepM * 100.f)));
-	SplitDistCm = TNumericLimits<float>::Max();
-	for (int32 i = 0; i < Checkpoints.Num(); ++i)
-	{
-		if (!ColorSplitCheckpoint.IsEmpty() && Checkpoints[i].name.Contains(ColorSplitCheckpoint))
-		{
-			SplitDistCm = GetDistanceOnTrail(GetCheckpointLocation(i));
-		}
-	}
+	ComputeSplit();
 	const float SplitDist = SplitDistCm;
 	const float Step = Len / Num;
 	for (int32 i = 0; i < Num; ++i)
@@ -385,6 +398,12 @@ void ACinematicTrail::BuildMarkers()
 void ACinematicTrail::BeginPlay()
 {
 	Super::BeginPlay();
+	ComputeSplit();
+	if (UScaleSubsystem* Scale = GetWorld()->GetSubsystem<UScaleSubsystem>())
+	{
+	Scale->SetNearFar(PanelScaleNearM * 100.f, PanelScaleFarM * 100.f);
+	Scale->SetGlobalMinMax(PanelScaleMin, PanelScaleMax);
+	}
 	if (bWaitForTiles)
 	{
 		// Cesium ne branche ce mode que sur les sequences presentes au BeginPlay du tileset ; celle du rendu est creee apres
@@ -449,9 +468,9 @@ void ACinematicTrail::SpawnRaceActors()
 	const FVector Scale(40.f);
 	// Sans reglages de la course dans la regie, les panneaux prennent une echelle min/max nulle : on garde celle par defaut du live
 	UScaleSubsystem* ScaleSubsystem = World->GetSubsystem<UScaleSubsystem>();
-	auto KeepDefaultScale = [ScaleSubsystem](AActor* Actor)
+	auto KeepDefaultScale = [this, ScaleSubsystem](AActor* Actor)
 	{
-		if (ScaleSubsystem) ScaleSubsystem->SetActorScaleMinMax(Actor, ScaleSubsystem->GetGlobalConfig().ScaleMinMax);
+		if (ScaleSubsystem) ScaleSubsystem->SetActorScaleMinMax(Actor, FMinMax(FVector(PanelScaleMin), FVector(PanelScaleMax)));
 	};
 
 	UCheckpointSubsystem* CheckpointSubsystem = GI->GetSubsystem<UCheckpointSubsystem>();
@@ -511,7 +530,22 @@ FVector ACinematicTrail::GetRevealLocation() const
 
 void ACinematicTrail::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+Super::Tick(DeltaTime);
+#if WITH_EDITOR
+if (bShowPointNumbers && !GetWorld()->IsGameWorld() && DrapedLLH.Num() > 0)
+{
+if (ACesiumGeoreference* Georef = ACesiumGeoreference::GetDefaultGeoreference(this))
+{
+const int32 To = FMath::Min(PointNumbersTo, DrapedLLH.Num() - 1);
+for (int32 i = FMath::Max(0, PointNumbersFrom); i <= To; i += 3)
+{
+const FVector P = Georef->TransformLongitudeLatitudeHeightPositionToUnreal(DrapedLLH[i] + FVector(0, 0, DrapeOffsetM + 2.0));
+DrawDebugPoint(GetWorld(), P, 14.f, RemovedPoints.Contains(i) ? FColor::Red : FColor::Yellow, false, 0.f);
+DrawDebugString(GetWorld(), P + FVector(0, 0, 250), FString::FromInt(i), nullptr, FColor::White, 0.f, false, 1.4f);
+}
+}
+}
+#endif
 	if (Reveal != AppliedReveal)
 	{
 		ApplyReveal();
@@ -676,6 +710,7 @@ void ACinematicTrail::DrapeOnTerrain()
 
 			int32 OnMeshes = 0, OnCesium = 0;
 			TArray<FVector> Draped;
+			TArray<bool> Measured;
 			for (int32 i = 0; i < Query.Num(); ++i)
 			{
 				const bool bCesium = Results.IsValidIndex(i) && Results[i].SampleSuccess;
@@ -701,12 +736,42 @@ void ACinematicTrail::DrapeOnTerrain()
 					++OnMeshes;
 				}
 				Draped.Add(FVector(Query[i].X, Query[i].Y, Height));
-			}
+				Measured.Add(bCesium || BestZ > -UE_DOUBLE_BIG_NUMBER);
+				}
+
+				// Points sans mesure (tuile pas chargee) : interpoles entre les mesures voisines, pas laisses a l'altitude GPS
+				int32 Interpolated = 0, Spikes = 0;
+				const int32 N = Draped.Num();
+				for (int32 i = 0; i < N; ++i)
+				{
+				if (Measured[i]) continue;
+				int32 A = i - 1, B = i + 1;
+				while (A >= 0 && !Measured[A]) --A;
+				while (B < N && !Measured[B]) ++B;
+				if (A >= 0 && B < N) Draped[i].Z = FMath::Lerp(Draped[A].Z, Draped[B].Z, double(i - A) / (B - A));
+				else if (A >= 0) Draped[i].Z = Draped[A].Z;
+				else if (B < N) Draped[i].Z = Draped[B].Z;
+				++Interpolated;
+				}
+				// Pics isoles : un point trop loin de la mediane de ses voisins y est ramene
+				const TArray<FVector> Raw = Draped;
+				for (int32 i = 0; i < N; ++i)
+				{
+				TArray<double, TInlineAllocator<9>> Near;
+				for (int32 k = FMath::Max(0, i - 4); k <= FMath::Min(N - 1, i + 4); ++k) Near.Add(Raw[k].Z);
+				Near.Sort();
+				const double Median = Near[Near.Num() / 2];
+				if (FMath::Abs(Raw[i].Z - Median) > Self->MaxGroundJumpM)
+				{
+				Draped[i].Z = Median;
+				++Spikes;
+				}
+				}
 
 			Self->Modify();
 			Self->DrapedLLH = MoveTemp(Draped);
 			Self->Rebuild();
-			CinematicTrail::Notify(FString::Printf(TEXT("Trace cinema : %d points drapes (%d sur les meshes, %d sur Cesium)"),
-				Query.Num(), OnMeshes, OnCesium), false);
+			CinematicTrail::Notify(FString::Printf(TEXT("Trace cinema : %d points drapes (%d sur les meshes, %d sur Cesium, %d interpoles, %d pics corriges)"),
+			Query.Num(), OnMeshes, OnCesium, Interpolated, Spikes), false);
 		}));
 }
