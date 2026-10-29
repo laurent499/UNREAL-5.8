@@ -154,6 +154,17 @@ public:
 	float Decalottage = 0.f;
 	UPROPERTY(EditAnywhere, Category="Decalottage")
 	TSoftObjectPtr<class UMaterialParameterCollection> DecalottageCollection;
+	/** Zone du decalottage (ellipse, monde en cm) : le trace s'y efface avec le decalottage, il flotterait sur la glace dissoute.
+	 * Memes valeurs que AplatCentre/Rayon de M_Terrain. */
+	UPROPERTY(EditAnywhere, Category="Decalottage")
+	FVector2D ZoneCenter = FVector2D(-2976.0, 1135.0);
+	UPROPERTY(EditAnywhere, Category="Decalottage")
+	FVector2D ZoneRadius = FVector2D(9500.0, 6500.0);
+	/** Decalottage a partir duquel le trace dans la zone commence a s'amincir, puis a avoir disparu */
+	UPROPERTY(EditAnywhere, Category="Decalottage", meta=(ClampMin=0, ClampMax=1))
+	float TrailFadeStart = 0.05f;
+	UPROPERTY(EditAnywhere, Category="Decalottage", meta=(ClampMin=0, ClampMax=1))
+	float TrailFadeEnd = 0.4f;
 
 	/** Lissage du rail suivi par la camera (m), meme principe que le survol live */
 	UPROPERTY(EditAnywhere, Category="Rail", meta=(ClampMin=1))
@@ -217,6 +228,7 @@ private:
 	float AppliedReveal = -1.f;
 	float AppliedDecalottage = -1.f;
 	void ApplyDecalottage();
+	void ApplyZoneFade();
 	int32 AppliedVisible = -1;
 	int32 PartialIndex = INDEX_NONE;
 

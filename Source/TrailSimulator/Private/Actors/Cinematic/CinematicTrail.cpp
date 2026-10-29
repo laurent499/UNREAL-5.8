@@ -241,6 +241,7 @@ void ACinematicTrail::Rebuild()
 		Rail->UpdateSpline();
 	}
 	BuildTrailMeshes();
+	AppliedDecalottage = -1.f;
 	BuildMarkers();
 	ApplyReveal();
 
@@ -564,8 +565,27 @@ void ACinematicTrail::ApplyDecalottage()
 	if (!Instance) return;
 	Instance->SetScalarParameterValue(TEXT("Decalottage"), Decalottage);
 	AppliedDecalottage = Decalottage;
+	ApplyZoneFade();
 	// Les panneaux se masquent avec le decalottage : relance ApplyReveal
 	AppliedReveal = -1.f;
+}
+
+void ACinematicTrail::ApplyZoneFade()
+{
+	const int32 Num = TrailMeshes.Num();
+	if (Num == 0 || Trail->GetNumberOfSplinePoints() < 2) return;
+	const float Fade = 1.f - FMath::SmoothStep(TrailFadeStart, FMath::Max(TrailFadeEnd, TrailFadeStart + 0.01f), Decalottage);
+	const float Step = Trail->GetSplineLength() / Num;
+	for (int32 i = 0; i < Num; ++i)
+	{
+		USplineMeshComponent* SMC = TrailMeshes[i].Get();
+		if (!SMC) continue;
+		const FVector P = Trail->GetLocationAtDistanceAlongSpline(Step * (i + 0.5f), ESplineCoordinateSpace::World);
+		const FVector2D Q((P.X - ZoneCenter.X) / ZoneRadius.X, (P.Y - ZoneCenter.Y) / ZoneRadius.Y);
+		const float Scale = TrailWidth * (Q.SizeSquared() < 1.0 ? Fade : 1.f);
+		SMC->SetStartScale(FVector2D(Scale), false);
+		SMC->SetEndScale(FVector2D(Scale), true);
+	}
 }
 
 void ACinematicTrail::SetSegmentEnd(int32 Index, float EndDist)
