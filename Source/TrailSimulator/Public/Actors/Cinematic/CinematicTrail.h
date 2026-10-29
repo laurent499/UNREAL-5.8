@@ -123,6 +123,9 @@ public:
 	/** Panneaux aux couleurs de leur portion du trace (TrailColor avant ColorSplitCheckpoint, TrailColor2 apres) */
 	UPROPERTY(EditAnywhere, Category="Panneaux")
 	bool bTintPanelsBySection = true;
+	/** Couleur du picto au-dessus des checkpoints et POI (blanc) ; alpha 0 : celle du template */
+	UPROPERTY(EditAnywhere, Category="Panneaux")
+	FLinearColor PictoColor = FLinearColor::White;
 	/** Masque checkpoints et POI pendant le decalottage, pour degager le sommet */
 	UPROPERTY(EditAnywhere, Category="Panneaux")
 	bool bHidePanelsOnDecalottage = true;

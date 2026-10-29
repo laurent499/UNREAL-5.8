@@ -254,7 +254,7 @@ void ACinematicTrail::Rebuild()
 	const float Dist = TrailLen > 0.f ? GetDistanceOnTrail(GetCheckpointLocation(i)) : 0.f;
 	CheckpointReveal.Add(TrailLen > 0.f ? Dist / TrailLen : 0.f);
 	CheckpointSections.Add(FString::Printf(TEXT("%s : %s (a %.0f m)"), *Checkpoints[i].name,
-	Dist >= SplitDistCm ? TEXT("couleur 2 (bleu)") : TEXT("couleur 1 (rouge)"), Dist / 100.f));
+	Dist > SplitDistCm + 300.f ? TEXT("couleur 2 (bleu)") : TEXT("couleur 1 (rouge)"), Dist / 100.f));
 	}
 }
 
@@ -456,12 +456,26 @@ void ACinematicTrail::SpawnRaceActors()
 		}
 	}
 	// Couleur de la course des panneaux : celle de leur portion du trace
+	// Picto principal : le MID du template ne recoit pas la couleur a la creation
+	auto WhitePicto = [this](AActor* Actor)
+	{
+		if (!Actor || PictoColor.A <= 0.f) return;
+		TArray<UMeshComponent*> Meshes;
+		Actor->GetComponents(Meshes);
+		for (UMeshComponent* Mesh : Meshes)
+		{
+			if (!Mesh->GetName().Contains(TEXT("MainPicto"))) continue;
+			UMaterialInstanceDynamic* MID = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(0));
+			if (!MID) MID = Mesh->CreateAndSetMaterialInstanceDynamic(0);
+			if (MID) MID->SetVectorParameterValue(TEXT("Color"), PictoColor);
+		}
+	};
 	auto SetupAt = [this](float DistCm)
 	{
 		FRaceSetup Setup = RaceSetup;
 		if (bTintPanelsBySection)
 		{
-			Setup.color = TEXT("#") + (DistCm >= SplitDistCm ? TrailColor2 : TrailColor).ToFColor(true).ToHex();
+			Setup.color = TEXT("#") + (DistCm > SplitDistCm + 300.f ? TrailColor2 : TrailColor).ToFColor(true).ToHex();
 		}
 		return Setup;
 	};
@@ -490,6 +504,7 @@ void ACinematicTrail::SpawnRaceActors()
 				const float Dist = GetDistanceOnTrail(GetCheckpointLocation(i));
 				Checkpoint->UpdateCheckpoint(Checkpoints[i], SetupAt(Dist));
 				KeepDefaultScale(Actor);
+				WhitePicto(Actor);
 				RevealActors.Emplace(Actor, Dist);
 			}
 		}
@@ -511,6 +526,7 @@ void ACinematicTrail::SpawnRaceActors()
 				const float Dist = GetDistanceOnTrail(GetPoiLocation(Poi));
 				PoiActor->UpdatePoi(Poi, SetupAt(Dist));
 				KeepDefaultScale(Actor);
+				WhitePicto(Actor);
 				RevealActors.Emplace(Actor, Dist);
 			}
 		}
