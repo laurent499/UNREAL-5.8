@@ -76,5 +76,6 @@ with open(path, 'w', newline='\n') as out:
     out.write(''.join(head))
     out.write(''.join('v %.2f %.2f %.2f\n' % tuple(p) for p in V))
     out.write(''.join('vn %.4f %.4f %.4f\n' % tuple(n) for n in N))
-    out.write(''.join('f %d//%d %d//%d %d//%d\n' % (a + 1, a + 1, b + 1, b + 1, c + 1, c + 1) for a, b, c in F))
+    out.write('vt 0.0 0.0\n')  # Interchange exige un indice d'UV valide
+    out.write(''.join('f %d/1/%d %d/1/%d %d/1/%d\n' % (a + 1, a + 1, b + 1, b + 1, c + 1, c + 1) for a, b, c in F))
 print('ecrit', path, ':', len(V), 'sommets')
