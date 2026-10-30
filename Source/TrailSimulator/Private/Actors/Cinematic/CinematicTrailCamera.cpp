@@ -37,8 +37,9 @@ void ACinematicTrailCamera::UpdateFromTrail()
 
 	const float Len = Rail->GetSplineLength();
 	// Tete du trace projetee sur le rail lisse : la camera accompagne le trace qui se dessine
+	const float Mapped = bFollowTrailReveal ? Trail->GetRailDistanceForReveal(Trail->Reveal) : -1.f;
 	const float DistanceCm = bFollowTrailReveal
-		? Rail->GetDistanceAlongSplineAtSplineInputKey(Rail->FindInputKeyClosestToWorldLocation(Trail->GetRevealLocation()))
+		? (Mapped >= 0.f ? Mapped : Rail->GetDistanceAlongSplineAtSplineInputKey(Rail->FindInputKeyClosestToWorldLocation(Trail->GetRevealLocation())))
 		: FMath::Clamp(Progress, 0.f, 1.f) * Len;
 	const float LeadCm = FMath::Max(1000.f, LeadM * 100.f);
 	auto At = [&](float Offset)

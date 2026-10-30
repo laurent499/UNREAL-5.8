@@ -175,6 +175,9 @@ public:
 	/** Lissage du rail suivi par la camera (m), meme principe que le survol live */
 	UPROPERTY(EditAnywhere, Category="Rail", meta=(ClampMin=1))
 	float RailSmoothM = 250.f;
+	/** Lissage (en echantillons de la table, sur 800) du mouvement de la camera le long du rail : plus haut = plus doux */
+	UPROPERTY(EditAnywhere, Category="Rail", meta=(ClampMin=0, ClampMax=200))
+	int32 RailMapSmooth = 24;
 
 	/** Telecharge le trace de RaceID depuis la regie et le garde dans le level */
 	UFUNCTION(CallInEditor, Category="Course", meta=(DisplayName="Charger la course"))
@@ -184,6 +187,9 @@ public:
 	void Rebuild();
 
 	class USplineComponent* GetRail() const { return Rail; }
+	/** Distance (cm) sur le rail de la camera pour une valeur de Reveal : table calculee a la construction et lissee,
+	 * donc sans les a-coups de la projection de la tete du trace sur le rail a chaque image. -1 : pas de table */
+	float GetRailDistanceForReveal(float InReveal) const;
 	/** Position de la tete du trace dessine (monde) */
 	FVector GetRevealLocation() const;
 	bool HasTrail() const { return PointsLLH.Num() >= 2; }
@@ -204,6 +210,9 @@ private:
 	UPROPERTY()
 	TArray<TObjectPtr<class USplineMeshComponent>> TrailMeshes;
 
+	/** Distance sur le rail (cm) pour RailMapSamples valeurs regulieres de Reveal (0 a 1), monotone et lissee */
+	UPROPERTY()
+	TArray<float> RailMap;
 	/** Points du trace (lon, lat, altitude GPS en m), sauvegardes avec le level */
 	UPROPERTY()
 	TArray<FVector> PointsLLH;

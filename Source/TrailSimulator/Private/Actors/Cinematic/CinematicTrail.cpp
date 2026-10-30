@@ -240,6 +240,37 @@ void ACinematicTrail::Rebuild()
 		Trail->UpdateSpline();
 		Rail->UpdateSpline();
 	}
+	// Table Reveal -> distance sur le rail : projections du trace sur le rail, rendues monotones puis lissees
+	RailMap.Reset();
+	if (Georef && Trail->GetNumberOfSplinePoints() >= 2 && Rail->GetNumberOfSplinePoints() >= 2)
+	{
+		constexpr int32 Samples = 800;
+		const float TrailLength = Trail->GetSplineLength();
+		const float RailLength = Rail->GetSplineLength();
+		RailMap.SetNum(Samples);
+		float Prev = 0.f;
+		for (int32 i = 0; i < Samples; ++i)
+		{
+			const FVector P = Trail->GetLocationAtDistanceAlongSpline(TrailLength * i / (Samples - 1), ESplineCoordinateSpace::World);
+			const float D = Rail->GetDistanceAlongSplineAtSplineInputKey(Rail->FindInputKeyClosestToWorldLocation(P));
+			Prev = FMath::Max(Prev, D);
+			RailMap[i] = Prev;
+		}
+		RailMap[0] = 0.f;
+		RailMap[Samples - 1] = RailLength;
+		for (int32 Pass = 0; Pass < 3 && RailMapSmooth > 0; ++Pass)
+		{
+			TArray<float> Smoothed = RailMap;
+			for (int32 i = 1; i < Samples - 1; ++i)
+			{
+				const int32 R = FMath::Min(RailMapSmooth, FMath::Min(i, Samples - 1 - i));
+				float Sum = 0.f;
+				for (int32 k = -R; k <= R; ++k) Sum += RailMap[i + k];
+				Smoothed[i] = Sum / (2 * R + 1);
+			}
+			RailMap = MoveTemp(Smoothed);
+		}
+	}
 	BuildTrailMeshes();
 	AppliedDecalottage = -1.f;
 	BuildMarkers();
@@ -452,6 +483,12 @@ void ACinematicTrail::SpawnRaceActors()
 		{
 			FTrailTemplate Template = Templates->GetTemplate(RaceSetup.templateName);
 			Template.Globals.CornerRadius = PanelCornerRadius;
+			if (bTintPanelsBySection)
+			{
+				// Le template GTWS d'origine a un bandeau orange fixe : il suit aussi la couleur de la portion
+				Template.Checkpoint.NameBkg = Template.Checkpoint.NameBorder = TEXT("race");
+				Template.Poi.NameBkg = Template.Poi.NameBorder = TEXT("race");
+			}
 			Templates->SetTemplate(RaceSetup.templateName, Template);
 		}
 	}
@@ -532,6 +569,14 @@ void ACinematicTrail::SpawnRaceActors()
 		}
 	}
 	AppliedReveal = -1.f;
+}
+
+float ACinematicTrail::GetRailDistanceForReveal(float InReveal) const
+{
+	if (RailMap.Num() < 2) return -1.f;
+	const float F = FMath::Clamp(InReveal, 0.f, 1.f) * (RailMap.Num() - 1);
+	const int32 I = FMath::Min(FMath::FloorToInt(F), RailMap.Num() - 2);
+	return FMath::Lerp(RailMap[I], RailMap[I + 1], F - I);
 }
 
 float ACinematicTrail::GetDistanceOnTrail(const FVector& WorldLocation) const
