@@ -171,6 +171,9 @@ public:
 	float TrailFadeStart = 0.05f;
 	UPROPERTY(EditAnywhere, Category="Decalottage", meta=(ClampMin=0, ClampMax=1))
 	float TrailFadeEnd = 0.4f;
+	/** Dans la zone du trou, le trace disparait plus tot : il ne doit jamais flotter au-dessus de la glace dissoute */
+	UPROPERTY(EditAnywhere, Category="Decalottage", meta=(ClampMin=0, ClampMax=1))
+	float ZoneFadeEnd = 0.1f;
 
 	/** Lissage du rail suivi par la camera (m), meme principe que le survol live */
 	UPROPERTY(EditAnywhere, Category="Rail", meta=(ClampMin=1))

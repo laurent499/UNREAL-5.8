@@ -635,7 +635,8 @@ void ACinematicTrail::ApplyZoneFade()
 {
 	const int32 Num = TrailMeshes.Num();
 	if (Num == 0 || Trail->GetNumberOfSplinePoints() < 2) return;
-	const float Fade = 1.f - FMath::SmoothStep(TrailFadeStart, FMath::Max(TrailFadeEnd, TrailFadeStart + 0.01f), Decalottage);
+	const float FadeOutside = 1.f - FMath::SmoothStep(TrailFadeStart, FMath::Max(TrailFadeEnd, TrailFadeStart + 0.01f), Decalottage);
+	const float FadeZone = 1.f - FMath::SmoothStep(0.f, FMath::Max(FMath::Min(ZoneFadeEnd, TrailFadeEnd), 0.02f), Decalottage);
 	const float Step = Trail->GetSplineLength() / Num;
 	for (int32 i = 0; i < Num; ++i)
 	{
@@ -643,7 +644,9 @@ void ACinematicTrail::ApplyZoneFade()
 		if (!SMC) continue;
 		const FVector P = Trail->GetLocationAtDistanceAlongSpline(Step * (i + 0.5f), ESplineCoordinateSpace::World);
 		const FVector2D Q((P.X - ZoneCenter.X) / ZoneRadius.X, (P.Y - ZoneCenter.Y) / ZoneRadius.Y);
-		const bool bFading = bFadeWholeTrail || Q.SizeSquared() < 1.0;
+		const bool bInZone = Q.SizeSquared() < 1.0;
+		const float Fade = bInZone ? FadeZone : FadeOutside;
+		const bool bFading = bFadeWholeTrail || bInZone;
 		// Jamais a l'echelle 0 (hull de collision invalide) : on amincit jusqu'a un minimum, puis on masque
 		const float Scale = TrailWidth * (bFading ? FMath::Max(Fade, 0.05f) : 1.f);
 		SMC->SetHiddenInGame(bFading && Fade < 0.02f);
