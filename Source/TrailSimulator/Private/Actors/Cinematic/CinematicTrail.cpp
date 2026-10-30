@@ -813,7 +813,9 @@ void ACinematicTrail::DrapeOnTerrain()
 				}
 				if (BestZ > -UE_DOUBLE_BIG_NUMBER)
 				{
-					Height = Georef->TransformUnrealPositionToLongitudeLatitudeHeight(FVector(Pos.X, Pos.Y, BestZ)).Z;
+					// Meshes et tuiles Cesium se recouvrent sur la bande de raccord : le trace passe au-dessus du plus haut des deux
+					const double MeshHeight = Georef->TransformUnrealPositionToLongitudeLatitudeHeight(FVector(Pos.X, Pos.Y, BestZ)).Z;
+					Height = bCesium ? FMath::Max(Height, MeshHeight) : MeshHeight;
 					++OnMeshes;
 				}
 				Draped.Add(FVector(Query[i].X, Query[i].Y, Height));
