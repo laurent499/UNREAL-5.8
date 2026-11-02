@@ -737,11 +737,18 @@ void ACinematicTrail::ApplyReveal()
 			Markers[i]->SetVisibility(!(bHidePanelsOnDecalottage && Decalottage > 0.001f) && (bAlwaysShowPanels || MarkerDistances[i] <= Dist));
 		}
 	}
+	// Panneaux : retrecissent jusqu'a disparaitre au debut du decalottage, plutot que de s'eteindre d'un coup
+	const float PanelFade = bHidePanelsOnDecalottage ? 1.f - FMath::SmoothStep(0.f, PanelFadeEnd, Decalottage) : 1.f;
+	UScaleSubsystem* ScaleSubsystem = GetWorld() ? GetWorld()->GetSubsystem<UScaleSubsystem>() : nullptr;
 	for (const TPair<TWeakObjectPtr<AActor>, float>& Pair : RevealActors)
 	{
 		if (AActor* Actor = Pair.Key.Get())
 		{
-			Actor->SetActorHiddenInGame((bHidePanelsOnDecalottage && Decalottage > 0.001f) || (!bAlwaysShowPanels && Pair.Value > Dist));
+			if (ScaleSubsystem)
+			{
+				ScaleSubsystem->SetActorScaleMinMax(Actor, FMinMax(FVector(PanelScaleMin * PanelFade), FVector(PanelScaleMax * PanelFade)));
+			}
+			Actor->SetActorHiddenInGame(PanelFade < 0.02f || (!bAlwaysShowPanels && Pair.Value > Dist));
 		}
 	}
 }

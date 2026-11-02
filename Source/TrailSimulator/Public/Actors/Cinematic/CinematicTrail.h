@@ -126,6 +126,9 @@ public:
 	/** Couleur du picto au-dessus des checkpoints et POI (blanc) ; alpha 0 : celle du template */
 	UPROPERTY(EditAnywhere, Category="Panneaux")
 	FLinearColor PictoColor = FLinearColor::White;
+	/** Decalottage auquel les panneaux ont fini de retrecir jusqu'a disparaitre (fondu par l'echelle) */
+	UPROPERTY(EditAnywhere, Category="Panneaux", meta=(ClampMin=0.01, ClampMax=1))
+	float PanelFadeEnd = 0.12f;
 	/** Masque checkpoints et POI pendant le decalottage, pour degager le sommet */
 	UPROPERTY(EditAnywhere, Category="Panneaux")
 	bool bHidePanelsOnDecalottage = true;
