@@ -30,6 +30,7 @@ public class TrailSimulator : ModuleRules
 			
 		});
 
+		PrivateDependencyModuleNames.AddRange(new string[] { "AssetRegistry" });
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"Json",

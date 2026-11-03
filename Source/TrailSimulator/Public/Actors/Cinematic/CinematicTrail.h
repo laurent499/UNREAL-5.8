@@ -147,6 +147,12 @@ public:
 	/** Couleur de chaque checkpoint selon sa portion du trace, pour verification (rempli par Recalculer) */
 	UPROPERTY(VisibleAnywhere, Category="Panneaux")
 	TArray<FString> CheckpointSections;
+	/** Dossier des images des panneaux cinema : une texture par checkpoint, nommee comme lui */
+	UPROPERTY(EditAnywhere, Category="Panneaux")
+	FString PanelImageFolder = TEXT("/Game/Cinematics/Panneaux");
+	/** Cree (ou met a jour) un Panneau cinema par checkpoint, a sa position, avec son image ; les panneaux du live sont alors desactives */
+	UFUNCTION(CallInEditor, Category="Panneaux", meta=(DisplayName="Creer les panneaux"))
+	void CreateCinematicPanels();
 	/** Taille du texte des reperes de l'editeur (cm) */
 	UPROPERTY(EditAnywhere, Category="Panneaux", meta=(ClampMin=100))
 	float MarkerTextSize = 4000.f;

@@ -28,6 +28,10 @@
 #include "CesiumSampleHeightResult.h"
 #include "EngineUtils.h"
 #include "DrawDebugHelpers.h"
+#include "Actors/Cinematic/CinematicPanel.h"
+#include "Actors/Cinematic/CinematicTrailCamera.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "Engine/Texture2D.h"
 #include "PathSubsystem.h"
 #include "SlateNotificationsBFL.h"
 #include "Components/SplineComponent.h"
@@ -381,6 +385,61 @@ FVector ACinematicTrail::GetPoiLocation(const FRacePOI& Poi) const
 	// Comme ARaceManager::HandleRacePoisDatasGathered : altitude brute, sans geoide ni decalage
 	const ACesiumGeoreference* Georef = ACesiumGeoreference::GetDefaultGeoreference(this);
 	return Georef ? Georef->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(Poi.lon, Poi.lat, Poi.elevation)) : GetActorLocation();
+}
+
+void ACinematicTrail::CreateCinematicPanels()
+{
+#if WITH_EDITOR
+	UWorld* World = GetWorld();
+	if (!World || !HasTrail()) return;
+	// Noms compares sans casse ni ponctuation ni accents : « Refuge de Tete Rousse » = Refuge_de_Tete_Rousse
+	auto Key = [](const FString& In)
+	{
+		static const FString Accents = TEXT("àâäéèêëîïôöùûüç");
+		static const FString Plain = TEXT("aaaeeeeiioouuuc");
+		FString Out;
+		for (TCHAR C : In.ToLower())
+		{
+			int32 Index;
+			if (Accents.FindChar(C, Index)) C = Plain[Index];
+			if ((C >= 'a' && C <= 'z') || (C >= '0' && C <= '9')) Out.AppendChar(C);
+		}
+		return Out;
+	};
+	TArray<FAssetData> Assets;
+	FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get().GetAssetsByPath(FName(*PanelImageFolder), Assets, true);
+	TMap<FString, UTexture2D*> Images;
+	for (const FAssetData& Asset : Assets)
+	{
+		if (UTexture2D* Tex = Cast<UTexture2D>(Asset.GetAsset())) Images.Add(Key(Asset.AssetName.ToString()), Tex);
+	}
+	TMap<FString, ACinematicPanel*> Existing;
+	for (TActorIterator<ACinematicPanel> It(World); It; ++It) Existing.Add(It->GetActorLabel(), *It);
+	AActor* Cam = nullptr;
+	for (TActorIterator<ACinematicTrailCamera> It(World); It; ++It) { Cam = *It; break; }
+
+	int32 Count = 0, NoImage = 0;
+	for (int32 i = 0; i < Checkpoints.Num(); ++i)
+	{
+		const FString Label = TEXT("Panneau ") + Checkpoints[i].name;
+		ACinematicPanel* Panel = Existing.FindRef(Label);
+		if (!Panel)
+		{
+			Panel = World->SpawnActor<ACinematicPanel>();
+			Panel->SetActorLabel(Label);
+		}
+		Panel->Modify();
+		Panel->Anchor = GetCheckpointLocation(i);
+		Panel->Camera = Cam;
+		Panel->Image = Images.FindRef(Key(Checkpoints[i].name));
+		NoImage += Panel->Image ? 0 : 1;
+		Panel->RerunConstructionScripts();
+		++Count;
+	}
+	Modify();
+	bSpawnCheckpoints = false;
+	CinematicTrail::Notify(FString::Printf(TEXT("Trace cinema : %d panneaux cinema (%d sans image dans %s)"), Count, NoImage, *PanelImageFolder), NoImage > 0);
+#endif
 }
 
 void ACinematicTrail::BuildMarkers()
