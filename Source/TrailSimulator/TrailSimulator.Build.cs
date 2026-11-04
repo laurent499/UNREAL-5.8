@@ -31,6 +31,10 @@ public class TrailSimulator : ModuleRules
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "AssetRegistry" });
+		if (Target.bBuildEditor)
+		{
+			PrivateDependencyModuleNames.AddRange(new string[] { "MeshDescription", "StaticMeshDescription" });
+		}
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"Json",

@@ -863,6 +863,30 @@ void ACinematicTrail::DrapeOnTerrain()
 			ACesiumGeoreference* Georef = Self ? ACesiumGeoreference::GetDefaultGeoreference(Self) : nullptr;
 			if (!Georef) return;
 
+			// Hauteur des meshes cales : sommets de leur maillage source ranges sur une grille de 2 m (point le plus haut
+			// par case). Ne depend pas de la collision, absente sur les gros meshes LiDAR importes
+			TMap<FIntPoint, double> MeshGrid;
+			constexpr double Cell = 200.0;
+#if WITH_EDITOR
+			for (AActor* Actor : Self->DrapeMeshes)
+			{
+				TArray<UStaticMeshComponent*> SMCs;
+				if (IsValid(Actor)) Actor->GetComponents(SMCs);
+				for (UStaticMeshComponent* SMC : SMCs)
+				{
+					const FMeshDescription* MD = SMC->GetStaticMesh() ? SMC->GetStaticMesh()->GetMeshDescription(0) : nullptr;
+					if (!MD) continue;
+					const FTransform T = SMC->GetComponentTransform();
+					const TVertexAttributesConstRef<FVector3f> Pos = FStaticMeshConstAttributes(*MD).GetVertexPositions();
+					for (const FVertexID V : MD->Vertices().GetElementIDs())
+					{
+						const FVector W = T.TransformPosition(FVector(Pos[V]));
+						double& Z = MeshGrid.FindOrAdd(FIntPoint(FMath::FloorToInt(W.X / Cell), FMath::FloorToInt(W.Y / Cell)), -UE_DOUBLE_BIG_NUMBER);
+						Z = FMath::Max(Z, W.Z);
+					}
+				}
+			}
+#endif
 			TArray<UPrimitiveComponent*> Meshes;
 			for (AActor* Actor : Self->DrapeMeshes)
 			{
@@ -888,7 +912,19 @@ void ACinematicTrail::DrapeOnTerrain()
 				const FVector Start = Pos + FVector(0, 0, 300000.0);
 				const FVector End = Pos - FVector(0, 0, 300000.0);
 				double BestZ = -UE_DOUBLE_BIG_NUMBER;
-				for (UPrimitiveComponent* Mesh : Meshes)
+				const FIntPoint Key(FMath::FloorToInt(Pos.X / Cell), FMath::FloorToInt(Pos.Y / Cell));
+				if (const double* Z = MeshGrid.Find(Key))
+				{
+					BestZ = *Z;
+				}
+				else
+				{
+					for (int32 dx = -1; dx <= 1; ++dx)
+						for (int32 dy = -1; dy <= 1; ++dy)
+							if (const double* Zn = MeshGrid.Find(Key + FIntPoint(dx, dy))) BestZ = FMath::Max(BestZ, *Zn);
+				}
+				// Repli sur la collision quand la grille n'a rien (meshes sans maillage source)
+				for (UPrimitiveComponent* Mesh : (BestZ > -UE_DOUBLE_BIG_NUMBER ? TArray<UPrimitiveComponent*>() : Meshes))
 				{
 					FHitResult Hit;
 					if (Mesh->LineTraceComponent(Hit, Start, End, FCollisionQueryParams(NAME_None, true)) && Hit.ImpactPoint.Z > BestZ)
