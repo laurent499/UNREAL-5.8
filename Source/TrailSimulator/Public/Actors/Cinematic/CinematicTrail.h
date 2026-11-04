@@ -172,6 +172,9 @@ public:
 	FVector2D ZoneCenter = FVector2D(-2976.0, 1135.0);
 	UPROPERTY(EditAnywhere, Category="Decalottage")
 	FVector2D ZoneRadius = FVector2D(9500.0, 6500.0);
+	/** Visibilite du trace (0 a 1), animable : le tube s'amincit puis disparait. S'ajoute au fondu du decalottage */
+	UPROPERTY(EditAnywhere, Interp, Category="Trace", meta=(ClampMin=0, ClampMax=1, UIMin=0, UIMax=1))
+	float TrailVisibility = 1.f;
 	/** Tout le trace s'efface avec le decalottage (sinon seulement dans la zone) */
 	UPROPERTY(EditAnywhere, Category="Decalottage")
 	bool bFadeWholeTrail = true;
@@ -254,6 +257,7 @@ private:
 	TArray<TPair<TWeakObjectPtr<AActor>, float>> RevealActors;
 	float AppliedReveal = -1.f;
 	float AppliedDecalottage = -1.f;
+	float AppliedTrailVisibility = -1.f;
 	void ApplyDecalottage();
 	void ApplyZoneFade();
 	int32 AppliedVisible = -1;

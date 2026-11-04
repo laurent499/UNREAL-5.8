@@ -28,6 +28,11 @@
 #include "CesiumSampleHeightResult.h"
 #include "EngineUtils.h"
 #include "DrawDebugHelpers.h"
+#if WITH_EDITOR
+#include "MeshDescription.h"
+#include "StaticMeshAttributes.h"
+#include "Components/StaticMeshComponent.h"
+#endif
 #include "Actors/Cinematic/CinematicPanel.h"
 #include "Actors/Cinematic/CinematicTrailCamera.h"
 #include "AssetRegistry/AssetRegistryModule.h"
@@ -671,6 +676,11 @@ DrawDebugString(GetWorld(), P + FVector(0, 0, 250), FString::FromInt(i), nullptr
 	{
 		ApplyReveal();
 	}
+	if (TrailVisibility != AppliedTrailVisibility)
+	{
+		AppliedTrailVisibility = TrailVisibility;
+		ApplyZoneFade();
+	}
 	if (Decalottage != AppliedDecalottage)
 	{
 		ApplyDecalottage();
@@ -704,8 +714,8 @@ void ACinematicTrail::ApplyZoneFade()
 		const FVector P = Trail->GetLocationAtDistanceAlongSpline(Step * (i + 0.5f), ESplineCoordinateSpace::World);
 		const FVector2D Q((P.X - ZoneCenter.X) / ZoneRadius.X, (P.Y - ZoneCenter.Y) / ZoneRadius.Y);
 		const bool bInZone = Q.SizeSquared() < 1.0;
-		const float Fade = bInZone ? FadeZone : FadeOutside;
-		const bool bFading = bFadeWholeTrail || bInZone;
+		const float Fade = FMath::Min(bInZone ? FadeZone : FadeOutside, TrailVisibility);
+		const bool bFading = bFadeWholeTrail || bInZone || TrailVisibility < 1.f;
 		// Jamais a l'echelle 0 (hull de collision invalide) : on amincit jusqu'a un minimum, puis on masque
 		const float Scale = TrailWidth * (bFading ? FMath::Max(Fade, 0.05f) : 1.f);
 		SMC->SetHiddenInGame(bFading && Fade < 0.02f);
