@@ -680,6 +680,7 @@ DrawDebugString(GetWorld(), P + FVector(0, 0, 250), FString::FromInt(i), nullptr
 	{
 		AppliedTrailVisibility = TrailVisibility;
 		ApplyZoneFade();
+		AppliedReveal = -1.f;
 	}
 	if (Decalottage != AppliedDecalottage)
 	{
@@ -778,7 +779,8 @@ void ACinematicTrail::ApplyReveal()
 	}
 
 	// Boule en tete, de la couleur du troncon, tant que le trace se deroule
-	const bool bShowHead = HeadSizeM > 0.f && Reveal > 0.001f && Reveal < 0.999f && Trail->GetNumberOfSplinePoints() >= 2;
+	// La boule reste au bout du trace une fois arrive, et s'eteint avec TrailVisibility
+	const bool bShowHead = HeadSizeM > 0.f && Reveal > 0.001f && TrailVisibility > 0.02f && Trail->GetNumberOfSplinePoints() >= 2;
 	Head->SetVisibility(bShowHead);
 	if (bShowHead)
 	{
@@ -791,7 +793,7 @@ void ACinematicTrail::ApplyReveal()
 			}
 		}
 		Head->SetWorldLocation(GetRevealLocation());
-		Head->SetWorldScale3D(FVector(HeadSizeM));
+		Head->SetWorldScale3D(FVector(HeadSizeM * TrailVisibility));
 		if (HeadMID)
 		{
 			HeadMID->SetVectorParameterValue(TEXT("Couleur"), Dist >= SplitDistCm ? TrailColor2 : TrailColor);
