@@ -714,8 +714,8 @@ void ACinematicTrail::ApplyZoneFade()
 		const FVector P = Trail->GetLocationAtDistanceAlongSpline(Step * (i + 0.5f), ESplineCoordinateSpace::World);
 		const FVector2D Q((P.X - ZoneCenter.X) / ZoneRadius.X, (P.Y - ZoneCenter.Y) / ZoneRadius.Y);
 		const bool bInZone = Q.SizeSquared() < 1.0;
-		const float Fade = FMath::Min(bInZone ? FadeZone : FadeOutside, TrailVisibility);
-		const bool bFading = bFadeWholeTrail || bInZone || TrailVisibility < 1.f;
+		const float Fade = bAutoFadeTrail ? FMath::Min(bInZone ? FadeZone : FadeOutside, TrailVisibility) : TrailVisibility;
+		const bool bFading = (bAutoFadeTrail && (bFadeWholeTrail || bInZone)) || TrailVisibility < 1.f;
 		// Jamais a l'echelle 0 (hull de collision invalide) : on amincit jusqu'a un minimum, puis on masque
 		const float Scale = TrailWidth * (bFading ? FMath::Max(Fade, 0.05f) : 1.f);
 		SMC->SetHiddenInGame(bFading && Fade < 0.02f);

@@ -175,6 +175,9 @@ public:
 	/** Visibilite du trace (0 a 1), animable : le tube s'amincit puis disparait. S'ajoute au fondu du decalottage */
 	UPROPERTY(EditAnywhere, Interp, Category="Trace", meta=(ClampMin=0, ClampMax=1, UIMin=0, UIMax=1))
 	float TrailVisibility = 1.f;
+	/** Le trace s'efface automatiquement avec le decalottage ; decoche : seule Trail Visibility le fait disparaitre */
+	UPROPERTY(EditAnywhere, Category="Decalottage")
+	bool bAutoFadeTrail = true;
 	/** Tout le trace s'efface avec le decalottage (sinon seulement dans la zone) */
 	UPROPERTY(EditAnywhere, Category="Decalottage")
 	bool bFadeWholeTrail = true;
