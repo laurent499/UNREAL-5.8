@@ -32,6 +32,8 @@
 #include "MeshDescription.h"
 #include "StaticMeshAttributes.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/SkyAtmosphereComponent.h"
+#include "UObject/UObjectIterator.h"
 #endif
 #include "Actors/Cinematic/CinematicPanel.h"
 #include "Actors/Cinematic/CinematicTrailCamera.h"
@@ -654,6 +656,30 @@ FVector ACinematicTrail::GetRevealLocation() const
 	return Trail->GetLocationAtDistanceAlongSpline(FMath::Clamp(Reveal, 0.f, 1.f) * Trail->GetSplineLength(), ESplineCoordinateSpace::World);
 }
 
+void ACinematicTrail::ApplyAerialPerspective()
+{
+	if (AerialPerspective < 0.f)
+	{
+		return;
+	}
+	if (!SkyAtmosphere.IsValid())
+	{
+		for (TObjectIterator<USkyAtmosphereComponent> It; It; ++It)
+		{
+			if (It->GetWorld() == GetWorld() && IsValid(*It))
+			{
+				SkyAtmosphere = *It;
+				break;
+			}
+		}
+	}
+	// UDS remet 0 a chaque construction : on ne touche au composant que si la valeur a change
+	if (USkyAtmosphereComponent* Sky = SkyAtmosphere.Get(); Sky && !FMath::IsNearlyEqual(Sky->AerialPespectiveViewDistanceScale, AerialPerspective))
+	{
+		Sky->SetAerialPespectiveViewDistanceScale(AerialPerspective);
+	}
+}
+
 void ACinematicTrail::Tick(float DeltaTime)
 {
 Super::Tick(DeltaTime);
@@ -672,6 +698,7 @@ DrawDebugString(GetWorld(), P + FVector(0, 0, 250), FString::FromInt(i), nullptr
 }
 }
 #endif
+	ApplyAerialPerspective();
 	if (Reveal != AppliedReveal)
 	{
 		ApplyReveal();

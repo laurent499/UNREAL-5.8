@@ -190,6 +190,11 @@ public:
 	UPROPERTY(EditAnywhere, Category="Decalottage", meta=(ClampMin=0, ClampMax=1))
 	float ZoneFadeEnd = 0.1f;
 
+	/** Perspective atmospherique du ciel (brume bleutee du lointain), animable. UDS la force a 0 : elle est reappliquee
+	 * a chaque image. 1 = physique, plus haut = lointain plus brumeux. Negatif : laisse UDS decider */
+	UPROPERTY(EditAnywhere, Interp, Category="Atmosphere", meta=(UIMin=0, UIMax=4))
+	float AerialPerspective = 1.f;
+
 	/** Lissage du rail suivi par la camera (m), meme principe que le survol live */
 	UPROPERTY(EditAnywhere, Category="Rail", meta=(ClampMin=1))
 	float RailSmoothM = 250.f;
@@ -261,6 +266,8 @@ private:
 	float AppliedReveal = -1.f;
 	float AppliedDecalottage = -1.f;
 	float AppliedTrailVisibility = -1.f;
+	TWeakObjectPtr<class USkyAtmosphereComponent> SkyAtmosphere;
+	void ApplyAerialPerspective();
 	void ApplyDecalottage();
 	void ApplyZoneFade();
 	int32 AppliedVisible = -1;
