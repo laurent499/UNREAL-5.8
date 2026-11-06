@@ -90,3 +90,6 @@ Plugins/VisualStudioTools/
 *.DotSettings.user
 
 graphify-out/
+
+# Donnees sources de la cinematique (LAZ, OBJ, NPY : ~1,2 Go), hors depot
+/cinema/
