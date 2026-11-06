@@ -2160,8 +2160,8 @@
     "semantic_hash": "cb1a43476b597d92631de147159cb2d8"
   },
   "Source/Subsystems/Private/PathSubsystem.cpp": {
-    "mtime": 1793114746.7055728,
-    "seen": 1793114776.9278111,
+    "mtime": 1793973989.2423725,
+    "seen": 1793974181.043876,
     "ast_hash": "730f11d5aeed5733a753193c3e652b79",
     "semantic_hash": ""
   },
@@ -2172,8 +2172,8 @@
     "semantic_hash": "9a75cc9b48c5271e5cb19748777ea7c0"
   },
   "Source/Subsystems/Private/RaceSubsystem.cpp": {
-    "mtime": 1793115757.9320476,
-    "seen": 1793115966.568787,
+    "mtime": 1793973989.2428908,
+    "seen": 1793974181.0438778,
     "ast_hash": "5a440c28c415db232719da2ccbcd54a8",
     "semantic_hash": ""
   },
@@ -2190,10 +2190,10 @@
     "semantic_hash": "3b8140b583a0c930f631fe752b34176d"
   },
   "Source/Subsystems/Private/ScaleSubsystem.cpp": {
-    "mtime": 1776770048.9147694,
-    "seen": 1791987750.9856732,
-    "ast_hash": "959b4b344a8d49cbe1736407c0f400c8",
-    "semantic_hash": "959b4b344a8d49cbe1736407c0f400c8"
+    "mtime": 1793973989.2439177,
+    "seen": 1793974181.0438807,
+    "ast_hash": "533f8a5db91f956aaee802e0b287c948",
+    "semantic_hash": ""
   },
   "Source/Subsystems/Private/SettingsSaveGame.cpp": {
     "mtime": 1776770048.9157698,
@@ -2310,8 +2310,8 @@
     "semantic_hash": "9c0db98aaaf67a12de514edca75ae849"
   },
   "Source/Subsystems/Public/PathSubsystem.h": {
-    "mtime": 1793114746.7055728,
-    "seen": 1793114776.927852,
+    "mtime": 1793973989.244442,
+    "seen": 1793974181.0439005,
     "ast_hash": "6f724a44df36581506e5728105327edc",
     "semantic_hash": ""
   },
@@ -2322,8 +2322,8 @@
     "semantic_hash": "181476af1fd44ffe3d9be13b4d0c80d1"
   },
   "Source/Subsystems/Public/RaceSubsystem.h": {
-    "mtime": 1793115757.9320476,
-    "seen": 1793115966.5688272,
+    "mtime": 1793973989.2449622,
+    "seen": 1793974181.0439024,
     "ast_hash": "712cf834f89afb9dc3adfdd1e9245647",
     "semantic_hash": ""
   },
@@ -2592,9 +2592,9 @@
     "semantic_hash": "bf9aa829324c6be568f33216e71a8977"
   },
   "Source/TrailSimulator/Private/Actors/Checkpoint.cpp": {
-    "mtime": 1792506088.9335067,
-    "seen": 1792759082.3892393,
-    "ast_hash": "1b42749fb6f946d9b978ce92ff4bd1aa",
+    "mtime": 1793973989.246571,
+    "seen": 1793974181.0439425,
+    "ast_hash": "a3b33a2c9258ead048347da06e6fbebc",
     "semantic_hash": ""
   },
   "Source/TrailSimulator/Private/Actors/GTWS/Checkpoint_GTWS.cpp": {
@@ -2676,15 +2676,15 @@
     "semantic_hash": "0b0bc7449e65490c2cd81d0cac3330e1"
   },
   "Source/TrailSimulator/Private/Actors/Path.cpp": {
-    "mtime": 1793114757.870739,
-    "seen": 1793114776.9279428,
-    "ast_hash": "a5c435a81feade39c2ef1511341d6f9c",
+    "mtime": 1793974149.1864424,
+    "seen": 1793974181.0439613,
+    "ast_hash": "677c584053d846423d3de16aacac6c25",
     "semantic_hash": ""
   },
   "Source/TrailSimulator/Private/Actors/Poi.cpp": {
-    "mtime": 1792058371.162491,
-    "seen": 1792061564.1753569,
-    "ast_hash": "32e8fb26a96fd8d747379a9923d3ae05",
+    "mtime": 1793973989.2516904,
+    "seen": 1793974181.043962,
+    "ast_hash": "a894d0a5106e87d2f07c719e18b0511c",
     "semantic_hash": ""
   },
   "Source/TrailSimulator/Private/Actors/Runner.cpp": {
@@ -2922,8 +2922,8 @@
     "semantic_hash": "f9a5a4a4525634dd9c863f5034a931d9"
   },
   "Source/TrailSimulator/Public/Actors/Path.h": {
-    "mtime": 1793114757.870739,
-    "seen": 1793114776.9280064,
+    "mtime": 1793973989.25505,
+    "seen": 1793974181.044014,
     "ast_hash": "715b4a307970e6c94bb57eab2638bc10",
     "semantic_hash": ""
   },
@@ -3096,9 +3096,9 @@
     "semantic_hash": "3f1e3d714d9b098821d7ea147d40f2db"
   },
   "Source/TrailSimulator/TrailSimulator.Build.cs": {
-    "mtime": 1793118786.0388782,
-    "seen": 1793119319.2499247,
-    "ast_hash": "5f3cff36a6f687f82c2beb70b5a21cd9",
+    "mtime": 1793973989.256051,
+    "seen": 1793974181.0440466,
+    "ast_hash": "9fbcbcf6e7144ffe542976bb088abfc8",
     "semantic_hash": ""
   },
   "Source/TrailSimulator/TrailSimulator.cpp": {
@@ -15366,9 +15366,9 @@
     "semantic_hash": ""
   },
   "Source/Subsystems/Public/TemplateSubsystem.h": {
-    "mtime": 1791992164.9625614,
-    "seen": 1791992411.0898108,
-    "ast_hash": "561d2ee892019fa97a213118045b3303",
+    "mtime": 1793973989.2455382,
+    "seen": 1793974181.0439105,
+    "ast_hash": "8db482785e7b2b9d561482ed484997f3",
     "semantic_hash": ""
   },
   "OnGraphics/TEMPLATES_UNREAL_POUR_ONGRAPHICS-20261015T072655-7625.md": {
@@ -15390,45 +15390,117 @@
     "semantic_hash": ""
   },
   "Source/TrailSimulator/Private/Actors/Cinematic/CinematicTrail.cpp": {
-    "mtime": 1793115862.7942822,
-    "seen": 1793115966.568896,
-    "ast_hash": "a1a06ca306850a475de0e0a5b9f28e9b",
+    "mtime": 1793973989.2486532,
+    "seen": 1793974181.0439482,
+    "ast_hash": "97c59c606811914ab43766f71c260c94",
     "semantic_hash": ""
   },
   "Source/TrailSimulator/Private/Actors/Cinematic/CinematicTrailCamera.cpp": {
-    "mtime": 1793114910.3203175,
-    "seen": 1793115054.7266545,
-    "ast_hash": "3b079312a4288be4b5f1f87375f608e4",
+    "mtime": 1793973989.249174,
+    "seen": 1793974181.0439491,
+    "ast_hash": "71c378296e986d1dccfd26db3e84e31c",
     "semantic_hash": ""
   },
   "Source/TrailSimulator/Public/Actors/Cinematic/CinematicTrail.h": {
-    "mtime": 1793115757.9320476,
-    "seen": 1793115966.5689669,
-    "ast_hash": "50de7b1dcfda96d34f760d1b4762052b",
+    "mtime": 1793973989.2536898,
+    "seen": 1793974181.0439978,
+    "ast_hash": "67f60511ec9162a69c848d318632f3c2",
     "semantic_hash": ""
   },
   "Source/TrailSimulator/Public/Actors/Cinematic/CinematicTrailCamera.h": {
-    "mtime": 1793114893.7361858,
-    "seen": 1793115054.7267385,
-    "ast_hash": "18cc42879123df27a8b774843cdcc65b",
+    "mtime": 1793973989.2536898,
+    "seen": 1793974181.0440006,
+    "ast_hash": "3d398902ea3aed3081c0efee66de3276",
     "semantic_hash": ""
   },
   "Docs/Cinematique/RENDU_CINEMATIQUE.md": {
-    "mtime": 1793119308.7078323,
-    "seen": 1793119319.2499397,
-    "ast_hash": "4eb70b651344bf89eb89b8ec7f5b65df",
+    "mtime": 1793973989.241331,
+    "seen": 1793974181.0440679,
+    "ast_hash": "6364fe88380fa48c5e21c7d52ae1c949",
     "semantic_hash": ""
   },
   "Source/TrailSimulator/Private/Actors/Cinematic/CinematicGeoAnchor.cpp": {
-    "mtime": 1793118778.5744524,
-    "seen": 1793119319.2498343,
-    "ast_hash": "e27562ee66f0cac8191699822e3c9f9f",
+    "mtime": 1793973989.2476149,
+    "seen": 1793974181.0439444,
+    "ast_hash": "a39a1a407364323815c04ac904aefcd6",
     "semantic_hash": ""
   },
   "Source/TrailSimulator/Public/Actors/Cinematic/CinematicGeoAnchor.h": {
-    "mtime": 1793118729.847243,
-    "seen": 1793119319.2498791,
-    "ast_hash": "e6ad4da8928048b8d77a16860adc0f84",
+    "mtime": 1793973989.2516904,
+    "seen": 1793974181.0439928,
+    "ast_hash": "1da10607cbcb18a1fad8e45d47c0e0d3",
+    "semantic_hash": ""
+  },
+  "Source/TrailSimulator/Private/Actors/Cinematic/CinematicPanel.cpp": {
+    "mtime": 1793973989.2481306,
+    "seen": 1793974181.0439467,
+    "ast_hash": "b1f4c50ef934709af98dc682f0d701a5",
+    "semantic_hash": ""
+  },
+  "Source/TrailSimulator/Private/SeaLevelSubsystem.cpp": {
+    "mtime": 1793974149.186962,
+    "seen": 1793974181.0439894,
+    "ast_hash": "50847ff40aadd190150ef8683e0c94a7",
+    "semantic_hash": ""
+  },
+  "Source/TrailSimulator/Public/Actors/Cinematic/CinematicPanel.h": {
+    "mtime": 1793973989.2526906,
+    "seen": 1793974181.0439963,
+    "ast_hash": "26d7014c8453e053a023c39ab0f67b12",
+    "semantic_hash": ""
+  },
+  "Source/TrailSimulator/Public/GeoidGrid.h": {
+    "mtime": 1793974149.1874778,
+    "seen": 1793974181.044043,
+    "ast_hash": "9e92875d0420a470aba7c61cd704dae5",
+    "semantic_hash": ""
+  },
+  "Source/TrailSimulator/Public/SeaLevelSubsystem.h": {
+    "mtime": 1793974149.188006,
+    "seen": 1793974181.0440447,
+    "ast_hash": "cf8833b6fe4e470279199a392c74db6b",
+    "semantic_hash": ""
+  },
+  "Tools/Cinematique/add_normals.py": {
+    "mtime": 1793973989.2570503,
+    "seen": 1793974181.0440552,
+    "ast_hash": "51bd7926c02e8d8428ef39097fa1ac9d",
+    "semantic_hash": ""
+  },
+  "Tools/Cinematique/laz_to_mesh.py": {
+    "mtime": 1793973989.2570503,
+    "seen": 1793974181.0440564,
+    "ast_hash": "d117aa2a6ca5c158200fcfdc51cc3336",
+    "semantic_hash": ""
+  },
+  "Tools/Cinematique/masque_socle.py": {
+    "mtime": 1793973989.2580507,
+    "seen": 1793974181.0440576,
+    "ast_hash": "30f9576a6d87bd773567542ea435cac0",
+    "semantic_hash": ""
+  },
+  "Tools/Cinematique/recentre_obj.py": {
+    "mtime": 1793973989.2590504,
+    "seen": 1793974181.0440586,
+    "ast_hash": "588576b1d8192f2261e81cfc1e2ba433",
+    "semantic_hash": ""
+  },
+  "Tools/Cinematique/socle_smooth.py": {
+    "mtime": 1793973989.2590504,
+    "seen": 1793974181.04406,
+    "ast_hash": "27c307f1e8fae4fa5b554c0eb7382269",
+    "semantic_hash": ""
+  },
+  "Tools/Cinematique/socle_volume.py": {
+    "mtime": 1793973989.2605536,
+    "seen": 1793974181.0440607,
+    "ast_hash": "82a0916f93fe618ceb416bd690b53f95",
+    "semantic_hash": ""
+  },
+  "Tools/Cinematique/terrain_lidar.py": {
+    "mtime": 1793973989.2605536,
+    "seen": 1793974181.0440612,
+    "ast_hash": "74164469ac93c5056b22b6269cb6eb17",
     "semantic_hash": ""
   }
 }
