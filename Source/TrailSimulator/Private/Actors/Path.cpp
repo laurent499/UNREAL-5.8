@@ -1603,34 +1603,91 @@ void APath::ApplyDrape()
 	const double Clearance = FMath::Max(PathDrape::CVarClearance.GetValueOnGameThread(), 0.f);
 	const double MaxShift = FMath::Max(PathDrape::CVarMaxShift.GetValueOnGameThread(), 1.f);
 	const double Slope = FMath::Max(PathDrape::CVarRamp.GetValueOnGameThread(), 1.f) / 100.0;
+	// Distance le long du trace GPS d'origine (le spline actuel peut deja etre drape)
+	TArray<double> DistM;
+	DistM.SetNumZeroed(NumPts);
+	for (int32 i = 1; i < NumPts; ++i)
+	{
+		const FVector& A = DrapeBaseLLH[i - 1];
+		const FVector& B = DrapeBaseLLH[i];
+		const double Dx = (B.X - A.X) * 111320.0 * FMath::Cos(FMath::DegreesToRadians(A.Y));
+		const double Dy = (B.Y - A.Y) * 110540.0;
+		DistM[i] = DistM[i - 1] + FMath::Sqrt(Dx * Dx + Dy * Dy);
+	}
+	auto DistM_At = [&DistM](int32 i) { return DistM[i]; };
+
+	// 0) Sol filtre : mediane sur 5 echantillons voisins (+-20 m a 10 m de pas). Un arbre, un rocher ou un artefact
+	// de tuile isole donnait un pic de 15 a 20 m qui soulevait tout le troncon en arche
+	const int32 NumQ = DrapeGround.Num();
+	TArray<double> Ground;
+	Ground.Init(PathDrape::NoGround, NumQ);
+	{
+		TArray<double, TInlineAllocator<5>> Window;
+		for (int32 q = 0; q < NumQ; ++q)
+		{
+			if (DrapeGround[q] <= PathDrape::NoGround) continue;
+			Window.Reset();
+			for (int32 k = FMath::Max(0, q - 2); k <= FMath::Min(NumQ - 1, q + 2); ++k)
+			{
+				if (DrapeGround[k] > PathDrape::NoGround) Window.Add(DrapeGround[k]);
+			}
+			Window.Sort();
+			Ground[q] = Window.Num() >= 3 ? Window[Window.Num() / 2] : DrapeGround[q];
+		}
+	}
 	auto Valid = [&](int32 q, double RefHeight)
 	{
-		return DrapeGround[q] > PathDrape::NoGround && FMath::Abs(DrapeGround[q] + Clearance - RefHeight) <= MaxShift;
+		return Ground[q] > PathDrape::NoGround && FMath::Abs(Ground[q] + Clearance - RefHeight) <= MaxShift;
 	};
 
-	// 1) Hauteur de chaque point : sol + marge (snap), ou au moins sol + marge (montee seule). Sans mesure : GPS
+	// 1) Hauteur de chaque point : sol + marge (snap), ou au moins sol + marge (montee seule)
 	TArray<double> H;
+	TArray<bool> Measured;
 	H.SetNumUninitialized(NumPts);
+	Measured.Init(false, NumPts);
 	for (int32 i = 0; i < NumPts; ++i) H[i] = DrapeBaseLLH[i].Z;
-	for (int32 q = 0; q < DrapeGround.Num(); ++q)
+	for (int32 q = 0; q < NumQ; ++q)
 	{
 		const int32 I = DrapeQueryPoint[q];
 		if (DrapeQueryAlpha[q] > 0.f || !H.IsValidIndex(I) || !Valid(q, DrapeBaseLLH[I].Z)) continue;
-		const double Target = DrapeGround[q] + Clearance;
+		const double Target = Ground[q] + Clearance;
 		H[I] = bSnap ? Target : FMath::Max(DrapeBaseLLH[I].Z, Target);
+		Measured[I] = true;
+	}
+	// Point sans mesure (echec Cesium, echantillon rejete, paquet pas encore arrive) : il prend l'ecart au GPS
+	// interpole entre ses voisins mesures, au lieu de rester a l'altitude GPS (pic de 30 m)
+	{
+		int32 Prev = INDEX_NONE;
+		for (int32 i = 0; i <= NumPts; ++i)
+		{
+			if (i < NumPts && !Measured[i]) continue;
+			const int32 Next = i < NumPts ? i : INDEX_NONE;
+			if (Prev == INDEX_NONE && Next == INDEX_NONE) break;
+			const double OffPrev = Prev != INDEX_NONE ? H[Prev] - DrapeBaseLLH[Prev].Z : H[Next] - DrapeBaseLLH[Next].Z;
+			const double OffNext = Next != INDEX_NONE ? H[Next] - DrapeBaseLLH[Next].Z : OffPrev;
+			const double D0 = Prev != INDEX_NONE ? DistM_At(Prev) : 0.0;
+			const double D1 = Next != INDEX_NONE ? DistM_At(Next) : 0.0;
+			for (int32 j = (Prev == INDEX_NONE ? 0 : Prev + 1); j < (Next == INDEX_NONE ? NumPts : Next); ++j)
+			{
+				const double A = (Prev != INDEX_NONE && Next != INDEX_NONE && D1 > D0) ? (DistM_At(j) - D0) / (D1 - D0) : 0.0;
+				const double Off = FMath::Lerp(OffPrev, OffNext, FMath::Clamp(A, 0.0, 1.0));
+				H[j] = bSnap ? DrapeBaseLLH[j].Z + Off : FMath::Max(DrapeBaseLLH[j].Z, DrapeBaseLLH[j].Z + Off);
+			}
+			Prev = Next;
+		}
 	}
 
 	// 2) Cordes qui passent sous le sol entre deux points : on monte les deux extremites
 	TArray<double> Lift;
 	Lift.Init(0.0, NumPts);
-	for (int32 q = 0; q < DrapeGround.Num(); ++q)
+	for (int32 q = 0; q < NumQ; ++q)
 	{
 		const int32 I = DrapeQueryPoint[q];
 		const float T = DrapeQueryAlpha[q];
 		if (T <= 0.f || I + 1 >= NumPts) continue;
 		const double Chord = FMath::Lerp(H[I], H[I + 1], double(T));
 		if (!Valid(q, Chord)) continue;
-		const double Deficit = DrapeGround[q] + Clearance - Chord;
+		const double Deficit = Ground[q] + Clearance - Chord;
 		if (Deficit > 0.0)
 		{
 			Lift[I] = FMath::Max(Lift[I], Deficit);
@@ -1638,9 +1695,6 @@ void APath::ApplyDrape()
 		}
 	}
 	// 3) Rampes de pente bornee autour des points remontes (dilatation aller-retour), jamais vers le bas
-	TArray<double> DistM;
-	DistM.SetNumUninitialized(NumPts);
-	for (int32 i = 0; i < NumPts; ++i) DistM[i] = SplinePath->GetDistanceAlongSplineAtSplinePoint(i) / 100.0;
 	for (int32 i = 1; i < NumPts; ++i) Lift[i] = FMath::Max(Lift[i], Lift[i - 1] - Slope * (DistM[i] - DistM[i - 1]));
 	for (int32 i = NumPts - 2; i >= 0; --i) Lift[i] = FMath::Max(Lift[i], Lift[i + 1] - Slope * (DistM[i + 1] - DistM[i]));
 
