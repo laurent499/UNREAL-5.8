@@ -110,6 +110,28 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 		{
 			Comp->SetCustomPrimitiveDataFloat(7, Mode);
 		}
+		// Biseau en degrés (primitive data 8)
+		if (!Data.IsValidIndex(8) || Data[8] != Tpl.Globals.Slant)
+		{
+			Comp->SetCustomPrimitiveDataFloat(8, Tpl.Globals.Slant);
+		}
+	};
+	// Hauteur de référence du biseau (primitive data 9) : nom et club pivotent sur leur jointure
+	// et doivent perdre la même largeur pour que leurs côtés penchés se prolongent.
+	auto SetSlantRefHeight = [](UPrimitiveComponent* Comp, float RefHeight)
+	{
+		const TArray<float>& Data = Comp->GetCustomPrimitiveData().Data;
+		if (!Data.IsValidIndex(9) || !FMath::IsNearlyEqual(Data[9], RefHeight, 0.01f))
+		{
+			Comp->SetCustomPrimitiveDataFloat(9, RefHeight);
+		}
+	};
+	// Hauteur d'un fond (cm) : la dimension médiane de ses bornes locales mises à l'échelle
+	// (la plus mince est l'épaisseur, la plus grande la largeur)
+	auto BkgHeight = [](const UPrimitiveComponent* Comp)
+	{
+		const FVector Size = Comp->CalcBounds(FTransform::Identity).GetBox().GetSize() * Comp->GetComponentScale().GetAbs();
+		return FMath::Max(FMath::Min(Size.X, Size.Y), FMath::Min(FMath::Max(Size.X, Size.Y), Size.Z));
 	};
 	auto Lin = [&RaceSetup](const FString& Value) { return FTrailTemplate::ToLinear(Value, RaceSetup.color); };
 	auto Srgb = [&RaceSetup](const FString& Value) { return FTrailTemplate::ToSRGB(Value, RaceSetup.color); };
@@ -140,6 +162,17 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 		if (IsClubVisible())
 		{
 			ClubComponent->UpdateMesh(SharedBounds.StartLocation, SharedBounds.EndLocation);
+		}
+
+		UPrimitiveComponent* NameBkg = NameComponent->NameBkgComponent;
+		UPrimitiveComponent* ClubBkg = ClubComponent->ClubBkgComponent;
+		if (NameBkg && ClubBkg)
+		{
+			// Nom seul : 0, le fond se biseaute sur sa propre hauteur
+			const float RefHeight = (IsClubVisible() && FMath::Abs(Tpl.Globals.Slant) >= 0.01f)
+				? FMath::Max(BkgHeight(NameBkg), BkgHeight(ClubBkg)) : 0.f;
+			SetSlantRefHeight(NameBkg, RefHeight);
+			SetSlantRefHeight(ClubBkg, RefHeight);
 		}
 	}
 	
