@@ -51,8 +51,8 @@ void ACheckpoint_GTWS::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, FRac
 	MainPictoColor = Lin(Style.MainPicto);
 
 	// Fonds arrondis : filets recentrés entre les fonds et raccourcis aux arrondis
-	RoundedPanel::FitLine(Line1Component, NameBkgComponent, InfosBkgComponent, Tpl.Globals.CornerRadius);
-	RoundedPanel::FitLine(Line2Component, InfosBkgComponent, WeatherBkgComponent, Tpl.Globals.CornerRadius);
+	RoundedPanel::FitLine(Line1Component, NameBkgComponent, InfosBkgComponent, Tpl.Globals.CornerRadius, Tpl.Globals.Slant);
+	RoundedPanel::FitLine(Line2Component, InfosBkgComponent, WeatherBkgComponent, Tpl.Globals.CornerRadius, Tpl.Globals.Slant);
 	// Pictos distance et altitude un peu plus discrets dans leur bandeau (0,2 à l'origine)
 	if (DistPicto) DistPicto->SetRelativeScale3D(FVector(0.16f));
 	if (AltPicto) AltPicto->SetRelativeScale3D(FVector(0.16f));
@@ -101,6 +101,7 @@ void ACheckpoint_GTWS::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, FRac
 		NameBkgComponent->SetCustomPrimitiveDataFloat(5,1.f);
 		UseRoundedBkg_CheckpointGTWS(NameBkgComponent);
 		NameBkgComponent->SetCustomPrimitiveDataFloat(6, Tpl.Globals.CornerRadius); // arrondi des coins (M_Plain)
+		NameBkgComponent->SetCustomPrimitiveDataFloat(8, Tpl.Globals.Slant); // biseau en degres (M_PlainRounded)
 
 	}
 	
@@ -112,6 +113,7 @@ void ACheckpoint_GTWS::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, FRac
 		InfosBkgComponent->SetCustomPrimitiveDataFloat(5, 1.f);
 		UseRoundedBkg_CheckpointGTWS(InfosBkgComponent);
 		InfosBkgComponent->SetCustomPrimitiveDataFloat(6, Tpl.Globals.CornerRadius); // arrondi des coins (M_Plain)
+		InfosBkgComponent->SetCustomPrimitiveDataFloat(8, Tpl.Globals.Slant); // biseau en degres (M_PlainRounded)
 		
 		const FString DistPath = FString::Printf(
 			TEXT("/Game/LTVContent/2D/Pictos/%s/loc.loc"), *Tpl.Globals.PictoSet);
@@ -169,6 +171,7 @@ void ACheckpoint_GTWS::UpdateCheckpoint(FRaceCheckpoint NewCheckpointDatas, FRac
 		WeatherBkgComponent->SetCustomPrimitiveDataFloat(5, 1.f);
 		UseRoundedBkg_CheckpointGTWS(WeatherBkgComponent);
 		WeatherBkgComponent->SetCustomPrimitiveDataFloat(6, Tpl.Globals.CornerRadius); // arrondi des coins (M_Plain)
+		WeatherBkgComponent->SetCustomPrimitiveDataFloat(8, Tpl.Globals.Slant); // biseau en degres (M_PlainRounded)
 
 	}
 	
