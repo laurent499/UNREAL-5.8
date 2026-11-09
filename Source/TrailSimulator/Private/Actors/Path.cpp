@@ -1426,11 +1426,13 @@ void APath::SetBroadcastCaptureEnabled_Implementation(bool bEnabled, class UText
 // -------------------- Drape du trace sur les tuiles Cesium
 namespace PathDrape
 {
-	static TAutoConsoleVariable<int32> CVarEnabled(TEXT("ts.Path.Drape"), 1, TEXT("Cale le trace sur les tuiles Cesium : monte les points qui passent sous le sol (0 = altitude GPS brute)"));
-	static TAutoConsoleVariable<float> CVarClearance(TEXT("ts.Path.DrapeClearanceM"), 1.5f, TEXT("Drape du trace : marge minimale au-dessus du sol Cesium (m)"));
+	static TAutoConsoleVariable<int32> CVarEnabled(TEXT("ts.Path.Drape"), 1, TEXT("Cale le trace sur les tuiles Cesium (0 = altitude GPS brute)"));
+	static TAutoConsoleVariable<int32> CVarSnap(TEXT("ts.Path.DrapeSnap"), 1, TEXT("Drape du trace : 1 = pose le trace a sol + marge partout (monte et descend), 0 = ne fait que monter les points sous le sol"));
+	static TAutoConsoleVariable<float> CVarClearance(TEXT("ts.Path.DrapeClearanceM"), 1.5f, TEXT("Drape du trace : hauteur au-dessus du sol Cesium (m)"));
 	static TAutoConsoleVariable<float> CVarStep(TEXT("ts.Path.DrapeStepM"), 10.f, TEXT("Drape du trace : pas d'echantillonnage du sol entre deux points GPS (m)"));
-	static TAutoConsoleVariable<float> CVarRamp(TEXT("ts.Path.DrapeRampPct"), 15.f, TEXT("Drape du trace : pente max (%) des rampes autour d'un point monte, pour que le tube ne fasse pas de vagues"));
-	static TAutoConsoleVariable<float> CVarMaxLift(TEXT("ts.Path.DrapeMaxLiftM"), 80.f, TEXT("Drape du trace : montee max d'un point (m), protege contre un echantillon aberrant"));
+	static TAutoConsoleVariable<float> CVarRamp(TEXT("ts.Path.DrapeRampPct"), 15.f, TEXT("Drape du trace : pente max (%) des rampes autour d'un point remonte par une corde, pour que le tube ne fasse pas de vagues"));
+	static TAutoConsoleVariable<float> CVarMaxShift(TEXT("ts.Path.DrapeMaxShiftM"), 80.f, TEXT("Drape du trace : ecart max (m) entre altitude GPS et sol au-dela duquel l'echantillon est ignore (aberrant)"));
+	static TAutoConsoleVariable<int32> CVarChunk(TEXT("ts.Path.DrapeChunk"), 800, TEXT("Drape du trace : hauteurs demandees a Cesium par paquet ; chaque paquet est applique et mis en cache des son arrivee"));
 
 	static FAutoConsoleCommandWithWorld CmdRedrape(TEXT("ts.Path.Redrape"),
 		TEXT("Redemande a Cesium la hauteur du sol sous tous les traces (ignore le cache) et les recale"),
@@ -1438,6 +1440,15 @@ namespace PathDrape
 		{
 			for (TActorIterator<APath> It(World); It; ++It) It->DrapeOnTerrain(true);
 		}));
+	static FAutoConsoleCommandWithWorld CmdReapply(TEXT("ts.Path.DrapeApply"),
+		TEXT("Reapplique le drape deja mesure (apres un changement de ts.Path.DrapeClearanceM, DrapeSnap ou DrapeRampPct)"),
+		FConsoleCommandWithWorldDelegate::CreateLambda([](UWorld* World)
+		{
+			for (TActorIterator<APath> It(World); It; ++It) It->ApplyDrape();
+		}));
+
+	/** Hauteur du sol d'une requete que Cesium n'a pas (encore) servie */
+	static constexpr double NoGround = -1.0e9;
 
 	/** Tileset du sol : Google Photorealistic si on le reconnait, sinon le premier visible */
 	static ACesium3DTileset* FindGroundTileset(UWorld* World)
@@ -1452,12 +1463,12 @@ namespace PathDrape
 		return Fallback;
 	}
 
-	/** Hauteur du sol d'une requete que Cesium n'a pas pu servir */
-	static constexpr double NoGround = -1.0e9;
-
-	static FString CachePath(int64 RaceID, uint32 Hash)
+	static void SaveCache(const FString& Path, TArray<double>& Ground)
 	{
-		return FPaths::ProjectSavedDir() / TEXT("PathDrape") / FString::Printf(TEXT("Race_%lld_%08x.bin"), RaceID, Hash);
+		TArray<uint8> Bytes;
+		FMemoryWriter Writer(Bytes);
+		Writer << Ground;
+		FFileHelper::SaveArrayToFile(Bytes, *Path);
 	}
 }
 
@@ -1468,17 +1479,29 @@ void APath::DrapeOnTerrain(bool bForceResample)
 	const int32 NumPts = SplinePath->GetNumberOfSplinePoints();
 	if (!Georef || NumPts < 2 || NumPts != RacePath.Points.Num()) return;
 
+	// Reference : position des points avant tout drape (GPS + geoide + ZOffset), et position de l'acteur a ce moment.
+	// Le drape repart toujours de la, donc l'appliquer plusieurs fois donne le meme resultat
+	if (DrapeBaseLLH.Num() != NumPts)
+	{
+		DrapeBaseLLH.SetNumUninitialized(NumPts);
+		for (int32 i = 0; i < NumPts; ++i)
+		{
+			DrapeBaseLLH[i] = Georef->TransformUnrealPositionToLongitudeLatitudeHeight(SplinePath->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World));
+		}
+		DrapeActorRef = GetActorLocation();
+	}
+
 	// Requetes : chaque point GPS (alpha 0) puis des points intermediaires sur la corde vers le suivant
 	const float StepM = FMath::Max(PathDrape::CVarStep.GetValueOnGameThread(), 2.f);
-	TArray<FVector> Query;
-	TArray<int32> QueryPoint;
-	TArray<float> QueryAlpha;
+	DrapeQuery.Reset();
+	DrapeQueryPoint.Reset();
+	DrapeQueryAlpha.Reset();
 	for (int32 i = 0; i < NumPts; ++i)
 	{
 		const FRacePathPoint& A = RacePath.Points[i];
-		Query.Add(FVector(A.lon, A.lat, A.ele));
-		QueryPoint.Add(i);
-		QueryAlpha.Add(0.f);
+		DrapeQuery.Add(FVector(A.lon, A.lat, A.ele));
+		DrapeQueryPoint.Add(i);
+		DrapeQueryAlpha.Add(0.f);
 		if (i + 1 == NumPts) break;
 		const FRacePathPoint& B = RacePath.Points[i + 1];
 		const double Dx = (B.lon - A.lon) * 111320.0 * FMath::Cos(FMath::DegreesToRadians(A.lat));
@@ -1487,131 +1510,139 @@ void APath::DrapeOnTerrain(bool bForceResample)
 		for (int32 k = 1; k < Steps; ++k)
 		{
 			const double T = double(k) / Steps;
-			Query.Add(FVector(FMath::Lerp(double(A.lon), double(B.lon), T), FMath::Lerp(double(A.lat), double(B.lat), T), A.ele));
-			QueryPoint.Add(i);
-			QueryAlpha.Add(float(T));
+			DrapeQuery.Add(FVector(FMath::Lerp(double(A.lon), double(B.lon), T), FMath::Lerp(double(A.lat), double(B.lat), T), A.ele));
+			DrapeQueryPoint.Add(i);
+			DrapeQueryAlpha.Add(float(T));
 		}
 	}
 
-	// Cache : hauteurs du sol par requete, cle = course + positions + pas
+	// Cache : hauteurs du sol par requete (NoGround = pas encore mesuree), cle = course + positions + pas
 	uint32 Hash = FCrc::MemCrc32(&StepM, sizeof(StepM));
-	for (const FVector& Q : Query)
+	for (const FVector& Q : DrapeQuery)
 	{
 		const double LonLat[2] = { Q.X, Q.Y };
 		Hash = FCrc::MemCrc32(LonLat, sizeof(LonLat), Hash);
 	}
-	const FString Cache = PathDrape::CachePath(RaceId, Hash);
+	DrapeCachePath = FPaths::ProjectSavedDir() / TEXT("PathDrape") / FString::Printf(TEXT("Race_%lld_%08x.bin"), RaceId, Hash);
+	DrapeGround.Init(PathDrape::NoGround, DrapeQuery.Num());
 	if (!bForceResample)
 	{
 		TArray<uint8> Bytes;
-		if (FFileHelper::LoadFileToArray(Bytes, *Cache, FILEREAD_Silent))
+		if (FFileHelper::LoadFileToArray(Bytes, *DrapeCachePath, FILEREAD_Silent))
 		{
-			TArray<double> Ground;
+			TArray<double> Cached;
 			FMemoryReader Reader(Bytes);
-			Reader << Ground;
-			if (!Reader.IsError() && Ground.Num() == Query.Num())
-			{
-				UE_LOG(LogTemp, Log, TEXT("Path %lld : drape depuis le cache %s"), RaceId, *Cache);
-				ApplyDrape(QueryPoint, QueryAlpha, Ground);
-				return;
-			}
+			Reader << Cached;
+			if (!Reader.IsError() && Cached.Num() == DrapeQuery.Num()) DrapeGround = MoveTemp(Cached);
 		}
 	}
 
+	// Ce qui manque encore, demande par paquets dans l'ordre du trace
+	DrapeMissing.Reset();
+	for (int32 q = 0; q < DrapeGround.Num(); ++q)
+	{
+		if (DrapeGround[q] <= PathDrape::NoGround) DrapeMissing.Add(q);
+	}
+	++DrapeGeneration;
+	UE_LOG(LogTemp, Log, TEXT("Path %lld : drape, %d/%d hauteurs en cache, %d a demander"), RaceId, DrapeQuery.Num() - DrapeMissing.Num(), DrapeQuery.Num(), DrapeMissing.Num());
+	if (DrapeMissing.Num() < DrapeQuery.Num()) ApplyDrape();
+	RequestNextDrapeChunk(DrapeGeneration);
+}
+
+void APath::RequestNextDrapeChunk(int32 Generation)
+{
+	if (Generation != DrapeGeneration || DrapeMissing.IsEmpty() || !GetWorld()) return;
 	ACesium3DTileset* Tileset = PathDrape::FindGroundTileset(GetWorld());
 	if (!Tileset)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Path %lld : pas de tileset Cesium, trace laisse a l'altitude GPS"), RaceId);
+		UE_LOG(LogTemp, Warning, TEXT("Path %lld : pas de tileset Cesium, drape incomplet"), RaceId);
 		return;
 	}
-	UE_LOG(LogTemp, Log, TEXT("Path %lld : drape, %d hauteurs demandees a %s"), RaceId, Query.Num(), *Tileset->GetActorNameOrLabel());
+	const int32 Count = FMath::Min(DrapeMissing.Num(), FMath::Max(PathDrape::CVarChunk.GetValueOnGameThread(), 50));
+	TArray<int32> Indices(DrapeMissing.GetData(), Count);
+	DrapeMissing.RemoveAt(0, Count, EAllowShrinking::No);
+	TArray<FVector> Query;
+	Query.Reserve(Count);
+	for (const int32 q : Indices) Query.Add(DrapeQuery[q]);
+
+	const double StartTime = FPlatformTime::Seconds();
 	TWeakObjectPtr<APath> WeakThis(this);
-	const int64 ForRace = RaceId;
 	Tileset->SampleHeightMostDetailed(Query, FCesiumSampleHeightMostDetailedCallback::CreateLambda(
-		[WeakThis, ForRace, Cache, QueryPoint, QueryAlpha](ACesium3DTileset*, const TArray<FCesiumSampleHeightResult>& Results, const TArray<FString>& Warnings)
+		[WeakThis, Generation, Indices, StartTime](ACesium3DTileset*, const TArray<FCesiumSampleHeightResult>& Results, const TArray<FString>& Warnings)
 		{
 			APath* Self = WeakThis.Get();
-			if (!Self || Self->RaceId != ForRace) return;
-			TArray<double> Ground;
-			Ground.Init(PathDrape::NoGround, QueryPoint.Num());
+			if (!Self || Generation != Self->DrapeGeneration) return;
 			int32 Ok = 0;
-			for (int32 q = 0; q < Ground.Num() && q < Results.Num(); ++q)
+			for (int32 k = 0; k < Indices.Num() && k < Results.Num(); ++k)
 			{
-				if (Results[q].SampleSuccess)
+				if (Results[k].SampleSuccess)
 				{
-					Ground[q] = Results[q].LongitudeLatitudeHeight.Z;
+					Self->DrapeGround[Indices[k]] = Results[k].LongitudeLatitudeHeight.Z;
 					++Ok;
 				}
 			}
-			for (const FString& W : Warnings) UE_LOG(LogTemp, Warning, TEXT("Path %lld : drape, %s"), ForRace, *W);
-			// Pas de cache si trop d'echecs (tuiles pas encore servies) : on reessaiera au prochain chargement
-			if (Ok > Ground.Num() * 9 / 10)
+			if (Warnings.Num() > 0) UE_LOG(LogTemp, Warning, TEXT("Path %lld : drape, %s"), Self->RaceId, *Warnings[0]);
+			UE_LOG(LogTemp, Log, TEXT("Path %lld : drape, paquet %d/%d hauteurs en %.1f s, reste %d"),
+				Self->RaceId, Ok, Indices.Num(), FPlatformTime::Seconds() - StartTime, Self->DrapeMissing.Num());
+			if (Ok > 0)
 			{
-				TArray<uint8> Bytes;
-				FMemoryWriter Writer(Bytes);
-				Writer << Ground;
-				FFileHelper::SaveArrayToFile(Bytes, *Cache);
+				PathDrape::SaveCache(Self->DrapeCachePath, Self->DrapeGround);
+				Self->ApplyDrape();
 			}
-			UE_LOG(LogTemp, Log, TEXT("Path %lld : drape, %d/%d hauteurs recues"), ForRace, Ok, Ground.Num());
-			Self->ApplyDrape(QueryPoint, QueryAlpha, Ground);
+			Self->RequestNextDrapeChunk(Generation);
 		}));
 }
 
-void APath::ApplyDrape(const TArray<int32>& QueryPoint, const TArray<float>& QueryAlpha, const TArray<double>& Ground)
+void APath::ApplyDrape()
 {
 	ACesiumGeoreference* Georef = Georeference.Get();
 	const int32 NumPts = SplinePath ? SplinePath->GetNumberOfSplinePoints() : 0;
-	if (!Georef || NumPts < 2 || Ground.Num() != QueryPoint.Num()) return;
+	if (!Georef || NumPts < 2 || DrapeBaseLLH.Num() != NumPts || DrapeGround.Num() != DrapeQueryPoint.Num()) return;
 
-	// Hauteur ellipsoidale actuelle de chaque point (GPS + geoide + ZOffset regie)
-	TArray<FVector> LLH;
-	TArray<double> DistM;
-	LLH.SetNumUninitialized(NumPts);
-	DistM.SetNumUninitialized(NumPts);
-	for (int32 i = 0; i < NumPts; ++i)
+	const bool bSnap = PathDrape::CVarSnap.GetValueOnGameThread() != 0;
+	const double Clearance = FMath::Max(PathDrape::CVarClearance.GetValueOnGameThread(), 0.f);
+	const double MaxShift = FMath::Max(PathDrape::CVarMaxShift.GetValueOnGameThread(), 1.f);
+	const double Slope = FMath::Max(PathDrape::CVarRamp.GetValueOnGameThread(), 1.f) / 100.0;
+	auto Valid = [&](int32 q, double RefHeight)
 	{
-		LLH[i] = Georef->TransformUnrealPositionToLongitudeLatitudeHeight(SplinePath->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World));
-		DistM[i] = SplinePath->GetDistanceAlongSplineAtSplinePoint(i) / 100.0;
+		return DrapeGround[q] > PathDrape::NoGround && FMath::Abs(DrapeGround[q] + Clearance - RefHeight) <= MaxShift;
+	};
+
+	// 1) Hauteur de chaque point : sol + marge (snap), ou au moins sol + marge (montee seule). Sans mesure : GPS
+	TArray<double> H;
+	H.SetNumUninitialized(NumPts);
+	for (int32 i = 0; i < NumPts; ++i) H[i] = DrapeBaseLLH[i].Z;
+	for (int32 q = 0; q < DrapeGround.Num(); ++q)
+	{
+		const int32 I = DrapeQueryPoint[q];
+		if (DrapeQueryAlpha[q] > 0.f || !H.IsValidIndex(I) || !Valid(q, DrapeBaseLLH[I].Z)) continue;
+		const double Target = DrapeGround[q] + Clearance;
+		H[I] = bSnap ? Target : FMath::Max(DrapeBaseLLH[I].Z, Target);
 	}
 
-	// Montee necessaire : le point lui-meme, et les deux extremites d'une corde qui passe sous le sol
-	const double Clearance = FMath::Max(PathDrape::CVarClearance.GetValueOnGameThread(), 0.f);
+	// 2) Cordes qui passent sous le sol entre deux points : on monte les deux extremites
 	TArray<double> Lift;
 	Lift.Init(0.0, NumPts);
-	for (int32 q = 0; q < Ground.Num(); ++q)
+	for (int32 q = 0; q < DrapeGround.Num(); ++q)
 	{
-		if (Ground[q] <= PathDrape::NoGround) continue;
-		const int32 I = QueryPoint[q];
-		if (!LLH.IsValidIndex(I)) continue;
-		const float T = QueryAlpha[q];
-		if (T <= 0.f || I + 1 >= NumPts)
-		{
-			Lift[I] = FMath::Max(Lift[I], Ground[q] + Clearance - LLH[I].Z);
-			continue;
-		}
-		const double Deficit = Ground[q] + Clearance - FMath::Lerp(LLH[I].Z, LLH[I + 1].Z, double(T));
+		const int32 I = DrapeQueryPoint[q];
+		const float T = DrapeQueryAlpha[q];
+		if (T <= 0.f || I + 1 >= NumPts) continue;
+		const double Chord = FMath::Lerp(H[I], H[I + 1], double(T));
+		if (!Valid(q, Chord)) continue;
+		const double Deficit = DrapeGround[q] + Clearance - Chord;
 		if (Deficit > 0.0)
 		{
 			Lift[I] = FMath::Max(Lift[I], Deficit);
 			Lift[I + 1] = FMath::Max(Lift[I + 1], Deficit);
 		}
 	}
-	// Rampes : un point monte entraine ses voisins avec une pente bornee (dilatation aller-retour), jamais vers le bas
-	const double MaxLift = FMath::Max(PathDrape::CVarMaxLift.GetValueOnGameThread(), 0.f);
-	const double Slope = FMath::Max(PathDrape::CVarRamp.GetValueOnGameThread(), 1.f) / 100.0;
-	for (double& L : Lift) L = FMath::Clamp(L, 0.0, MaxLift);
+	// 3) Rampes de pente bornee autour des points remontes (dilatation aller-retour), jamais vers le bas
+	TArray<double> DistM;
+	DistM.SetNumUninitialized(NumPts);
+	for (int32 i = 0; i < NumPts; ++i) DistM[i] = SplinePath->GetDistanceAlongSplineAtSplinePoint(i) / 100.0;
 	for (int32 i = 1; i < NumPts; ++i) Lift[i] = FMath::Max(Lift[i], Lift[i - 1] - Slope * (DistM[i] - DistM[i - 1]));
 	for (int32 i = NumPts - 2; i >= 0; --i) Lift[i] = FMath::Max(Lift[i], Lift[i + 1] - Slope * (DistM[i + 1] - DistM[i]));
-
-	int32 Moved = 0;
-	double MaxApplied = 0.0;
-	for (const double L : Lift)
-	{
-		Moved += L > 0.01 ? 1 : 0;
-		MaxApplied = FMath::Max(MaxApplied, L);
-	}
-	UE_LOG(LogTemp, Log, TEXT("Path %lld : drape, %d/%d points montes (max %.1f m)"), RaceId, Moved, NumPts, MaxApplied);
-	if (Moved == 0) return;
 
 	// Kms : leur position sur le trace, relevee avant de bouger le spline
 	TArray<TPair<AKm*, float>> KmKeys;
@@ -1620,16 +1651,20 @@ void APath::ApplyDrape(const TArray<int32>& QueryPoint, const TArray<float>& Que
 		if (IsValid(Km)) KmKeys.Emplace(Km.Get(), SplinePath->FindInputKeyClosestToWorldLocation(Km->GetActorLocation()));
 	}
 
-	// Splines du trace et de la pente
+	// Le decalage ZOffset regie applique depuis (AddActorWorldOffset) est conserve
+	const FVector ActorShift = GetActorLocation() - DrapeActorRef;
+	double SumShift = 0.0;
 	for (int32 i = 0; i < NumPts; ++i)
 	{
-		if (Lift[i] <= 0.0) continue;
-		const FVector P = Georef->TransformLongitudeLatitudeHeightPositionToUnreal(LLH[i] + FVector(0, 0, Lift[i]));
+		const double Final = H[i] + Lift[i];
+		SumShift += Final - DrapeBaseLLH[i].Z;
+		const FVector P = Georef->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(DrapeBaseLLH[i].X, DrapeBaseLLH[i].Y, Final)) + ActorShift;
 		SplinePath->SetLocationAtSplinePoint(i, P, ESplineCoordinateSpace::World, false);
 		SlopePath->SetLocationAtSplinePoint(i, P, ESplineCoordinateSpace::World, false);
 	}
 	SplinePath->UpdateSpline();
 	SlopePath->UpdateSpline();
+	UE_LOG(LogTemp, Log, TEXT("Path %lld : drape applique (%s), ecart moyen au GPS %.1f m"), RaceId, bSnap ? TEXT("pose au sol") : TEXT("montee seule"), SumShift / NumPts);
 
 	// Tube : un spline mesh par paire de points consecutifs, dans le meme ordre pour le trace et la pente
 	const float TotalLen = FMath::Max(SplinePath->GetSplineLength(), 1.f);

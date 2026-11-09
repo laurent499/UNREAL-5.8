@@ -114,6 +114,8 @@ public:
 	 * @param bForceResample ignore le cache et redemande les hauteurs a Cesium
 	 */
 	void DrapeOnTerrain(bool bForceResample = false);
+	/** Recalcule la hauteur du trace a partir des hauteurs du sol deja mesurees */
+	void ApplyDrape();
 
 	// Broadcast
 	void SetBroadcastCaptureEnabled_Implementation(bool bEnabled, class UTextureRenderTarget2D* SharedRT) override;
@@ -193,8 +195,19 @@ private:
 	TSubclassOf<AActor> GetKmClassForRace(const FRaceSetup& RaceSetup) const;
 	UFUNCTION()
 	bool BuildKms(int64 RaceID);
-	/** Applique le drape a partir des hauteurs du sol de chaque requete (tres negative = echec) */
-	void ApplyDrape(const TArray<int32>& QueryPoint, const TArray<float>& QueryAlpha, const TArray<double>& Ground);
+	/** Demande a Cesium le paquet suivant de hauteurs manquantes */
+	void RequestNextDrapeChunk(int32 Generation);
+	// Drape : requetes (lon, lat), point GPS et position sur la corde de chacune, hauteur du sol mesuree
+	TArray<FVector> DrapeQuery;
+	TArray<int32> DrapeQueryPoint;
+	TArray<float> DrapeQueryAlpha;
+	TArray<double> DrapeGround;
+	TArray<int32> DrapeMissing;
+	/** Points avant drape (lon, lat, hauteur ellipsoidale) et position de l'acteur a ce moment */
+	TArray<FVector> DrapeBaseLLH;
+	FVector DrapeActorRef = FVector::ZeroVector;
+	FString DrapeCachePath;
+	int32 DrapeGeneration = 0;
 	
 	UPROPERTY()
 	TArray<FVector> QueryLLH;	// sampling path points
