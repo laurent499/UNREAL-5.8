@@ -2266,6 +2266,8 @@ void ARaceManager::ChangePathOffset_Internal(float OffsetValue, int64 RaceID)
 	}
 	
 	PathPtr->Get()->AddActorWorldOffset(FVector(0.f, 0.f, OffsetValue));
+	// Le drape (cache) remonte les points que la baisse aurait fait passer sous le sol
+	PathPtr->Get()->DrapeOnTerrain();
 	
 	// Runners
 	FRunners RunnersTmp = RunnerSubsystem->GetRunnersByRaceId(RaceID);

@@ -107,6 +107,14 @@ public:
 	/** Rail de camera lisse (moyenne glissante gaussienne sur SmoothM metres), le meme que le survol */
 	static void BuildSmoothCameraRail(class USplineComponent* Source, class USplineComponent* Rail, float SmoothM);
 
+	/**
+	 * Cale le trace sur les tuiles Cesium : echantillonne la hauteur reelle du sol (niveau de detail maximal)
+	 * sur chaque point et tous les ts.Path.DrapeStepM metres entre deux points, puis ne fait que monter les points
+	 * qui passent sous sol + ts.Path.DrapeClearanceM, avec des rampes douces. Resultat mis en cache dans Saved/PathDrape.
+	 * @param bForceResample ignore le cache et redemande les hauteurs a Cesium
+	 */
+	void DrapeOnTerrain(bool bForceResample = false);
+
 	// Broadcast
 	void SetBroadcastCaptureEnabled_Implementation(bool bEnabled, class UTextureRenderTarget2D* SharedRT) override;
 	
@@ -185,6 +193,8 @@ private:
 	TSubclassOf<AActor> GetKmClassForRace(const FRaceSetup& RaceSetup) const;
 	UFUNCTION()
 	bool BuildKms(int64 RaceID);
+	/** Applique le drape a partir des hauteurs du sol de chaque requete (tres negative = echec) */
+	void ApplyDrape(const TArray<int32>& QueryPoint, const TArray<float>& QueryAlpha, const TArray<double>& Ground);
 	
 	UPROPERTY()
 	TArray<FVector> QueryLLH;	// sampling path points
