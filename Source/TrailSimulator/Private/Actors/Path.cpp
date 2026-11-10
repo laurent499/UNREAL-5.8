@@ -1183,9 +1183,13 @@ void APath::UpdatePulseGlow(float NewPulseGlow) const
  * @brief Toggle displays
  * @param bShowPath 
  */
+namespace PathDrape { extern TSet<TWeakObjectPtr<APath>> PendingApply; }
+
 void APath::ChangePathVisibility(bool bShowPath)
 {
 	bPathShown = bShowPath;
+	// Hauteurs du drape arrivees pendant que le trace etait cache : appliquees une fois, maintenant
+	if (bShowPath && PathDrape::PendingApply.Contains(this)) ApplyDrape();
 	if (PathSplineMeshes.Num() > 0)
 	{
 		for (TObjectPtr<USplineMeshComponent> SplineMeshComponent : PathSplineMeshes)
@@ -1449,6 +1453,11 @@ namespace PathDrape
 
 	/** Hauteur du sol d'une requete que Cesium n'a pas (encore) servie */
 	static constexpr double NoGround = -1.0e9;
+	/** Requete servie par Cesium sans sol (mer, trou de tuiles) : mise en cache pour ne pas la redemander a chaque lancement */
+	static constexpr double NoSample = -2.0e9;
+
+	/** Traces caches dont le drape a recu des hauteurs : applique a l'affichage plutot qu'a chaque paquet (~15 ms de game thread) */
+	TSet<TWeakObjectPtr<APath>> PendingApply;
 
 	/** Tileset du sol : Google Photorealistic si on le reconnait, sinon le premier visible */
 	static ACesium3DTileset* FindGroundTileset(UWorld* World)
@@ -1488,7 +1497,8 @@ void APath::DrapeOnTerrain(bool bForceResample)
 		{
 			DrapeBaseLLH[i] = Georef->TransformUnrealPositionToLongitudeLatitudeHeight(SplinePath->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World));
 		}
-		DrapeActorRef = GetActorLocation();
+		// En (lon, lat, hauteur) : la position Unreal change a chaque deplacement de l'origine (MoveToRace)
+		DrapeActorRef = Georef->TransformUnrealPositionToLongitudeLatitudeHeight(GetActorLocation());
 	}
 
 	// Requetes : chaque point GPS (alpha 0) puis des points intermediaires sur la corde vers le suivant
@@ -1541,10 +1551,11 @@ void APath::DrapeOnTerrain(bool bForceResample)
 	DrapeMissing.Reset();
 	for (int32 q = 0; q < DrapeGround.Num(); ++q)
 	{
-		if (DrapeGround[q] <= PathDrape::NoGround) DrapeMissing.Add(q);
+		if (DrapeGround[q] == PathDrape::NoGround) DrapeMissing.Add(q);
 	}
 	++DrapeGeneration;
 	UE_LOG(LogTemp, Log, TEXT("Path %lld : drape, %d/%d hauteurs en cache, %d a demander"), RaceId, DrapeQuery.Num() - DrapeMissing.Num(), DrapeQuery.Num(), DrapeMissing.Num());
+	PathDrape::PendingApply.Remove(this);
 	if (DrapeMissing.Num() < DrapeQuery.Num()) ApplyDrape();
 	RequestNextDrapeChunk(DrapeGeneration);
 }
@@ -1580,14 +1591,19 @@ void APath::RequestNextDrapeChunk(int32 Generation)
 					Self->DrapeGround[Indices[k]] = Results[k].LongitudeLatitudeHeight.Z;
 					++Ok;
 				}
+				else
+				{
+					Self->DrapeGround[Indices[k]] = PathDrape::NoSample;
+				}
 			}
 			if (Warnings.Num() > 0) UE_LOG(LogTemp, Warning, TEXT("Path %lld : drape, %s"), Self->RaceId, *Warnings[0]);
 			UE_LOG(LogTemp, Log, TEXT("Path %lld : drape, paquet %d/%d hauteurs en %.1f s, reste %d"),
 				Self->RaceId, Ok, Indices.Num(), FPlatformTime::Seconds() - StartTime, Self->DrapeMissing.Num());
+			PathDrape::SaveCache(Self->DrapeCachePath, Self->DrapeGround);
 			if (Ok > 0)
 			{
-				PathDrape::SaveCache(Self->DrapeCachePath, Self->DrapeGround);
-				Self->ApplyDrape();
+				if (Self->bPathShown) Self->ApplyDrape();
+				else PathDrape::PendingApply.Add(Self);
 			}
 			Self->RequestNextDrapeChunk(Generation);
 		}));
@@ -1706,13 +1722,15 @@ void APath::ApplyDrape()
 	}
 
 	// Le decalage ZOffset regie applique depuis (AddActorWorldOffset) est conserve
-	const FVector ActorShift = GetActorLocation() - DrapeActorRef;
+	// (ecart de hauteur de l'acteur depuis la reference, independant de l'origine du georeference)
+	PathDrape::PendingApply.Remove(this);
+	const double ActorShiftM = Georef->TransformUnrealPositionToLongitudeLatitudeHeight(GetActorLocation()).Z - DrapeActorRef.Z;
 	double SumShift = 0.0;
 	for (int32 i = 0; i < NumPts; ++i)
 	{
 		const double Final = H[i] + Lift[i];
 		SumShift += Final - DrapeBaseLLH[i].Z;
-		const FVector P = Georef->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(DrapeBaseLLH[i].X, DrapeBaseLLH[i].Y, Final)) + ActorShift;
+		const FVector P = Georef->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(DrapeBaseLLH[i].X, DrapeBaseLLH[i].Y, Final + ActorShiftM));
 		SplinePath->SetLocationAtSplinePoint(i, P, ESplineCoordinateSpace::World, false);
 		SlopePath->SetLocationAtSplinePoint(i, P, ESplineCoordinateSpace::World, false);
 	}
