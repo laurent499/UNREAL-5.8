@@ -41,6 +41,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Camera/PlayerCameraManager.h"
 #include "Components/SkyAtmosphereComponent.h"
+#include "Components/ExponentialHeightFogComponent.h"
 #include "UI/SLoadingOverlay.h"
 #include "Widgets/SWeakWidget.h"
 #include "Engine/EngineTypes.h"
@@ -374,7 +375,11 @@ void ARaceManager::BeginPlay()
 	if (UDSClass)
 	{
 		UDSActor = UGameplayStatics::GetActorOfClass(GetWorld(), UDSClass);
-		
+		if (UDSActor)
+		{
+			// AlignSkyToGlobe doit passer apres UDS, qui reecrit ses composants a chaque tick
+			AddTickPrerequisiteActor(UDSActor);
+		}
 	} 
 	
 	GetWorldTimerManager().SetTimer(
@@ -424,6 +429,8 @@ void ARaceManager::Tick(float DeltaTime)
 		}
 	}
 
+	AlignSkyToGlobe();
+
 	// Deplacement fluide des coureurs entre deux snapshots
 	for (auto It = InterpolatingRunners.CreateIterator(); It; ++It)
 	{
@@ -452,30 +459,80 @@ void ARaceManager::UpdateUdsTime()
 	{
 		(Time >= 600 && Time <= 1800)  ? OnChangeDayNight.Broadcast(true) : OnChangeDayNight.Broadcast(false);
 	}
-	RecenterSkyAtmosphere();
 }
 
 /**
- * @brief Garde le sommet de la planete UDS sous la camera.
- * UDS (« Keep Planet Top at Camera XY Location ») peut laisser son SkyAtmosphere a des milliers
- * de km apres un vol Cesium / un changement d'origine : la camera se retrouve hors de l'atmosphere
- * et une partie du ciel devient noire. Constate le 02/10 : atmosphere a 6385 km de la camera.
+ * @brief Cale le ciel UDS sur le globe Cesium sous la camera.
+ * L'origine du georef reste au depart de la course (les splines du trace sont en coordonnees Unreal),
+ * donc loin du depart la Terre « descend » sous le plan Unreal (~8 km a 300 km) et penche. Sans recalage,
+ * le sol de l'atmosphere et le brouillard (plan horizontal) restent a l'altitude du depart : bande noire
+ * a l'horizon et relief noye dans le brouillard (constate le 10/11 a 314 km du Mont-Blanc).
+ * On pose donc la planete de l'atmosphere tangente au sol reel sous la camera (centre le long de la
+ * verticale locale) et le brouillard a l'altitude du depart sous la camera. Pres du depart, rien ne bouge.
+ * Appelee a chaque tick apres UDS, mais n'ecrit que si le calage a bouge de plus de 10 m.
  */
-void ARaceManager::RecenterSkyAtmosphere()
+void ARaceManager::AlignSkyToGlobe()
 {
 	if (!UDSActor) return;
+	ACesiumGeoreference* Geo = Georeference.Get();
+	if (!Geo)
+	{
+		Geo = ACesiumGeoreference::GetDefaultGeoreference(GetWorld());
+		Georeference = Geo;
+	}
 	USkyAtmosphereComponent* Atmosphere = UDSActor->FindComponentByClass<USkyAtmosphereComponent>();
 	APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(this, 0);
-	if (!Atmosphere || !CameraManager) return;
+	if (!Geo || !Atmosphere || !CameraManager) return;
+
+	if (!bSkyGlobeSetup)
+	{
+		bSkyGlobeSetup = true;
+		// UDS deplacerait le sommet de la planete sous la camera a chaque tick : c'est nous qui la placons
+		if (FBoolProperty* Keep = FindFProperty<FBoolProperty>(UDSActor->GetClass(), TEXT("keep Planet Top at Camera XY Location")))
+		{
+			Keep->SetPropertyValue_InContainer(UDSActor, false);
+		}
+		Atmosphere->TransformMode = ESkyAtmosphereTransformMode::PlanetCenterAtComponentTransform;
+		Atmosphere->MarkRenderStateDirty();
+	}
 
 	const FVector Camera = CameraManager->GetCameraLocation();
-	const FVector Top = Atmosphere->GetComponentLocation();
-	static constexpr double MaxOffsetCm = 100000.0 * 100.0; // 100 km
-	if (FVector2D::Distance(FVector2D(Camera), FVector2D(Top)) <= MaxOffsetCm) return;
+	const FVector LLH = Geo->TransformUnrealPositionToLongitudeLatitudeHeight(Camera);
+	if (!FMath::IsFinite(LLH.X) || !FMath::IsFinite(LLH.Y)) return;
+	const FVector Ground = Geo->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(LLH.X, LLH.Y, 0.0));
+	const FVector Up = (Geo->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(LLH.X, LLH.Y, 1000.0)) - Ground).GetSafeNormal();
+	if (Up.IsNearlyZero()) return;
 
-	UE_LOG(LogTemp, Warning, TEXT("[UDS] SkyAtmosphere a %.0f km de la camera : recentre sous la camera"),
-		FVector2D::Distance(FVector2D(Camera), FVector2D(Top)) / 100000.0);
-	Atmosphere->SetWorldLocation(FVector(Camera.X, Camera.Y, Top.Z));
+	static constexpr double ToleranceCm = 1000.0;
+
+	// Brouillard (plan horizontal) : a l'altitude du depart a la verticale de la camera.
+	// La racine UDS est Static : on deplace le composant de brouillard seul (rendu Movable une fois).
+	if (UExponentialHeightFogComponent* Fog = UDSActor->FindComponentByClass<UExponentialHeightFogComponent>())
+	{
+		const double FogZ = Geo->TransformLongitudeLatitudeHeightPositionToUnreal(
+			FVector(LLH.X, LLH.Y, Geo->GetOriginHeight())).Z - 150.0;
+		const FVector FogLocation = Fog->GetComponentLocation();
+		if (FMath::Abs(FogLocation.Z - FogZ) > ToleranceCm)
+		{
+			if (Fog->Mobility != EComponentMobility::Movable)
+			{
+				Fog->SetMobility(EComponentMobility::Movable);
+			}
+			Fog->SetWorldLocation(FVector(FogLocation.X, FogLocation.Y, FogZ));
+		}
+	}
+
+	// Planete de l'atmosphere (et des nuages) : tangente au niveau de la mer sous la camera
+	const FVector Center = Ground - Up * (double(Atmosphere->BottomRadius) * 100000.0);
+	if (Atmosphere->TransformMode != ESkyAtmosphereTransformMode::PlanetCenterAtComponentTransform)
+	{
+		Atmosphere->TransformMode = ESkyAtmosphereTransformMode::PlanetCenterAtComponentTransform;
+		Atmosphere->MarkRenderStateDirty();
+	}
+	if (FVector::DistSquared(Atmosphere->GetComponentLocation(), Center) > ToleranceCm * ToleranceCm)
+	{
+		Atmosphere->SetWorldLocation(Center);
+	}
 }
 
 /**

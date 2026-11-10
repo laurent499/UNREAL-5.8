@@ -564,7 +564,8 @@ private:
 	FTimerHandle UdsHandle;
 	UFUNCTION()
 	void UpdateUdsTime();
-	void RecenterSkyAtmosphere();
+	void AlignSkyToGlobe();
+	bool bSkyGlobeSetup = false;
 	UPROPERTY()
 	bool bIsDay = false;
 		
