@@ -42,6 +42,7 @@
 #include "Camera/PlayerCameraManager.h"
 #include "Components/SkyAtmosphereComponent.h"
 #include "Components/ExponentialHeightFogComponent.h"
+#include "Components/VolumetricCloudComponent.h"
 #include "UI/SLoadingOverlay.h"
 #include "Widgets/SWeakWidget.h"
 #include "Engine/EngineTypes.h"
@@ -520,6 +521,23 @@ void ARaceManager::AlignSkyToGlobe()
 			}
 			Fog->SetWorldLocation(FVector(FogLocation.X, FogLocation.Y, FogZ));
 		}
+
+		// Coupure du brouillard : par temps clair elle evite de voiler le ciel a l'horizon (bande bleue), le ciel
+		// etant a profondeur infinie. Elle doit donc depasser le sol le plus lointain visible, sinon un disque de
+		// brouillard net apparait vu de tres haut : au moins 300 km, et l'horizon de la camera + 10 %.
+		// Par brouillard dense (~2 sur 10), le ciel sous l'horizon resterait net et formerait une bande sombre :
+		// on voile alors tout, ciel compris.
+		static constexpr float DenseFogDensity = 0.008f;
+		static constexpr double ClearSkyCutoffCm = 30000000.0;
+		const double CameraAltCm = FMath::Max(0.0, LLH.Z * 100.0);
+		const double HorizonCm = FMath::Sqrt(2.0 * double(Atmosphere->BottomRadius) * 100000.0 * CameraAltCm);
+		const float WantedCutoff = Fog->FogDensity > DenseFogDensity ? 0.f
+			: float(FMath::Max(ClearSkyCutoffCm, HorizonCm * 1.1));
+		if (WantedCutoff == 0.f ? Fog->FogCutoffDistance != 0.f
+			: FMath::Abs(Fog->FogCutoffDistance - WantedCutoff) > WantedCutoff * 0.05f)
+		{
+			Fog->SetFogCutoffDistance(WantedCutoff);
+		}
 	}
 
 	// Planete de l'atmosphere (et des nuages) : tangente au niveau de la mer sous la camera
@@ -532,6 +550,30 @@ void ARaceManager::AlignSkyToGlobe()
 	if (FVector::DistSquared(Atmosphere->GetComponentLocation(), Center) > ToleranceCm * ToleranceCm)
 	{
 		Atmosphere->SetWorldLocation(Center);
+	}
+
+	// Nuages jusqu'a l'horizon : en montant, l'horizon de la couche s'eloigne (au-dela de ~23 km d'altitude
+	// il depasse la portee UDS) et un anneau sans nuages apparait au bord du globe. On allonge la portee
+	// de depart des rayons a la distance de l'horizon de la couche ; le nombre d'echantillons ne change pas.
+	if (UVolumetricCloudComponent* Cloud = UDSActor->FindComponentByClass<UVolumetricCloudComponent>())
+	{
+		const double RadiusKm = Atmosphere->BottomRadius;
+		const double CameraAltKm = FMath::Max(0.0, (Camera - Center).Size() / 100000.0 - RadiusKm);
+		const double CloudTopKm = FMath::Max(0.0, double(Cloud->LayerBottomAltitude + Cloud->LayerHeight));
+		const double HorizonKm = FMath::Sqrt(2.0 * RadiusKm * CameraAltKm) + FMath::Sqrt(2.0 * RadiusKm * CloudTopKm);
+		const float Wanted = float(FMath::Min(HorizonKm * 1.05, 5000.0));
+		if (Cloud->TracingStartMaxDistance < Wanted * 0.95f)
+		{
+			Cloud->SetTracingStartMaxDistance(Wanted);
+		}
+		// UDS borne la distance de trace a ~60 km depuis la camera : la couche s'arretait net quelques degres
+		// au-dessus de l'horizon (bande claire sous un plafond couvert, Cape Town 10/11). Comptee depuis
+		// l'entree dans la couche, elle va jusqu'a l'horizon pour le meme nombre d'echantillons.
+		if (Cloud->TracingMaxDistanceMode != EVolumetricCloudTracingMaxDistanceMode::DistanceFromCloudLayerEntryPoint)
+		{
+			Cloud->TracingMaxDistanceMode = EVolumetricCloudTracingMaxDistanceMode::DistanceFromCloudLayerEntryPoint;
+			Cloud->MarkRenderStateDirty();
+		}
 	}
 }
 
