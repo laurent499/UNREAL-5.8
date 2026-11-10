@@ -32,6 +32,10 @@ public:
 	 * @param PathEndpoint 
 	 */
 	void PerformHttpRequestForPath(int64 RaceID, const FString& PathEndpoint);
+	/** Requete GET du trace avec les en-tetes d'acces, utilisable hors jeu (acteurs cinema dans l'editeur) */
+	static TSharedRef<IHttpRequest, ESPMode::ThreadSafe> CreatePathRequest(const FString& PathEndpoint);
+	/** Convertit la reponse JSON de race/<id>/path */
+	static bool ParsePathJson(const FString& JsonString, FRacePath& OutPath);
 
 	TObjectPtr<AActor> GetPathById(int64 RaceID) const;
 	

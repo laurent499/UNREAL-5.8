@@ -41,6 +41,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Camera/PlayerCameraManager.h"
 #include "Components/SkyAtmosphereComponent.h"
+#include "Components/ExponentialHeightFogComponent.h"
+#include "Components/VolumetricCloudComponent.h"
 #include "UI/SLoadingOverlay.h"
 #include "Widgets/SWeakWidget.h"
 #include "Engine/EngineTypes.h"
@@ -374,7 +376,11 @@ void ARaceManager::BeginPlay()
 	if (UDSClass)
 	{
 		UDSActor = UGameplayStatics::GetActorOfClass(GetWorld(), UDSClass);
-		
+		if (UDSActor)
+		{
+			// AlignSkyToGlobe doit passer apres UDS, qui reecrit ses composants a chaque tick
+			AddTickPrerequisiteActor(UDSActor);
+		}
 	} 
 	
 	GetWorldTimerManager().SetTimer(
@@ -424,6 +430,8 @@ void ARaceManager::Tick(float DeltaTime)
 		}
 	}
 
+	AlignSkyToGlobe();
+
 	// Deplacement fluide des coureurs entre deux snapshots
 	for (auto It = InterpolatingRunners.CreateIterator(); It; ++It)
 	{
@@ -452,30 +460,121 @@ void ARaceManager::UpdateUdsTime()
 	{
 		(Time >= 600 && Time <= 1800)  ? OnChangeDayNight.Broadcast(true) : OnChangeDayNight.Broadcast(false);
 	}
-	RecenterSkyAtmosphere();
 }
 
 /**
- * @brief Garde le sommet de la planete UDS sous la camera.
- * UDS (« Keep Planet Top at Camera XY Location ») peut laisser son SkyAtmosphere a des milliers
- * de km apres un vol Cesium / un changement d'origine : la camera se retrouve hors de l'atmosphere
- * et une partie du ciel devient noire. Constate le 02/10 : atmosphere a 6385 km de la camera.
+ * @brief Cale le ciel UDS sur le globe Cesium sous la camera.
+ * L'origine du georef reste au depart de la course (les splines du trace sont en coordonnees Unreal),
+ * donc loin du depart la Terre « descend » sous le plan Unreal (~8 km a 300 km) et penche. Sans recalage,
+ * le sol de l'atmosphere et le brouillard (plan horizontal) restent a l'altitude du depart : bande noire
+ * a l'horizon et relief noye dans le brouillard (constate le 10/11 a 314 km du Mont-Blanc).
+ * On pose donc la planete de l'atmosphere tangente au sol reel sous la camera (centre le long de la
+ * verticale locale) et le brouillard a l'altitude du depart sous la camera. Pres du depart, rien ne bouge.
+ * Appelee a chaque tick apres UDS, mais n'ecrit que si le calage a bouge de plus de 10 m.
  */
-void ARaceManager::RecenterSkyAtmosphere()
+void ARaceManager::AlignSkyToGlobe()
 {
 	if (!UDSActor) return;
+	ACesiumGeoreference* Geo = Georeference.Get();
+	if (!Geo)
+	{
+		Geo = ACesiumGeoreference::GetDefaultGeoreference(GetWorld());
+		Georeference = Geo;
+	}
 	USkyAtmosphereComponent* Atmosphere = UDSActor->FindComponentByClass<USkyAtmosphereComponent>();
 	APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(this, 0);
-	if (!Atmosphere || !CameraManager) return;
+	if (!Geo || !Atmosphere || !CameraManager) return;
+
+	if (!bSkyGlobeSetup)
+	{
+		bSkyGlobeSetup = true;
+		// UDS deplacerait le sommet de la planete sous la camera a chaque tick : c'est nous qui la placons
+		if (FBoolProperty* Keep = FindFProperty<FBoolProperty>(UDSActor->GetClass(), TEXT("keep Planet Top at Camera XY Location")))
+		{
+			Keep->SetPropertyValue_InContainer(UDSActor, false);
+		}
+		Atmosphere->TransformMode = ESkyAtmosphereTransformMode::PlanetCenterAtComponentTransform;
+		Atmosphere->MarkRenderStateDirty();
+	}
 
 	const FVector Camera = CameraManager->GetCameraLocation();
-	const FVector Top = Atmosphere->GetComponentLocation();
-	static constexpr double MaxOffsetCm = 100000.0 * 100.0; // 100 km
-	if (FVector2D::Distance(FVector2D(Camera), FVector2D(Top)) <= MaxOffsetCm) return;
+	const FVector LLH = Geo->TransformUnrealPositionToLongitudeLatitudeHeight(Camera);
+	if (!FMath::IsFinite(LLH.X) || !FMath::IsFinite(LLH.Y)) return;
+	const FVector Ground = Geo->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(LLH.X, LLH.Y, 0.0));
+	const FVector Up = (Geo->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(LLH.X, LLH.Y, 1000.0)) - Ground).GetSafeNormal();
+	if (Up.IsNearlyZero()) return;
 
-	UE_LOG(LogTemp, Warning, TEXT("[UDS] SkyAtmosphere a %.0f km de la camera : recentre sous la camera"),
-		FVector2D::Distance(FVector2D(Camera), FVector2D(Top)) / 100000.0);
-	Atmosphere->SetWorldLocation(FVector(Camera.X, Camera.Y, Top.Z));
+	static constexpr double ToleranceCm = 1000.0;
+
+	// Brouillard (plan horizontal) : a l'altitude du depart a la verticale de la camera.
+	// La racine UDS est Static : on deplace le composant de brouillard seul (rendu Movable une fois).
+	if (UExponentialHeightFogComponent* Fog = UDSActor->FindComponentByClass<UExponentialHeightFogComponent>())
+	{
+		const double FogZ = Geo->TransformLongitudeLatitudeHeightPositionToUnreal(
+			FVector(LLH.X, LLH.Y, Geo->GetOriginHeight())).Z - 150.0;
+		const FVector FogLocation = Fog->GetComponentLocation();
+		if (FMath::Abs(FogLocation.Z - FogZ) > ToleranceCm)
+		{
+			if (Fog->Mobility != EComponentMobility::Movable)
+			{
+				Fog->SetMobility(EComponentMobility::Movable);
+			}
+			Fog->SetWorldLocation(FVector(FogLocation.X, FogLocation.Y, FogZ));
+		}
+
+		// Coupure du brouillard : par temps clair elle evite de voiler le ciel a l'horizon (bande bleue), le ciel
+		// etant a profondeur infinie. Elle doit donc depasser le sol le plus lointain visible, sinon un disque de
+		// brouillard net apparait vu de tres haut : au moins 300 km, et l'horizon de la camera + 10 %.
+		// Par brouillard dense (~2 sur 10), le ciel sous l'horizon resterait net et formerait une bande sombre :
+		// on voile alors tout, ciel compris.
+		static constexpr float DenseFogDensity = 0.008f;
+		static constexpr double ClearSkyCutoffCm = 30000000.0;
+		const double CameraAltCm = FMath::Max(0.0, LLH.Z * 100.0);
+		const double HorizonCm = FMath::Sqrt(2.0 * double(Atmosphere->BottomRadius) * 100000.0 * CameraAltCm);
+		const float WantedCutoff = Fog->FogDensity > DenseFogDensity ? 0.f
+			: float(FMath::Max(ClearSkyCutoffCm, HorizonCm * 1.1));
+		if (WantedCutoff == 0.f ? Fog->FogCutoffDistance != 0.f
+			: FMath::Abs(Fog->FogCutoffDistance - WantedCutoff) > WantedCutoff * 0.05f)
+		{
+			Fog->SetFogCutoffDistance(WantedCutoff);
+		}
+	}
+
+	// Planete de l'atmosphere (et des nuages) : tangente au niveau de la mer sous la camera
+	const FVector Center = Ground - Up * (double(Atmosphere->BottomRadius) * 100000.0);
+	if (Atmosphere->TransformMode != ESkyAtmosphereTransformMode::PlanetCenterAtComponentTransform)
+	{
+		Atmosphere->TransformMode = ESkyAtmosphereTransformMode::PlanetCenterAtComponentTransform;
+		Atmosphere->MarkRenderStateDirty();
+	}
+	if (FVector::DistSquared(Atmosphere->GetComponentLocation(), Center) > ToleranceCm * ToleranceCm)
+	{
+		Atmosphere->SetWorldLocation(Center);
+	}
+
+	// Nuages jusqu'a l'horizon : en montant, l'horizon de la couche s'eloigne (au-dela de ~23 km d'altitude
+	// il depasse la portee UDS) et un anneau sans nuages apparait au bord du globe. On allonge la portee
+	// de depart des rayons a la distance de l'horizon de la couche ; le nombre d'echantillons ne change pas.
+	if (UVolumetricCloudComponent* Cloud = UDSActor->FindComponentByClass<UVolumetricCloudComponent>())
+	{
+		const double RadiusKm = Atmosphere->BottomRadius;
+		const double CameraAltKm = FMath::Max(0.0, (Camera - Center).Size() / 100000.0 - RadiusKm);
+		const double CloudTopKm = FMath::Max(0.0, double(Cloud->LayerBottomAltitude + Cloud->LayerHeight));
+		const double HorizonKm = FMath::Sqrt(2.0 * RadiusKm * CameraAltKm) + FMath::Sqrt(2.0 * RadiusKm * CloudTopKm);
+		const float Wanted = float(FMath::Min(HorizonKm * 1.05, 5000.0));
+		if (Cloud->TracingStartMaxDistance < Wanted * 0.95f)
+		{
+			Cloud->SetTracingStartMaxDistance(Wanted);
+		}
+		// UDS borne la distance de trace a ~60 km depuis la camera : la couche s'arretait net quelques degres
+		// au-dessus de l'horizon (bande claire sous un plafond couvert, Cape Town 10/11). Comptee depuis
+		// l'entree dans la couche, elle va jusqu'a l'horizon pour le meme nombre d'echantillons.
+		if (Cloud->TracingMaxDistanceMode != EVolumetricCloudTracingMaxDistanceMode::DistanceFromCloudLayerEntryPoint)
+		{
+			Cloud->TracingMaxDistanceMode = EVolumetricCloudTracingMaxDistanceMode::DistanceFromCloudLayerEntryPoint;
+			Cloud->MarkRenderStateDirty();
+		}
+	}
 }
 
 /**

@@ -30,6 +30,11 @@ public class TrailSimulator : ModuleRules
 			
 		});
 
+		PrivateDependencyModuleNames.AddRange(new string[] { "AssetRegistry" });
+		if (Target.bBuildEditor)
+		{
+			PrivateDependencyModuleNames.AddRange(new string[] { "MeshDescription", "StaticMeshDescription" });
+		}
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"Json",
@@ -40,7 +45,8 @@ public class TrailSimulator : ModuleRules
 			"ImageWrapper",
 			"OWLCamera",
 			"OWLMedia",
-			"AudioMixer"	// nombre de canaux du mixeur (audio du flux OWL)
+			"AudioMixer",	// nombre de canaux du mixeur (audio du flux OWL)
+			"LidarPointCloudRuntime"	// calage des nuages de points du level cinema
 			
 		});
 

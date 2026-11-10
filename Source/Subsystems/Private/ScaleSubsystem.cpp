@@ -124,9 +124,9 @@ bool UScaleSubsystem::GetCameraLocation(FVector& OutCamLoc) const
 	APlayerController* PC = World->GetFirstPlayerController();
 	// APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	AActor* ViewTarget = PC ? PC->GetViewTarget() : nullptr;
-	UCineCameraComponent* CamComp = ViewTarget->GetComponentByClass<UCineCameraComponent>();
-	
-	if (!PC) return false;
+	UCineCameraComponent* CamComp = ViewTarget ? ViewTarget->GetComponentByClass<UCineCameraComponent>() : nullptr;
+
+	if (!PC || !CamComp) return false;
 
 	if (PC->PlayerCameraManager)
 	{
@@ -163,7 +163,11 @@ void UScaleSubsystem::Tick(float DeltaTime)
 		// 	? PC->PlayerCameraManager->GetCameraLocation()
 		// 	: FVector::ZeroVector;
 		
-		const FVector CamLoc = PC->GetViewTarget()->GetComponentByClass<UCineCameraComponent>()->GetComponentLocation();
+		// Vue sans CineCamera (debut d'un rendu Movie Render Queue, avant la coupe camera) : on attend la prochaine image
+		AActor* ViewTarget = PC ? PC->GetViewTarget() : nullptr;
+		const UCineCameraComponent* Cam = ViewTarget ? ViewTarget->GetComponentByClass<UCineCameraComponent>() : nullptr;
+		if (!Cam) continue;
+		const FVector CamLoc = Cam->GetComponentLocation();
 		
 		const FVector ActorLoc = A->GetActorLocation();
 		const FVector TargetScale = ComputeTargetScale(E, CamLoc, ActorLoc);

@@ -38,14 +38,19 @@
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
 #include "WorldAmbienceSubsystem.h"
+#include "Cesium3DTileset.h"
+#include "CesiumSampleHeightResult.h"
+#include "EngineUtils.h"
+#include "HAL/IConsoleManager.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "Serialization/MemoryReader.h"
+#include "Serialization/MemoryWriter.h"
 #include "HAL/IConsoleManager.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 
-THIRD_PARTY_INCLUDES_START
-#include <CesiumGeospatial/Cartographic.h>
-#include <CesiumGeospatial/EarthGravitationalModel1996Grid.h>
-THIRD_PARTY_INCLUDES_END
+#include "GeoidGrid.h"
 
 // -------------------- Glow jour / nuit
 /**
@@ -77,44 +82,6 @@ namespace PathGlow
 			: FMath::Lerp(CVarGlowDay.GetValueOnGameThread(), CVarGlowNight.GetValueOnGameThread(), Night);
 	}
 }
-
-// -------------------- Geoid EGM96
-/**
- * Ecart entre le geoide EGM96 (niveau de la mer) et l'ellipsoide WGS84, lu dans la grille officielle
- * Content/Data/Geoid/WW15MGH.DAC (chargee une fois, ~2 Mo en memoire).
- */
-struct FGeoidGrid
-{
-	static const CesiumGeospatial::EarthGravitationalModel1996Grid* Get()
-	{
-		static TOptional<std::optional<CesiumGeospatial::EarthGravitationalModel1996Grid>> Grid;
-		if (!Grid.IsSet())
-		{
-			TArray<uint8> Bytes;
-			const FString File = FPaths::ProjectContentDir() / TEXT("Data/Geoid/WW15MGH.DAC");
-			if (FFileHelper::LoadFileToArray(Bytes, *File))
-			{
-				Grid.Emplace(CesiumGeospatial::EarthGravitationalModel1996Grid::fromBuffer(
-					std::span<const std::byte>(reinterpret_cast<const std::byte*>(Bytes.GetData()), Bytes.Num())));
-			}
-			else
-			{
-				Grid.Emplace(std::nullopt);
-			}
-			if (!Grid.GetValue())
-			{
-				UE_LOG(LogTemp, Error, TEXT("[Path] Grille du geoide illisible (%s) : trace place sur l'altitude GPS brute"), *File);
-			}
-		}
-		return Grid.GetValue() ? &*Grid.GetValue() : nullptr;
-	}
-	static bool IsAvailable() { return Get() != nullptr; }
-	static double UndulationM(double LonDeg, double LatDeg)
-	{
-		const CesiumGeospatial::EarthGravitationalModel1996Grid* G = Get();
-		return G ? G->sampleHeight(CesiumGeospatial::Cartographic::fromDegrees(LonDeg, LatDeg, 0.0)) : 0.0;
-	}
-};
 
 // -------------------- Geometry helpers
 static float DistPointSegment3D(const FVector& P, const FVector& A, const FVector& B)
@@ -502,6 +469,17 @@ static float FollowRail(USceneComponent* Arm, USceneComponent* Camera, USplineCo
 	return Tight;
 }
 
+double APath::GetGeoidUndulationM(double LonDeg, double LatDeg)
+{
+	return FGeoidGrid::UndulationM(LonDeg, LatDeg);
+}
+
+void APath::BuildSmoothCameraRail(USplineComponent* Source, USplineComponent* Rail, float SmoothM)
+{
+	if (!Source || !Rail || Source->GetNumberOfSplinePoints() < 2) return;
+	PathFly::BuildSmoothRail(Source, Rail, FMath::Max(SmoothM, 1.f));
+}
+
 APath::APath()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -803,6 +781,9 @@ void APath::DrawPath(int64 RaceID, FRacePath RacePathDatas)
 	LoadingSubsystem->Complete(IdKm, FText::FromString(FString::Printf(TEXT("Kms %lld built"), RaceID)));
 	RebuildPathSplineMeshes(RaceID);
 	RebuildSlopeSplineMeshes(RaceID);
+
+	// Altitude GPS imprecise (5 a 30 m) : on cale le trace sur le sol reel des tuiles Cesium
+	DrapeOnTerrain();
 }
 
 /**
@@ -1439,5 +1420,360 @@ void APath::SetBroadcastCaptureEnabled_Implementation(bool bEnabled, class UText
 		OwlCapture->Deactivate();
 
 		OwlCapture->TextureTarget = nullptr;
+	}
+}
+
+// -------------------- Drape du trace sur les tuiles Cesium
+namespace PathDrape
+{
+	static TAutoConsoleVariable<int32> CVarEnabled(TEXT("ts.Path.Drape"), 1, TEXT("Cale le trace sur les tuiles Cesium (0 = altitude GPS brute)"));
+	static TAutoConsoleVariable<int32> CVarSnap(TEXT("ts.Path.DrapeSnap"), 1, TEXT("Drape du trace : 1 = pose le trace a sol + marge partout (monte et descend), 0 = ne fait que monter les points sous le sol"));
+	static TAutoConsoleVariable<float> CVarClearance(TEXT("ts.Path.DrapeClearanceM"), 1.5f, TEXT("Drape du trace : hauteur au-dessus du sol Cesium (m)"));
+	static TAutoConsoleVariable<float> CVarStep(TEXT("ts.Path.DrapeStepM"), 10.f, TEXT("Drape du trace : pas d'echantillonnage du sol entre deux points GPS (m)"));
+	static TAutoConsoleVariable<float> CVarRamp(TEXT("ts.Path.DrapeRampPct"), 15.f, TEXT("Drape du trace : pente max (%) des rampes autour d'un point remonte par une corde, pour que le tube ne fasse pas de vagues"));
+	static TAutoConsoleVariable<float> CVarMaxShift(TEXT("ts.Path.DrapeMaxShiftM"), 80.f, TEXT("Drape du trace : ecart max (m) entre altitude GPS et sol au-dela duquel l'echantillon est ignore (aberrant)"));
+	static TAutoConsoleVariable<int32> CVarChunk(TEXT("ts.Path.DrapeChunk"), 800, TEXT("Drape du trace : hauteurs demandees a Cesium par paquet ; chaque paquet est applique et mis en cache des son arrivee"));
+
+	static FAutoConsoleCommandWithWorld CmdRedrape(TEXT("ts.Path.Redrape"),
+		TEXT("Redemande a Cesium la hauteur du sol sous tous les traces (ignore le cache) et les recale"),
+		FConsoleCommandWithWorldDelegate::CreateLambda([](UWorld* World)
+		{
+			for (TActorIterator<APath> It(World); It; ++It) It->DrapeOnTerrain(true);
+		}));
+	static FAutoConsoleCommandWithWorld CmdReapply(TEXT("ts.Path.DrapeApply"),
+		TEXT("Reapplique le drape deja mesure (apres un changement de ts.Path.DrapeClearanceM, DrapeSnap ou DrapeRampPct)"),
+		FConsoleCommandWithWorldDelegate::CreateLambda([](UWorld* World)
+		{
+			for (TActorIterator<APath> It(World); It; ++It) It->ApplyDrape();
+		}));
+
+	/** Hauteur du sol d'une requete que Cesium n'a pas (encore) servie */
+	static constexpr double NoGround = -1.0e9;
+
+	/** Tileset du sol : Google Photorealistic si on le reconnait, sinon le premier visible */
+	static ACesium3DTileset* FindGroundTileset(UWorld* World)
+	{
+		ACesium3DTileset* Fallback = nullptr;
+		for (TActorIterator<ACesium3DTileset> It(World); It; ++It)
+		{
+			if (It->IsHidden()) continue;
+			if (It->GetActorNameOrLabel().Contains(TEXT("Google"))) return *It;
+			if (!Fallback) Fallback = *It;
+		}
+		return Fallback;
+	}
+
+	static void SaveCache(const FString& Path, TArray<double>& Ground)
+	{
+		TArray<uint8> Bytes;
+		FMemoryWriter Writer(Bytes);
+		Writer << Ground;
+		FFileHelper::SaveArrayToFile(Bytes, *Path);
+	}
+}
+
+void APath::DrapeOnTerrain(bool bForceResample)
+{
+	if (!PathDrape::CVarEnabled.GetValueOnGameThread() || !SplinePath || !GetWorld()) return;
+	ACesiumGeoreference* Georef = Georeference.Get();
+	const int32 NumPts = SplinePath->GetNumberOfSplinePoints();
+	if (!Georef || NumPts < 2 || NumPts != RacePath.Points.Num()) return;
+
+	// Reference : position des points avant tout drape (GPS + geoide + ZOffset), et position de l'acteur a ce moment.
+	// Le drape repart toujours de la, donc l'appliquer plusieurs fois donne le meme resultat
+	if (DrapeBaseLLH.Num() != NumPts)
+	{
+		DrapeBaseLLH.SetNumUninitialized(NumPts);
+		for (int32 i = 0; i < NumPts; ++i)
+		{
+			DrapeBaseLLH[i] = Georef->TransformUnrealPositionToLongitudeLatitudeHeight(SplinePath->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World));
+		}
+		DrapeActorRef = GetActorLocation();
+	}
+
+	// Requetes : chaque point GPS (alpha 0) puis des points intermediaires sur la corde vers le suivant
+	const float StepM = FMath::Max(PathDrape::CVarStep.GetValueOnGameThread(), 2.f);
+	DrapeQuery.Reset();
+	DrapeQueryPoint.Reset();
+	DrapeQueryAlpha.Reset();
+	for (int32 i = 0; i < NumPts; ++i)
+	{
+		const FRacePathPoint& A = RacePath.Points[i];
+		DrapeQuery.Add(FVector(A.lon, A.lat, A.ele));
+		DrapeQueryPoint.Add(i);
+		DrapeQueryAlpha.Add(0.f);
+		if (i + 1 == NumPts) break;
+		const FRacePathPoint& B = RacePath.Points[i + 1];
+		const double Dx = (B.lon - A.lon) * 111320.0 * FMath::Cos(FMath::DegreesToRadians(A.lat));
+		const double Dy = (B.lat - A.lat) * 110540.0;
+		const int32 Steps = FMath::CeilToInt(FMath::Sqrt(Dx * Dx + Dy * Dy) / StepM);
+		for (int32 k = 1; k < Steps; ++k)
+		{
+			const double T = double(k) / Steps;
+			DrapeQuery.Add(FVector(FMath::Lerp(double(A.lon), double(B.lon), T), FMath::Lerp(double(A.lat), double(B.lat), T), A.ele));
+			DrapeQueryPoint.Add(i);
+			DrapeQueryAlpha.Add(float(T));
+		}
+	}
+
+	// Cache : hauteurs du sol par requete (NoGround = pas encore mesuree), cle = course + positions + pas
+	uint32 Hash = FCrc::MemCrc32(&StepM, sizeof(StepM));
+	for (const FVector& Q : DrapeQuery)
+	{
+		const double LonLat[2] = { Q.X, Q.Y };
+		Hash = FCrc::MemCrc32(LonLat, sizeof(LonLat), Hash);
+	}
+	DrapeCachePath = FPaths::ProjectSavedDir() / TEXT("PathDrape") / FString::Printf(TEXT("Race_%lld_%08x.bin"), RaceId, Hash);
+	DrapeGround.Init(PathDrape::NoGround, DrapeQuery.Num());
+	if (!bForceResample)
+	{
+		TArray<uint8> Bytes;
+		if (FFileHelper::LoadFileToArray(Bytes, *DrapeCachePath, FILEREAD_Silent))
+		{
+			TArray<double> Cached;
+			FMemoryReader Reader(Bytes);
+			Reader << Cached;
+			if (!Reader.IsError() && Cached.Num() == DrapeQuery.Num()) DrapeGround = MoveTemp(Cached);
+		}
+	}
+
+	// Ce qui manque encore, demande par paquets dans l'ordre du trace
+	DrapeMissing.Reset();
+	for (int32 q = 0; q < DrapeGround.Num(); ++q)
+	{
+		if (DrapeGround[q] <= PathDrape::NoGround) DrapeMissing.Add(q);
+	}
+	++DrapeGeneration;
+	UE_LOG(LogTemp, Log, TEXT("Path %lld : drape, %d/%d hauteurs en cache, %d a demander"), RaceId, DrapeQuery.Num() - DrapeMissing.Num(), DrapeQuery.Num(), DrapeMissing.Num());
+	if (DrapeMissing.Num() < DrapeQuery.Num()) ApplyDrape();
+	RequestNextDrapeChunk(DrapeGeneration);
+}
+
+void APath::RequestNextDrapeChunk(int32 Generation)
+{
+	if (Generation != DrapeGeneration || DrapeMissing.IsEmpty() || !GetWorld()) return;
+	ACesium3DTileset* Tileset = PathDrape::FindGroundTileset(GetWorld());
+	if (!Tileset)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Path %lld : pas de tileset Cesium, drape incomplet"), RaceId);
+		return;
+	}
+	const int32 Count = FMath::Min(DrapeMissing.Num(), FMath::Max(PathDrape::CVarChunk.GetValueOnGameThread(), 50));
+	TArray<int32> Indices(DrapeMissing.GetData(), Count);
+	DrapeMissing.RemoveAt(0, Count, EAllowShrinking::No);
+	TArray<FVector> Query;
+	Query.Reserve(Count);
+	for (const int32 q : Indices) Query.Add(DrapeQuery[q]);
+
+	const double StartTime = FPlatformTime::Seconds();
+	TWeakObjectPtr<APath> WeakThis(this);
+	Tileset->SampleHeightMostDetailed(Query, FCesiumSampleHeightMostDetailedCallback::CreateLambda(
+		[WeakThis, Generation, Indices, StartTime](ACesium3DTileset*, const TArray<FCesiumSampleHeightResult>& Results, const TArray<FString>& Warnings)
+		{
+			APath* Self = WeakThis.Get();
+			if (!Self || Generation != Self->DrapeGeneration) return;
+			int32 Ok = 0;
+			for (int32 k = 0; k < Indices.Num() && k < Results.Num(); ++k)
+			{
+				if (Results[k].SampleSuccess)
+				{
+					Self->DrapeGround[Indices[k]] = Results[k].LongitudeLatitudeHeight.Z;
+					++Ok;
+				}
+			}
+			if (Warnings.Num() > 0) UE_LOG(LogTemp, Warning, TEXT("Path %lld : drape, %s"), Self->RaceId, *Warnings[0]);
+			UE_LOG(LogTemp, Log, TEXT("Path %lld : drape, paquet %d/%d hauteurs en %.1f s, reste %d"),
+				Self->RaceId, Ok, Indices.Num(), FPlatformTime::Seconds() - StartTime, Self->DrapeMissing.Num());
+			if (Ok > 0)
+			{
+				PathDrape::SaveCache(Self->DrapeCachePath, Self->DrapeGround);
+				Self->ApplyDrape();
+			}
+			Self->RequestNextDrapeChunk(Generation);
+		}));
+}
+
+void APath::ApplyDrape()
+{
+	ACesiumGeoreference* Georef = Georeference.Get();
+	const int32 NumPts = SplinePath ? SplinePath->GetNumberOfSplinePoints() : 0;
+	if (!Georef || NumPts < 2 || DrapeBaseLLH.Num() != NumPts || DrapeGround.Num() != DrapeQueryPoint.Num()) return;
+
+	const bool bSnap = PathDrape::CVarSnap.GetValueOnGameThread() != 0;
+	const double Clearance = FMath::Max(PathDrape::CVarClearance.GetValueOnGameThread(), 0.f);
+	const double MaxShift = FMath::Max(PathDrape::CVarMaxShift.GetValueOnGameThread(), 1.f);
+	const double Slope = FMath::Max(PathDrape::CVarRamp.GetValueOnGameThread(), 1.f) / 100.0;
+	// Distance le long du trace GPS d'origine (le spline actuel peut deja etre drape)
+	TArray<double> DistM;
+	DistM.SetNumZeroed(NumPts);
+	for (int32 i = 1; i < NumPts; ++i)
+	{
+		const FVector& A = DrapeBaseLLH[i - 1];
+		const FVector& B = DrapeBaseLLH[i];
+		const double Dx = (B.X - A.X) * 111320.0 * FMath::Cos(FMath::DegreesToRadians(A.Y));
+		const double Dy = (B.Y - A.Y) * 110540.0;
+		DistM[i] = DistM[i - 1] + FMath::Sqrt(Dx * Dx + Dy * Dy);
+	}
+	auto DistM_At = [&DistM](int32 i) { return DistM[i]; };
+
+	// 0) Sol filtre : mediane sur 5 echantillons voisins (+-20 m a 10 m de pas). Un arbre, un rocher ou un artefact
+	// de tuile isole donnait un pic de 15 a 20 m qui soulevait tout le troncon en arche
+	const int32 NumQ = DrapeGround.Num();
+	TArray<double> Ground;
+	Ground.Init(PathDrape::NoGround, NumQ);
+	{
+		TArray<double, TInlineAllocator<5>> Window;
+		for (int32 q = 0; q < NumQ; ++q)
+		{
+			if (DrapeGround[q] <= PathDrape::NoGround) continue;
+			Window.Reset();
+			for (int32 k = FMath::Max(0, q - 2); k <= FMath::Min(NumQ - 1, q + 2); ++k)
+			{
+				if (DrapeGround[k] > PathDrape::NoGround) Window.Add(DrapeGround[k]);
+			}
+			Window.Sort();
+			Ground[q] = Window.Num() >= 3 ? Window[Window.Num() / 2] : DrapeGround[q];
+		}
+	}
+	auto Valid = [&](int32 q, double RefHeight)
+	{
+		return Ground[q] > PathDrape::NoGround && FMath::Abs(Ground[q] + Clearance - RefHeight) <= MaxShift;
+	};
+
+	// 1) Hauteur de chaque point : sol + marge (snap), ou au moins sol + marge (montee seule)
+	TArray<double> H;
+	TArray<bool> Measured;
+	H.SetNumUninitialized(NumPts);
+	Measured.Init(false, NumPts);
+	for (int32 i = 0; i < NumPts; ++i) H[i] = DrapeBaseLLH[i].Z;
+	for (int32 q = 0; q < NumQ; ++q)
+	{
+		const int32 I = DrapeQueryPoint[q];
+		if (DrapeQueryAlpha[q] > 0.f || !H.IsValidIndex(I) || !Valid(q, DrapeBaseLLH[I].Z)) continue;
+		const double Target = Ground[q] + Clearance;
+		H[I] = bSnap ? Target : FMath::Max(DrapeBaseLLH[I].Z, Target);
+		Measured[I] = true;
+	}
+	// Point sans mesure (echec Cesium, echantillon rejete, paquet pas encore arrive) : il prend l'ecart au GPS
+	// interpole entre ses voisins mesures, au lieu de rester a l'altitude GPS (pic de 30 m)
+	{
+		int32 Prev = INDEX_NONE;
+		for (int32 i = 0; i <= NumPts; ++i)
+		{
+			if (i < NumPts && !Measured[i]) continue;
+			const int32 Next = i < NumPts ? i : INDEX_NONE;
+			if (Prev == INDEX_NONE && Next == INDEX_NONE) break;
+			const double OffPrev = Prev != INDEX_NONE ? H[Prev] - DrapeBaseLLH[Prev].Z : H[Next] - DrapeBaseLLH[Next].Z;
+			const double OffNext = Next != INDEX_NONE ? H[Next] - DrapeBaseLLH[Next].Z : OffPrev;
+			const double D0 = Prev != INDEX_NONE ? DistM_At(Prev) : 0.0;
+			const double D1 = Next != INDEX_NONE ? DistM_At(Next) : 0.0;
+			for (int32 j = (Prev == INDEX_NONE ? 0 : Prev + 1); j < (Next == INDEX_NONE ? NumPts : Next); ++j)
+			{
+				const double A = (Prev != INDEX_NONE && Next != INDEX_NONE && D1 > D0) ? (DistM_At(j) - D0) / (D1 - D0) : 0.0;
+				const double Off = FMath::Lerp(OffPrev, OffNext, FMath::Clamp(A, 0.0, 1.0));
+				H[j] = bSnap ? DrapeBaseLLH[j].Z + Off : FMath::Max(DrapeBaseLLH[j].Z, DrapeBaseLLH[j].Z + Off);
+			}
+			Prev = Next;
+		}
+	}
+
+	// 2) Cordes qui passent sous le sol entre deux points : on monte les deux extremites
+	TArray<double> Lift;
+	Lift.Init(0.0, NumPts);
+	for (int32 q = 0; q < NumQ; ++q)
+	{
+		const int32 I = DrapeQueryPoint[q];
+		const float T = DrapeQueryAlpha[q];
+		if (T <= 0.f || I + 1 >= NumPts) continue;
+		const double Chord = FMath::Lerp(H[I], H[I + 1], double(T));
+		if (!Valid(q, Chord)) continue;
+		const double Deficit = Ground[q] + Clearance - Chord;
+		if (Deficit > 0.0)
+		{
+			Lift[I] = FMath::Max(Lift[I], Deficit);
+			Lift[I + 1] = FMath::Max(Lift[I + 1], Deficit);
+		}
+	}
+	// 3) Rampes de pente bornee autour des points remontes (dilatation aller-retour), jamais vers le bas
+	for (int32 i = 1; i < NumPts; ++i) Lift[i] = FMath::Max(Lift[i], Lift[i - 1] - Slope * (DistM[i] - DistM[i - 1]));
+	for (int32 i = NumPts - 2; i >= 0; --i) Lift[i] = FMath::Max(Lift[i], Lift[i + 1] - Slope * (DistM[i + 1] - DistM[i]));
+
+	// Kms : leur position sur le trace, relevee avant de bouger le spline
+	TArray<TPair<AKm*, float>> KmKeys;
+	for (const TObjectPtr<AKm>& Km : KmsArray)
+	{
+		if (IsValid(Km)) KmKeys.Emplace(Km.Get(), SplinePath->FindInputKeyClosestToWorldLocation(Km->GetActorLocation()));
+	}
+
+	// Le decalage ZOffset regie applique depuis (AddActorWorldOffset) est conserve
+	const FVector ActorShift = GetActorLocation() - DrapeActorRef;
+	double SumShift = 0.0;
+	for (int32 i = 0; i < NumPts; ++i)
+	{
+		const double Final = H[i] + Lift[i];
+		SumShift += Final - DrapeBaseLLH[i].Z;
+		const FVector P = Georef->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(DrapeBaseLLH[i].X, DrapeBaseLLH[i].Y, Final)) + ActorShift;
+		SplinePath->SetLocationAtSplinePoint(i, P, ESplineCoordinateSpace::World, false);
+		SlopePath->SetLocationAtSplinePoint(i, P, ESplineCoordinateSpace::World, false);
+	}
+	SplinePath->UpdateSpline();
+	SlopePath->UpdateSpline();
+	UE_LOG(LogTemp, Log, TEXT("Path %lld : drape applique (%s), ecart moyen au GPS %.1f m"), RaceId, bSnap ? TEXT("pose au sol") : TEXT("montee seule"), SumShift / NumPts);
+
+	// Tube : un spline mesh par paire de points consecutifs, dans le meme ordre pour le trace et la pente
+	const float TotalLen = FMath::Max(SplinePath->GetSplineLength(), 1.f);
+	auto Refit = [](USplineMeshComponent* SMC, const USplineComponent* Spline, int32 A)
+	{
+		const FVector P0 = Spline->GetLocationAtSplinePoint(A, ESplineCoordinateSpace::Local);
+		const FVector P1 = Spline->GetLocationAtSplinePoint(A + 1, ESplineCoordinateSpace::Local);
+		SMC->SetStartAndEnd(P0, Spline->GetTangentAtSplinePoint(A, ESplineCoordinateSpace::Local), P1, Spline->GetTangentAtSplinePoint(A + 1, ESplineCoordinateSpace::Local), true);
+		SMC->SetCustomPrimitiveDataVector3(2, P0);
+		SMC->SetCustomPrimitiveDataVector3(6, P1);
+	};
+	if (PathSplineMeshes.Num() == NumPts - 1)
+	{
+		for (int32 i = 0; i < PathSplineMeshes.Num(); ++i)
+		{
+			if (USplineMeshComponent* SMC = PathSplineMeshes[i].Get())
+			{
+				Refit(SMC, SplinePath, i);
+				const float StartDist = SplinePath->GetDistanceAlongSplineAtSplinePoint(i);
+				SMC->SetCustomPrimitiveDataFloat(0, StartDist / TotalLen);
+				SMC->SetCustomPrimitiveDataFloat(1, (SplinePath->GetDistanceAlongSplineAtSplinePoint(i + 1) - StartDist) / TotalLen);
+			}
+		}
+	}
+	if (SlopeSplineMeshes.Num() == NumPts - 1)
+	{
+		for (int32 i = 0; i < SlopeSplineMeshes.Num(); ++i)
+		{
+			if (USplineMeshComponent* SMC = SlopeSplineMeshes[i].Get()) Refit(SMC, SlopePath, i);
+		}
+	}
+
+	// Checkpoints poses sur les points GPS, et rail du travelling qui passe par eux
+	LockedPoints.Reset();
+	for (int32 i = 0; i < NumPts; ++i)
+	{
+		const FRaceCheckpoint& Datas = RacePath.Points[i].datas;
+		if (Datas.name.IsEmpty()) continue;
+		const FVector P = SplinePath->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World);
+		LockedPoints.Add(P);
+		if (CheckpointSubsystem)
+		{
+			if (AActor* Checkpoint = CheckpointSubsystem->GetCheckpointActor(RaceId, Datas.checkpointId)) Checkpoint->SetActorLocation(P);
+		}
+	}
+	for (const TPair<AKm*, float>& Pair : KmKeys)
+	{
+		Pair.Key->SetActorLocation(SplinePath->GetLocationAtSplineInputKey(Pair.Value, ESplineCoordinateSpace::World));
+	}
+	PathFly::BuildRail(SplinePath, TravelPath, ToleranceMeters, LockedPoints, SampleStepMeters);
+	DistanceCm = FMath::Clamp(DistanceCm, 0.f, TravelPath->GetSplineLength());
+
+	// Morceaux de trace de la regie (segments) : reconstruits sur le spline cale
+	if (UPathSegmentsComponent* SegmentsComp = FindComponentByClass<UPathSegmentsComponent>())
+	{
+		SegmentsComp->Refresh();
 	}
 }

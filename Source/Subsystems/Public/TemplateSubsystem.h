@@ -55,6 +55,9 @@ public:
 	static const FTrailTemplate& ResolveForRace(const UObject* WorldContext, const FRaceSetup& RaceSetup,
 		TOptional<FTrailTemplate>& Storage);
 
+	/** Impose un template (levels cinema : regie injoignable, ou arrondi des panneaux regle sur place). */
+	void SetTemplate(const FString& TemplateName, const FTrailTemplate& Template) { Templates.Add(TemplateName, Template); }
+
 	FOnTemplateChanged OnTemplateChanged;
 
 private:

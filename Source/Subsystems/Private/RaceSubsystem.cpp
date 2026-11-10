@@ -145,6 +145,11 @@ const FRaceSetup URaceSubsystem::GetRaceSetupById(int64 RaceID) const
 	return RaceSetupDatasMap.FindChecked(RaceID);
 }
 
+void URaceSubsystem::AddRaceSetup(const FRaceSetup& NewRaceSetup)
+{
+	RaceSetupDatasMap.Add(NewRaceSetup.raceId, NewRaceSetup);
+}
+
 void URaceSubsystem::SetCurrentRaceId(const int64 RaceId)
 {
 	CurrentRaceId = RaceId;
