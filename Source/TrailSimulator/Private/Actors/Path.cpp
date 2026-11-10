@@ -37,6 +37,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
+#include "Materials/MaterialInterface.h"
 #include "WorldAmbienceSubsystem.h"
 #include "Cesium3DTileset.h"
 #include "CesiumSampleHeightResult.h"
@@ -80,6 +81,22 @@ namespace PathGlow
 		return bPulse
 			? FMath::Lerp(CVarPulseDay.GetValueOnGameThread(), CVarPulseNight.GetValueOnGameThread(), Night)
 			: FMath::Lerp(CVarGlowDay.GetValueOnGameThread(), CVarGlowNight.GetValueOnGameThread(), Night);
+	}
+}
+
+// -------------------- Style du trace
+/**
+ * Tube lumineux (materiaux du maillage SM_Cylindre_1x1 : M_MasterPC + M_Glow) ou brins filamenteux
+ * (M_GlowFilament sur les deux couches). Bascule a chaud : ts.Path.Filament 1 / 0.
+ */
+namespace PathStyle
+{
+	static TAutoConsoleVariable<int32> CVarFilament(TEXT("ts.Path.Filament"), 0, TEXT("Style du trace : 0 = tube lumineux, 1 = brins filamenteux (M_GlowFilament)"));
+
+	static UMaterialInterface* FilamentMaterial()
+	{
+		static TSoftObjectPtr<UMaterialInterface> Ptr(FSoftObjectPath(TEXT("/Game/LTVContent/Materials/Masters/M_GlowFilament.M_GlowFilament")));
+		return Ptr.LoadSynchronous();
 	}
 }
 
@@ -595,10 +612,30 @@ void APath::BeginPlay()
 	PathGlow::PulseBase = -1.f;
 	FTimerHandle GlowTimer;
 	GetWorldTimerManager().SetTimer(GlowTimer, FTimerDelegate::CreateWeakLambda(this,
-		[this, AppliedGlowGain = -1.f, AppliedGlowBase = -1.f, AppliedPulseGain = -1.f, Cursor = MAX_int32]() mutable
+		[this, AppliedGlowGain = -1.f, AppliedGlowBase = -1.f, AppliedPulseGain = -1.f, Cursor = MAX_int32, AppliedStyle = 0, StyledTotal = 0, StyleCursor = MAX_int32]() mutable
 		{
 			const int32 Total = PathSplineMeshes.Num() + SlopeSplineMeshes.Num();
 			if (Total == 0 || !SettingsSubsystem) return;
+
+			// Style du trace : reecrit les materiaux par paquets quand la CVar change ou que le trace est reconstruit
+			const int32 Style = PathStyle::CVarFilament.GetValueOnGameThread() != 0 ? 1 : 0;
+			if (Style != AppliedStyle || (Style == 1 && Total != StyledTotal))
+			{
+				AppliedStyle = Style;
+				StyledTotal = Total;
+				StyleCursor = 0;
+			}
+			if (StyleCursor < Total)
+			{
+				UMaterialInterface* Mat = Style ? PathStyle::FilamentMaterial() : nullptr; // nullptr = materiaux du maillage
+				if (Style && !Mat) StyleCursor = Total;
+				for (const int32 End = FMath::Min(StyleCursor + PathGlow::MeshesPerStep, Total); StyleCursor < End; ++StyleCursor)
+				{
+					USplineMeshComponent* SMC = StyleCursor < PathSplineMeshes.Num() ? PathSplineMeshes[StyleCursor].Get() : SlopeSplineMeshes[StyleCursor - PathSplineMeshes.Num()].Get();
+					if (!SMC) continue;
+					for (int32 m = 0; m < SMC->GetNumMaterials(); ++m) SMC->SetMaterial(m, Mat);
+				}
+			}
 
 			if (UMaterialParameterCollection* MPC = PulseMPC.LoadSynchronous())
 			{
@@ -841,6 +878,9 @@ void APath::RebuildPathSplineMeshes(int64 RaceID)
 		SMC->SetCustomPrimitiveDataFloat(11, 0.f); // UseSlope = 0	M_MasterPC
 		SMC->SetCustomPrimitiveDataVector4(12, LinearColor); // Color (12->15)
 		SMC->SetCustomPrimitiveDataFloat(16, SettingsSubsystem->GetGlowById(RaceID) * PathGlow::Gain(GetWorld(), false));
+		// M_GlowFilament : abscisse de debut et longueur du troncon en metres (brins continus d'un troncon a l'autre)
+		SMC->SetCustomPrimitiveDataFloat(17, StartDist * 0.01f);
+		SMC->SetCustomPrimitiveDataFloat(18, (EndDist - StartDist) * 0.01f);
 		SMC->SetHiddenInGame(true);
 	}
 	Root->SetMobility(EComponentMobility::Movable);
@@ -990,6 +1030,11 @@ void APath::RebuildSlopeSplineMeshes(int64 RaceID)
 			SMC->SetCustomPrimitiveDataFloat(13, Junction[B]);	// valeur a la jonction de fin
 			SMC->SetCustomPrimitiveDataFloat(11, 1.f);	// UseSlope = 1
 			SMC->SetCustomPrimitiveDataFloat(16, SettingsSubsystem->GetGlowById(RaceID) * PathGlow::Gain(GetWorld(), false));
+			// M_GlowFilament : abscisse de debut et longueur de CE troncon en metres (0/1 ci-dessus couvrent tout le segment de pente)
+			const float DistA = SplinePath->GetDistanceAlongSplineAtSplinePoint(A);
+			const float DistB = SplinePath->GetDistanceAlongSplineAtSplinePoint(B);
+			SMC->SetCustomPrimitiveDataFloat(17, DistA * 0.01f);
+			SMC->SetCustomPrimitiveDataFloat(18, (DistB - DistA) * 0.01f);
 			SMC->SetHiddenInGame(true);
 		}
 	}
