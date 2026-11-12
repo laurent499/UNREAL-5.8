@@ -58,6 +58,9 @@ void UMeteoPageSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
+	// Pas de serveur pendant un cook/commandlet : le port est pris par l'editeur ouvert et l'erreur de bind fait echouer le packaging
+	if (IsRunningCommandlet()) return;
+
 	// Meme listener que le Remote Control : GetHttpRouter renvoie le routeur existant s'il est deja ouvert
 	FHttpServerModule& HttpServerModule = FHttpServerModule::Get();
 	HttpRouter = HttpServerModule.GetHttpRouter(ListenPort, /*bFailOnBindFailure=*/true);

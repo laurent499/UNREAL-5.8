@@ -10,6 +10,11 @@
 #include "PoiSubsystem.h"
 #include "HttpGatewaySubsystem.h"
 #include "LoadingStatusSubsystem.h"
+// Cible jeu : windows.h (inclus plus haut via Cesium) definit la macro GetEnvironmentVariable,
+// qui casse FPlatformMisc::GetEnvironmentVariable dans FOWLSaveToFileSettings.h (OWL).
+#ifdef GetEnvironmentVariable
+#undef GetEnvironmentVariable
+#endif
 #include "OWLViewportCapture.h"
 #include "OWLMediaOutput.h"
 #include "OWLMediaOutputComponent.h"
@@ -185,13 +190,15 @@ static bool CallBP_GetFloatOut(UObject* Obj, FName FunctionName, const FString& 
 			break;
 		}
 
-		// Match par DisplayName (meta)
+#if WITH_METADATA
+		// Match par DisplayName (meta) : metadonnees absentes du jeu package
 		const FString Display = P->GetMetaData(TEXT("DisplayName"));
 		if (!Display.IsEmpty() && SanitizeKey(Display) == WantedKey)
 		{
 			Best = P;
 			break;
 		}
+#endif
 	}
 
 	FProperty* Target = Best ? Best : FirstOut;
