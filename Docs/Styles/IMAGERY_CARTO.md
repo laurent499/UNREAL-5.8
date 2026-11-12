@@ -37,7 +37,7 @@ Handler : `UCartoImagerySubsystem` (module Subsystems), enregistré auprès de `
 
 Jamais dans le JSON ni dans git. Lue au moment d'appliquer le style, dans l'ordre :
 1. variable d'environnement `LTV_MAPBOX_TOKEN` ;
-2. fichier `SavedSecretsmapbox_token.txt` du projet (Saved est ignoré par git ; en jeu packagé, le Saved du jeu) ;
+2. fichier `Saved/Secrets/mapbox_token.txt` du projet (Saved est ignoré par git ; en jeu packagé, le Saved du jeu) ;
 3. fichier `%LOCALAPPDATA%\LTV\mapbox_token.txt` (la clé seule).
 
 Sans clé, le style est refusé (log `[Carto]`) et le rendu photo reste à l'antenne.
