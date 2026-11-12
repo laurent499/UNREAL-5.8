@@ -29,9 +29,14 @@ namespace CartoImagery
 	static FString ReadMapboxToken()
 	{
 		FString Token = FPlatformMisc::GetEnvironmentVariable(TEXT("LTV_MAPBOX_TOKEN")).TrimStartAndEnd();
-		if (Token.IsEmpty())
+		// Puis Saved/Secrets du projet (ignoré par git), puis %LOCALAPPDATA%/LTV (commun à toutes les copies du projet)
+		const FString Files[] = {
+			FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("Secrets"), TEXT("mapbox_token.txt")),
+			FPaths::Combine(FPlatformProcess::UserSettingsDir(), TEXT("LTV"), TEXT("mapbox_token.txt")),
+		};
+		for (const FString& File : Files)
 		{
-			const FString File = FPaths::Combine(FPlatformProcess::UserSettingsDir(), TEXT("LTV"), TEXT("mapbox_token.txt"));
+			if (!Token.IsEmpty()) break;
 			if (FFileHelper::LoadFileToString(Token, *File)) Token = Token.TrimStartAndEnd();
 		}
 		return Token;
