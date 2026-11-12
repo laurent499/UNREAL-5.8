@@ -205,8 +205,20 @@ void AKm::ApplyKmStyle() const
 	}
 	Slant = FMath::Clamp(Slant, -60.f, 60.f);
 
-	// Bornes du texte dans l'espace de MainRoot (le texte se lit depuis +X)
-	const FBox TextBox = LabelComp->CalcBounds(LabelComp->GetRelativeTransform()).GetBox();
+	// Bornes du texte dans l'espace du texte (il se lit depuis +X). CalcBounds ignore l'alignement
+	// vertical : il pose toujours la ligne sous l'origine (Z de -hauteur à 0), on la recale ici.
+	FBox LineBox = LabelComp->CalcBounds(FTransform::Identity).GetBox();
+	const float LineHeight = LineBox.GetSize().Z;
+	switch (LabelComp->VerticalAlignment.GetValue())
+	{
+	case EVRTA_TextBottom: LineBox = LineBox.ShiftBy(FVector(0.f, 0.f, LineHeight)); break;
+	case EVRTA_TextCenter: LineBox = LineBox.ShiftBy(FVector(0.f, 0.f, 0.5f * LineHeight)); break;
+	default: break;
+	}
+	// La hauteur de ligne compte la place des jambages sous la ligne de base (≈ 20 %) : les
+	// chiffres et « Km » n'en ont pas, le fond se cale sur la partie haute pour rester centré
+	LineBox.Min.Z += 0.2f * LineHeight;
+	const FBox TextBox = LineBox.TransformBy(LabelComp->GetRelativeTransform());
 	const float TextHeight = TextBox.GetSize().Z;
 	const float TextWidth = TextBox.GetSize().Y;
 	const FBox MeshBox = Mesh->GetBoundingBox();
