@@ -1465,7 +1465,8 @@ namespace PathDrape
 		ACesium3DTileset* Fallback = nullptr;
 		for (TActorIterator<ACesium3DTileset> It(World); It; ++It)
 		{
-			if (It->IsHidden()) continue;
+			// Relief du style Carto : pas le sol de reference (le cache de drape garde les hauteurs Google)
+			if (It->IsHidden() || It->ActorHasTag(TEXT("LTV_StyleTerrain"))) continue;
 			if (It->GetActorNameOrLabel().Contains(TEXT("Google"))) return *It;
 			if (!Fallback) Fallback = *It;
 		}
