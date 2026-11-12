@@ -660,6 +660,9 @@ void ARaceManager::HandleRaceSetupDatasGathered(int64 RaceID, FRaceSetup RaceSet
 		LoadingSubsystem->Fail(IdPois, FText::FromString(FString::Printf(TEXT("Loading Pois for Race %lld failed"), RaceID)));
 		LoadingSubsystem->Fail(IdCheckpoints, FText::FromString(FString::Printf(TEXT("Loading Checkpoints for Race %lld failed"), RaceID)));
 		LoadingSubsystem->Fail(IdPath, FText::FromString(FString::Printf(TEXT("Loading PathHandlePathDatas for Race %lld failed"), RaceID)));
+		// Course sans setup valide : pas de trace a attendre pour le placement de depart
+		StartupPendingRaces.Remove(RaceID);
+		TryStartupPlacement();
 		return;
 	}
 	
@@ -714,6 +717,101 @@ void ARaceManager::HandlePathDatasGathered(int64 RaceID, FRacePath RacePathDatas
 	{
 		LoadingSubsystem->Fail(IdPath, FText::FromString(FString::Printf(TEXT("No Point in Path for Race %lld failed"), RaceID)));
 	}
+
+	// DrawPath vient de caler l'origine du georef sur le depart de CETTE course : une fois la camera
+	// placee, on remet l'origine sur la course affichee, sinon la vue partirait sur la derniere course chargee.
+	RestoreOriginOnCurrentRace(RaceID);
+	StartupPendingRaces.Remove(RaceID);
+	TryStartupPlacement();
+}
+
+/**
+ * @brief Place la camera sur la premiere course de la regie ayant un trace.
+ * Attend que les courses precedentes dans la liste soient tranchees (trace recu ou echec), sauf bForce (filet 30 s).
+ */
+void ARaceManager::TryStartupPlacement(bool bForce)
+{
+	if (bStartupPlacementDone || StartupRaceOrder.IsEmpty()) return;
+
+	for (const int64 RaceID : StartupRaceOrder)
+	{
+		const FRacePath* Path = PathsDatas.Find(RaceID);
+		if (Path && Path->Points.Num() > 0 && RacePaths.Contains(RaceID))
+		{
+			bStartupPlacementDone = true;
+			GetWorldTimerManager().ClearTimer(StartupPlacementHandle);
+			PlaceOnRaceAtStartup(RaceID);
+			return;
+		}
+		if (StartupPendingRaces.Contains(RaceID) && !bForce)
+		{
+			return; // une course mieux placee dans la liste peut encore arriver
+		}
+	}
+
+	if (bForce || StartupPendingRaces.IsEmpty())
+	{
+		bStartupPlacementDone = true;
+		GetWorldTimerManager().ClearTimer(StartupPlacementHandle);
+		UE_LOG(LogTemp, Warning, TEXT("[Startup] Aucune course avec trace : camera laissee en place"));
+	}
+}
+
+/**
+ * @brief Teleporte directement (sans vol) au-dessus du depart, comme MoveToRace mais instantane.
+ */
+void ARaceManager::PlaceOnRaceAtStartup(int64 RaceID)
+{
+	ACesiumGeoreference* Geo = Georeference.Get();
+	if (!Geo)
+	{
+		Geo = ACesiumGeoreference::GetDefaultGeoreference(GetWorld());
+		Georeference = Geo;
+	}
+	const FRacePath* Path = PathsDatas.Find(RaceID);
+	APawn* Pawn = UGameplayStatics::GetPlayerPawn(this, 0);
+	if (!Geo || !Path || Path->Points.IsEmpty() || !Pawn || !RaceSubsystem)
+	{
+		MoveToPath_Internal(RaceID); // repli : le vol habituel
+		return;
+	}
+
+	const int64 PreviousRaceID = RaceSubsystem->GetCurrentRaceId();
+	if (PreviousRaceID != -1 && PreviousRaceID != RaceID)
+	{
+		ToggleRace_Internal(PreviousRaceID, false);
+	}
+	RaceSubsystem->SetCurrentRaceId(RaceID);
+
+	const FRacePathPoint& P0 = Path->Points[0];
+	if (ShiftComp) ShiftComp->SetActive(false);
+	// Origine sur le depart d'abord (repere des splines), puis le pawn par-dessus
+	Geo->SetOriginLongitudeLatitudeHeight(FVector(P0.lon, P0.lat, P0.ele));
+	const double ArrivalHeight = (P0.datas.name.IsEmpty() ? P0.ele : P0.datas.altitude) + 5000.0;
+	const FVector Location = Geo->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(P0.lon, P0.lat, ArrivalHeight));
+	Pawn->SetActorLocationAndRotation(Location, FRotator::ZeroRotator, false, nullptr, ETeleportType::TeleportPhysics);
+	if (AController* Controller = Pawn->GetController())
+	{
+		Controller->SetControlRotation(FRotator::ZeroRotator);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[Startup] Camera placee sur la course %lld"), RaceID);
+	ToggleRace_Internal(RaceID, true);
+}
+
+/**
+ * @brief Apres le dessin d'un autre trace (qui deplace l'origine), remet l'origine sur la course courante.
+ */
+void ARaceManager::RestoreOriginOnCurrentRace(int64 JustDrawnRaceID)
+{
+	if (!bStartupPlacementDone || !RaceSubsystem) return;
+	const int64 CurrentRaceID = RaceSubsystem->GetCurrentRaceId();
+	if (CurrentRaceID == JustDrawnRaceID) return;
+	const FRacePath* Path = PathsDatas.Find(CurrentRaceID);
+	ACesiumGeoreference* Geo = Georeference.Get();
+	if (!Path || Path->Points.IsEmpty() || !Geo) return;
+	const FRacePathPoint& P0 = Path->Points[0];
+	Geo->SetOriginLongitudeLatitudeHeight(FVector(P0.lon, P0.lat, P0.ele));
 }
 
 /**
@@ -1269,7 +1367,20 @@ void ARaceManager::HandleRacesDatasGathered(FRaceEntries RacesArray)
 {
 	if (RacesArray.RacesEntries.IsEmpty()) return;
 	AllRaces = RacesArray;
-	
+
+	// La camera ira sur la premiere course de la liste ayant un trace, des que les precedentes sont
+	// tranchees. Filet : au bout de 30 s on se place avec ce qui est arrive (requete perdue sans reponse).
+	if (!bStartupPlacementDone && StartupRaceOrder.IsEmpty())
+	{
+		for (const FRaceEntry& RaceEntry : AllRaces.RacesEntries)
+		{
+			StartupRaceOrder.Add(RaceEntry.raceId);
+			StartupPendingRaces.Add(RaceEntry.raceId);
+		}
+		GetWorldTimerManager().SetTimer(StartupPlacementHandle,
+			FTimerDelegate::CreateWeakLambda(this, [this]() { TryStartupPlacement(true); }), 30.f, false);
+	}
+
 	PerformHttpRequestForRaces();
 }
 

@@ -511,6 +511,15 @@ private:
 	FRaceEntries AllRaces;
 	UFUNCTION()
 	void PerformHttpRequestForRaces();
+
+	// Placement au lancement sur la premiere course de la regie (ordre de GET regie/N/races)
+	TArray<int64> StartupRaceOrder;
+	TSet<int64> StartupPendingRaces;
+	bool bStartupPlacementDone = false;
+	FTimerHandle StartupPlacementHandle;
+	void TryStartupPlacement(bool bForce = false);
+	void PlaceOnRaceAtStartup(int64 RaceID);
+	void RestoreOriginOnCurrentRace(int64 JustDrawnRaceID);
 	UPROPERTY()
 	FString RunnersEndpoint;	
 	UPROPERTY()
