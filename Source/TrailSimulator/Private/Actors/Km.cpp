@@ -181,7 +181,11 @@ void AKm::ApplyKmStyle() const
 
 	const FLinearColor BkgColor = FTrailTemplate::ToLinear(Style.Bkg, Setup.color);
 	const UStaticMesh* Mesh = BkgComp->GetStaticMesh();
-	if (!bTemplated || BkgColor.A < 0.01f || !Mesh || LabelComp->Text.IsEmpty())
+	// Hauteur du texte au-dessus de l'épingle : avec un fond, on le remonte pour laisser de l'air
+	// entre le cartouche et la borne (70 = position d'origine, sans fond)
+	const bool bShowBkg = bTemplated && BkgColor.A >= 0.01f && Mesh && !LabelComp->Text.IsEmpty();
+	LabelComp->SetRelativeLocation(FVector(0.f, 0.f, bShowBkg ? 90.f : 70.f));
+	if (!bShowBkg)
 	{
 		BkgComp->SetVisibility(false);
 		return;
