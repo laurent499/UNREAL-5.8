@@ -120,8 +120,13 @@ Convention réservée : **CustomStencil = 200** marque un overlay à protéger.
 Un matériau de style lit `SceneTexture:CustomStencil` et laisse passer la couleur d'origine
 quand le stencil vaut 200. Le marquage des acteurs (tracé, km, étiquettes : `bRenderCustomDepth`,
 `CustomDepthStencilValue = 200`, `r.CustomDepth=3`) est fait **par le cadre** quand une entrée
-porte `"protectOverlays": true` et défait au retour en Réaliste. Le fil N&B valide la convention
-(alternative : overlays translucides rendus après le post-process « Before Translucency »).
+porte `"protectOverlays": true` et défait au retour en Réaliste. Convention validée par le fil N&B
+(`PP_Grade` en « Scene Color Before DOF ») : seules les primitives opaques ou masquées reçoivent le
+stencil (tracé, fonds km `M_PlainRounded`, pictos). Les `UTextRenderComponent` sont exclus : textes
+`M_RawText`, cartes translucides et halos `M_Glow` restent en couleur d'eux-mêmes. Le cadre parcourt
+toute la hiérarchie attachée et rend à chaque primitive son état d'origine (la CustomDepth posée par
+`TrailRawText::EnableOcclusion` en Réaliste est gardée). Limite v1 : une primitive créée après
+l'apparition de l'acteur n'est marquée qu'au prochain changement de style.
 
 ## 4. Régie : page Styles
 
