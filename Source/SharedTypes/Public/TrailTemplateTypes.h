@@ -71,6 +71,25 @@ struct SHAREDTYPES_API FTrailTemplateRunner
 	UPROPERTY(BlueprintReadOnly) float Height = 100.f;
 };
 
+/** Bornes kilométriques (« 14 Km ») : fond derrière la distance pour la lire sur le terrain. */
+USTRUCT(BlueprintType)
+struct SHAREDTYPES_API FTrailTemplateKm
+{
+	GENERATED_BODY()
+
+	/** Fond derrière la distance ; alpha 0 = pas de fond. */
+	UPROPERTY(BlueprintReadOnly) FString Bkg = TEXT("#000000CC");
+	UPROPERTY(BlueprintReadOnly) FString Text = TEXT("race");
+	/** Forme des angles : "globals" (comme les autres fonds), "square", "rounded" ou "slant". */
+	UPROPERTY(BlueprintReadOnly) FString Shape = TEXT("rounded");
+	/** Arrondi quand Shape = "rounded" (part de la hauteur du fond, 0,5 = pilule). */
+	UPROPERTY(BlueprintReadOnly) float CornerRadius = 0.3f;
+	/** Biseau en degrés quand Shape = "slant" (positif : le haut penche à droite). */
+	UPROPERTY(BlueprintReadOnly) float Slant = 12.f;
+	/** Marge autour du texte, en part de sa hauteur. */
+	UPROPERTY(BlueprintReadOnly) float Padding = 0.2f;
+};
+
 USTRUCT(BlueprintType)
 struct SHAREDTYPES_API FTrailTemplate
 {
@@ -83,6 +102,7 @@ struct SHAREDTYPES_API FTrailTemplate
 	UPROPERTY(BlueprintReadOnly) FTrailTemplateStack Checkpoint;
 	UPROPERTY(BlueprintReadOnly) FTrailTemplateStack Poi;
 	UPROPERTY(BlueprintReadOnly) FTrailTemplateRunner Runner;
+	UPROPERTY(BlueprintReadOnly) FTrailTemplateKm Km;
 
 	/**
 	 * @brief Convertit une couleur du template en linéaire.
