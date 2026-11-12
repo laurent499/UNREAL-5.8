@@ -215,7 +215,8 @@ void UCartoImagerySubsystem::ApplySection(UWorld* World, const TSharedRef<FJsonO
 	// Décalage vertical du relief (m) : World Terrain est plus lisse que Google, le tracé drapé peut s'y enfoncer sur les crêtes
 	const double OffsetM = GetNumber(Section, TEXT("terrainOffsetM"), 0.0);
 	const FVector Base = PhotoReference ? PhotoReference->GetActorLocation() : FVector::ZeroVector;
-	Relief->SetActorLocation(Base + FVector::UpVector * OffsetM * 100.0);
+	const FVector Wanted = Base + FVector::UpVector * OffsetM * 100.0;
+	if (!Relief->GetActorLocation().Equals(Wanted, 1.0)) Relief->SetActorLocation(Wanted);
 
 	// Carte : même réglages => rien à faire (réapplication) ; sinon on recharge l'overlay
 	UCesiumUrlTemplateRasterOverlay* Overlay = MapOverlay.Get();
@@ -240,15 +241,16 @@ void UCartoImagerySubsystem::ApplySection(UWorld* World, const TSharedRef<FJsonO
 	}
 	else
 	{
-		Overlay->SetMaximumScreenSpaceError(OverlaySse);
+		// Chaque setter Cesium recharge la carte : on ne touche qu'à ce qui change
 		if (bChanged)
 		{
 			Overlay->TemplateUrl = Map.Url;
 			Overlay->TileWidth = Map.TileSize;
 			Overlay->TileHeight = Map.TileSize;
 			Overlay->MaximumLevel = Map.MaximumLevel;
-			Overlay->Refresh();
 		}
+		if (!FMath::IsNearlyEqual(Overlay->GetMaximumScreenSpaceError(), OverlaySse)) Overlay->SetMaximumScreenSpaceError(OverlaySse);
+		else if (bChanged) Overlay->Refresh();
 	}
 
 	bSuspendPhoto = GetString(Section, TEXT("photoTiles"), TEXT("hide")).Equals(TEXT("suspend"), ESearchCase::IgnoreCase);
