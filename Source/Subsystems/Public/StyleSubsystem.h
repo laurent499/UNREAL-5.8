@@ -11,6 +11,7 @@
 class APostProcessVolume;
 class UMaterialInstanceDynamic;
 class UMaterialInterface;
+class UPrimitiveComponent;
 
 /** Diffusé après chaque changement de style (nom du nouveau style). */
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnStyleChanged, const FString& /*StyleName*/);
@@ -76,7 +77,8 @@ private:
 	void BuildPostProcess(UWorld* World, const TArray<TSharedPtr<FJsonObject>>& Entries);
 	void SetOverlayProtection(UWorld* World, bool bProtect);
 	void OnActorSpawned(AActor* Actor);
-	static void ProtectActor(AActor* Actor, bool bProtect);
+	void ProtectActor(AActor* Actor);
+	void RestoreProtectedPrimitives();
 
 	FString CurrentStyleName;
 	TSharedPtr<FJsonObject> CurrentStyle;
@@ -91,6 +93,8 @@ private:
 	TArray<TObjectPtr<UMaterialInstanceDynamic>> StyleMaterials;
 
 	bool bOverlaysProtected = false;
+	/** État d'origine (CustomDepth, stencil) des primitives marquées, rendu au retour. */
+	TMap<TWeakObjectPtr<UPrimitiveComponent>, TPair<bool, int32>> ProtectedPrimitives;
 	int32 SavedCustomDepthMode = INDEX_NONE;
 	FDelegateHandle ActorSpawnedHandle;
 	TWeakObjectPtr<UWorld> SpawnHandleWorld;

@@ -15,6 +15,7 @@
 #include "Materials/MaterialInterface.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Components/PrimitiveComponent.h"
+#include "Components/TextRenderComponent.h"
 #include "EngineUtils.h"
 #include "HAL/IConsoleManager.h"
 
@@ -133,6 +134,7 @@ void UStyleSubsystem::OnWorldBeginPlay(UWorld* World)
 	StyleVolume = nullptr;
 	StyleMaterials.Reset();
 	bOverlaysProtected = false;
+	ProtectedPrimitives.Reset();
 	ActiveSections.Reset();
 	if (CurrentStyle.IsValid())
 	{
@@ -466,20 +468,45 @@ void UStyleSubsystem::RevertPostProcess(UWorld* World)
 // Overlays protégés : stencil 200 sur tracé, bornes, checkpoints, POI, coureurs
 // ---------------------------------------------------------------------------
 
-void UStyleSubsystem::ProtectActor(AActor* Actor, bool bProtect)
+void UStyleSubsystem::ProtectActor(AActor* Actor)
 {
 	if (!IsValid(Actor) || !TrailStyle::IsProtectedClass(Actor->GetClass())) return;
-	TInlineComponentArray<UPrimitiveComponent*> Prims(Actor);
-	for (UPrimitiveComponent* Prim : Prims)
+	// Les éléments de NameComponent / ClubComponent... ont pour Outer leur composant, pas l'acteur :
+	// on parcourt toute la hiérarchie attachée (comme TrailRawText::EnableOcclusion)
+	TArray<USceneComponent*> Attached;
+	if (USceneComponent* Root = Actor->GetRootComponent())
 	{
-		Prim->SetRenderCustomDepth(bProtect);
-		Prim->SetCustomDepthStencilValue(bProtect ? TrailStyle::OverlayStencil : 0);
+		Attached.Add(Root);
+		Root->GetChildrenComponents(/*bIncludeAllDescendants=*/true, Attached);
 	}
+	for (USceneComponent* Component : Attached)
+	{
+		UPrimitiveComponent* Prim = Cast<UPrimitiveComponent>(Component);
+		// Textes translucides : n'écrivent pas le stencil, ils restent en couleur d'eux-mêmes (M_RawText)
+		if (!Prim || Prim->IsA<UTextRenderComponent>() || ProtectedPrimitives.Contains(Prim)) continue;
+		ProtectedPrimitives.Add(Prim, TPair<bool, int32>(Prim->bRenderCustomDepth, Prim->CustomDepthStencilValue));
+		if (!Prim->bRenderCustomDepth) Prim->SetRenderCustomDepth(true);
+		Prim->SetCustomDepthStencilValue(TrailStyle::OverlayStencil);
+	}
+}
+
+void UStyleSubsystem::RestoreProtectedPrimitives()
+{
+	// Retour à l'état d'origine : la CustomDepth posée par EnableOcclusion (Réaliste) est gardée
+	for (const auto& Pair : ProtectedPrimitives)
+	{
+		if (UPrimitiveComponent* Prim = Pair.Key.Get())
+		{
+			if (Prim->bRenderCustomDepth != Pair.Value.Key) Prim->SetRenderCustomDepth(Pair.Value.Key);
+			Prim->SetCustomDepthStencilValue(Pair.Value.Value);
+		}
+	}
+	ProtectedPrimitives.Reset();
 }
 
 void UStyleSubsystem::OnActorSpawned(AActor* Actor)
 {
-	ProtectActor(Actor, true);
+	ProtectActor(Actor);
 }
 
 void UStyleSubsystem::SetOverlayProtection(UWorld* World, bool bProtect)
@@ -502,9 +529,16 @@ void UStyleSubsystem::SetOverlayProtection(UWorld* World, bool bProtect)
 		}
 	}
 
-	for (TActorIterator<AActor> It(World); It; ++It)
+	if (bProtect)
 	{
-		ProtectActor(*It, bProtect);
+		for (TActorIterator<AActor> It(World); It; ++It)
+		{
+			ProtectActor(*It);
+		}
+	}
+	else
+	{
+		RestoreProtectedPrimitives();
 	}
 
 	if (UWorld* Previous = SpawnHandleWorld.Get())
