@@ -28,12 +28,12 @@
 #include "CesiumSampleHeightResult.h"
 #include "EngineUtils.h"
 #include "DrawDebugHelpers.h"
+#include "Components/SkyAtmosphereComponent.h"
+#include "UObject/UObjectIterator.h"
 #if WITH_EDITOR
 #include "MeshDescription.h"
 #include "StaticMeshAttributes.h"
 #include "Components/StaticMeshComponent.h"
-#include "Components/SkyAtmosphereComponent.h"
-#include "UObject/UObjectIterator.h"
 #endif
 #include "Actors/Cinematic/CinematicPanel.h"
 #include "Actors/Cinematic/CinematicTrailCamera.h"
