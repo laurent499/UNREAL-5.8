@@ -239,7 +239,9 @@ void UStyleSubsystem::ApplySections(UWorld* World)
 	{
 		for (const auto& Pair : CurrentStyle->Values)
 		{
-			if (!TrailStyle::IsMetaKey(Pair.Key) && GetSection(CurrentStyle, Pair.Key).IsValid())
+			// Clé JSON : FSharedString en 5.8, convertie pour l'API FString
+			const FString Key(*Pair.Key);
+			if (!TrailStyle::IsMetaKey(Key) && GetSection(CurrentStyle, Key).IsValid())
 			{
 				Wanted.Add(FName(*Pair.Key));
 			}
@@ -484,7 +486,7 @@ void UStyleSubsystem::ProtectActor(AActor* Actor)
 		UPrimitiveComponent* Prim = Cast<UPrimitiveComponent>(Component);
 		// Textes translucides : n'écrivent pas le stencil, ils restent en couleur d'eux-mêmes (M_RawText)
 		if (!Prim || Prim->IsA<UTextRenderComponent>() || ProtectedPrimitives.Contains(Prim)) continue;
-		ProtectedPrimitives.Add(Prim, TPair<bool, int32>(Prim->bRenderCustomDepth, Prim->CustomDepthStencilValue));
+		ProtectedPrimitives.Add(Prim, TPair<bool, int32>(static_cast<bool>(Prim->bRenderCustomDepth), static_cast<int32>(Prim->CustomDepthStencilValue)));
 		if (!Prim->bRenderCustomDepth) Prim->SetRenderCustomDepth(true);
 		Prim->SetCustomDepthStencilValue(TrailStyle::OverlayStencil);
 	}
