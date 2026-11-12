@@ -47,6 +47,7 @@
 #include "Widgets/SWeakWidget.h"
 #include "Engine/EngineTypes.h"
 #include "Math/UnrealMathUtility.h" // FMath::IsFinite
+#include "Curves/CurveFloat.h"
 
 /**
  * @brief Ensure Subsystems in Internal methods
@@ -135,6 +136,52 @@ bool ARaceManager::RefreshSubsystemsFromPIE() const
 	}
 #endif
 	return false;
+}
+
+/**
+ * Point de vue d'arrivee sur une course (MoveToRace et lancement).
+ * Hauteur : point le plus haut du trace + 1000 m (au-dessus des cretes, tuiles grossieres comprises),
+ * plutot que depart + 5000 m. Camera inclinee a 45 deg, reculee pour viser le depart, tournee vers le
+ * gros du trace (barycentre, ou premier point a plus de 500 m pour une boucle).
+ * Sortie : lon/lat/hauteur, yaw et pitch en East-South-Up (convention Cesium FlyTo).
+ */
+static bool ComputeRaceViewpoint(const FRacePath& Path, FVector& OutLonLatHeight, double& OutYaw, double& OutPitch)
+{
+	if (Path.Points.IsEmpty()) return false;
+	static constexpr double MarginM = 1000.0;
+	static constexpr double PitchDeg = -45.0;
+	static constexpr double MPerDegLat = 110540.0;
+
+	const FRacePathPoint& P0 = Path.Points[0];
+	const double MPerDegLon = 111320.0 * FMath::Max(0.01, FMath::Cos(FMath::DegreesToRadians(double(P0.lat))));
+
+	double MaxEle = P0.ele;
+	FVector2D Sum(0.0, 0.0); // (est, nord) en metres depuis le depart
+	FVector2D FirstFar(0.0, 0.0);
+	for (const FRacePathPoint& P : Path.Points)
+	{
+		MaxEle = FMath::Max(MaxEle, double(P.ele));
+		const FVector2D EN((P.lon - P0.lon) * MPerDegLon, (P.lat - P0.lat) * MPerDegLat);
+		Sum += EN;
+		if (FirstFar.IsNearlyZero() && EN.SizeSquared() > 500.0 * 500.0)
+		{
+			FirstFar = EN;
+		}
+	}
+	FVector2D Dir = Sum / double(Path.Points.Num());
+	if (Dir.SizeSquared() < 200.0 * 200.0) Dir = FirstFar;
+	Dir = Dir.IsNearlyZero() ? FVector2D(1.0, 0.0) : Dir.GetSafeNormal();
+
+	const double Height = MaxEle + MarginM;
+	// A 45 deg, reculer d'autant que la hauteur au-dessus du depart pour l'avoir au centre de l'image
+	const double Back = FMath::Max(0.0, Height - double(P0.ele)) / FMath::Tan(FMath::DegreesToRadians(-PitchDeg));
+	OutLonLatHeight = FVector(
+		P0.lon - Dir.X * Back / MPerDegLon,
+		P0.lat - Dir.Y * Back / MPerDegLat,
+		Height);
+	OutYaw = FMath::RadiansToDegrees(FMath::Atan2(-Dir.Y, Dir.X)); // ESU : 0 = est, 90 = sud
+	OutPitch = PitchDeg;
+	return true;
 }
 
 static FString SanitizeKey(FString S)
@@ -784,15 +831,19 @@ void ARaceManager::PlaceOnRaceAtStartup(int64 RaceID)
 	RaceSubsystem->SetCurrentRaceId(RaceID);
 
 	const FRacePathPoint& P0 = Path->Points[0];
+	FVector Viewpoint;
+	double ViewYaw = 0.0, ViewPitch = 0.0;
+	ComputeRaceViewpoint(*Path, Viewpoint, ViewYaw, ViewPitch);
 	if (ShiftComp) ShiftComp->SetActive(false);
-	// Origine sur le depart d'abord (repere des splines), puis le pawn par-dessus
+	// Origine sur le depart d'abord (repere des splines), puis le pawn par-dessus.
+	// Pres de l'origine, East-South-Up et Unreal coincident : le yaw/pitch ESU sert tel quel.
 	Geo->SetOriginLongitudeLatitudeHeight(FVector(P0.lon, P0.lat, P0.ele));
-	const double ArrivalHeight = (P0.datas.name.IsEmpty() ? P0.ele : P0.datas.altitude) + 5000.0;
-	const FVector Location = Geo->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(P0.lon, P0.lat, ArrivalHeight));
-	Pawn->SetActorLocationAndRotation(Location, FRotator::ZeroRotator, false, nullptr, ETeleportType::TeleportPhysics);
+	const FVector Location = Geo->TransformLongitudeLatitudeHeightPositionToUnreal(Viewpoint);
+	const FRotator ViewRotation(ViewPitch, ViewYaw, 0.0);
+	Pawn->SetActorLocationAndRotation(Location, FRotator(0.0, ViewYaw, 0.0), false, nullptr, ETeleportType::TeleportPhysics);
 	if (AController* Controller = Pawn->GetController())
 	{
-		Controller->SetControlRotation(FRotator::ZeroRotator);
+		Controller->SetControlRotation(ViewRotation);
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("[Startup] Camera placee sur la course %lld"), RaceID);
@@ -1436,13 +1487,27 @@ void ARaceManager::MoveToPath_Internal(int64 RaceID)
 		}
 		ShiftComp->SetActive(false);
 		FRacePath NewPath = PathsDatas.FindRef(RaceID);
-		float NewArrivalHeight = NewPath.Points[0].datas.name.IsEmpty() ? NewPath.Points[0].ele : NewPath.Points[0].datas.altitude;
-		
-		FlyComp->FlyToLocationLongitudeLatitudeHeight(
-			FVector(NewPath.Points[0].lon, NewPath.Points[0].lat, NewArrivalHeight + 5000.f),
-			0.f,
-			0.f,
-			false);
+		FVector Viewpoint;
+		double ViewYaw = 0.0, ViewPitch = 0.0;
+		if (!ComputeRaceViewpoint(NewPath, Viewpoint, ViewYaw, ViewPitch))
+		{
+			USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Teleport cancelled : empty path (Race %lld)"), RaceID)), EMessageType::Error);
+			return;
+		}
+
+		// Montee en cours de vol plafonnee : la courbe Cesium par defaut grimpe tres haut entre deux courses
+		if (!FlyHeightCurve)
+		{
+			FlyHeightCurve = NewObject<UCurveFloat>(this);
+			// distance du vol (m) -> surelevation max a mi-parcours (m)
+			FlyHeightCurve->FloatCurve.AddKey(0.f, 0.f);
+			FlyHeightCurve->FloatCurve.AddKey(10000.f, 500.f);
+			FlyHeightCurve->FloatCurve.AddKey(100000.f, 8000.f);
+			FlyHeightCurve->FloatCurve.AddKey(1000000.f, 40000.f);
+		}
+		FlyComp->MaximumHeightByDistanceCurve = FlyHeightCurve;
+
+		FlyComp->FlyToLocationLongitudeLatitudeHeight(Viewpoint, ViewYaw, ViewPitch, false);
 				
 		// Test values from settings
 		TestAnchor = SettingsSubsystem->GetZAnchor();

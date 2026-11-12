@@ -520,6 +520,9 @@ private:
 	void TryStartupPlacement(bool bForce = false);
 	void PlaceOnRaceAtStartup(int64 RaceID);
 	void RestoreOriginOnCurrentRace(int64 JustDrawnRaceID);
+	// Surelevation max du vol MoveToRace selon la distance (remplace la courbe Cesium par defaut)
+	UPROPERTY(Transient)
+	TObjectPtr<class UCurveFloat> FlyHeightCurve;
 	UPROPERTY()
 	FString RunnersEndpoint;	
 	UPROPERTY()
