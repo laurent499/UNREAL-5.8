@@ -72,11 +72,13 @@ public:
 	
 	UFUNCTION()
 	bool DoesPoiBelongsToRace(int64 PoiID, int64 RaceID);
-	
+
+	/** Acteur d'un POI d'une course (teleportation de la camera par le RaceManager). nullptr si absent. */
+	TObjectPtr<AActor> GetPoiActor(int64 PoiID, int64 RaceID);
+
 private:
 	UFUNCTION()
 	void SetRaceSetup(int64 RaceID, FRaceSetup NewRaceSetup);
-	TObjectPtr<AActor> GetPoiActor(int64 PoiID, int64 RaceID);
 	
 	UPROPERTY()
 	FRacePOI POI;

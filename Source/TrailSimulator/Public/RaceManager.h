@@ -175,6 +175,8 @@ public:
 	UFUNCTION()
 	void ToggleRunners_Internal(int64 RaceID, bool bShow) const;
 	
+	/** Vol de la camera face a une cible : Kind 0 = coureur, 1 = checkpoint, 2 = POI. */
+	bool FlyFacing(AActor* Target, int64 RaceID, uint8 Kind) const;
 	UFUNCTION()
 	void TeleportToTeam_Internal(int64 TeamID, int64 RaceID) const;
 	UFUNCTION()
