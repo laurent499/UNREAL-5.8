@@ -37,6 +37,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
+#include "Materials/MaterialInterface.h"
 #include "WorldAmbienceSubsystem.h"
 #include "Cesium3DTileset.h"
 #include "CesiumSampleHeightResult.h"
@@ -80,6 +81,42 @@ namespace PathGlow
 		return bPulse
 			? FMath::Lerp(CVarPulseDay.GetValueOnGameThread(), CVarPulseNight.GetValueOnGameThread(), Night)
 			: FMath::Lerp(CVarGlowDay.GetValueOnGameThread(), CVarGlowNight.GetValueOnGameThread(), Night);
+	}
+}
+
+// -------------------- Style du trace
+/**
+ * Rendu choisi dans le template regie de la course (section "trail") :
+ * classic = materiaux du maillage SM_Cylindre_1x1 (M_MasterPC + M_Glow), tube = tube plein sans disques aux jonctions,
+ * filament = brins tresses. Les deux derniers posent M_GlowFilament sur les deux couches du tube et passent leurs
+ * reglages en donnees de primitive 19..25. ts.Path.Style force un style a la console (-1 = template).
+ */
+namespace PathStyle
+{
+	static TAutoConsoleVariable<int32> CVarStyle(TEXT("ts.Path.Style"), -1, TEXT("Style du trace : -1 = template regie, 0 = classique, 1 = tube plein, 2 = filaments"));
+
+	static UMaterialInterface* FilamentMaterial()
+	{
+		static TSoftObjectPtr<UMaterialInterface> Ptr(FSoftObjectPath(TEXT("/Game/LTVContent/Materials/Masters/M_GlowFilament.M_GlowFilament")));
+		return Ptr.LoadSynchronous();
+	}
+
+	/** 0 classique, 1 tube, 2 filaments. */
+	static int32 StyleIndex(const FTrailTemplateTrail& Trail)
+	{
+		const int32 Forced = CVarStyle.GetValueOnGameThread();
+		if (Forced >= 0) return FMath::Min(Forced, 2);
+		if (Trail.Style.Equals(TEXT("filament"), ESearchCase::IgnoreCase)) return 2;
+		if (Trail.Style.Equals(TEXT("tube"), ESearchCase::IgnoreCase)) return 1;
+		return 0;
+	}
+
+	/** Empreinte des reglages : le trace n'est reecrit que quand elle change. */
+	static uint32 Hash(int32 Style, const FTrailTemplateTrail& T)
+	{
+		uint32 H = GetTypeHash(Style);
+		for (const float V : { T.StrandWidth, T.StrandWave, T.StrandSpeed, T.StrandGain, T.Core, T.MinPx }) H = HashCombine(H, GetTypeHash(V));
+		return H;
 	}
 }
 
@@ -595,10 +632,47 @@ void APath::BeginPlay()
 	PathGlow::PulseBase = -1.f;
 	FTimerHandle GlowTimer;
 	GetWorldTimerManager().SetTimer(GlowTimer, FTimerDelegate::CreateWeakLambda(this,
-		[this, AppliedGlowGain = -1.f, AppliedGlowBase = -1.f, AppliedPulseGain = -1.f, Cursor = MAX_int32]() mutable
+		[this, AppliedGlowGain = -1.f, AppliedGlowBase = -1.f, AppliedPulseGain = -1.f, Cursor = MAX_int32, AppliedStyleHash = 0u, StyledTotal = 0, StyleCursor = MAX_int32, TplSetup = FRaceSetup()]() mutable
 		{
 			const int32 Total = PathSplineMeshes.Num() + SlopeSplineMeshes.Num();
 			if (Total == 0 || !SettingsSubsystem) return;
+
+			// Style du trace (template regie) : reecrit materiaux et reglages par paquets quand ils changent
+			// ou que le trace est reconstruit
+			// (setup lu une seule fois : le trace existe, donc la course est connue de RaceSubsystem)
+			if (TplSetup.raceId == 0 && RaceSubsystem) TplSetup = RaceSubsystem->GetRaceSetupById(RaceId);
+			TOptional<FTrailTemplate> TplStorage;
+			const FTrailTemplateTrail& Trail = UTemplateSubsystem::ResolveForRace(this, TplSetup, TplStorage).Trail;
+			const int32 Style = PathStyle::StyleIndex(Trail);
+			const uint32 StyleHash = PathStyle::Hash(Style, Trail);
+			if (StyleHash != AppliedStyleHash || Total != StyledTotal)
+			{
+				AppliedStyleHash = StyleHash;
+				StyledTotal = Total;
+				StyleCursor = 0;
+			}
+			if (StyleCursor < Total)
+			{
+				UMaterialInterface* Mat = Style > 0 ? PathStyle::FilamentMaterial() : nullptr; // nullptr = materiaux du maillage
+				for (const int32 End = FMath::Min(StyleCursor + PathGlow::MeshesPerStep, Total); StyleCursor < End; ++StyleCursor)
+				{
+					USplineMeshComponent* SMC = StyleCursor < PathSplineMeshes.Num() ? PathSplineMeshes[StyleCursor].Get() : SlopeSplineMeshes[StyleCursor - PathSplineMeshes.Num()].Get();
+					if (!SMC) continue;
+					for (int32 m = 0; m < SMC->GetNumMaterials(); ++m) SMC->SetMaterial(m, Mat);
+					// M_GlowFilament grossit le tube de loin (largeur mini a l'ecran) : bornes elargies pour le culling
+					SMC->SetBoundsScale(Mat ? 16.f : 1.f);
+					if (Mat)
+					{
+						SMC->SetCustomPrimitiveDataFloat(19, Style == 2 ? 1.f : 0.f);
+						SMC->SetCustomPrimitiveDataFloat(20, Trail.StrandWidth);
+						SMC->SetCustomPrimitiveDataFloat(21, Trail.StrandWave);
+						SMC->SetCustomPrimitiveDataFloat(22, Trail.StrandSpeed);
+						SMC->SetCustomPrimitiveDataFloat(23, Trail.StrandGain);
+						SMC->SetCustomPrimitiveDataFloat(24, Trail.Core);
+						SMC->SetCustomPrimitiveDataFloat(25, Trail.MinPx);
+					}
+				}
+			}
 
 			if (UMaterialParameterCollection* MPC = PulseMPC.LoadSynchronous())
 			{
@@ -841,6 +915,9 @@ void APath::RebuildPathSplineMeshes(int64 RaceID)
 		SMC->SetCustomPrimitiveDataFloat(11, 0.f); // UseSlope = 0	M_MasterPC
 		SMC->SetCustomPrimitiveDataVector4(12, LinearColor); // Color (12->15)
 		SMC->SetCustomPrimitiveDataFloat(16, SettingsSubsystem->GetGlowById(RaceID) * PathGlow::Gain(GetWorld(), false));
+		// M_GlowFilament : abscisse de debut et longueur du troncon en metres (brins continus d'un troncon a l'autre)
+		SMC->SetCustomPrimitiveDataFloat(17, StartDist * 0.01f);
+		SMC->SetCustomPrimitiveDataFloat(18, (EndDist - StartDist) * 0.01f);
 		SMC->SetHiddenInGame(true);
 	}
 	Root->SetMobility(EComponentMobility::Movable);
@@ -990,6 +1067,11 @@ void APath::RebuildSlopeSplineMeshes(int64 RaceID)
 			SMC->SetCustomPrimitiveDataFloat(13, Junction[B]);	// valeur a la jonction de fin
 			SMC->SetCustomPrimitiveDataFloat(11, 1.f);	// UseSlope = 1
 			SMC->SetCustomPrimitiveDataFloat(16, SettingsSubsystem->GetGlowById(RaceID) * PathGlow::Gain(GetWorld(), false));
+			// M_GlowFilament : abscisse de debut et longueur de CE troncon en metres (0/1 ci-dessus couvrent tout le segment de pente)
+			const float DistA = SplinePath->GetDistanceAlongSplineAtSplinePoint(A);
+			const float DistB = SplinePath->GetDistanceAlongSplineAtSplinePoint(B);
+			SMC->SetCustomPrimitiveDataFloat(17, DistA * 0.01f);
+			SMC->SetCustomPrimitiveDataFloat(18, (DistB - DistA) * 0.01f);
 			SMC->SetHiddenInGame(true);
 		}
 	}
@@ -1222,9 +1304,12 @@ void APath::ChangeSlopeVisibility(bool bShowPath)
 }
 void APath::ChangeKmsVisibility(bool bShowKm)
 {
-	for (auto km : Kms[RaceId])
+	// Find plutot que [] : bornes pas encore construites (trace en cours de dessin) = rien a faire, pas d'assert
+	const TArray<TObjectPtr<AKm>>* RaceKms = Kms.Find(RaceId);
+	if (!RaceKms) return;
+	for (const TObjectPtr<AKm>& km : *RaceKms)
 	{
-		km->SetActorHiddenInGame(!bShowKm);
+		if (IsValid(km)) km->SetActorHiddenInGame(!bShowKm);
 	}
 }
 

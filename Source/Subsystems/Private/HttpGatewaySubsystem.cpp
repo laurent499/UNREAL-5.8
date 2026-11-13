@@ -11,6 +11,7 @@
 #include "WorldAmbienceSubsystem.h"
 #include "TemplateSubsystem.h"
 #include "StyleSubsystem.h"
+#include "SettingsSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "Dom/JsonObject.h"
@@ -917,6 +918,28 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
             AsyncTask(ENamedThreads::GameThread,[this, GlobalValue, idrace]()
             {
                 OnUpdateOffset.Broadcast(GlobalValue, idrace);
+            });
+        }
+        // Hauteur absolue de la trace : group=settings&action=zoffsetset&idrace=XX&value=cm
+        // (zoffset, lui, AJOUTE value au decalage courant). 0 = trace a son altitude GPS.
+        if (Action.Equals(TEXT("zoffsetset"), ESearchCase::IgnoreCase))
+        {
+            if (const FString* ZOffsetValueStr = Request.QueryParams.Find(TEXT("value")))
+            {
+                GlobalValue = FCString::Atof(**ZOffsetValueStr);
+            }
+            if (const FString* idraceStr = Request.QueryParams.Find(TEXT("idrace")))
+            {
+                idrace = FCString::Atoi64(**idraceStr);
+            }
+            TWeakObjectPtr<UGameInstance> WeakGI(GetGameInstance());
+            AsyncTask(ENamedThreads::GameThread,[this, WeakGI, GlobalValue, idrace]()
+            {
+                USettingsSubsystem* Settings = WeakGI.IsValid() ? WeakGI->GetSubsystem<USettingsSubsystem>() : nullptr;
+                if (!Settings || !Settings->DoesSettingsExist(idrace)) return;
+                const float Delta = GlobalValue - Settings->GetZOffsetById(idrace);
+                if (FMath::IsNearlyZero(Delta)) return;
+                OnUpdateOffset.Broadcast(Delta, idrace);
             });
         }
         // Path Glow

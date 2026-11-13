@@ -175,6 +175,8 @@ public:
 	UFUNCTION()
 	void ToggleRunners_Internal(int64 RaceID, bool bShow) const;
 	
+	/** Vol de la camera face a une cible : Kind 0 = coureur, 1 = checkpoint, 2 = POI. */
+	bool FlyFacing(AActor* Target, int64 RaceID, uint8 Kind) const;
 	UFUNCTION()
 	void TeleportToTeam_Internal(int64 TeamID, int64 RaceID) const;
 	UFUNCTION()
@@ -511,6 +513,18 @@ private:
 	FRaceEntries AllRaces;
 	UFUNCTION()
 	void PerformHttpRequestForRaces();
+
+	// Placement au lancement sur la premiere course de la regie (ordre de GET regie/N/races)
+	TArray<int64> StartupRaceOrder;
+	TSet<int64> StartupPendingRaces;
+	bool bStartupPlacementDone = false;
+	FTimerHandle StartupPlacementHandle;
+	void TryStartupPlacement(bool bForce = false);
+	void PlaceOnRaceAtStartup(int64 RaceID);
+	void RestoreOriginOnCurrentRace(int64 JustDrawnRaceID);
+	// Surelevation max du vol MoveToRace selon la distance (remplace la courbe Cesium par defaut)
+	UPROPERTY(Transient)
+	TObjectPtr<class UCurveFloat> FlyHeightCurve;
 	UPROPERTY()
 	FString RunnersEndpoint;	
 	UPROPERTY()
@@ -565,6 +579,7 @@ private:
 	UFUNCTION()
 	void UpdateUdsTime();
 	void AlignSkyToGlobe();
+	void FollowOriginWithCamera();
 	bool bSkyGlobeSetup = false;
 	UPROPERTY()
 	bool bIsDay = false;

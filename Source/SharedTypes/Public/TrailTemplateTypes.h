@@ -71,6 +71,28 @@ struct SHAREDTYPES_API FTrailTemplateRunner
 	UPROPERTY(BlueprintReadOnly) float Height = 100.f;
 };
 
+/** Rendu du tracé lumineux de la course. */
+USTRUCT(BlueprintType)
+struct SHAREDTYPES_API FTrailTemplateTrail
+{
+	GENERATED_BODY()
+
+	/** "classic" = matériaux d'origine du tube, "tube" = tube plein sans disques aux jonctions, "filament" = brins tressés. */
+	UPROPERTY(BlueprintReadOnly) FString Style = TEXT("classic");
+	/** Largeur d'un brin (part du demi-tour du tube). */
+	UPROPERTY(BlueprintReadOnly) float StrandWidth = 0.035f;
+	/** Longueur d'onde de la tresse, en mètres. */
+	UPROPERTY(BlueprintReadOnly) float StrandWave = 260.f;
+	/** Vitesse de la vague qui court le long du tracé (0 = figée). */
+	UPROPERTY(BlueprintReadOnly) float StrandSpeed = 0.8f;
+	/** Éclat des brins. */
+	UPROPERTY(BlueprintReadOnly) float StrandGain = 1.6f;
+	/** Éclat du cœur glow sous les brins. */
+	UPROPERTY(BlueprintReadOnly) float Core = 0.8f;
+	/** Largeur minimale du tracé à l'écran, en pixels (tube et filaments). */
+	UPROPERTY(BlueprintReadOnly) float MinPx = 14.f;
+};
+
 /** Bornes kilométriques (« 14 Km ») : fond derrière la distance pour la lire sur le terrain. */
 USTRUCT(BlueprintType)
 struct SHAREDTYPES_API FTrailTemplateKm
@@ -103,6 +125,7 @@ struct SHAREDTYPES_API FTrailTemplate
 	UPROPERTY(BlueprintReadOnly) FTrailTemplateStack Poi;
 	UPROPERTY(BlueprintReadOnly) FTrailTemplateRunner Runner;
 	UPROPERTY(BlueprintReadOnly) FTrailTemplateKm Km;
+	UPROPERTY(BlueprintReadOnly) FTrailTemplateTrail Trail;
 
 	/**
 	 * @brief Convertit une couleur du template en linéaire.
