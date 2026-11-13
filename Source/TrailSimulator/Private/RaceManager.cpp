@@ -649,7 +649,15 @@ void ARaceManager::AlignSkyToGlobe()
 		static constexpr float DenseFogDensity = 0.008f;
 		static constexpr double ClearSkyCutoffCm = 30000000.0;
 		const double CameraAltCm = FMath::Max(0.0, LLH.Z * 100.0);
-		const double HorizonCm = FMath::Sqrt(2.0 * double(Atmosphere->BottomRadius) * 100000.0 * CameraAltCm);
+		// Horizon du sol + horizon du sommet des nuages : au-dela de l'horizon du sol, des nuages restent
+		// visibles ; hors coupure ils ne seraient plus voiles et formeraient un lisere net (Cape Town 13/11).
+		double CloudTopCm = 0.0;
+		if (const UVolumetricCloudComponent* CloudLayer = UDSActor->FindComponentByClass<UVolumetricCloudComponent>())
+		{
+			CloudTopCm = FMath::Max(0.0, double(CloudLayer->LayerBottomAltitude + CloudLayer->LayerHeight)) * 100000.0;
+		}
+		const double RadiusCm = double(Atmosphere->BottomRadius) * 100000.0;
+		const double HorizonCm = FMath::Sqrt(2.0 * RadiusCm * CameraAltCm) + FMath::Sqrt(2.0 * RadiusCm * CloudTopCm);
 		const float WantedCutoff = Fog->FogDensity > DenseFogDensity ? 0.f
 			: float(FMath::Max(ClearSkyCutoffCm, HorizonCm * 1.1));
 		if (WantedCutoff == 0.f ? Fog->FogCutoffDistance != 0.f
@@ -672,7 +680,7 @@ void ARaceManager::AlignSkyToGlobe()
 			bFaded = GroundFade < 1.f;
 			if (UExponentialHeightFogComponent* Fog = UDSActor->FindComponentByClass<UExponentialHeightFogComponent>())
 			{
-				if (!FMath::IsNearlyEqual(Fog->FogMaxOpacity, GroundFade, 0.005f))
+				if (GroundFade >= 1.f ? Fog->FogMaxOpacity != 1.f : !FMath::IsNearlyEqual(Fog->FogMaxOpacity, GroundFade, 0.005f))
 				{
 					Fog->SetFogMaxOpacity(GroundFade);
 				}
@@ -715,8 +723,9 @@ void ARaceManager::AlignSkyToGlobe()
 		const double CameraAltKm = FMath::Max(0.0, (Camera - Center).Size() / 100000.0 - RadiusKm);
 		const double CloudTopKm = FMath::Max(0.0, double(Cloud->LayerBottomAltitude + Cloud->LayerHeight));
 		const double HorizonKm = FMath::Sqrt(2.0 * RadiusKm * CameraAltKm) + FMath::Sqrt(2.0 * RadiusKm * CloudTopKm);
-		const float Wanted = float(FMath::Min(HorizonKm * 1.05, 5000.0));
-		if (Cloud->TracingStartMaxDistance < Wanted * 0.95f)
+		// Suit l'horizon dans les deux sens (UDS ne remet pas sa valeur en redescendant)
+		const float Wanted = float(FMath::Clamp(HorizonKm * 1.05, 400.0, 5000.0));
+		if (FMath::Abs(Cloud->TracingStartMaxDistance - Wanted) > Wanted * 0.05f)
 		{
 			Cloud->SetTracingStartMaxDistance(Wanted);
 		}
