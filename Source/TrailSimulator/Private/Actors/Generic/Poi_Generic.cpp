@@ -73,8 +73,8 @@ void APoi_Generic::UpdatePoi(FRacePOI PoiData, FRaceSetup RaceSetup)
 	MainPictoColor = Lin(Style.MainPicto);
 
 	// Fonds arrondis : filets recentrés entre les fonds et raccourcis aux arrondis
-	RoundedPanel::FitLine(Line1Component, NameBkgComponent, InfosBkgComponent, Tpl.Globals.CornerRadius);
-	RoundedPanel::FitLine(Line2Component, InfosBkgComponent, WeatherBkgComponent, Tpl.Globals.CornerRadius);
+	RoundedPanel::FitLine(Line1Component, NameBkgComponent, InfosBkgComponent, Tpl.Globals.CornerRadius, Tpl.Globals.Slant);
+	RoundedPanel::FitLine(Line2Component, InfosBkgComponent, WeatherBkgComponent, Tpl.Globals.CornerRadius, Tpl.Globals.Slant);
 	// Picto altitude un peu plus discret dans son bandeau (0,2 à l'origine)
 	if (AltPicto) AltPicto->SetRelativeScale3D(FVector(0.16f));
 	
@@ -165,6 +165,7 @@ void APoi_Generic::UpdatePoi(FRacePOI PoiData, FRaceSetup RaceSetup)
 		InfosBkgComponent->SetCustomPrimitiveDataFloat(5, 1.f);
 		UseRoundedBkg_PoiGeneric(InfosBkgComponent);
 		InfosBkgComponent->SetCustomPrimitiveDataFloat(6, Tpl.Globals.CornerRadius); // arrondi des coins (M_Plain)
+		InfosBkgComponent->SetCustomPrimitiveDataFloat(8, Tpl.Globals.Slant); // biseau en degres (M_PlainRounded)
 		
 		const FString AltPath = FString::Printf(
 			TEXT("/Game/LTVContent/2D/Pictos/%s/peak.peak"), *Tpl.Globals.PictoSet);
@@ -202,6 +203,7 @@ void APoi_Generic::UpdatePoi(FRacePOI PoiData, FRaceSetup RaceSetup)
 		WeatherBkgComponent->SetCustomPrimitiveDataFloat(5, 1.f);
 		UseRoundedBkg_PoiGeneric(WeatherBkgComponent);
 		WeatherBkgComponent->SetCustomPrimitiveDataFloat(6, Tpl.Globals.CornerRadius); // arrondi des coins (M_Plain)
+		WeatherBkgComponent->SetCustomPrimitiveDataFloat(8, Tpl.Globals.Slant); // biseau en degres (M_PlainRounded)
 	}
 	
 	if (TempText)

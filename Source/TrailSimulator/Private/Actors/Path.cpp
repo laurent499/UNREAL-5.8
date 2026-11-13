@@ -37,6 +37,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
+#include "Materials/MaterialInterface.h"
 #include "WorldAmbienceSubsystem.h"
 #include "Cesium3DTileset.h"
 #include "CesiumSampleHeightResult.h"
@@ -80,6 +81,42 @@ namespace PathGlow
 		return bPulse
 			? FMath::Lerp(CVarPulseDay.GetValueOnGameThread(), CVarPulseNight.GetValueOnGameThread(), Night)
 			: FMath::Lerp(CVarGlowDay.GetValueOnGameThread(), CVarGlowNight.GetValueOnGameThread(), Night);
+	}
+}
+
+// -------------------- Style du trace
+/**
+ * Rendu choisi dans le template regie de la course (section "trail") :
+ * classic = materiaux du maillage SM_Cylindre_1x1 (M_MasterPC + M_Glow), tube = tube plein sans disques aux jonctions,
+ * filament = brins tresses. Les deux derniers posent M_GlowFilament sur les deux couches du tube et passent leurs
+ * reglages en donnees de primitive 19..25. ts.Path.Style force un style a la console (-1 = template).
+ */
+namespace PathStyle
+{
+	static TAutoConsoleVariable<int32> CVarStyle(TEXT("ts.Path.Style"), -1, TEXT("Style du trace : -1 = template regie, 0 = classique, 1 = tube plein, 2 = filaments"));
+
+	static UMaterialInterface* FilamentMaterial()
+	{
+		static TSoftObjectPtr<UMaterialInterface> Ptr(FSoftObjectPath(TEXT("/Game/LTVContent/Materials/Masters/M_GlowFilament.M_GlowFilament")));
+		return Ptr.LoadSynchronous();
+	}
+
+	/** 0 classique, 1 tube, 2 filaments. */
+	static int32 StyleIndex(const FTrailTemplateTrail& Trail)
+	{
+		const int32 Forced = CVarStyle.GetValueOnGameThread();
+		if (Forced >= 0) return FMath::Min(Forced, 2);
+		if (Trail.Style.Equals(TEXT("filament"), ESearchCase::IgnoreCase)) return 2;
+		if (Trail.Style.Equals(TEXT("tube"), ESearchCase::IgnoreCase)) return 1;
+		return 0;
+	}
+
+	/** Empreinte des reglages : le trace n'est reecrit que quand elle change. */
+	static uint32 Hash(int32 Style, const FTrailTemplateTrail& T)
+	{
+		uint32 H = GetTypeHash(Style);
+		for (const float V : { T.StrandWidth, T.StrandWave, T.StrandSpeed, T.StrandGain, T.Core, T.MinPx }) H = HashCombine(H, GetTypeHash(V));
+		return H;
 	}
 }
 
@@ -595,10 +632,47 @@ void APath::BeginPlay()
 	PathGlow::PulseBase = -1.f;
 	FTimerHandle GlowTimer;
 	GetWorldTimerManager().SetTimer(GlowTimer, FTimerDelegate::CreateWeakLambda(this,
-		[this, AppliedGlowGain = -1.f, AppliedGlowBase = -1.f, AppliedPulseGain = -1.f, Cursor = MAX_int32]() mutable
+		[this, AppliedGlowGain = -1.f, AppliedGlowBase = -1.f, AppliedPulseGain = -1.f, Cursor = MAX_int32, AppliedStyleHash = 0u, StyledTotal = 0, StyleCursor = MAX_int32, TplSetup = FRaceSetup()]() mutable
 		{
 			const int32 Total = PathSplineMeshes.Num() + SlopeSplineMeshes.Num();
 			if (Total == 0 || !SettingsSubsystem) return;
+
+			// Style du trace (template regie) : reecrit materiaux et reglages par paquets quand ils changent
+			// ou que le trace est reconstruit
+			// (setup lu une seule fois : le trace existe, donc la course est connue de RaceSubsystem)
+			if (TplSetup.raceId == 0 && RaceSubsystem) TplSetup = RaceSubsystem->GetRaceSetupById(RaceId);
+			TOptional<FTrailTemplate> TplStorage;
+			const FTrailTemplateTrail& Trail = UTemplateSubsystem::ResolveForRace(this, TplSetup, TplStorage).Trail;
+			const int32 Style = PathStyle::StyleIndex(Trail);
+			const uint32 StyleHash = PathStyle::Hash(Style, Trail);
+			if (StyleHash != AppliedStyleHash || Total != StyledTotal)
+			{
+				AppliedStyleHash = StyleHash;
+				StyledTotal = Total;
+				StyleCursor = 0;
+			}
+			if (StyleCursor < Total)
+			{
+				UMaterialInterface* Mat = Style > 0 ? PathStyle::FilamentMaterial() : nullptr; // nullptr = materiaux du maillage
+				for (const int32 End = FMath::Min(StyleCursor + PathGlow::MeshesPerStep, Total); StyleCursor < End; ++StyleCursor)
+				{
+					USplineMeshComponent* SMC = StyleCursor < PathSplineMeshes.Num() ? PathSplineMeshes[StyleCursor].Get() : SlopeSplineMeshes[StyleCursor - PathSplineMeshes.Num()].Get();
+					if (!SMC) continue;
+					for (int32 m = 0; m < SMC->GetNumMaterials(); ++m) SMC->SetMaterial(m, Mat);
+					// M_GlowFilament grossit le tube de loin (largeur mini a l'ecran) : bornes elargies pour le culling
+					SMC->SetBoundsScale(Mat ? 16.f : 1.f);
+					if (Mat)
+					{
+						SMC->SetCustomPrimitiveDataFloat(19, Style == 2 ? 1.f : 0.f);
+						SMC->SetCustomPrimitiveDataFloat(20, Trail.StrandWidth);
+						SMC->SetCustomPrimitiveDataFloat(21, Trail.StrandWave);
+						SMC->SetCustomPrimitiveDataFloat(22, Trail.StrandSpeed);
+						SMC->SetCustomPrimitiveDataFloat(23, Trail.StrandGain);
+						SMC->SetCustomPrimitiveDataFloat(24, Trail.Core);
+						SMC->SetCustomPrimitiveDataFloat(25, Trail.MinPx);
+					}
+				}
+			}
 
 			if (UMaterialParameterCollection* MPC = PulseMPC.LoadSynchronous())
 			{
@@ -841,6 +915,9 @@ void APath::RebuildPathSplineMeshes(int64 RaceID)
 		SMC->SetCustomPrimitiveDataFloat(11, 0.f); // UseSlope = 0	M_MasterPC
 		SMC->SetCustomPrimitiveDataVector4(12, LinearColor); // Color (12->15)
 		SMC->SetCustomPrimitiveDataFloat(16, SettingsSubsystem->GetGlowById(RaceID) * PathGlow::Gain(GetWorld(), false));
+		// M_GlowFilament : abscisse de debut et longueur du troncon en metres (brins continus d'un troncon a l'autre)
+		SMC->SetCustomPrimitiveDataFloat(17, StartDist * 0.01f);
+		SMC->SetCustomPrimitiveDataFloat(18, (EndDist - StartDist) * 0.01f);
 		SMC->SetHiddenInGame(true);
 	}
 	Root->SetMobility(EComponentMobility::Movable);
@@ -990,6 +1067,11 @@ void APath::RebuildSlopeSplineMeshes(int64 RaceID)
 			SMC->SetCustomPrimitiveDataFloat(13, Junction[B]);	// valeur a la jonction de fin
 			SMC->SetCustomPrimitiveDataFloat(11, 1.f);	// UseSlope = 1
 			SMC->SetCustomPrimitiveDataFloat(16, SettingsSubsystem->GetGlowById(RaceID) * PathGlow::Gain(GetWorld(), false));
+			// M_GlowFilament : abscisse de debut et longueur de CE troncon en metres (0/1 ci-dessus couvrent tout le segment de pente)
+			const float DistA = SplinePath->GetDistanceAlongSplineAtSplinePoint(A);
+			const float DistB = SplinePath->GetDistanceAlongSplineAtSplinePoint(B);
+			SMC->SetCustomPrimitiveDataFloat(17, DistA * 0.01f);
+			SMC->SetCustomPrimitiveDataFloat(18, (DistB - DistA) * 0.01f);
 			SMC->SetHiddenInGame(true);
 		}
 	}
@@ -1183,9 +1265,13 @@ void APath::UpdatePulseGlow(float NewPulseGlow) const
  * @brief Toggle displays
  * @param bShowPath 
  */
+namespace PathDrape { extern TSet<TWeakObjectPtr<APath>> PendingApply; }
+
 void APath::ChangePathVisibility(bool bShowPath)
 {
 	bPathShown = bShowPath;
+	// Hauteurs du drape arrivees pendant que le trace etait cache : appliquees une fois, maintenant
+	if (bShowPath && PathDrape::PendingApply.Contains(this)) ApplyDrape();
 	if (PathSplineMeshes.Num() > 0)
 	{
 		for (TObjectPtr<USplineMeshComponent> SplineMeshComponent : PathSplineMeshes)
@@ -1449,6 +1535,11 @@ namespace PathDrape
 
 	/** Hauteur du sol d'une requete que Cesium n'a pas (encore) servie */
 	static constexpr double NoGround = -1.0e9;
+	/** Requete servie par Cesium sans sol (mer, trou de tuiles) : mise en cache pour ne pas la redemander a chaque lancement */
+	static constexpr double NoSample = -2.0e9;
+
+	/** Traces caches dont le drape a recu des hauteurs : applique a l'affichage plutot qu'a chaque paquet (~15 ms de game thread) */
+	TSet<TWeakObjectPtr<APath>> PendingApply;
 
 	/** Tileset du sol : Google Photorealistic si on le reconnait, sinon le premier visible */
 	static ACesium3DTileset* FindGroundTileset(UWorld* World)
@@ -1456,7 +1547,8 @@ namespace PathDrape
 		ACesium3DTileset* Fallback = nullptr;
 		for (TActorIterator<ACesium3DTileset> It(World); It; ++It)
 		{
-			if (It->IsHidden()) continue;
+			// Relief du style Carto : pas le sol de reference (le cache de drape garde les hauteurs Google)
+			if (It->IsHidden() || It->ActorHasTag(TEXT("LTV_StyleTerrain"))) continue;
 			if (It->GetActorNameOrLabel().Contains(TEXT("Google"))) return *It;
 			if (!Fallback) Fallback = *It;
 		}
@@ -1488,7 +1580,8 @@ void APath::DrapeOnTerrain(bool bForceResample)
 		{
 			DrapeBaseLLH[i] = Georef->TransformUnrealPositionToLongitudeLatitudeHeight(SplinePath->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::World));
 		}
-		DrapeActorRef = GetActorLocation();
+		// En (lon, lat, hauteur) : la position Unreal change a chaque deplacement de l'origine (MoveToRace)
+		DrapeActorRef = Georef->TransformUnrealPositionToLongitudeLatitudeHeight(GetActorLocation());
 	}
 
 	// Requetes : chaque point GPS (alpha 0) puis des points intermediaires sur la corde vers le suivant
@@ -1541,10 +1634,11 @@ void APath::DrapeOnTerrain(bool bForceResample)
 	DrapeMissing.Reset();
 	for (int32 q = 0; q < DrapeGround.Num(); ++q)
 	{
-		if (DrapeGround[q] <= PathDrape::NoGround) DrapeMissing.Add(q);
+		if (DrapeGround[q] == PathDrape::NoGround) DrapeMissing.Add(q);
 	}
 	++DrapeGeneration;
 	UE_LOG(LogTemp, Log, TEXT("Path %lld : drape, %d/%d hauteurs en cache, %d a demander"), RaceId, DrapeQuery.Num() - DrapeMissing.Num(), DrapeQuery.Num(), DrapeMissing.Num());
+	PathDrape::PendingApply.Remove(this);
 	if (DrapeMissing.Num() < DrapeQuery.Num()) ApplyDrape();
 	RequestNextDrapeChunk(DrapeGeneration);
 }
@@ -1580,14 +1674,19 @@ void APath::RequestNextDrapeChunk(int32 Generation)
 					Self->DrapeGround[Indices[k]] = Results[k].LongitudeLatitudeHeight.Z;
 					++Ok;
 				}
+				else
+				{
+					Self->DrapeGround[Indices[k]] = PathDrape::NoSample;
+				}
 			}
 			if (Warnings.Num() > 0) UE_LOG(LogTemp, Warning, TEXT("Path %lld : drape, %s"), Self->RaceId, *Warnings[0]);
 			UE_LOG(LogTemp, Log, TEXT("Path %lld : drape, paquet %d/%d hauteurs en %.1f s, reste %d"),
 				Self->RaceId, Ok, Indices.Num(), FPlatformTime::Seconds() - StartTime, Self->DrapeMissing.Num());
+			PathDrape::SaveCache(Self->DrapeCachePath, Self->DrapeGround);
 			if (Ok > 0)
 			{
-				PathDrape::SaveCache(Self->DrapeCachePath, Self->DrapeGround);
-				Self->ApplyDrape();
+				if (Self->bPathShown) Self->ApplyDrape();
+				else PathDrape::PendingApply.Add(Self);
 			}
 			Self->RequestNextDrapeChunk(Generation);
 		}));
@@ -1706,13 +1805,15 @@ void APath::ApplyDrape()
 	}
 
 	// Le decalage ZOffset regie applique depuis (AddActorWorldOffset) est conserve
-	const FVector ActorShift = GetActorLocation() - DrapeActorRef;
+	// (ecart de hauteur de l'acteur depuis la reference, independant de l'origine du georeference)
+	PathDrape::PendingApply.Remove(this);
+	const double ActorShiftM = Georef->TransformUnrealPositionToLongitudeLatitudeHeight(GetActorLocation()).Z - DrapeActorRef.Z;
 	double SumShift = 0.0;
 	for (int32 i = 0; i < NumPts; ++i)
 	{
 		const double Final = H[i] + Lift[i];
 		SumShift += Final - DrapeBaseLLH[i].Z;
-		const FVector P = Georef->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(DrapeBaseLLH[i].X, DrapeBaseLLH[i].Y, Final)) + ActorShift;
+		const FVector P = Georef->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(DrapeBaseLLH[i].X, DrapeBaseLLH[i].Y, Final + ActorShiftM));
 		SplinePath->SetLocationAtSplinePoint(i, P, ESplineCoordinateSpace::World, false);
 		SlopePath->SetLocationAtSplinePoint(i, P, ESplineCoordinateSpace::World, false);
 	}

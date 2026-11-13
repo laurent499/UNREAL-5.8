@@ -25,7 +25,12 @@ public:
 	TObjectPtr<class ARaceManager> RaceManager;
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	void OnLookAtTimerTick();
+
+	/** Couleur du texte et fond derrière la distance, d'après la section km du template de la course. */
+	void ApplyKmStyle() const;
+	void HandleTemplateChanged(const FString& TemplateName);
 	
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<class UStaticMeshComponent> StaticMeshComp;
@@ -36,6 +41,13 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<class UTextRenderComponent> LabelComp;
+	/** Fond derrière la distance (Bkg_Plain + M_PlainRounded, comme les fonds des checkpoints). */
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<class USplineMeshComponent> BkgComp;
+
+	/** Course de la borne, retenue par UpdateKm (const, imposé par IKmInterface) pour rejouer le template. */
+	mutable int64 KmRaceID = 0;
+	FDelegateHandle TemplateChangedHandle;
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<class USettingsSubsystem> SettingsSubsystem;
 	UPROPERTY(EditDefaultsOnly)
