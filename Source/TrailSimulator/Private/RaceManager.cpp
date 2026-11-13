@@ -10,6 +10,11 @@
 #include "PoiSubsystem.h"
 #include "HttpGatewaySubsystem.h"
 #include "LoadingStatusSubsystem.h"
+// Cible jeu : windows.h (inclus plus haut via Cesium) definit la macro GetEnvironmentVariable,
+// qui casse FPlatformMisc::GetEnvironmentVariable dans FOWLSaveToFileSettings.h (OWL).
+#ifdef GetEnvironmentVariable
+#undef GetEnvironmentVariable
+#endif
 #include "OWLViewportCapture.h"
 #include "OWLMediaOutput.h"
 #include "OWLMediaOutputComponent.h"
@@ -47,6 +52,7 @@
 #include "Widgets/SWeakWidget.h"
 #include "Engine/EngineTypes.h"
 #include "Math/UnrealMathUtility.h" // FMath::IsFinite
+#include "Curves/CurveFloat.h"
 
 /**
  * @brief Ensure Subsystems in Internal methods
@@ -137,6 +143,52 @@ bool ARaceManager::RefreshSubsystemsFromPIE() const
 	return false;
 }
 
+/**
+ * Point de vue d'arrivee sur une course (MoveToRace et lancement).
+ * Hauteur : point le plus haut du trace + 1000 m (au-dessus des cretes, tuiles grossieres comprises),
+ * plutot que depart + 5000 m. Camera inclinee a 45 deg, reculee pour viser le depart, tournee vers le
+ * gros du trace (barycentre, ou premier point a plus de 500 m pour une boucle).
+ * Sortie : lon/lat/hauteur, yaw et pitch en East-South-Up (convention Cesium FlyTo).
+ */
+static bool ComputeRaceViewpoint(const FRacePath& Path, FVector& OutLonLatHeight, double& OutYaw, double& OutPitch)
+{
+	if (Path.Points.IsEmpty()) return false;
+	static constexpr double MarginM = 1000.0;
+	static constexpr double PitchDeg = -45.0;
+	static constexpr double MPerDegLat = 110540.0;
+
+	const FRacePathPoint& P0 = Path.Points[0];
+	const double MPerDegLon = 111320.0 * FMath::Max(0.01, FMath::Cos(FMath::DegreesToRadians(double(P0.lat))));
+
+	double MaxEle = P0.ele;
+	FVector2D Sum(0.0, 0.0); // (est, nord) en metres depuis le depart
+	FVector2D FirstFar(0.0, 0.0);
+	for (const FRacePathPoint& P : Path.Points)
+	{
+		MaxEle = FMath::Max(MaxEle, double(P.ele));
+		const FVector2D EN((P.lon - P0.lon) * MPerDegLon, (P.lat - P0.lat) * MPerDegLat);
+		Sum += EN;
+		if (FirstFar.IsNearlyZero() && EN.SizeSquared() > 500.0 * 500.0)
+		{
+			FirstFar = EN;
+		}
+	}
+	FVector2D Dir = Sum / double(Path.Points.Num());
+	if (Dir.SizeSquared() < 200.0 * 200.0) Dir = FirstFar;
+	Dir = Dir.IsNearlyZero() ? FVector2D(1.0, 0.0) : Dir.GetSafeNormal();
+
+	const double Height = MaxEle + MarginM;
+	// A 45 deg, reculer d'autant que la hauteur au-dessus du depart pour l'avoir au centre de l'image
+	const double Back = FMath::Max(0.0, Height - double(P0.ele)) / FMath::Tan(FMath::DegreesToRadians(-PitchDeg));
+	OutLonLatHeight = FVector(
+		P0.lon - Dir.X * Back / MPerDegLon,
+		P0.lat - Dir.Y * Back / MPerDegLat,
+		Height);
+	OutYaw = FMath::RadiansToDegrees(FMath::Atan2(-Dir.Y, Dir.X)); // ESU : 0 = est, 90 = sud
+	OutPitch = PitchDeg;
+	return true;
+}
+
 static FString SanitizeKey(FString S)
 {
 	S.ReplaceInline(TEXT(" "), TEXT(""));
@@ -185,13 +237,15 @@ static bool CallBP_GetFloatOut(UObject* Obj, FName FunctionName, const FString& 
 			break;
 		}
 
-		// Match par DisplayName (meta)
+#if WITH_METADATA
+		// Match par DisplayName (meta) : metadonnees absentes du jeu package
 		const FString Display = P->GetMetaData(TEXT("DisplayName"));
 		if (!Display.IsEmpty() && SanitizeKey(Display) == WantedKey)
 		{
 			Best = P;
 			break;
 		}
+#endif
 	}
 
 	FProperty* Target = Best ? Best : FirstOut;
@@ -660,6 +714,9 @@ void ARaceManager::HandleRaceSetupDatasGathered(int64 RaceID, FRaceSetup RaceSet
 		LoadingSubsystem->Fail(IdPois, FText::FromString(FString::Printf(TEXT("Loading Pois for Race %lld failed"), RaceID)));
 		LoadingSubsystem->Fail(IdCheckpoints, FText::FromString(FString::Printf(TEXT("Loading Checkpoints for Race %lld failed"), RaceID)));
 		LoadingSubsystem->Fail(IdPath, FText::FromString(FString::Printf(TEXT("Loading PathHandlePathDatas for Race %lld failed"), RaceID)));
+		// Course sans setup valide : pas de trace a attendre pour le placement de depart
+		StartupPendingRaces.Remove(RaceID);
+		TryStartupPlacement();
 		return;
 	}
 	
@@ -714,6 +771,105 @@ void ARaceManager::HandlePathDatasGathered(int64 RaceID, FRacePath RacePathDatas
 	{
 		LoadingSubsystem->Fail(IdPath, FText::FromString(FString::Printf(TEXT("No Point in Path for Race %lld failed"), RaceID)));
 	}
+
+	// DrawPath vient de caler l'origine du georef sur le depart de CETTE course : une fois la camera
+	// placee, on remet l'origine sur la course affichee, sinon la vue partirait sur la derniere course chargee.
+	RestoreOriginOnCurrentRace(RaceID);
+	StartupPendingRaces.Remove(RaceID);
+	TryStartupPlacement();
+}
+
+/**
+ * @brief Place la camera sur la premiere course de la regie ayant un trace.
+ * Attend que les courses precedentes dans la liste soient tranchees (trace recu ou echec), sauf bForce (filet 30 s).
+ */
+void ARaceManager::TryStartupPlacement(bool bForce)
+{
+	if (bStartupPlacementDone || StartupRaceOrder.IsEmpty()) return;
+
+	for (const int64 RaceID : StartupRaceOrder)
+	{
+		const FRacePath* Path = PathsDatas.Find(RaceID);
+		if (Path && Path->Points.Num() > 0 && RacePaths.Contains(RaceID))
+		{
+			bStartupPlacementDone = true;
+			GetWorldTimerManager().ClearTimer(StartupPlacementHandle);
+			PlaceOnRaceAtStartup(RaceID);
+			return;
+		}
+		if (StartupPendingRaces.Contains(RaceID) && !bForce)
+		{
+			return; // une course mieux placee dans la liste peut encore arriver
+		}
+	}
+
+	if (bForce || StartupPendingRaces.IsEmpty())
+	{
+		bStartupPlacementDone = true;
+		GetWorldTimerManager().ClearTimer(StartupPlacementHandle);
+		UE_LOG(LogTemp, Warning, TEXT("[Startup] Aucune course avec trace : camera laissee en place"));
+	}
+}
+
+/**
+ * @brief Teleporte directement (sans vol) au-dessus du depart, comme MoveToRace mais instantane.
+ */
+void ARaceManager::PlaceOnRaceAtStartup(int64 RaceID)
+{
+	ACesiumGeoreference* Geo = Georeference.Get();
+	if (!Geo)
+	{
+		Geo = ACesiumGeoreference::GetDefaultGeoreference(GetWorld());
+		Georeference = Geo;
+	}
+	const FRacePath* Path = PathsDatas.Find(RaceID);
+	APawn* Pawn = UGameplayStatics::GetPlayerPawn(this, 0);
+	if (!Geo || !Path || Path->Points.IsEmpty() || !Pawn || !RaceSubsystem)
+	{
+		MoveToPath_Internal(RaceID); // repli : le vol habituel
+		return;
+	}
+
+	const int64 PreviousRaceID = RaceSubsystem->GetCurrentRaceId();
+	if (PreviousRaceID != -1 && PreviousRaceID != RaceID)
+	{
+		ToggleRace_Internal(PreviousRaceID, false);
+	}
+	RaceSubsystem->SetCurrentRaceId(RaceID);
+
+	const FRacePathPoint& P0 = Path->Points[0];
+	FVector Viewpoint;
+	double ViewYaw = 0.0, ViewPitch = 0.0;
+	ComputeRaceViewpoint(*Path, Viewpoint, ViewYaw, ViewPitch);
+	if (ShiftComp) ShiftComp->SetActive(false);
+	// Origine sur le depart d'abord (repere des splines), puis le pawn par-dessus.
+	// Pres de l'origine, East-South-Up et Unreal coincident : le yaw/pitch ESU sert tel quel.
+	Geo->SetOriginLongitudeLatitudeHeight(FVector(P0.lon, P0.lat, P0.ele));
+	const FVector Location = Geo->TransformLongitudeLatitudeHeightPositionToUnreal(Viewpoint);
+	const FRotator ViewRotation(ViewPitch, ViewYaw, 0.0);
+	Pawn->SetActorLocationAndRotation(Location, FRotator(0.0, ViewYaw, 0.0), false, nullptr, ETeleportType::TeleportPhysics);
+	if (AController* Controller = Pawn->GetController())
+	{
+		Controller->SetControlRotation(ViewRotation);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[Startup] Camera placee sur la course %lld"), RaceID);
+	ToggleRace_Internal(RaceID, true);
+}
+
+/**
+ * @brief Apres le dessin d'un autre trace (qui deplace l'origine), remet l'origine sur la course courante.
+ */
+void ARaceManager::RestoreOriginOnCurrentRace(int64 JustDrawnRaceID)
+{
+	if (!bStartupPlacementDone || !RaceSubsystem) return;
+	const int64 CurrentRaceID = RaceSubsystem->GetCurrentRaceId();
+	if (CurrentRaceID == JustDrawnRaceID) return;
+	const FRacePath* Path = PathsDatas.Find(CurrentRaceID);
+	ACesiumGeoreference* Geo = Georeference.Get();
+	if (!Path || Path->Points.IsEmpty() || !Geo) return;
+	const FRacePathPoint& P0 = Path->Points[0];
+	Geo->SetOriginLongitudeLatitudeHeight(FVector(P0.lon, P0.lat, P0.ele));
 }
 
 /**
@@ -1269,7 +1425,20 @@ void ARaceManager::HandleRacesDatasGathered(FRaceEntries RacesArray)
 {
 	if (RacesArray.RacesEntries.IsEmpty()) return;
 	AllRaces = RacesArray;
-	
+
+	// La camera ira sur la premiere course de la liste ayant un trace, des que les precedentes sont
+	// tranchees. Filet : au bout de 30 s on se place avec ce qui est arrive (requete perdue sans reponse).
+	if (!bStartupPlacementDone && StartupRaceOrder.IsEmpty())
+	{
+		for (const FRaceEntry& RaceEntry : AllRaces.RacesEntries)
+		{
+			StartupRaceOrder.Add(RaceEntry.raceId);
+			StartupPendingRaces.Add(RaceEntry.raceId);
+		}
+		GetWorldTimerManager().SetTimer(StartupPlacementHandle,
+			FTimerDelegate::CreateWeakLambda(this, [this]() { TryStartupPlacement(true); }), 30.f, false);
+	}
+
 	PerformHttpRequestForRaces();
 }
 
@@ -1325,13 +1494,27 @@ void ARaceManager::MoveToPath_Internal(int64 RaceID)
 		}
 		ShiftComp->SetActive(false);
 		FRacePath NewPath = PathsDatas.FindRef(RaceID);
-		float NewArrivalHeight = NewPath.Points[0].datas.name.IsEmpty() ? NewPath.Points[0].ele : NewPath.Points[0].datas.altitude;
-		
-		FlyComp->FlyToLocationLongitudeLatitudeHeight(
-			FVector(NewPath.Points[0].lon, NewPath.Points[0].lat, NewArrivalHeight + 5000.f),
-			0.f,
-			0.f,
-			false);
+		FVector Viewpoint;
+		double ViewYaw = 0.0, ViewPitch = 0.0;
+		if (!ComputeRaceViewpoint(NewPath, Viewpoint, ViewYaw, ViewPitch))
+		{
+			USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Teleport cancelled : empty path (Race %lld)"), RaceID)), EMessageType::Error);
+			return;
+		}
+
+		// Montee en cours de vol plafonnee : la courbe Cesium par defaut grimpe tres haut entre deux courses
+		if (!FlyHeightCurve)
+		{
+			FlyHeightCurve = NewObject<UCurveFloat>(this);
+			// distance du vol (m) -> surelevation max a mi-parcours (m)
+			FlyHeightCurve->FloatCurve.AddKey(0.f, 0.f);
+			FlyHeightCurve->FloatCurve.AddKey(10000.f, 500.f);
+			FlyHeightCurve->FloatCurve.AddKey(100000.f, 8000.f);
+			FlyHeightCurve->FloatCurve.AddKey(1000000.f, 40000.f);
+		}
+		FlyComp->MaximumHeightByDistanceCurve = FlyHeightCurve;
+
+		FlyComp->FlyToLocationLongitudeLatitudeHeight(Viewpoint, ViewYaw, ViewPitch, false);
 				
 		// Test values from settings
 		TestAnchor = SettingsSubsystem->GetZAnchor();
@@ -2362,6 +2545,7 @@ void ARaceManager::ChangePathOffset_Internal(float OffsetValue, int64 RaceID)
 	if (!PathPtr)
 	{
 		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Path not found in Race %lld"), RaceID)), EMessageType::Error);
+		return; // reglage sauvegarde, applique au prochain chargement du trace
 	}
 	
 	PathPtr->Get()->AddActorWorldOffset(FVector(0.f, 0.f, OffsetValue));

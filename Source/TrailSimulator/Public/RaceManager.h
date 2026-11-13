@@ -511,6 +511,18 @@ private:
 	FRaceEntries AllRaces;
 	UFUNCTION()
 	void PerformHttpRequestForRaces();
+
+	// Placement au lancement sur la premiere course de la regie (ordre de GET regie/N/races)
+	TArray<int64> StartupRaceOrder;
+	TSet<int64> StartupPendingRaces;
+	bool bStartupPlacementDone = false;
+	FTimerHandle StartupPlacementHandle;
+	void TryStartupPlacement(bool bForce = false);
+	void PlaceOnRaceAtStartup(int64 RaceID);
+	void RestoreOriginOnCurrentRace(int64 JustDrawnRaceID);
+	// Surelevation max du vol MoveToRace selon la distance (remplace la courbe Cesium par defaut)
+	UPROPERTY(Transient)
+	TObjectPtr<class UCurveFloat> FlyHeightCurve;
 	UPROPERTY()
 	FString RunnersEndpoint;	
 	UPROPERTY()
