@@ -10,6 +10,8 @@
 #include "SlateNotificationsBFL.h"
 #include "WorldAmbienceSubsystem.h"
 #include "TemplateSubsystem.h"
+#include "StyleSubsystem.h"
+#include "SettingsSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "Dom/JsonObject.h"
@@ -918,6 +920,28 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
                 OnUpdateOffset.Broadcast(GlobalValue, idrace);
             });
         }
+        // Hauteur absolue de la trace : group=settings&action=zoffsetset&idrace=XX&value=cm
+        // (zoffset, lui, AJOUTE value au decalage courant). 0 = trace a son altitude GPS.
+        if (Action.Equals(TEXT("zoffsetset"), ESearchCase::IgnoreCase))
+        {
+            if (const FString* ZOffsetValueStr = Request.QueryParams.Find(TEXT("value")))
+            {
+                GlobalValue = FCString::Atof(**ZOffsetValueStr);
+            }
+            if (const FString* idraceStr = Request.QueryParams.Find(TEXT("idrace")))
+            {
+                idrace = FCString::Atoi64(**idraceStr);
+            }
+            TWeakObjectPtr<UGameInstance> WeakGI(GetGameInstance());
+            AsyncTask(ENamedThreads::GameThread,[this, WeakGI, GlobalValue, idrace]()
+            {
+                USettingsSubsystem* Settings = WeakGI.IsValid() ? WeakGI->GetSubsystem<USettingsSubsystem>() : nullptr;
+                if (!Settings || !Settings->DoesSettingsExist(idrace)) return;
+                const float Delta = GlobalValue - Settings->GetZOffsetById(idrace);
+                if (FMath::IsNearlyZero(Delta)) return;
+                OnUpdateOffset.Broadcast(Delta, idrace);
+            });
+        }
         // Path Glow
         if (Action.Equals(TEXT("glow"), ESearchCase::IgnoreCase))
         {
@@ -1124,6 +1148,33 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
                 {
                     Templates->ReloadTemplate(TemplateName);
                 }
+            });
+        }
+    }
+
+    /*** STYLE COMMANDS ***/
+    // group=style&action=set&name=noir_et_blanc&data={...} : applique un style de rendu global
+    //   (data = JSON complet du style ; sans data, lu sur la regie ; name=realiste = rendu d'origine)
+    // group=style&action=reload : relit et reapplique le style courant
+    // Contrat : Docs/Styles/CONTRAT_STYLES.md
+    if (Group.Equals(TEXT("style"), ESearchCase::IgnoreCase))
+    {
+        const FString* NameStr = Request.QueryParams.Find(TEXT("name"));
+        const FString* DataStr = Request.QueryParams.Find(TEXT("data"));
+        const bool bSet = Action.Equals(TEXT("set"), ESearchCase::IgnoreCase) && NameStr;
+        const bool bReload = Action.Equals(TEXT("reload"), ESearchCase::IgnoreCase);
+        if (bSet || bReload)
+        {
+            TWeakObjectPtr<UGameInstance> WeakGI(GetGameInstance());
+            const FString StyleName = NameStr ? *NameStr : FString();
+            const FString StyleData = DataStr ? *DataStr : FString();
+            AsyncTask(ENamedThreads::GameThread, [WeakGI, bSet, StyleName, StyleData]()
+            {
+                UStyleSubsystem* Styles = WeakGI.IsValid() ? WeakGI->GetSubsystem<UStyleSubsystem>() : nullptr;
+                if (!Styles) return;
+                if (!bSet) Styles->ReloadStyle();
+                else if (!StyleData.IsEmpty()) Styles->ApplyStyleJson(StyleName, StyleData);
+                else Styles->ApplyStyle(StyleName);
             });
         }
     }
