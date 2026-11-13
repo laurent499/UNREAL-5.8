@@ -577,6 +577,7 @@ private:
 	UFUNCTION()
 	void UpdateUdsTime();
 	void AlignSkyToGlobe();
+	void FollowOriginWithCamera();
 	bool bSkyGlobeSetup = false;
 	UPROPERTY()
 	bool bIsDay = false;

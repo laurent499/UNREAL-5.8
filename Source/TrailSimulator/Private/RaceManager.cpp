@@ -514,6 +514,71 @@ void ARaceManager::UpdateUdsTime()
 	{
 		(Time >= 600 && Time <= 1800)  ? OnChangeDayNight.Broadcast(true) : OnChangeDayNight.Broadcast(false);
 	}
+	FollowOriginWithCamera();
+}
+
+namespace GlobeOrigin
+{
+	static TAutoConsoleVariable<int32> CVarFollow(TEXT("ts.Globe.FollowOrigin"), 1,
+		TEXT("Loin de la course, l'origine Cesium suit la camera (0 = origine fixe sur le depart, comme avant)"));
+	static TAutoConsoleVariable<float> CVarLeaveKm(TEXT("ts.Globe.LeaveRaceKm"), 150.f,
+		TEXT("Distance au depart de la course au-dela de laquelle l'origine commence a suivre la camera"));
+	static TAutoConsoleVariable<float> CVarStepKm(TEXT("ts.Globe.StepKm"), 50.f,
+		TEXT("Loin de la course : l'origine est recalee sous la camera des qu'elle s'en eloigne de cette distance"));
+
+	/** Distance au sol (km) entre deux points lon/lat en degres. */
+	static double GroundKm(double LonA, double LatA, double LonB, double LatB)
+	{
+		const double P1 = FMath::DegreesToRadians(LatA), P2 = FMath::DegreesToRadians(LatB);
+		const double DP = P2 - P1, DL = FMath::DegreesToRadians(LonB - LonA);
+		const double H = FMath::Square(FMath::Sin(DP * 0.5)) + FMath::Cos(P1) * FMath::Cos(P2) * FMath::Square(FMath::Sin(DL * 0.5));
+		return 6371.0 * 2.0 * FMath::Asin(FMath::Min(1.0, FMath::Sqrt(H)));
+	}
+}
+
+/**
+ * @brief Loin de la course, garde l'origine Cesium sous la camera (simulateur : la verticale du jeu suit le globe).
+ * Pres de la course rien ne change : l'origine reste sur le depart, repere du trace et de tout le live.
+ * Au-dela de ts.Globe.LeaveRaceKm du depart, l'origine est reposee a la verticale de la camera a chaque
+ * ts.Globe.StepKm parcouru (meme hauteur d'origine, pour que le brouillard ne saute pas) ; en revenant a moins
+ * de LeaveRaceKm - StepKm du depart, elle retourne exactement sur le depart. Les acteurs suivent par leur
+ * ancre globe, comme lors d'un changement de course. Appelee une fois par seconde.
+ */
+void ARaceManager::FollowOriginWithCamera()
+{
+	if (!GlobeOrigin::CVarFollow.GetValueOnGameThread() || !bStartupPlacementDone || !RaceSubsystem) return;
+	if (FlyComp && FlyComp->IsFlightInProgress()) return; // MoveToRace : OnFlightComplete repose l'origine
+	ACesiumGeoreference* Geo = Georeference.Get();
+	APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(this, 0);
+	const FRacePath* Path = PathsDatas.Find(RaceSubsystem->GetCurrentRaceId());
+	if (!Geo || !CameraManager || !Path || Path->Points.IsEmpty()) return;
+
+	const FRacePathPoint& P0 = Path->Points[0];
+	const FVector Cam = Geo->TransformUnrealPositionToLongitudeLatitudeHeight(CameraManager->GetCameraLocation());
+	if (!FMath::IsFinite(Cam.X) || !FMath::IsFinite(Cam.Y)) return;
+	const FVector Origin = Geo->GetOriginLongitudeLatitudeHeight();
+
+	const double LeaveKm = FMath::Max(10.0, double(GlobeOrigin::CVarLeaveKm.GetValueOnGameThread()));
+	const double StepKm = FMath::Clamp(double(GlobeOrigin::CVarStepKm.GetValueOnGameThread()), 1.0, LeaveKm * 0.8);
+	const double CamToRaceKm = GlobeOrigin::GroundKm(Cam.X, Cam.Y, P0.lon, P0.lat);
+	const bool bOriginOnRace = GlobeOrigin::GroundKm(Origin.X, Origin.Y, P0.lon, P0.lat) < 0.01;
+
+	if (bOriginOnRace)
+	{
+		if (CamToRaceKm <= LeaveKm) return; // mode course : rien ne bouge
+	}
+	else if (CamToRaceKm < LeaveKm - StepKm)
+	{
+		Geo->SetOriginLongitudeLatitudeHeight(FVector(P0.lon, P0.lat, P0.ele));
+		UE_LOG(LogTemp, Log, TEXT("[Globe] Origine revenue sur le depart de la course (camera a %.0f km)"), CamToRaceKm);
+		return;
+	}
+	else if (GlobeOrigin::GroundKm(Cam.X, Cam.Y, Origin.X, Origin.Y) < StepKm)
+	{
+		return;
+	}
+	Geo->SetOriginLongitudeLatitudeHeight(FVector(Cam.X, Cam.Y, P0.ele));
+	UE_LOG(LogTemp, Log, TEXT("[Globe] Origine recalee sous la camera (lon %.3f lat %.3f, a %.0f km de la course)"), Cam.X, Cam.Y, CamToRaceKm);
 }
 
 /**
