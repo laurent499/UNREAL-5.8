@@ -594,6 +594,41 @@ void ARaceManager::AlignSkyToGlobe()
 		}
 	}
 
+	// Vue de l'espace : le brouillard UDS (pense pour le sol) voile tout le globe en blanc et les nuages 2D
+	// de la sphere de ciel deviennent des trainees. Ils s'effacent entre 20 et 60 km d'altitude ; au-dela,
+	// la brume vue d'en haut vient de l'atmosphere seule. Sous 20 km, rien ne change.
+	{
+		static constexpr double FadeStartM = 20000.0;
+		static constexpr double FadeEndM = 60000.0;
+		const float GroundFade = 1.f - float(FMath::SmoothStep(FadeStartM, FadeEndM, LLH.Z));
+		static bool bFaded = false; // un seul RaceManager par monde
+		if (GroundFade < 1.f || bFaded)
+		{
+			bFaded = GroundFade < 1.f;
+			if (UExponentialHeightFogComponent* Fog = UDSActor->FindComponentByClass<UExponentialHeightFogComponent>())
+			{
+				if (!FMath::IsNearlyEqual(Fog->FogMaxOpacity, GroundFade, 0.005f))
+				{
+					Fog->SetFogMaxOpacity(GroundFade);
+				}
+			}
+			// Voiles 2D du ciel UDS : valeurs d'origine retenues au premier fondu, remises en redescendant
+			static double WispsClear = -1.0, WispsCloudy = -1.0;
+			FDoubleProperty* Clear = FindFProperty<FDoubleProperty>(UDSActor->GetClass(), TEXT("cloud Wisps Opacity (Clear)"));
+			FDoubleProperty* Cloudy = FindFProperty<FDoubleProperty>(UDSActor->GetClass(), TEXT("cloud Wisps Opacity (Cloudy)"));
+			if (Clear && Cloudy)
+			{
+				if (WispsClear < 0.0)
+				{
+					WispsClear = Clear->GetPropertyValue_InContainer(UDSActor);
+					WispsCloudy = Cloudy->GetPropertyValue_InContainer(UDSActor);
+				}
+				Clear->SetPropertyValue_InContainer(UDSActor, WispsClear * GroundFade);
+				Cloudy->SetPropertyValue_InContainer(UDSActor, WispsCloudy * GroundFade);
+			}
+		}
+	}
+
 	// Planete de l'atmosphere (et des nuages) : tangente au niveau de la mer sous la camera
 	const FVector Center = Ground - Up * (double(Atmosphere->BottomRadius) * 100000.0);
 	if (Atmosphere->TransformMode != ESkyAtmosphereTransformMode::PlanetCenterAtComponentTransform)
