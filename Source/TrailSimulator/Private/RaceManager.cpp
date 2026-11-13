@@ -4,6 +4,7 @@
 #include "TemplateSubsystem.h"
 #include "CesiumFlyToComponent.h"
 #include "CesiumGeoreference.h"
+#include "Cesium3DTileset.h"
 #include "CesiumOriginShiftComponent.h"
 #include "CheckpointSubsystem.h"
 #include "PathSubsystem.h"
@@ -140,6 +141,185 @@ bool ARaceManager::RefreshSubsystemsFromPIE() const
 	}
 #endif
 	return false;
+}
+
+/**
+ * Teleportation sur un coureur, un checkpoint ou un POI : la camera arrive face a la cible, a distance,
+ * un peu au-dessus, et la regarde (avant : a la verticale de la cible, regard a l'horizontale).
+ * Tout est calcule en lon/lat/hauteur au moment de l'appel (l'origine du monde peut etre loin de la course).
+ * - coureur, checkpoint : camera en avant sur le trace, tournee vers l'arriere (on voit arriver les coureurs) ;
+ * - POI hors du trace : camera du cote du trace, regard du trace vers le POI ; POI sur le trace : vue de cote.
+ * Sol : altitude du trace autour de la camera, tuiles Cesium si deja chargees, puis garde au sol apres l'arrivee.
+ */
+namespace FaceView
+{
+	enum class ETarget : uint8 { Runner, Checkpoint, Poi };
+
+	static TAutoConsoleVariable<float> CVarRunnerM(TEXT("ts.Teleport.RunnerM"), 150.f,
+		TEXT("Teleportation sur un coureur : distance au sol entre la camera et le coureur (m)"));
+	static TAutoConsoleVariable<float> CVarCheckpointM(TEXT("ts.Teleport.CheckpointM"), 250.f,
+		TEXT("Teleportation sur un checkpoint : distance au sol entre la camera et le checkpoint (m)"));
+	static TAutoConsoleVariable<float> CVarPoiM(TEXT("ts.Teleport.PoiM"), 400.f,
+		TEXT("Teleportation sur un POI : distance au sol entre la camera et le POI (m)"));
+	static TAutoConsoleVariable<float> CVarPitchDeg(TEXT("ts.Teleport.PitchDeg"), 15.f,
+		TEXT("Teleportation : angle sous l'horizontale sous lequel la camera voit la cible (deg)"));
+	static TAutoConsoleVariable<float> CVarClearanceM(TEXT("ts.Teleport.ClearanceM"), 30.f,
+		TEXT("Teleportation : hauteur minimale de la camera au-dessus du sol (m)"));
+
+	static constexpr double MPerDegLat = 110540.0;
+	static double MPerDegLon(double Lat) { return 111320.0 * FMath::Max(0.01, FMath::Cos(FMath::DegreesToRadians(Lat))); }
+
+	/** (est, nord) en metres de (Lon, Lat) par rapport a (Lon0, Lat0). */
+	static FVector2D EN(double Lon, double Lat, double Lon0, double Lat0)
+	{
+		return FVector2D((Lon - Lon0) * MPerDegLon(Lat0), (Lat - Lat0) * MPerDegLat);
+	}
+
+	/** Direction de course (est, nord) unitaire au point I, mesuree entre les points a ~30 m de part et d'autre. */
+	static FVector2D CourseDir(const FRacePath& Path, int32 I)
+	{
+		const FRacePathPoint& C = Path.Points[I];
+		int32 A = I, B = I;
+		while (A > 0 && EN(Path.Points[A].lon, Path.Points[A].lat, C.lon, C.lat).Size() < 30.0) --A;
+		while (B < Path.Points.Num() - 1 && EN(Path.Points[B].lon, Path.Points[B].lat, C.lon, C.lat).Size() < 30.0) ++B;
+		const FVector2D D = EN(Path.Points[B].lon, Path.Points[B].lat, Path.Points[A].lon, Path.Points[A].lat);
+		return D.IsNearlyZero() ? FVector2D::ZeroVector : D.GetSafeNormal();
+	}
+
+	/** Hauteur du sol sous (Lon, Lat) d'apres les tuiles Cesium deja chargees ; false si rien n'est touche. */
+	static bool TraceGround(UWorld* World, ACesiumGeoreference* Geo, double Lon, double Lat, double TopH, double BottomH, double& OutH)
+	{
+		const FVector Top = Geo->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(Lon, Lat, TopH));
+		const FVector Bottom = Geo->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(Lon, Lat, BottomH));
+		TArray<FHitResult> Hits;
+		World->LineTraceMultiByChannel(Hits, Top, Bottom, ECC_Visibility);
+		for (const FHitResult& Hit : Hits)
+		{
+			if (Hit.GetActor() && Hit.GetActor()->IsA<ACesium3DTileset>())
+			{
+				OutH = Geo->TransformUnrealPositionToLongitudeLatitudeHeight(Hit.ImpactPoint).Z;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Point de vue face a la cible. Target : lon/lat/hauteur de la cible.
+	 * Sortie : lon/lat/hauteur de la camera, yaw et pitch en East-South-Up (convention Cesium FlyTo).
+	 */
+	static void Compute(UWorld* World, ACesiumGeoreference* Geo, const FRacePath* Path, const FVector& Target, ETarget Kind,
+		FVector& OutLLH, double& OutYaw, double& OutPitch)
+	{
+		const double Dist = FMath::Max(10.0, double(Kind == ETarget::Runner ? CVarRunnerM.GetValueOnGameThread()
+			: Kind == ETarget::Checkpoint ? CVarCheckpointM.GetValueOnGameThread() : CVarPoiM.GetValueOnGameThread()));
+		const double Tan = FMath::Tan(FMath::DegreesToRadians(FMath::Clamp(double(CVarPitchDeg.GetValueOnGameThread()), 0.0, 80.0)));
+		const double Clearance = FMath::Max(0.0, double(CVarClearanceM.GetValueOnGameThread()));
+
+		// Direction cible -> camera (est, nord) ; repli sans trace : camera au sud, regard vers le nord
+		FVector2D Dir(0.0, -1.0);
+		if (Path && Path->Points.Num() >= 2)
+		{
+			int32 Nearest = 0;
+			double NearestSq = TNumericLimits<double>::Max();
+			for (int32 i = 0; i < Path->Points.Num(); ++i)
+			{
+				const double Sq = EN(Path->Points[i].lon, Path->Points[i].lat, Target.X, Target.Y).SizeSquared();
+				if (Sq < NearestSq) { NearestSq = Sq; Nearest = i; }
+			}
+			const FVector2D Course = CourseDir(*Path, Nearest);
+			const FVector2D ToTrail = EN(Path->Points[Nearest].lon, Path->Points[Nearest].lat, Target.X, Target.Y);
+			if (Kind == ETarget::Poi && ToTrail.Size() > 50.0)
+			{
+				Dir = ToTrail.GetSafeNormal(); // POI hors du trace : on le regarde depuis le trace
+			}
+			else if (Kind == ETarget::Poi)
+			{
+				if (!Course.IsNearlyZero()) Dir = FVector2D(Course.Y, -Course.X); // POI sur le trace : normale (a droite)
+			}
+			else if (!Course.IsNearlyZero())
+			{
+				Dir = Course; // coureur, checkpoint : en avant sur le trace, tourne vers l'arriere
+			}
+		}
+		const FVector2D CamEN = Dir * Dist;
+		const double CamLon = Target.X + CamEN.X / MPerDegLon(Target.Y);
+		const double CamLat = Target.Y + CamEN.Y / MPerDegLat;
+
+		// Hauteur : l'angle voulu au-dessus de la cible, et jamais sous le sol connu autour de la camera
+		double CamH = Target.Z + Dist * Tan;
+		if (Path)
+		{
+			for (const FRacePathPoint& P : Path->Points)
+			{
+				if (EN(P.lon, P.lat, CamLon, CamLat).SizeSquared() < 100.0 * 100.0) CamH = FMath::Max(CamH, double(P.ele) + Clearance);
+			}
+		}
+		double GroundH = 0.0;
+		if (World && TraceGround(World, Geo, CamLon, CamLat, CamH + 5000.0, CamH - 5000.0, GroundH))
+		{
+			CamH = FMath::Max(CamH, GroundH + Clearance);
+		}
+
+		OutLLH = FVector(CamLon, CamLat, CamH);
+		OutYaw = FMath::RadiansToDegrees(FMath::Atan2(CamEN.Y, -CamEN.X)); // regard camera -> cible ; ESU : 0 = est, 90 = sud
+		OutPitch = -FMath::RadiansToDegrees(FMath::Atan2(CamH - Target.Z, Dist));
+	}
+
+	/** Teleportation en cours ; une nouvelle (ou un MoveToRace) arrete la garde au sol de la precedente. */
+	static uint32 GuardSerial = 0;
+
+	/**
+	 * Garde au sol : une fois le vol termine, pendant 4 s (le temps que les tuiles fines arrivent), la camera
+	 * est remontee si le relief Cesium la depasse, puis tournee de nouveau vers la cible.
+	 */
+	static void StartGroundGuard(UWorld* World, UCesiumFlyToComponent* Fly, ACesiumGeoreference* Geo, AActor* Target)
+	{
+		if (!World || !Fly || !Geo) return;
+		const uint32 Serial = ++GuardSerial;
+		TSharedRef<FTimerHandle> Handle = MakeShared<FTimerHandle>();
+		TSharedRef<int32> Ticks = MakeShared<int32>(0);
+		TWeakObjectPtr<UWorld> WeakWorld = World;
+		TWeakObjectPtr<UCesiumFlyToComponent> WeakFly = Fly;
+		TWeakObjectPtr<ACesiumGeoreference> WeakGeo = Geo;
+		TWeakObjectPtr<AActor> WeakTarget = Target;
+		World->GetTimerManager().SetTimer(*Handle, FTimerDelegate::CreateLambda([=]()
+		{
+			UWorld* W = WeakWorld.Get();
+			UCesiumFlyToComponent* F = WeakFly.Get();
+			ACesiumGeoreference* G = WeakGeo.Get();
+			APawn* Pawn = F ? Cast<APawn>(F->GetOwner()) : nullptr;
+			++(*Ticks);
+			// Arret 4 s apres la fin du vol (compteur pose a 104 a l arrivee, 16 x 0,25 s jusqu a 120)
+			if (!W || !G || !Pawn || Serial != GuardSerial || *Ticks > 120)
+			{
+				if (W) W->GetTimerManager().ClearTimer(*Handle);
+				return;
+			}
+			if (F->IsFlightInProgress())
+			{
+				*Ticks = FMath::Min(*Ticks, 104);
+				return;
+			}
+			*Ticks = FMath::Max(*Ticks, 104);
+
+			const double Clearance = FMath::Max(0.0, double(CVarClearanceM.GetValueOnGameThread()));
+			const FVector Cam = G->TransformUnrealPositionToLongitudeLatitudeHeight(Pawn->GetActorLocation());
+			double GroundH = 0.0;
+			if (!TraceGround(W, G, Cam.X, Cam.Y, Cam.Z + 3000.0, Cam.Z - Clearance, GroundH) || GroundH + Clearance <= Cam.Z + 1.0) return;
+
+			const FVector NewLocation = G->TransformLongitudeLatitudeHeightPositionToUnreal(FVector(Cam.X, Cam.Y, GroundH + Clearance));
+			Pawn->SetActorLocation(NewLocation, false, nullptr, ETeleportType::TeleportPhysics);
+			if (AActor* T = WeakTarget.Get())
+			{
+				if (AController* Controller = Pawn->GetController())
+				{
+					Controller->SetControlRotation((T->GetActorLocation() - NewLocation).Rotation());
+				}
+			}
+			UE_LOG(LogTemp, Log, TEXT("[Teleport] Camera remontee au-dessus du relief (%.0f m)"), GroundH + Clearance - Cam.Z);
+		}), 0.25f, true);
+	}
 }
 
 static FString SanitizeKey(FString S)
@@ -1283,9 +1463,11 @@ void ARaceManager::HandleRacesDatasGathered(FRaceEntries RacesArray)
 void ARaceManager::OnFlightComplete()
 {	
 	if (!Georeference) return;
+	if (!RaceSubsystem) return;
 	const int64 CurrentRaceID = RaceSubsystem->GetCurrentRaceId();
-	FRacePath* Path = PathsDatas.Find(CurrentRaceID);
-	FRacePathPoint& P0 = Path->Points[0];
+	const FRacePath* Path = PathsDatas.Find(CurrentRaceID);
+	if (!Path || Path->Points.IsEmpty()) return;
+	const FRacePathPoint& P0 = Path->Points[0];
 	Georeference->SetOriginLongitudeLatitudeHeight(FVector(P0.lon, P0.lat, P0.ele));
 }
 
@@ -1334,6 +1516,7 @@ void ARaceManager::MoveToPath_Internal(int64 RaceID)
 		FRacePath NewPath = PathsDatas.FindRef(RaceID);
 		float NewArrivalHeight = NewPath.Points[0].datas.name.IsEmpty() ? NewPath.Points[0].ele : NewPath.Points[0].datas.altitude;
 		
+		++FaceView::GuardSerial; // la garde au sol d'une teleportation precedente ne doit pas retourner la camera
 		FlyComp->FlyToLocationLongitudeLatitudeHeight(
 			FVector(NewPath.Points[0].lon, NewPath.Points[0].lat, NewArrivalHeight + 5000.f),
 			0.f,
@@ -1572,6 +1755,36 @@ void ARaceManager::ToggleRunners_Internal(int64 RaceID, bool bShow) const
 }
 
 /**
+ * @brief Vol face a une cible (coureur 0, checkpoint 1, POI 2), voir FaceView.
+ * @return false si le pawn, son FlyTo ou le georef manquent (l'appelant garde l'ancien vol)
+ */
+bool ARaceManager::FlyFacing(AActor* Target, int64 RaceID, uint8 Kind) const
+{
+	UCesiumFlyToComponent* Fly = FlyComp;
+	if (!Fly)
+	{
+		APawn* Pawn = UGameplayStatics::GetPlayerPawn(this, 0);
+		Fly = Pawn ? Pawn->FindComponentByClass<UCesiumFlyToComponent>() : nullptr;
+	}
+	ACesiumGeoreference* Geo = Georeference.Get();
+	if (!Geo) Geo = ACesiumGeoreference::GetDefaultGeoreference(GetWorld());
+	if (!Target || !Fly || !Geo) return false;
+
+	// Position de la cible lue maintenant (l'origine du monde a pu bouger depuis son placement)
+	const FVector TargetLLH = Geo->TransformUnrealPositionToLongitudeLatitudeHeight(Target->GetActorLocation());
+	if (!FMath::IsFinite(TargetLLH.X) || !FMath::IsFinite(TargetLLH.Y) || !FMath::IsFinite(TargetLLH.Z)) return false;
+
+	FVector CamLLH;
+	double Yaw = 0.0, Pitch = 0.0;
+	FaceView::Compute(GetWorld(), Geo, PathsDatas.Find(RaceID), TargetLLH, static_cast<FaceView::ETarget>(Kind), CamLLH, Yaw, Pitch);
+	Fly->FlyToLocationLongitudeLatitudeHeight(CamLLH, Yaw, Pitch, false);
+	FaceView::StartGroundGuard(GetWorld(), Fly, Geo, Target);
+	UE_LOG(LogTemp, Log, TEXT("[Teleport] Camera face a %s : lon %.5f lat %.5f h %.0f m, yaw %.0f pitch %.0f"),
+		*Target->GetName(), CamLLH.X, CamLLH.Y, CamLLH.Z, Yaw, Pitch);
+	return true;
+}
+
+/**
  * @brief Moving the Pawn to the Team location
  * @param TeamID 
  * @param RaceID 
@@ -1580,7 +1793,15 @@ void ARaceManager::TeleportToTeam_Internal(int64 TeamID, int64 RaceID) const
 {
 	TeamSubsystem = FWorldUtils::GetGISubsystemOrLog<UTeamSubsystem>(this, TEXT(__FUNCTION__), true);
 	if (!TeamSubsystem) return;
-	TeamSubsystem->Teleport(TeamID, RaceID);
+	AActor* RunnerActor = TeamSubsystem->GetRunnerActorByRaceTeam(RaceID, TeamID);
+	if (!RunnerActor || !FlyFacing(RunnerActor, RaceID, 0))
+	{
+		TeamSubsystem->Teleport(TeamID, RaceID); // messages d'erreur (team ou coureur introuvable) et ancien vol
+		return;
+	}
+	const FRunnerStruct* Runner = TeamSubsystem->GetRunnerByRaceTeam(RaceID, TeamID);
+	USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Teleport To Team %lld - %s"),
+		TeamID, Runner ? *Runner->nom : TEXT(""))), EMessageType::Success);
 }
 void ARaceManager::EdTeleportToTeam() const
 {
@@ -2010,7 +2231,11 @@ void ARaceManager::TeleportToCheckpoint_Internal(int64 CheckpointID, int64 RaceI
 {
 	CheckpointSubsystem = FWorldUtils::GetGISubsystemOrLog<UCheckpointSubsystem>(this, TEXT(__FUNCTION__), true);
 	if (!CheckpointSubsystem) return;
-	CheckpointSubsystem->Teleport(CheckpointID, RaceID);	
+	AActor* CheckpointActor = CheckpointSubsystem->GetCheckpointActor(RaceID, CheckpointID);
+	if (!CheckpointActor || !FlyFacing(CheckpointActor, RaceID, 1))
+	{
+		CheckpointSubsystem->Teleport(CheckpointID, RaceID); // messages d'erreur et ancien vol
+	}
 }
 void ARaceManager::EdTeleportToCheckpoint() const
 {
@@ -2181,7 +2406,11 @@ void ARaceManager::TeleportToPoi_Internal(int64 PoiID, int64 RaceID) const
 {
 	PoiSubsystem = FWorldUtils::GetGISubsystemOrLog<UPoiSubsystem>(this, TEXT(__FUNCTION__), true);
 	if (!PoiSubsystem) return;
-	PoiSubsystem->Teleport(PoiID, RaceID);	
+	AActor* PoiActor = PoiSubsystem->GetPoiActor(PoiID, RaceID);
+	if (!PoiActor || !FlyFacing(PoiActor, RaceID, 2))
+	{
+		PoiSubsystem->Teleport(PoiID, RaceID); // messages d'erreur et ancien vol
+	}
 }
 void ARaceManager::EDTeleportToPoi() const
 {
@@ -2630,6 +2859,8 @@ void ARaceManager::ToggleRace_Internal(int64 RaceID, bool bShow) const
 			ToggleRunners_Internal(RaceID, false);
 			TogglePois_Internal(RaceID, false);
 			ToggleSlope_Internal(RaceID, false);
+			// Bornes km masquees comme le reste : sinon celles de la course quittee restent affichees
+			ToggleKms_Internal(RaceID, false);
 			// OldRaceID = RaceID;
 		}
 	}

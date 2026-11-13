@@ -1222,9 +1222,12 @@ void APath::ChangeSlopeVisibility(bool bShowPath)
 }
 void APath::ChangeKmsVisibility(bool bShowKm)
 {
-	for (auto km : Kms[RaceId])
+	// Find plutot que [] : bornes pas encore construites (trace en cours de dessin) = rien a faire, pas d'assert
+	const TArray<TObjectPtr<AKm>>* RaceKms = Kms.Find(RaceId);
+	if (!RaceKms) return;
+	for (const TObjectPtr<AKm>& km : *RaceKms)
 	{
-		km->SetActorHiddenInGame(!bShowKm);
+		if (IsValid(km)) km->SetActorHiddenInGame(!bShowKm);
 	}
 }
 
