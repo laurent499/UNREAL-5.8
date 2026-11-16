@@ -128,6 +128,8 @@ struct SHAREDTYPES_API FTrailTemplateSegment
 	UPROPERTY(BlueprintReadOnly) float Padding = 0.2f;
 	/** Hauteur du bas du cartouche au-dessus du sol (m), sauf hauteur propre au segment. */
 	UPROPERTY(BlueprintReadOnly) float Height = 45.f;
+	/** Taille selon la distance à la caméra, comme les checkpoints (même proche / loin et même min / max de la course). */
+	UPROPERTY(BlueprintReadOnly) bool AutoScale = true;
 };
 
 USTRUCT(BlueprintType)

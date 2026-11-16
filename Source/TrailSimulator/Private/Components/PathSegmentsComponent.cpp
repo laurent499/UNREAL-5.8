@@ -15,6 +15,7 @@
 #include "RaceSubsystem.h"
 #include "SettingsSubsystem.h"
 #include "TemplateSubsystem.h"
+#include "ScaleSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "TimerManager.h"
 
@@ -161,6 +162,10 @@ void UPathSegmentsComponent::RestoreTrace()
 		if (Label) Label->DestroyComponent();
 	}
 	Labels.Reset();
+	LabelAnchors.Reset();
+	LabelBaseHeights.Reset();
+	LabelHalfHeights.Reset();
+	LabelScales.Reset();
 }
 
 /** Place un morceau du trace entre deux cles de la spline (meme calcul que APath::RebuildPathSplineMeshes) */
@@ -245,6 +250,7 @@ void UPathSegmentsComponent::Apply()
 		GlobalsSlant = Tpl.Globals.Slant;
 	}
 	const float DefaultLabelHeight = FMath::Max(Style.Height, 0.f) * 100.f;
+	bAutoScale = Style.AutoScale;
 	float PlateRadius = 0.f;
 	float PlateSlant = 0.f;
 	if (Style.Shape.Equals(TEXT("globals"), ESearchCase::IgnoreCase)) { PlateRadius = GlobalsRadius; PlateSlant = GlobalsSlant; }
@@ -502,6 +508,10 @@ void UPathSegmentsComponent::Apply()
 			const FVector Anchor = Spline->GetLocationAtDistanceAlongSpline(0.5f * (Range.D0 + Range.D1), ESplineCoordinateSpace::World);
 			Label->SetWorldLocation(Anchor + FVector::UpVector * (Range.LabelHeight + 0.5f * PlateHeight));
 			Labels.Add(Label);
+			LabelAnchors.Add(Anchor);
+			LabelBaseHeights.Add(Range.LabelHeight);
+			LabelHalfHeights.Add(0.5f * PlateHeight);
+			LabelScales.Add(1.f);
 		}
 	}
 
@@ -511,8 +521,11 @@ void UPathSegmentsComponent::Apply()
 	{
 		if (!World->GetTimerManager().IsTimerActive(LookAtTimerHandle))
 		{
-			const float Interval = Path->SettingsSubsystem ? Path->SettingsSubsystem->GetUpdateIntervalSeconds() : 0.25f;
-			World->GetTimerManager().SetTimer(LookAtTimerHandle, this, &UPathSegmentsComponent::OnLookAtTimerTick, FMath::Max(Interval, 0.05f), true, 0.f);
+			float Interval = Path->SettingsSubsystem ? Path->SettingsSubsystem->GetUpdateIntervalSeconds() : 0.25f;
+			Interval = FMath::Max(Interval, 0.05f);
+			// Taille selon la distance : mise a jour plus frequente pour que le changement de taille reste fluide
+			if (bAutoScale) Interval = FMath::Min(Interval, 1.f / 30.f);
+			World->GetTimerManager().SetTimer(LookAtTimerHandle, this, &UPathSegmentsComponent::OnLookAtTimerTick, Interval, true, 0.f);
 		}
 	}
 	else
@@ -527,13 +540,54 @@ void UPathSegmentsComponent::OnLookAtTimerTick()
 	const APlayerController* PC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
 	if (!PC || !PC->PlayerCameraManager) return;
 	const FVector CameraLocation = PC->PlayerCameraManager->GetCameraLocation();
-	for (UTextRenderComponent* Label : Labels)
+
+	// Taille selon la distance, comme les checkpoints (UScaleSubsystem) : meme proche / loin, meme courbe,
+	// et le rapport min / max de la course. Le cartouche garde sa taille d'origine au loin et se reduit
+	// en s'approchant ; son bas reste a la meme hauteur au-dessus du trace.
+	const UScaleSubsystem* Scale = bAutoScale && GetWorld() ? GetWorld()->GetSubsystem<UScaleSubsystem>() : nullptr;
+	float MinRatio = 1.f;
+	if (Scale)
 	{
+		const APath* Path = Cast<APath>(GetOwner());
+		FMinMax MinMax = Scale->GetGlobalConfig().ScaleMinMax;
+		if (Path && Path->SettingsSubsystem)
+		{
+			const FMinMax RaceMinMax = Path->SettingsSubsystem->GetMinMaxById(Path->RaceId);
+			if (RaceMinMax.Max.X > KINDA_SMALL_NUMBER) MinMax = RaceMinMax;
+		}
+		MinRatio = MinMax.Max.X > KINDA_SMALL_NUMBER ? FMath::Clamp(MinMax.Min.X / MinMax.Max.X, 0.01f, 1.f) : 1.f;
+	}
+	const float DeltaTime = GetWorld() && LookAtTimerHandle.IsValid() ? GetWorld()->GetTimerManager().GetTimerRate(LookAtTimerHandle) : 0.05f;
+
+	for (int32 i = 0; i < Labels.Num(); ++i)
+	{
+		UTextRenderComponent* Label = Labels[i];
 		if (!Label) continue;
 		FVector ToCamera = CameraLocation - Label->GetComponentLocation();
 		ToCamera.Z = 0.f;
-		if (ToCamera.IsNearlyZero()) continue;
-		Label->SetWorldRotation(FRotator(0.f, ToCamera.Rotation().Yaw, 0.f));
+		if (!ToCamera.IsNearlyZero())
+		{
+			Label->SetWorldRotation(FRotator(0.f, ToCamera.Rotation().Yaw, 0.f));
+		}
+
+		if (!LabelAnchors.IsValidIndex(i) || !LabelScales.IsValidIndex(i)) continue;
+		float Target = 1.f;
+		if (Scale)
+		{
+			const FDistanceScaleConfig& Cfg = Scale->GetGlobalConfig();
+			const float Near = FMath::Max(0.f, Cfg.NearDistanceCm);
+			const float Far = FMath::Max(Near + KINDA_SMALL_NUMBER, Cfg.FarDistanceCm);
+			const FVector D = LabelAnchors[i] - CameraLocation;
+			const float Dist = Cfg.bUseXYOnly ? FVector2D(D.X, D.Y).Size() : D.Size();
+			float Alpha = FMath::Clamp((Dist - Near) / (Far - Near), 0.f, 1.f);
+			if (Cfg.bSmoothStep) Alpha = Alpha * Alpha * (3.f - 2.f * Alpha);
+			Target = FMath::Lerp(MinRatio, 1.f, Alpha);
+			if (Cfg.bInterp) Target = FMath::FInterpTo(LabelScales[i], Target, DeltaTime, Cfg.InterpSpeed);
+		}
+		if (FMath::IsNearlyEqual(Target, LabelScales[i], 0.002f)) continue;
+		LabelScales[i] = Target;
+		Label->SetWorldScale3D(FVector(Target));
+		Label->SetWorldLocation(LabelAnchors[i] + FVector::UpVector * (LabelBaseHeights[i] + LabelHalfHeights[i] * Target));
 	}
 }
 

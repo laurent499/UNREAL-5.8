@@ -76,6 +76,14 @@ private:
 	TArray<TPair<FVector2D, FVector2D>> HighlightedBaseScales;
 	UPROPERTY()
 	TArray<TObjectPtr<class UTextRenderComponent>> Labels;
+	/** Par label (meme ordre que Labels) : point du trace sous le label, hauteur du bas du cartouche (cm),
+	 *  demi-hauteur du cartouche a l'echelle 1 (cm) et echelle courante (taille selon la distance) */
+	TArray<FVector> LabelAnchors;
+	TArray<float> LabelBaseHeights;
+	TArray<float> LabelHalfHeights;
+	TArray<float> LabelScales;
+	/** Section segment du template : taille selon la distance a la camera */
+	bool bAutoScale = true;
 	UPROPERTY()
 	TArray<TObjectPtr<class USplineMeshComponent>> Plates;
 	UPROPERTY()
