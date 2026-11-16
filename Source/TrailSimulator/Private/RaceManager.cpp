@@ -2674,7 +2674,7 @@ void ARaceManager::EdTogglePois() const
 }
 void ARaceManager::RtTogglePois(int64 RaceID, bool bShow) const
 {
-	if (!RefreshSubsystemsFromPIE())
+	if (!RefreshSubsystems())
 	{
 		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Subsystems not available"))), EMessageType::Error);
 		return;
@@ -2844,7 +2844,7 @@ void ARaceManager::UpdateFetchFrequency_Internal(float FetchValue, int64 RaceID)
 }
 void ARaceManager::RtUpdateFetchFrequency(float FetchValue, int64 RaceID)
 {
-	if (!RefreshSubsystemsFromPIE())
+	if (!RefreshSubsystems())
 	{
 		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Subsystems not available"))), EMessageType::Error);
 		return;
@@ -3380,7 +3380,7 @@ void ARaceManager::UpdateCameraAngle_Internal(float NewPitch)
 }
 void ARaceManager::RtUpdateCameraAngle(float NewPitch)
 {
-	if (!RefreshSubsystemsFromPIE())
+	if (!RefreshSubsystems())
 	{
 		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Subsystems not available"))), EMessageType::Error);
 		return;
@@ -3407,7 +3407,7 @@ void ARaceManager::UpdateCameraAnchor_Internal(float NewAnchor)
 }
 void ARaceManager::RtUpdateCameraAnchor(float NewAnchor)
 {
-	if (!RefreshSubsystemsFromPIE())
+	if (!RefreshSubsystems())
 	{
 		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Subsystems not available"))), EMessageType::Error);
 		return;
@@ -3435,7 +3435,7 @@ void ARaceManager::UpdateUpdateArmLength_Internal(float NewLength)
 
 void ARaceManager::RtUpdateUpdateArmLength(float NewLength)
 {
-	if (!RefreshSubsystemsFromPIE())
+	if (!RefreshSubsystems())
 	{
 		USlateNotificationsBFL::SlateNotify(FText::FromString(FString::Printf(TEXT("Subsystems not available"))), EMessageType::Error);
 		return;
