@@ -33,12 +33,7 @@ public:
 	/** Hauteur du texte (cm) */
 	UPROPERTY(EditAnywhere, Category="Segments")
 	float LabelWorldSize = 5200.f;
-	/** Hauteur du bas du fond au-dessus du trace (cm) */
-	UPROPERTY(EditAnywhere, Category="Segments")
-	float LabelHeight = 4500.f;
-	/** Marge du fond autour du texte, en fraction de la hauteur du texte */
-	UPROPERTY(EditAnywhere, Category="Segments")
-	float LabelPadding = 0.3f;
+	// Forme du cartouche, marge et hauteur par defaut : template de la course (section "segment")
 	/** Epaisseur du trace dans un segment visible, en multiple de l'epaisseur normale */
 	UPROPERTY(EditAnywhere, Category="Segments", meta=(ClampMin="1.0", ClampMax="5.0"))
 	float HighlightThickness = 1.4f;
@@ -56,6 +51,9 @@ private:
 	void ConfigurePiece(class USplineMeshComponent* Piece, float Key0, float Key1) const;
 	class USplineMeshComponent* CreatePiece(class USplineMeshComponent* Original);
 	void OnLookAtTimerTick();
+	/** « Appliquer dans Unreal » sur la page Templates : cartouches redessines avec la nouvelle forme */
+	void HandleTemplateChanged(const FString& TemplateName);
+	FDelegateHandle TemplateChangedHandle;
 
 	UFUNCTION()
 	void UpdateDayNight(bool bIsDay);
@@ -79,7 +77,7 @@ private:
 	UPROPERTY()
 	TArray<TObjectPtr<class UTextRenderComponent>> Labels;
 	UPROPERTY()
-	TArray<TObjectPtr<class UStaticMeshComponent>> Plates;
+	TArray<TObjectPtr<class USplineMeshComponent>> Plates;
 	UPROPERTY()
 	TObjectPtr<class UStaticMesh> PlateMesh;
 	UPROPERTY()

@@ -112,6 +112,24 @@ struct SHAREDTYPES_API FTrailTemplateKm
 	UPROPERTY(BlueprintReadOnly) float Padding = 0.2f;
 };
 
+/** Cartouche du nom des segments du tracé : forme et hauteur (ses couleurs se règlent par segment dans la régie). */
+USTRUCT(BlueprintType)
+struct SHAREDTYPES_API FTrailTemplateSegment
+{
+	GENERATED_BODY()
+
+	/** Forme des angles : "globals" (comme les autres fonds), "square", "rounded" ou "slant". */
+	UPROPERTY(BlueprintReadOnly) FString Shape = TEXT("square");
+	/** Arrondi quand Shape = "rounded" (part de la hauteur du fond, 0,5 = pilule). */
+	UPROPERTY(BlueprintReadOnly) float CornerRadius = 0.3f;
+	/** Biseau en degrés quand Shape = "slant" (positif : le haut penche à droite). */
+	UPROPERTY(BlueprintReadOnly) float Slant = 12.f;
+	/** Marge autour du texte, en part de sa hauteur. */
+	UPROPERTY(BlueprintReadOnly) float Padding = 0.2f;
+	/** Hauteur du bas du cartouche au-dessus du sol (m), sauf hauteur propre au segment. */
+	UPROPERTY(BlueprintReadOnly) float Height = 45.f;
+};
+
 USTRUCT(BlueprintType)
 struct SHAREDTYPES_API FTrailTemplate
 {
@@ -125,6 +143,7 @@ struct SHAREDTYPES_API FTrailTemplate
 	UPROPERTY(BlueprintReadOnly) FTrailTemplateStack Poi;
 	UPROPERTY(BlueprintReadOnly) FTrailTemplateRunner Runner;
 	UPROPERTY(BlueprintReadOnly) FTrailTemplateKm Km;
+	UPROPERTY(BlueprintReadOnly) FTrailTemplateSegment Segment;
 	UPROPERTY(BlueprintReadOnly) FTrailTemplateTrail Trail;
 
 	/**

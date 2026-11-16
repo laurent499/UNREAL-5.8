@@ -14,6 +14,8 @@
 #include "RaceManager.h"
 #include "RaceSubsystem.h"
 #include "SettingsSubsystem.h"
+#include "TemplateSubsystem.h"
+#include "Engine/GameInstance.h"
 #include "TimerManager.h"
 
 namespace PathSegments
@@ -26,10 +28,11 @@ UPathSegmentsComponent::UPathSegmentsComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	// Fond du nom : cube aplati avec M_Plain, le master des fonds de nom (couleur en Custom Primitive Data)
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeFinder(TEXT("/Engine/BasicShapes/Cube.Cube"));
-	if (CubeFinder.Succeeded()) PlateMesh = CubeFinder.Object;
-	static ConstructorHelpers::FObjectFinder<UMaterialInterface> PlainFinder(TEXT("/Game/LTVContent/Materials/Masters/M_Plain.M_Plain"));
+	// Fond du nom : meme fond que les bornes km (Bkg_Plain etire le long d'un spline, M_PlainRounded
+	// pour les angles arrondis ou en biais ; couleur, arrondi et biseau en Custom Primitive Data)
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> BkgFinder(TEXT("/Game/LTVContent/Meshes/SM/Stack/newUTMB/Bkg_Plain.Bkg_Plain"));
+	if (BkgFinder.Succeeded()) PlateMesh = BkgFinder.Object;
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> PlainFinder(TEXT("/Game/LTVContent/Materials/Masters/M_PlainRounded.M_PlainRounded"));
 	if (PlainFinder.Succeeded()) PlateMaterial = PlainFinder.Object;
 }
 
@@ -40,6 +43,22 @@ void UPathSegmentsComponent::BeginPlay()
 	{
 		RaceManager->OnChangeDayNight.AddUniqueDynamic(this, &UPathSegmentsComponent::UpdateDayNight);
 	}
+	UGameInstance* GameInstance = GetWorld() ? GetWorld()->GetGameInstance() : nullptr;
+	if (UTemplateSubsystem* Templates = GameInstance ? GameInstance->GetSubsystem<UTemplateSubsystem>() : nullptr)
+	{
+		TemplateChangedHandle = Templates->OnTemplateChanged.AddUObject(this, &UPathSegmentsComponent::HandleTemplateChanged);
+	}
+}
+
+void UPathSegmentsComponent::HandleTemplateChanged(const FString& TemplateName)
+{
+	APath* Path = Cast<APath>(GetOwner());
+	if (Segments.Num() == 0 || !Path || !Path->RaceSubsystem
+		|| Path->RaceSubsystem->GetRaceSetupById(Path->RaceId).templateName != TemplateName)
+	{
+		return;
+	}
+	Apply();
 }
 
 void UPathSegmentsComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -47,6 +66,11 @@ void UPathSegmentsComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	if (UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(LookAtTimerHandle);
+		UGameInstance* GameInstance = World->GetGameInstance();
+		if (UTemplateSubsystem* Templates = GameInstance ? GameInstance->GetSubsystem<UTemplateSubsystem>() : nullptr)
+		{
+			Templates->OnTemplateChanged.Remove(TemplateChangedHandle);
+		}
 	}
 	Super::EndPlay(EndPlayReason);
 }
@@ -127,7 +151,7 @@ void UPathSegmentsComponent::RestoreTrace()
 	HighlightedPieces.Reset();
 	HighlightedBaseScales.Reset();
 
-	for (UStaticMeshComponent* Plate : Plates)
+	for (USplineMeshComponent* Plate : Plates)
 	{
 		if (Plate) Plate->DestroyComponent();
 	}
@@ -210,7 +234,25 @@ void UPathSegmentsComponent::Apply()
 	const int32 NumOriginal = Spline->GetNumberOfSplinePoints() - 1;
 	if (NumOriginal < 1 || Path->PathSplineMeshes.Num() < NumOriginal) return; // trace pas encore construit
 
-	struct FRange { float D0; float D1; FLinearColor Color; FString Label; float LabelHeight; };
+	// Cartouche : forme, marge et hauteur par defaut du template de la course
+	FTrailTemplateSegment Style;
+	float GlobalsRadius = 0.f, GlobalsSlant = 0.f;
+	if (Path->RaceSubsystem)
+	{
+		const FTrailTemplate Tpl = UTemplateSubsystem::GetForRace(this, Path->RaceSubsystem->GetRaceSetupById(Path->RaceId));
+		Style = Tpl.Segment;
+		GlobalsRadius = Tpl.Globals.CornerRadius;
+		GlobalsSlant = Tpl.Globals.Slant;
+	}
+	const float DefaultLabelHeight = FMath::Max(Style.Height, 0.f) * 100.f;
+	float PlateRadius = 0.f;
+	float PlateSlant = 0.f;
+	if (Style.Shape.Equals(TEXT("globals"), ESearchCase::IgnoreCase)) { PlateRadius = GlobalsRadius; PlateSlant = GlobalsSlant; }
+	else if (Style.Shape.Equals(TEXT("rounded"), ESearchCase::IgnoreCase)) PlateRadius = Style.CornerRadius;
+	else if (Style.Shape.Equals(TEXT("slant"), ESearchCase::IgnoreCase)) PlateSlant = Style.Slant;
+	PlateSlant = FMath::Clamp(PlateSlant, -60.f, 60.f);
+
+	struct FRange { float D0; float D1; FLinearColor Color; FString Label; float LabelHeight; FColor TextColor; FLinearColor PlateColor; };
 	TArray<FRange> Ranges;
 	const float TotalLen = Spline->GetSplineLength();
 	// Borne posee sur un checkpoint : distance du point du trace qui le porte (il a pu etre deplace),
@@ -236,7 +278,11 @@ void UPathSegmentsComponent::Apply()
 		const float D1 = FMath::Clamp(BoundCm(Segment.CheckpointOut, Segment.KmOut), 0.f, TotalLen);
 		if (!Segment.bVisible || D1 - D0 < PathSegments::MinPieceCm) continue;
 		const FColor Color = FColor::FromHex(Segment.Color);
-		Ranges.Add({ D0, D1, FLinearColor::FromSRGBColor(Color), Segment.Label, Segment.LabelHeight > 0.f ? Segment.LabelHeight * 100.f : LabelHeight });
+		// Texte blanc et fond de la couleur du trace quand la regie n'en envoie pas
+		const FColor TextColor = Segment.TextColor.IsEmpty() ? FColor::White : FColor::FromHex(Segment.TextColor);
+		const FColor PlateColor = Segment.PlateColor.IsEmpty() ? Color : FColor::FromHex(Segment.PlateColor);
+		Ranges.Add({ D0, D1, FLinearColor::FromSRGBColor(Color), Segment.Label, Segment.LabelHeight > 0.f ? Segment.LabelHeight * 100.f : DefaultLabelHeight,
+			TextColor, FLinearColor::FromSRGBColor(PlateColor) });
 	}
 
 	if (Ranges.Num() > 0)
@@ -403,17 +449,18 @@ void UPathSegmentsComponent::Apply()
 			Label->SetWorldSize(LabelWorldSize);
 			Label->SetText(FText::FromString(Range.Label));
 			Label->RegisterComponent();
-			TrailRawText::Apply(Label, FColor::White);
+			TrailRawText::Apply(Label, Range.TextColor);
 			Label->SetScalarParameterForCustomPrimitiveData("Illum", LabelIllum);
 
 			// Fond de la couleur du segment derriere le texte (le texte regarde +X)
 			const FVector TextSize = Label->GetTextLocalSize();
 			const float TextWidth = TextSize.Y > 1.f ? TextSize.Y : LabelWorldSize * 0.6f * Range.Label.Len();
 			const float TextHeight = TextSize.Z > 1.f ? TextSize.Z : LabelWorldSize;
-			const float Pad = LabelWorldSize * LabelPadding;
+			const float Pad = FMath::Max(Style.Padding, 0.f) * TextHeight;
+			const float PlateHeight = TextHeight + 2.f * Pad;
 			if (PlateMesh)
 			{
-				UStaticMeshComponent* Plate = NewObject<UStaticMeshComponent>(Path);
+				USplineMeshComponent* Plate = NewObject<USplineMeshComponent>(Path);
 				Plate->CreationMethod = EComponentCreationMethod::Instance;
 				Path->AddInstanceComponent(Plate);
 				Plate->SetComponentTickEnabled(false);
@@ -425,16 +472,35 @@ void UPathSegmentsComponent::Apply()
 				Plate->SetupAttachment(Label);
 				Plate->RegisterComponent();
 				if (PlateMaterial) Plate->SetMaterial(0, PlateMaterial);
-				Plate->SetCustomPrimitiveDataVector4(0, Range.Color);	// Couleur
+				Plate->SetCustomPrimitiveDataVector4(0, Range.PlateColor);	// Couleur
 				Plate->SetCustomPrimitiveDataFloat(4, 0.5f);				// Illum
 				Plate->SetCustomPrimitiveDataFloat(5, 1.f);				// Alpha
-				// Cube de 100 cm : 4 cm d'epaisseur, juste derriere le texte
-				Plate->SetRelativeLocation(FVector(-10.f, 0.f, 0.f));
-				Plate->SetRelativeScale3D(FVector(0.04f, (TextWidth + 2.f * Pad) / 100.f, (TextHeight + Pad) / 100.f));
+				Plate->SetCustomPrimitiveDataFloat(6, PlateRadius);		// Arrondi des angles
+				Plate->SetCustomPrimitiveDataFloat(7, 0.f);
+				Plate->SetCustomPrimitiveDataFloat(8, PlateSlant);		// Biseau
+				Plate->SetCustomPrimitiveDataFloat(9, 0.f);
+				// Comme les bornes km : Bkg_Plain etire en largeur par le spline (axe X du mesh), hauteur en Z,
+				// juste derriere le texte (qui regarde +X) et centre sur lui. Le biseau mange |tan| x hauteur
+				// de chaque cote : on l'ajoute a la largeur.
+				const FBox MeshBox = PlateMesh->GetBoundingBox();
+				const float MeshHeight = FMath::Max(MeshBox.GetSize().Z, 1.f);
+				const float SlantInset = FMath::Abs(FMath::Tan(FMath::DegreesToRadians(PlateSlant))) * PlateHeight;
+				const float PlateWidth = TextWidth + 2.f * Pad + 2.f * SlantInset;
+				const float ScaleZ = PlateHeight / MeshHeight;
+				const float Depth = FMath::Max(FMath::Abs(MeshBox.Min.Y), FMath::Abs(MeshBox.Max.Y));
+				const float X = -Depth - 10.f;
+				const float Z = -MeshBox.GetCenter().Z * ScaleZ;
+				const FVector Start(X, 0.5f * PlateWidth, Z);
+				const FVector End(X, -0.5f * PlateWidth, Z);
+				const FVector Tangent = End - Start;
+				Plate->SetForwardAxis(ESplineMeshAxis::X, false);
+				Plate->SetStartScale(FVector2D(1.f, ScaleZ), false);
+				Plate->SetEndScale(FVector2D(1.f, ScaleZ), false);
+				Plate->SetStartAndEnd(Start, Tangent, End, Tangent, true);
 				Plates.Add(Plate);
 			}
 			const FVector Anchor = Spline->GetLocationAtDistanceAlongSpline(0.5f * (Range.D0 + Range.D1), ESplineCoordinateSpace::World);
-			Label->SetWorldLocation(Anchor + FVector::UpVector * (Range.LabelHeight + 0.5f * (TextHeight + Pad)));
+			Label->SetWorldLocation(Anchor + FVector::UpVector * (Range.LabelHeight + 0.5f * PlateHeight));
 			Labels.Add(Label);
 		}
 	}

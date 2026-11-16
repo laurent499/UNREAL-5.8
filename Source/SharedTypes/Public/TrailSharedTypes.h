@@ -875,9 +875,15 @@ struct SHAREDTYPES_API FPathSegment
 
 	UPROPERTY(EditAnywhere)
 	FString Label;
-	/** Couleur hexadecimale, ex. #1E6BFF */
+	/** Couleur hexadecimale du trace, ex. #1E6BFF */
 	UPROPERTY(EditAnywhere)
 	FString Color;
+	/** Couleur hexadecimale du texte du label (vide = blanc) */
+	UPROPERTY(EditAnywhere)
+	FString TextColor;
+	/** Couleur hexadecimale du fond (cartouche) du label (vide = couleur du trace) */
+	UPROPERTY(EditAnywhere)
+	FString PlateColor;
 	/** Debut et fin du segment, en km le long du trace (memes km que les bornes) */
 	UPROPERTY(EditAnywhere)
 	float KmIn = 0.f;
@@ -890,7 +896,7 @@ struct SHAREDTYPES_API FPathSegment
 	int64 CheckpointOut = 0;
 	UPROPERTY(EditAnywhere)
 	bool bVisible = true;
-	/** Hauteur du label au-dessus du trace, en m (0 = LabelHeight du composant) */
+	/** Hauteur du label au-dessus du trace, en m (0 = hauteur du template de la course, section segment) */
 	UPROPERTY(EditAnywhere)
 	float LabelHeight = 0.f;
 };

@@ -1083,7 +1083,8 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
     
     
     /*** SEGMENTS COMMANDS ***/
-    // group=segments&action=set&idrace=XX&data=[{"label":"Segment Downhill","color":"#1E6BFF","kmIn":7.2,"kmOut":8.5,"cpIn":0,"cpOut":0,"show":1}]
+    // group=segments&action=set&idrace=XX&data=[{"label":"Segment Downhill","color":"#1E6BFF","textColor":"#FFFFFF","plateColor":"#1E6BFF","kmIn":7.2,"kmOut":8.5,"cpIn":0,"cpOut":0,"show":1}]
+    // color = trace, textColor = texte du label (defaut blanc), plateColor = fond du label (defaut couleur du trace)
     // cpIn / cpOut : checkpointId sur lequel la borne est posee (0 = km libre)
     // Remplace tous les segments de la course (liste vide : plus aucun segment).
     if (Group.Equals(TEXT("segments"), ESearchCase::IgnoreCase) && Action.Equals(TEXT("set"), ESearchCase::IgnoreCase))
@@ -1107,6 +1108,8 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
                 FPathSegment Segment;
                 (*Obj)->TryGetStringField(TEXT("label"), Segment.Label);
                 (*Obj)->TryGetStringField(TEXT("color"), Segment.Color);
+                (*Obj)->TryGetStringField(TEXT("textColor"), Segment.TextColor);
+                (*Obj)->TryGetStringField(TEXT("plateColor"), Segment.PlateColor);
                 double Km = 0.0;
                 if ((*Obj)->TryGetNumberField(TEXT("kmIn"), Km)) Segment.KmIn = Km;
                 if ((*Obj)->TryGetNumberField(TEXT("kmOut"), Km)) Segment.KmOut = Km;
