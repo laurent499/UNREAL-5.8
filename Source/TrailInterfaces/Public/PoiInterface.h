@@ -32,4 +32,7 @@ public:
 	
 	virtual void UpdateDayNight(bool bIsDay) = 0;
 
+	// Panneau du POI (sans le pied) : ses enfants visibles forment le rectangle que les cartes
+	// des coureurs evitent a l'ecran. nullptr = pas d'evitement.
+	virtual USceneComponent* GetPanelComponent() const { return nullptr; }
 };

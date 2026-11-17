@@ -44,6 +44,9 @@ public:
 	
 	UFUNCTION()
 	virtual void UpdateDayNight(bool bIsDay) override;
+
+	// Panneau sans le pied : evite par les cartes des coureurs (URunnerStackingSubsystem)
+	virtual USceneComponent* GetPanelComponent() const override { return FootHook; }
 	
 	// Orbit
 	UPROPERTY(VisibleAnywhere)

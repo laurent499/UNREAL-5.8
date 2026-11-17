@@ -14,6 +14,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/SplineMeshComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Engine/StaticMesh.h"
 
 /**
  * @brief Fond de panneau avec coins arrondis : M_PlainRounded (même rendu que M_Plain, qui
@@ -80,6 +82,81 @@ static constexpr float FlagNameGap_RunnerGTWS = 20.f;
 static const FVector FlagClubLocation_RunnerGTWS(0.f, -6.f, 0.f);
 /** Position d'origine de la photo sous NameHook. */
 static const FVector PhotoLeftLocation_RunnerGTWS(31.f, 130.f, -60.f);
+
+/**
+ * @brief Barre du club affichée ? Avec le drapeau dans la barre du nom, un coureur sans club
+ *        n'a plus rien à y mettre : la barre disparaît (fond, texte, place du drapeau).
+ *        Drapeau dans la barre du club : comportement d'origine (seul le choix opérateur / template compte).
+ */
+static bool ClubBarShown_RunnerGTWS(bool bClubVisible, const FRunnerStruct& Datas, const FTrailTemplateRunner& Style)
+{
+	if (!bClubVisible) return false;
+	return !(Style.FlagPosition.Equals(TEXT("name"), ESearchCase::IgnoreCase) && Datas.club.TrimStartAndEnd().IsEmpty());
+}
+
+/**
+ * @brief Pied (tige sous la carte) : touche le bas de la dernière barre visible.
+ * @note Barre du club masquée (club vide avec le drapeau dans le nom, ou choix opérateur) : le haut
+ *       du pied est calé sur le bas du fond du nom, mesuré dans le repère du parent du pied ; son bas
+ *       (ancrage au sol) ne bouge pas. Le fond du club n'entre pas dans le calcul : masqué, il n'est
+ *       plus mis en forme et ses bornes ne disent rien. Barre du club affichée : échelle et position
+ *       d'origine (celles du CDO). La photo n'entre pas en compte.
+ *       Lift : décalage vertical de la carte (évitement des checkpoints) ; le haut du pied le suit,
+ *       le bas reste au sol. Le fond du nom mesuré est déjà décalé.
+ */
+static void FitFoot_RunnerGTWS(UStaticMeshComponent* Foot, const UStaticMeshComponent* DefaultFoot,
+	const UPrimitiveComponent* NameBkg, bool bClubBar, float Lift = 0.f)
+{
+	if (!Foot || !DefaultFoot || !Foot->GetStaticMesh()) return;
+	const FVector DefaultScale = DefaultFoot->GetRelativeScale3D();
+	const FVector DefaultLocation = DefaultFoot->GetRelativeLocation();
+	FVector Scale = DefaultScale;
+	FVector Location = DefaultLocation;
+	bool bFitted = false;
+	if (!bClubBar && NameBkg && DefaultScale.Z > KINDA_SMALL_NUMBER)
+	{
+		// Repère du parent du pied : unités de sa position et de son échelle relatives
+		// (indépendant de l'échelle automatique de l'acteur, qui s'applique à tout)
+		const USceneComponent* Parent = Foot->GetAttachParent();
+		const FTransform Ref = Parent ? Parent->GetComponentTransform() : FTransform::Identity;
+		const FBox NameBox = BoxIn_RunnerGTWS(NameBkg, Ref, false);
+		// Bornes du mesh du pied, quel que soit son pivot (centre ou extrémité)
+		const FBox MeshBox = Foot->GetStaticMesh()->GetBoundingBox();
+		const float MeshHeight = MeshBox.Max.Z - MeshBox.Min.Z;
+		const float Bottom = DefaultLocation.Z + MeshBox.Min.Z * DefaultScale.Z;
+		const float DefaultTop = DefaultLocation.Z + MeshBox.Max.Z * DefaultScale.Z;
+		if (NameBox.IsValid && MeshHeight > KINDA_SMALL_NUMBER && NameBox.Min.Z - Lift > DefaultTop
+			&& NameBox.Min.Z - Bottom > 1.f)
+		{
+			Scale.Z = (NameBox.Min.Z - Bottom) / MeshHeight;
+			Location.Z = Bottom - MeshBox.Min.Z * Scale.Z;
+			bFitted = true;
+		}
+		// TEMPORAIRE (diagnostic du pied) : à retirer une fois le rendu validé
+		if (FMath::IsNearlyZero(Lift) && !Foot->GetRelativeScale3D().Equals(Scale, 1e-4f))
+		{
+			UE_LOG(LogTemp, Log, TEXT("[FootFit] %s Name Z %.1f..%.1f | foot mesh Z %.1f..%.1f, defaut loc %.1f scale %.3f (haut %.1f, bas %.1f) | courant loc %.1f scale %.3f -> loc %.1f scale %.3f"),
+				*GetNameSafe(Foot->GetOwner()), NameBox.Min.Z, NameBox.Max.Z, MeshBox.Min.Z, MeshBox.Max.Z,
+				DefaultLocation.Z, DefaultScale.Z, DefaultTop, Bottom,
+				Foot->GetRelativeLocation().Z, Foot->GetRelativeScale3D().Z, Location.Z, Scale.Z);
+		}
+	}
+	// Pied d'origine et carte décalée : le haut suit le décalage, le bas reste au sol
+	if (!bFitted && !FMath::IsNearlyZero(Lift) && Foot->GetStaticMesh() && DefaultScale.Z > KINDA_SMALL_NUMBER)
+	{
+		const FBox MeshBox = Foot->GetStaticMesh()->GetBoundingBox();
+		const float MeshHeight = MeshBox.Max.Z - MeshBox.Min.Z;
+		if (MeshHeight > KINDA_SMALL_NUMBER)
+		{
+			const float Bottom = DefaultLocation.Z + MeshBox.Min.Z * DefaultScale.Z;
+			const float Top = DefaultLocation.Z + MeshBox.Max.Z * DefaultScale.Z + Lift;
+			Scale.Z = FMath::Max(Top - Bottom, 1.f) / MeshHeight;
+			Location.Z = Bottom - MeshBox.Min.Z * Scale.Z;
+		}
+	}
+	if (!Foot->GetRelativeScale3D().Equals(Scale, 1e-4f)) Foot->SetRelativeScale3D(Scale);
+	if (!Foot->GetRelativeLocation().Equals(Location, 0.01f)) Foot->SetRelativeLocation(Location);
+}
 
 ARunner_GTWS::ARunner_GTWS()
 {
@@ -198,6 +275,13 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 	const bool bFlagInName = FlagComponent && IsFlagVisible() && !Runner.pays.IsEmpty()
 		&& Style.FlagPosition.Equals(TEXT("name"), ESearchCase::IgnoreCase);
 	const bool bGradient = Style.NameGradient;
+	// Barre du club : masquée si le drapeau est dans le nom et que le coureur n'a pas de club.
+	// Le reste de la carte suit comme pour un club masqué (largeur du nom seul, nom arrondi tout autour).
+	const bool bClubBar = ClubBarShown_RunnerGTWS(IsClubVisible(), Runner, Style);
+	if (ClubComponent)
+	{
+		ClubComponent->ToggleClub(bClubBar);
+	}
 
 	if (ClubComponent && NameComponent)
 	{
@@ -207,7 +291,7 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 		// Club masqué : le nom reste seul et s'arrondit tout autour
 		if (UPrimitiveComponent* NameBkg = NameComponent->NameBkgComponent)
 		{
-			SetCornerRadius(NameBkg, IsClubVisible() ? 1.f : 0.f, bGradient);
+			SetCornerRadius(NameBkg, bClubBar ? 1.f : 0.f, bGradient);
 			if (bGradient)
 			{
 				// Couleur d'arrivée du dégradé (M_PlainRoundedGradient, primitive data 10-13)
@@ -238,12 +322,12 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 		}
 
 		// Le plus large des deux impose la largeur des deux fonds
-		const float ClubTextWidth = IsClubVisible() ? ClubComponent->GetLocalSize().Y : 0.f;
+		const float ClubTextWidth = bClubBar ? ClubComponent->GetLocalSize().Y : 0.f;
 		const FStartAndEnd SharedBounds = GTWSStyle::MakeSharedBkgBounds(
 			NameComponent->GetLocalSize().Y + FlagShift, ClubTextWidth, Style.BkgLeftMargin, Style.BkgRightMargin);
 
 		NameComponent->UpdateMesh(SharedBounds.StartLocation, SharedBounds.EndLocation);
-		if (IsClubVisible())
+		if (bClubBar)
 		{
 			ClubComponent->UpdateMesh(SharedBounds.StartLocation, SharedBounds.EndLocation);
 		}
@@ -253,7 +337,7 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 		if (NameBkg && ClubBkg)
 		{
 			// Nom seul : 0, le fond se biseaute sur sa propre hauteur
-			const float RefHeight = (IsClubVisible() && FMath::Abs(Tpl.Globals.Slant) >= 0.01f)
+			const float RefHeight = (bClubBar && FMath::Abs(Tpl.Globals.Slant) >= 0.01f)
 				? FMath::Max(BkgHeight(NameBkg), BkgHeight(ClubBkg)) : 0.f;
 			SetSlantRefHeight(NameBkg, RefHeight);
 			SetSlantRefHeight(ClubBkg, RefHeight);
@@ -322,6 +406,27 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 			}
 		}
 	}
+
+	// Pied : jusqu'au bas de la dernière barre visible (une fois les crochets posés)
+	if (NameComponent && ClubComponent)
+	{
+		bFootClubBar = bClubBar;
+		const ARunner_GTWS* Defaults = GetClass()->GetDefaultObject<ARunner_GTWS>();
+		FitFoot_RunnerGTWS(FootComponent, Defaults ? Defaults->GetFootMesh() : nullptr,
+			NameComponent->NameBkgComponent, bClubBar, CardLift);
+	}
+}
+
+void ARunner_GTWS::ApplyFootForCardLift()
+{
+	if (!NameComponent)
+	{
+		Super::ApplyFootForCardLift();
+		return;
+	}
+	const ARunner_GTWS* Defaults = GetClass()->GetDefaultObject<ARunner_GTWS>();
+	FitFoot_RunnerGTWS(FootComponent, Defaults ? Defaults->GetFootMesh() : nullptr,
+		NameComponent->NameBkgComponent, bFootClubBar, CardLift);
 }
 
 void ARunner_GTWS::ToggleClub(bool bDisplay)
@@ -329,7 +434,19 @@ void ARunner_GTWS::ToggleClub(bool bDisplay)
 	Super::ToggleClub(bDisplay);
 	if (ClubComponent)
 	{
-		ClubComponent->ToggleClub(IsClubVisible());
+		// Même règle qu'UpdateRunner : pas de barre du club vide quand le drapeau est dans le nom
+		TOptional<FTrailTemplate> Storage;
+		const FTrailTemplateRunner& Style = UTemplateSubsystem::ResolveForRace(this, TemplateRaceSetup, Storage).Runner;
+		const bool bClubBar = ClubBarShown_RunnerGTWS(IsClubVisible(), RunnerDatas, Style);
+		ClubComponent->ToggleClub(bClubBar);
+		// Le pied suit tout de suite (sans attendre le prochain relevé)
+		if (NameComponent)
+		{
+			bFootClubBar = bClubBar;
+			const ARunner_GTWS* Defaults = GetClass()->GetDefaultObject<ARunner_GTWS>();
+			FitFoot_RunnerGTWS(FootComponent, Defaults ? Defaults->GetFootMesh() : nullptr,
+				NameComponent->NameBkgComponent, bClubBar, CardLift);
+		}
 	}
 }
 
@@ -367,7 +484,9 @@ void ARunner_GTWS::UpdateDayNight(bool bIsDay)
 		// Appelé à chaque relevé de l'heure, sinon le nom alterne entre deux formes.
 		if (UPrimitiveComponent* NameBkg = NameComponent->NameBkgComponent)
 		{
-			NameBkg->SetCustomPrimitiveDataFloat(7, IsClubVisible() ? 1.f : 0.f);
+			TOptional<FTrailTemplate> Storage;
+			const FTrailTemplateRunner& Style = UTemplateSubsystem::ResolveForRace(this, TemplateRaceSetup, Storage).Runner;
+			NameBkg->SetCustomPrimitiveDataFloat(7, ClubBarShown_RunnerGTWS(IsClubVisible(), RunnerDatas, Style) ? 1.f : 0.f);
 		}
 	}
 	if (FlagComponent)

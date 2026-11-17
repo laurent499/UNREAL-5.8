@@ -557,6 +557,48 @@ void ARunner::SetIsStacked(bool bInStacked)
 	}
 }
 
+void ARunner::SetStackCardLift(float Lift)
+{
+	if (!PresentationRoot || FMath::IsNearlyEqual(Lift, CardLift, 0.01f)) return;
+	if (!bHasPresentationBase)
+	{
+		PresentationBaseLocation = PresentationRoot->GetRelativeLocation();
+		bHasPresentationBase = true;
+	}
+	// Premier decalage : on garde le pied tel qu'il est a decalage nul
+	if (FMath::IsNearlyZero(CardLift) && FootComponent)
+	{
+		FootBaseScale = FootComponent->GetRelativeScale3D();
+		FootBaseLocation = FootComponent->GetRelativeLocation();
+	}
+	CardLift = Lift;
+	PresentationRoot->SetRelativeLocation(PresentationBaseLocation + FVector(0.f, 0.f, CardLift));
+	ApplyFootForCardLift();
+}
+
+void ARunner::ApplyFootForCardLift()
+{
+	if (!FootComponent || !FootComponent->GetStaticMesh()) return;
+	if (FMath::IsNearlyZero(CardLift))
+	{
+		FootComponent->SetRelativeScale3D(FootBaseScale);
+		FootComponent->SetRelativeLocation(FootBaseLocation);
+		return;
+	}
+	// Bornes du mesh, quel que soit son pivot : le bas reste au sol, le haut suit la carte
+	const FBox MeshBox = FootComponent->GetStaticMesh()->GetBoundingBox();
+	const float MeshHeight = MeshBox.Max.Z - MeshBox.Min.Z;
+	if (MeshHeight <= KINDA_SMALL_NUMBER) return;
+	const float Bottom = FootBaseLocation.Z + MeshBox.Min.Z * FootBaseScale.Z;
+	const float Top = FootBaseLocation.Z + MeshBox.Max.Z * FootBaseScale.Z + CardLift;
+	FVector Scale = FootBaseScale;
+	FVector Location = FootBaseLocation;
+	Scale.Z = FMath::Max(Top - Bottom, 1.f) / MeshHeight;
+	Location.Z = Bottom - MeshBox.Min.Z * Scale.Z;
+	FootComponent->SetRelativeScale3D(Scale);
+	FootComponent->SetRelativeLocation(Location);
+}
+
 bool ARunner::IsStacked() const
 {
 	return bStackedState;

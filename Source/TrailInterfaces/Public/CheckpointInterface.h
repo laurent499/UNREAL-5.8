@@ -27,6 +27,10 @@ public:
 	virtual void ToggleCheckpointWeather(bool bShow) = 0;
 	virtual void StartAnimation(float RotationSpeed) = 0;
 	virtual void StopAnimation() = 0;
+
+	// Panneau du checkpoint (sans le pied) : ses enfants visibles forment le rectangle que les
+	// cartes des coureurs evitent a l'ecran. nullptr = pas d'evitement.
+	virtual USceneComponent* GetPanelComponent() const { return nullptr; }
 	
 	virtual void UpdateDayNight(bool bIsDay) = 0;
 	
