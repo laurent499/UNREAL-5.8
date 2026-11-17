@@ -69,6 +69,14 @@ struct SHAREDTYPES_API FTrailTemplateRunner
 	UPROPERTY(BlueprintReadOnly) float BkgRightMargin = 50.f;
 	/** Hauteur du cartouche au-dessus du coureur (VDelta). */
 	UPROPERTY(BlueprintReadOnly) float Height = 100.f;
+	/** Photo : "left" (dans la marge gauche des fonds, d'origine) ou "above" (posée sur la barre du nom). */
+	UPROPERTY(BlueprintReadOnly) FString PhotoPosition = TEXT("left");
+	/** Drapeau : "club" (dans la barre du club, d'origine) ou "name" (dans la barre du nom, avant le nom). */
+	UPROPERTY(BlueprintReadOnly) FString FlagPosition = TEXT("club");
+	/** Dégradé gauche -> droite sur le fond du nom, de NameGradientFrom à NameGradientTo (sinon NameBkg uni). */
+	UPROPERTY(BlueprintReadOnly) bool NameGradient = false;
+	UPROPERTY(BlueprintReadOnly) FString NameGradientFrom = TEXT("#000000FF");
+	UPROPERTY(BlueprintReadOnly) FString NameGradientTo = TEXT("race");
 };
 
 /** Rendu du tracé lumineux de la course. */
