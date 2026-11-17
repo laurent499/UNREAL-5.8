@@ -13,23 +13,73 @@
 #include "Components/GTWS/GTWS_NameComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SplineMeshComponent.h"
+#include "Components/TextRenderComponent.h"
 
 /**
  * @brief Fond de panneau avec coins arrondis : M_PlainRounded (même rendu que M_Plain, qui
  *        ignore son masque d'opacité). Primitive data : 0-3 couleur, 5 alpha, 6 arrondi, 7 coins.
  */
-static void UseRoundedBkg_RunnerGTWS(UPrimitiveComponent* Comp)
+static void UseRoundedBkg_RunnerGTWS(UPrimitiveComponent* Comp, bool bGradient = false)
 {
+	// M_PlainRoundedGradient : copie de M_PlainRounded (mêmes primitive data 0-9) avec un dégradé
+	// gauche -> droite vers BaseColorB (primitive data 10-13). Tools/Templates/create_plain_rounded_gradient.py
 	static TWeakObjectPtr<UMaterialInterface> Rounded;
+	static TWeakObjectPtr<UMaterialInterface> Gradient;
 	if (!Rounded.IsValid())
 	{
 		Rounded = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/LTVContent/Materials/Masters/M_PlainRounded.M_PlainRounded"));
 	}
-	if (Comp && Rounded.IsValid() && Comp->GetMaterial(0) != Rounded.Get())
+	if (bGradient && !Gradient.IsValid())
 	{
-		Comp->SetMaterial(0, Rounded.Get());
+		Gradient = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/LTVContent/Materials/Masters/M_PlainRoundedGradient.M_PlainRoundedGradient"));
+	}
+	UMaterialInterface* Wanted = (bGradient && Gradient.IsValid()) ? Gradient.Get() : Rounded.Get();
+	if (Comp && Wanted && Comp->GetMaterial(0) != Wanted)
+	{
+		Comp->SetMaterial(0, Wanted);
 	}
 }
+
+/**
+ * @brief Boîte englobante de Root et de ses descendants visibles, dans le repère de Ref.
+ * @note Sert à poser photo et drapeau contre la barre du nom quelle que soit la taille de leurs meshes.
+ */
+static FBox BoxIn_RunnerGTWS(const USceneComponent* Root, const FTransform& Ref, bool bWithChildren = true)
+{
+	FBox Box(ForceInit);
+	if (!Root) return Box;
+	TArray<USceneComponent*> Comps;
+	if (bWithChildren) Root->GetChildrenComponents(true, Comps);
+	Comps.Add(const_cast<USceneComponent*>(Root));
+	for (const USceneComponent* C : Comps)
+	{
+		const UPrimitiveComponent* P = Cast<UPrimitiveComponent>(C);
+		if (P && P->IsVisible())
+		{
+			Box += P->CalcBounds(P->GetComponentTransform().GetRelativeTransform(Ref)).GetBox();
+		}
+	}
+	return Box;
+}
+
+/** Texte 3D du nom (membre protégé de UNameComponent). */
+static UTextRenderComponent* NameText_RunnerGTWS(const USceneComponent* NameComp)
+{
+	TArray<USceneComponent*> Children;
+	if (NameComp) NameComp->GetChildrenComponents(false, Children);
+	for (USceneComponent* C : Children)
+	{
+		if (UTextRenderComponent* T = Cast<UTextRenderComponent>(C)) return T;
+	}
+	return nullptr;
+}
+
+/** Écart entre le drapeau et le nom quand le drapeau est dans la barre du nom (cm). */
+static constexpr float FlagNameGap_RunnerGTWS = 20.f;
+/** Position d'origine du drapeau sous ClubHook. */
+static const FVector FlagClubLocation_RunnerGTWS(0.f, -6.f, 0.f);
+/** Position d'origine de la photo sous NameHook. */
+static const FVector PhotoLeftLocation_RunnerGTWS(31.f, 130.f, -60.f);
 
 ARunner_GTWS::ARunner_GTWS()
 {
@@ -98,9 +148,9 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 	// snapshot : on ne touche au rendu que si la valeur change.
 	// Mode (primitive data 7) : 0 tous les coins, 1 ceux du haut, 2 ceux du bas ; nom et club
 	// forment ainsi un seul bloc arrondi à l'extérieur, comme le synthé OnGraphics.
-	auto SetCornerRadius = [&Tpl](UPrimitiveComponent* Comp, float Mode)
+	auto SetCornerRadius = [&Tpl](UPrimitiveComponent* Comp, float Mode, bool bGradient)
 	{
-		UseRoundedBkg_RunnerGTWS(Comp);
+		UseRoundedBkg_RunnerGTWS(Comp, bGradient);
 		const TArray<float>& Data = Comp->GetCustomPrimitiveData().Data;
 		if (!Data.IsValidIndex(6) || Data[6] != Tpl.Globals.CornerRadius)
 		{
@@ -142,21 +192,55 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 		FootComponent->SetColorParameterValueOnMaterials("BaseColor", Lin(Style.Foot));
 	}
 	
+	// Options du template (défauts = rendu d'origine) : photo sur la barre du nom, drapeau avant
+	// le nom, dégradé sur le fond du nom
+	const bool bPhotoAbove = Style.PhotoPosition.Equals(TEXT("above"), ESearchCase::IgnoreCase);
+	const bool bFlagInName = FlagComponent && IsFlagVisible() && !Runner.pays.IsEmpty()
+		&& Style.FlagPosition.Equals(TEXT("name"), ESearchCase::IgnoreCase);
+	const bool bGradient = Style.NameGradient;
+
 	if (ClubComponent && NameComponent)
 	{
 		// Les deux textes sont posés d'abord : il faut qu'ils le soient pour être mesurables
-		NameComponent->SetColors(Lin(Style.NameBkg), Srgb(Style.NameText));
+		NameComponent->SetColors(Lin(bGradient ? Style.NameGradientFrom : Style.NameBkg), Srgb(Style.NameText));
 		ClubComponent->SetColors(Lin(Style.ClubBkg), Srgb(Style.ClubText));
 		// Club masqué : le nom reste seul et s'arrondit tout autour
-		if (NameComponent->NameBkgComponent) SetCornerRadius(NameComponent->NameBkgComponent, IsClubVisible() ? 1.f : 0.f);
-		if (ClubComponent->ClubBkgComponent) SetCornerRadius(ClubComponent->ClubBkgComponent, 2.f);
+		if (UPrimitiveComponent* NameBkg = NameComponent->NameBkgComponent)
+		{
+			SetCornerRadius(NameBkg, IsClubVisible() ? 1.f : 0.f, bGradient);
+			if (bGradient)
+			{
+				// Couleur d'arrivée du dégradé (M_PlainRoundedGradient, primitive data 10-13)
+				const FLinearColor To = Lin(Style.NameGradientTo);
+				const TArray<float>& Data = NameBkg->GetCustomPrimitiveData().Data;
+				if (!Data.IsValidIndex(13) || !FLinearColor(Data[10], Data[11], Data[12], Data[13]).Equals(To))
+				{
+					NameBkg->SetCustomPrimitiveDataVector4(10, To);
+				}
+			}
+		}
+		if (ClubComponent->ClubBkgComponent) SetCornerRadius(ClubComponent->ClubBkgComponent, 2.f, false);
 		NameComponent->UpdateName(Runner.nom);
 		ClubComponent->UpdateClub(Runner);
+
+		// Drapeau dans la barre du nom : le nom se décale vers la droite de la largeur du drapeau
+		// (UpdateName vient de remettre le texte à sa place d'origine)
+		float FlagShift = 0.f;
+		if (bFlagInName)
+		{
+			const FBox FlagBox = BoxIn_RunnerGTWS(FlagComponent, NameHook->GetComponentTransform());
+			UTextRenderComponent* NameText = NameText_RunnerGTWS(NameComponent);
+			if (FlagBox.IsValid && NameText)
+			{
+				FlagShift = FlagBox.GetSize().Y + FlagNameGap_RunnerGTWS;
+				NameText->AddRelativeLocation(FVector(0.f, -FlagShift, 0.f));
+			}
+		}
 
 		// Le plus large des deux impose la largeur des deux fonds
 		const float ClubTextWidth = IsClubVisible() ? ClubComponent->GetLocalSize().Y : 0.f;
 		const FStartAndEnd SharedBounds = GTWSStyle::MakeSharedBkgBounds(
-			NameComponent->GetLocalSize().Y, ClubTextWidth, Style.BkgLeftMargin, Style.BkgRightMargin);
+			NameComponent->GetLocalSize().Y + FlagShift, ClubTextWidth, Style.BkgLeftMargin, Style.BkgRightMargin);
 
 		NameComponent->UpdateMesh(SharedBounds.StartLocation, SharedBounds.EndLocation);
 		if (IsClubVisible())
@@ -198,7 +282,46 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 	
 	if (FlagComponent && !Runner.pays.IsEmpty() && IsFlagVisible()){
 		FlagComponent->UpdateFlag(Runner.pays);
-	}	
+	}
+
+	// Placements mesurés une fois les crochets posés : tout se calcule dans le repère de NameHook
+	// (gauche de l'écran = +Y, haut = +Z), quelle que soit la taille des meshes de la photo et du drapeau
+	const FTransform NameRef = NameHook->GetComponentTransform();
+	UPrimitiveComponent* NameBarBkg = NameComponent ? NameComponent->NameBkgComponent.Get() : nullptr;
+	const FBox NameBarBox = NameBarBkg ? BoxIn_RunnerGTWS(NameBarBkg, NameRef, false) : FBox(ForceInit);
+
+	// Photo au-dessus de la barre du nom : posée sur son bord haut, alignée sur son bord gauche
+	if (PhotoHook)
+	{
+		PhotoHook->SetRelativeLocation(PhotoLeftLocation_RunnerGTWS);
+		if (bPhotoAbove && PhotoComponent && IsPhotoVisible() && NameBarBox.IsValid)
+		{
+			const FBox PhotoBox = BoxIn_RunnerGTWS(PhotoComponent, NameRef);
+			if (PhotoBox.IsValid)
+			{
+				PhotoHook->AddRelativeLocation(FVector(0.f, NameBarBox.Max.Y - PhotoBox.Max.Y, NameBarBox.Max.Z - PhotoBox.Min.Z));
+			}
+		}
+	}
+
+	// Drapeau dans la barre du nom : juste avant le nom, centré sur la hauteur de la barre
+	if (FlagComponent)
+	{
+		FlagComponent->SetRelativeLocation(FlagClubLocation_RunnerGTWS);
+		UTextRenderComponent* NameText = NameComponent ? NameText_RunnerGTWS(NameComponent) : nullptr;
+		if (bFlagInName && NameText && NameBarBox.IsValid)
+		{
+			const FBox FlagBox = BoxIn_RunnerGTWS(FlagComponent, NameRef);
+			const FBox TextBox = BoxIn_RunnerGTWS(NameText, NameRef, false);
+			if (FlagBox.IsValid && TextBox.IsValid)
+			{
+				const FVector Delta(0.f,
+					TextBox.Max.Y + FlagNameGap_RunnerGTWS - FlagBox.Min.Y,
+					NameBarBox.GetCenter().Z - FlagBox.GetCenter().Z);
+				FlagComponent->AddWorldOffset(NameRef.TransformVector(Delta));
+			}
+		}
+	}
 }
 
 void ARunner_GTWS::ToggleClub(bool bDisplay)
