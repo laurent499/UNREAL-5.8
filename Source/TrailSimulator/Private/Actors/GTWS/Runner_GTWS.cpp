@@ -81,6 +81,17 @@ static const FVector FlagClubLocation_RunnerGTWS(0.f, -6.f, 0.f);
 /** Position d'origine de la photo sous NameHook. */
 static const FVector PhotoLeftLocation_RunnerGTWS(31.f, 130.f, -60.f);
 
+/**
+ * @brief Barre du club affichée ? Avec le drapeau dans la barre du nom, un coureur sans club
+ *        n'a plus rien à y mettre : la barre disparaît (fond, texte, place du drapeau).
+ *        Drapeau dans la barre du club : comportement d'origine (seul le choix opérateur / template compte).
+ */
+static bool ClubBarShown_RunnerGTWS(bool bClubVisible, const FRunnerStruct& Datas, const FTrailTemplateRunner& Style)
+{
+	if (!bClubVisible) return false;
+	return !(Style.FlagPosition.Equals(TEXT("name"), ESearchCase::IgnoreCase) && Datas.club.TrimStartAndEnd().IsEmpty());
+}
+
 ARunner_GTWS::ARunner_GTWS()
 {
 	
@@ -198,6 +209,13 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 	const bool bFlagInName = FlagComponent && IsFlagVisible() && !Runner.pays.IsEmpty()
 		&& Style.FlagPosition.Equals(TEXT("name"), ESearchCase::IgnoreCase);
 	const bool bGradient = Style.NameGradient;
+	// Barre du club : masquée si le drapeau est dans le nom et que le coureur n'a pas de club.
+	// Le reste de la carte suit comme pour un club masqué (largeur du nom seul, nom arrondi tout autour).
+	const bool bClubBar = ClubBarShown_RunnerGTWS(IsClubVisible(), Runner, Style);
+	if (ClubComponent)
+	{
+		ClubComponent->ToggleClub(bClubBar);
+	}
 
 	if (ClubComponent && NameComponent)
 	{
@@ -207,7 +225,7 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 		// Club masqué : le nom reste seul et s'arrondit tout autour
 		if (UPrimitiveComponent* NameBkg = NameComponent->NameBkgComponent)
 		{
-			SetCornerRadius(NameBkg, IsClubVisible() ? 1.f : 0.f, bGradient);
+			SetCornerRadius(NameBkg, bClubBar ? 1.f : 0.f, bGradient);
 			if (bGradient)
 			{
 				// Couleur d'arrivée du dégradé (M_PlainRoundedGradient, primitive data 10-13)
@@ -238,12 +256,12 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 		}
 
 		// Le plus large des deux impose la largeur des deux fonds
-		const float ClubTextWidth = IsClubVisible() ? ClubComponent->GetLocalSize().Y : 0.f;
+		const float ClubTextWidth = bClubBar ? ClubComponent->GetLocalSize().Y : 0.f;
 		const FStartAndEnd SharedBounds = GTWSStyle::MakeSharedBkgBounds(
 			NameComponent->GetLocalSize().Y + FlagShift, ClubTextWidth, Style.BkgLeftMargin, Style.BkgRightMargin);
 
 		NameComponent->UpdateMesh(SharedBounds.StartLocation, SharedBounds.EndLocation);
-		if (IsClubVisible())
+		if (bClubBar)
 		{
 			ClubComponent->UpdateMesh(SharedBounds.StartLocation, SharedBounds.EndLocation);
 		}
@@ -253,7 +271,7 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 		if (NameBkg && ClubBkg)
 		{
 			// Nom seul : 0, le fond se biseaute sur sa propre hauteur
-			const float RefHeight = (IsClubVisible() && FMath::Abs(Tpl.Globals.Slant) >= 0.01f)
+			const float RefHeight = (bClubBar && FMath::Abs(Tpl.Globals.Slant) >= 0.01f)
 				? FMath::Max(BkgHeight(NameBkg), BkgHeight(ClubBkg)) : 0.f;
 			SetSlantRefHeight(NameBkg, RefHeight);
 			SetSlantRefHeight(ClubBkg, RefHeight);
@@ -329,7 +347,10 @@ void ARunner_GTWS::ToggleClub(bool bDisplay)
 	Super::ToggleClub(bDisplay);
 	if (ClubComponent)
 	{
-		ClubComponent->ToggleClub(IsClubVisible());
+		// Même règle qu'UpdateRunner : pas de barre du club vide quand le drapeau est dans le nom
+		TOptional<FTrailTemplate> Storage;
+		const FTrailTemplateRunner& Style = UTemplateSubsystem::ResolveForRace(this, TemplateRaceSetup, Storage).Runner;
+		ClubComponent->ToggleClub(ClubBarShown_RunnerGTWS(IsClubVisible(), RunnerDatas, Style));
 	}
 }
 
@@ -367,7 +388,9 @@ void ARunner_GTWS::UpdateDayNight(bool bIsDay)
 		// Appelé à chaque relevé de l'heure, sinon le nom alterne entre deux formes.
 		if (UPrimitiveComponent* NameBkg = NameComponent->NameBkgComponent)
 		{
-			NameBkg->SetCustomPrimitiveDataFloat(7, IsClubVisible() ? 1.f : 0.f);
+			TOptional<FTrailTemplate> Storage;
+			const FTrailTemplateRunner& Style = UTemplateSubsystem::ResolveForRace(this, TemplateRaceSetup, Storage).Runner;
+			NameBkg->SetCustomPrimitiveDataFloat(7, ClubBarShown_RunnerGTWS(IsClubVisible(), RunnerDatas, Style) ? 1.f : 0.f);
 		}
 	}
 	if (FlagComponent)
