@@ -59,6 +59,12 @@ static TAutoConsoleVariable<int32> CVarCardAvoidDebug(
 	TEXT("1 = dessine les boites testees (cyan : panneaux checkpoint, jaune : cartes, rouge : cartes decalees) et journalise les cartes decalees. 2 = journalise aussi les composants de chaque boite."),
 	ECVF_Default);
 
+static TAutoConsoleVariable<int32> CVarCardAvoidMaxBelow(
+	TEXT("Trail.CardAvoid.MaxBelow"),
+	2,
+	TEXT("Piles jusqu'a ce nombre de runners : la carte passe sous le panneau checkpoint ; au-dela, au-dessus. (Repli de l'autre cote si la place manque.)"),
+	ECVF_Default);
+
 static TAutoConsoleVariable<float> CVarCardAvoidMinFoot(
 	TEXT("Trail.CardAvoid.MinFoot"),
 	0.25f,
@@ -1052,6 +1058,17 @@ void URunnerStackingSubsystem::TickCardAvoidance(float DeltaSeconds)
 	const int32 BoxPeriod = FMath::Clamp(Entries.Num() / 2, 1, 8);
 	bool bAnyLifted = false;
 
+	// Taille des piles : seul ou a deux, la carte passe sous le panneau ; au-dela, au-dessus
+	TMap<const AActor*, int32, TInlineSetAllocator<16>> StackSizes;
+	for (const FStackEntry& E : Entries)
+	{
+		if (const AActor* Base = E.CurrentBase.Get())
+		{
+			++StackSizes.FindOrAdd(Base, 1);
+		}
+	}
+	const int32 MaxBelow = FMath::Max(0, CVarCardAvoidMaxBelow.GetValueOnGameThread());
+
 	for (int32 i = 0; i < Entries.Num(); ++i)
 	{
 		const FStackEntry& E = Entries[i];
@@ -1115,10 +1132,15 @@ void URunnerStackingSubsystem::TickCardAvoidance(float DeltaSeconds)
 					const float DownLift = -DownPx / PxPerUnit;
 					const bool bDownFree = R.Max.Y + DownPx <= ViewRect.Max.Y && DownLift >= -MaxDown;
 
-					if (S.Side < 0 && bDownFree)        Side = -1; // garde le cote deja choisi
+					// Cote prefere selon la taille de la pile ; l'autre seulement si la place manque
+					const int32* Found = StackSizes.Find(Runner);
+					const int32 StackSize = Found ? *Found : 1;
+					const bool bPreferDown = StackSize <= MaxBelow;
+					if (bPreferDown && bDownFree)       Side = -1;
+					else if (!bPreferDown && bUpFree)   Side = +1;
 					else if (bUpFree)                   Side = +1;
 					else if (bDownFree)                 Side = -1;
-					else                                Side = FMath::Abs(UpPx) <= FMath::Abs(DownPx) ? +1 : -1;
+					else                                Side = bPreferDown ? -1 : +1;
 
 					Target = Side > 0 ? -UpPx / PxPerUnit : FMath::Max(DownLift, -MaxDown);
 				}
