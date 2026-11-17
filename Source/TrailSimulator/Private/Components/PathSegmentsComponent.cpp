@@ -9,6 +9,7 @@
 #include "Engine/StaticMesh.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Components/TextRenderComponent.h"
+#include "Engine/Font.h"
 #include "Camera/PlayerCameraManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "RaceManager.h"
@@ -23,6 +24,63 @@ namespace PathSegments
 {
 	/** Plus petit morceau cree par une coupure (cm) : une borne a moins de 1 m d'un point GPS s'y accroche */
 	constexpr float MinPieceCm = 100.f;
+
+	/** Equivalent ASCII d'un caractere typographique ou accentue (0 = aucun) */
+	TCHAR AsciiFallback(TCHAR C)
+	{
+		switch (C)
+		{
+		case 0x2018: case 0x2019: case 0x201A: case 0x201B: case 0x2032: case 0x00B4: case 0x0060: return TEXT('\'');
+		case 0x201C: case 0x201D: case 0x201E: case 0x201F: case 0x2033: case 0x00AB: case 0x00BB: return TEXT('"');
+		case 0x2010: case 0x2011: case 0x2012: case 0x2013: case 0x2014: case 0x2015: case 0x2212: return TEXT('-');
+		case 0x00A0: case 0x2007: case 0x2009: case 0x202F: return TEXT(' ');
+		default: break;
+		}
+		// Lettres accentuees (Latin-1 et Latin etendu A courant) : lettre de base
+		static const struct { uint16 From; TCHAR To; } Letters[] = {
+			{0x00C0, TEXT('A')}, {0x00C1, TEXT('A')}, {0x00C2, TEXT('A')}, {0x00C3, TEXT('A')}, {0x00C4, TEXT('A')}, {0x00C5, TEXT('A')},
+			{0x00E0, TEXT('a')}, {0x00E1, TEXT('a')}, {0x00E2, TEXT('a')}, {0x00E3, TEXT('a')}, {0x00E4, TEXT('a')}, {0x00E5, TEXT('a')},
+			{0x00C7, TEXT('C')}, {0x00E7, TEXT('c')}, {0x00C8, TEXT('E')}, {0x00C9, TEXT('E')}, {0x00CA, TEXT('E')}, {0x00CB, TEXT('E')},
+			{0x00E8, TEXT('e')}, {0x00E9, TEXT('e')}, {0x00EA, TEXT('e')}, {0x00EB, TEXT('e')}, {0x00CC, TEXT('I')}, {0x00CD, TEXT('I')},
+			{0x00CE, TEXT('I')}, {0x00CF, TEXT('I')}, {0x00EC, TEXT('i')}, {0x00ED, TEXT('i')}, {0x00EE, TEXT('i')}, {0x00EF, TEXT('i')},
+			{0x00D1, TEXT('N')}, {0x00F1, TEXT('n')}, {0x00D2, TEXT('O')}, {0x00D3, TEXT('O')}, {0x00D4, TEXT('O')}, {0x00D5, TEXT('O')},
+			{0x00D6, TEXT('O')}, {0x00D8, TEXT('O')}, {0x00F2, TEXT('o')}, {0x00F3, TEXT('o')}, {0x00F4, TEXT('o')}, {0x00F5, TEXT('o')},
+			{0x00F6, TEXT('o')}, {0x00F8, TEXT('o')}, {0x00D9, TEXT('U')}, {0x00DA, TEXT('U')}, {0x00DB, TEXT('U')}, {0x00DC, TEXT('U')},
+			{0x00F9, TEXT('u')}, {0x00FA, TEXT('u')}, {0x00FB, TEXT('u')}, {0x00FC, TEXT('u')}, {0x00DD, TEXT('Y')}, {0x00FD, TEXT('y')},
+			{0x00FF, TEXT('y')}, {0x0178, TEXT('Y')},
+		};
+		for (const auto& L : Letters)
+		{
+			if (L.From == C) return L.To;
+		}
+		return 0;
+	}
+
+	/**
+	 * Texte affichable par la police du label : un caractere absent de la police (la police par defaut
+	 * des UTextRenderComponent est hors ligne, jeu de caracteres limite) devient son equivalent ASCII
+	 * (apostrophe typographique, guillemets, tirets, accents) ou disparait, au lieu d'un carre.
+	 */
+	FString MakeDisplayable(const FString& In, const UFont* Font)
+	{
+		if (!Font) return In;
+		FString Out;
+		Out.Reserve(In.Len() + 4);
+		for (const TCHAR C : In)
+		{
+			if (Font->RemapChar(C) != UFont::NULLCHARACTER)
+			{
+				Out.AppendChar(C);
+				continue;
+			}
+			if (C == 0x2026) { Out += TEXT("..."); continue; }
+			if (C == 0x0152 || C == 0x00C6) { Out += C == 0x0152 ? TEXT("OE") : TEXT("AE"); continue; }
+			if (C == 0x0153 || C == 0x00E6) { Out += C == 0x0153 ? TEXT("oe") : TEXT("ae"); continue; }
+			const TCHAR Ascii = AsciiFallback(C);
+			if (Ascii && Font->RemapChar(Ascii) != UFont::NULLCHARACTER) Out.AppendChar(Ascii);
+		}
+		return Out;
+	}
 }
 
 UPathSegmentsComponent::UPathSegmentsComponent()
@@ -453,14 +511,15 @@ void UPathSegmentsComponent::Apply()
 			Label->SetHorizontalAlignment(EHTA_Center);
 			Label->SetVerticalAlignment(EVRTA_TextCenter);
 			Label->SetWorldSize(LabelWorldSize);
-			Label->SetText(FText::FromString(Range.Label));
+			const FString LabelText = PathSegments::MakeDisplayable(Range.Label, Label->Font);
+			Label->SetText(FText::FromString(LabelText));
 			Label->RegisterComponent();
 			TrailRawText::Apply(Label, Range.TextColor);
 			Label->SetScalarParameterForCustomPrimitiveData("Illum", LabelIllum);
 
 			// Fond de la couleur du segment derriere le texte (le texte regarde +X)
 			const FVector TextSize = Label->GetTextLocalSize();
-			const float TextWidth = TextSize.Y > 1.f ? TextSize.Y : LabelWorldSize * 0.6f * Range.Label.Len();
+			const float TextWidth = TextSize.Y > 1.f ? TextSize.Y : LabelWorldSize * 0.6f * LabelText.Len();
 			const float TextHeight = TextSize.Z > 1.f ? TextSize.Z : LabelWorldSize;
 			const float Pad = FMath::Max(Style.Padding, 0.f) * TextHeight;
 			const float PlateHeight = TextHeight + 2.f * Pad;
