@@ -6,6 +6,7 @@
 #include "TimerManager.h"
 #include "HAL/IConsoleManager.h"
 #include "CheckpointInterface.h"
+#include "PoiInterface.h"
 #include "EngineUtils.h"
 #include "SceneView.h"
 #include "UnrealClient.h"
@@ -57,6 +58,12 @@ static TAutoConsoleVariable<int32> CVarCardAvoidDebug(
 	TEXT("Trail.CardAvoid.Debug"),
 	0,
 	TEXT("1 = dessine les boites testees (cyan : panneaux checkpoint, jaune : cartes, rouge : cartes decalees) et journalise les cartes decalees. 2 = journalise aussi les composants de chaque boite."),
+	ECVF_Default);
+
+static TAutoConsoleVariable<float> CVarCardAvoidRadius(
+	TEXT("Trail.CardAvoid.Radius"),
+	1.5f,
+	TEXT("Seuls les panneaux (checkpoint, POI) a moins de ce rayon du runner sont evites, en hauteurs de runner a l'echelle courante (suit donc la distance camera). 0 = pas de limite."),
 	ECVF_Default);
 
 static TAutoConsoleVariable<int32> CVarCardAvoidMaxBelow(
@@ -988,8 +995,9 @@ void URunnerStackingSubsystem::TickCardAvoidance(float DeltaSeconds)
 		TArray<FCheckpointPanel> Found;
 		for (TActorIterator<AActor> It(World); It; ++It)
 		{
-			const ICheckpointInterface* CI = Cast<ICheckpointInterface>(*It);
-			USceneComponent* Panel = CI ? CI->GetPanelComponent() : nullptr;
+			USceneComponent* Panel = nullptr;
+			if (const ICheckpointInterface* CI = Cast<ICheckpointInterface>(*It)) Panel = CI->GetPanelComponent();
+			else if (const IPoiInterface* PI = Cast<IPoiInterface>(*It)) Panel = PI->GetPanelComponent();
 			if (!Panel) continue;
 			FCheckpointPanel& P = Found.AddDefaulted_GetRef();
 			P.Panel = Panel;
@@ -1018,7 +1026,8 @@ void URunnerStackingSubsystem::TickCardAvoidance(float DeltaSeconds)
 	if (bDebugLog) LastDebugLog = Now;
 
 	// Rectangles des panneaux checkpoint visibles
-	TArray<FBox2D, TInlineAllocator<16>> PanelRects;
+	struct FPanelRect { FBox2D Rect; FVector Location; };
+	TArray<FPanelRect, TInlineAllocator<16>> AllPanels;
 	if (bEnabled && CheckpointPanels.Num() > 0)
 	{
 		// Une boite rafraichie par image (le texte et la meteo changent rarement)
@@ -1044,12 +1053,13 @@ void URunnerStackingSubsystem::TickCardAvoidance(float DeltaSeconds)
 				&& R.Max.X > ViewRect.Min.X && R.Min.X < ViewRect.Max.X
 				&& R.Max.Y > ViewRect.Min.Y && R.Min.Y < ViewRect.Max.Y)
 			{
-				PanelRects.Add(R);
+				AllPanels.Add({ R, Owner->GetActorLocation() });
 			}
 		}
 	}
 
-	if (PanelRects.Num() == 0 && !bAnyCardLifted) return;
+	if (AllPanels.Num() == 0 && !bAnyCardLifted) return;
+	const float RadiusFactor = FMath::Max(0.f, CVarCardAvoidRadius.GetValueOnGameThread());
 
 	const float Margin = FMath::Max(0.f, CVarCardAvoidMarginPx.GetValueOnGameThread());
 	const float Speed = FMath::Max(0.f, CVarCardAvoidSpeed.GetValueOnGameThread());
@@ -1092,13 +1102,32 @@ void URunnerStackingSubsystem::TickCardAvoidance(float DeltaSeconds)
 		float Target = 0.f;
 		int8 Side = 0;
 
-		if (PanelRects.Num() > 0)
+		// Panneaux proches du runner : au-dela du rayon, un recouvrement a l'ecran n'est qu'une
+		// question de perspective (panneau loin devant ou derriere) et ne fait pas bouger la carte
+		TArray<FBox2D, TInlineAllocator<8>> PanelRects;
+		if (AllPanels.Num() > 0)
 		{
-			// Boite de la carte (pile comprise)
 			if (!S.LocalBox.IsValid || (i % BoxPeriod) == (RunnerBoxCursor % BoxPeriod))
 			{
 				S.LocalBox = ComputeLocalBox(Card);
 			}
+			const FVector RunnerLoc = Root->GetComponentLocation();
+			const float CardTopUnits = (Card->GetRelativeLocation().Z - Lift)
+				+ (S.LocalBox.IsValid ? S.LocalBox.Max.Z * FMath::Abs(Card->GetRelativeScale3D().Z) : 0.f);
+			const float RunnerHeightWorld = FMath::Max(1.f, CardTopUnits) * FMath::Abs(Root->GetComponentScale().Z);
+			// Hysteresis : un peu plus loin pour une carte deja decalee
+			const float Radius = RadiusFactor * RunnerHeightWorld * (S.Side != 0 ? 1.15f : 1.f);
+			for (const FPanelRect& P : AllPanels)
+			{
+				if (RadiusFactor <= 0.f || FVector::DistSquared(RunnerLoc, P.Location) <= Radius * Radius)
+				{
+					PanelRects.Add(P.Rect);
+				}
+			}
+		}
+
+		if (PanelRects.Num() > 0)
+		{
 
 			// Rectangle a la place d'origine (decalage courant retire)
 			const FVector UpPerUnit = Root->GetComponentTransform().TransformVector(FVector::UpVector);
