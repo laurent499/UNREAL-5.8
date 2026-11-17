@@ -55,6 +55,9 @@ public:
 	
 	UFUNCTION()
 	virtual void UpdateDayNight(bool bIsDay) override;
+
+	// Panneau sans le pied : evite par les cartes des coureurs (URunnerStackingSubsystem)
+	virtual USceneComponent* GetPanelComponent() const override { return FootHook; }
 	
 	// Contrôles
 	void CameraControl_Fwd_Implementation(float Value) override;

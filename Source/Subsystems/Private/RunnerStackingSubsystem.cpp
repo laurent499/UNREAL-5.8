@@ -5,6 +5,14 @@
 #include "Components/SceneComponent.h"
 #include "TimerManager.h"
 #include "HAL/IConsoleManager.h"
+#include "CheckpointInterface.h"
+#include "EngineUtils.h"
+#include "SceneView.h"
+#include "UnrealClient.h"
+#include "Engine/LocalPlayer.h"
+#include "Engine/GameViewportClient.h"
+#include "Components/PrimitiveComponent.h"
+#include "GameFramework/PlayerController.h"
 
 // Ecart maximal le long du trace pour empiler deux runners. Sans ce garde-fou, seule la
 // distance 3D comptait : deux coureurs a des km l'un de l'autre sur le parcours, mais proches a vol
@@ -25,6 +33,109 @@ static TAutoConsoleVariable<float> CVarStackingOverlapFactor(
 	TEXT("Distance minimale d'empilement, en hauteurs de runner a l'echelle courante. 0 = desactive."),
 	ECVF_Default);
 
+// Evitement des panneaux checkpoint par les cartes des runners
+static TAutoConsoleVariable<int32> CVarCardAvoidEnable(
+	TEXT("Trail.CardAvoid.Enable"),
+	1,
+	TEXT("1 = la carte d'un runner qui recouvre un panneau checkpoint a l'ecran monte au-dessus (sinon descend dessous). 0 = desactive."),
+	ECVF_Default);
+
+static TAutoConsoleVariable<float> CVarCardAvoidMarginPx(
+	TEXT("Trail.CardAvoid.MarginPx"),
+	8.f,
+	TEXT("Ecart (pixels) laisse entre la carte d'un runner et le panneau checkpoint qu'elle evite."),
+	ECVF_Default);
+
+static TAutoConsoleVariable<float> CVarCardAvoidSpeed(
+	TEXT("Trail.CardAvoid.Speed"),
+	6.f,
+	TEXT("Vitesse du glissement de la carte (interpolation par image, plus grand = plus rapide)."),
+	ECVF_Default);
+
+static TAutoConsoleVariable<float> CVarCardAvoidMinFoot(
+	TEXT("Trail.CardAvoid.MinFoot"),
+	0.25f,
+	TEXT("En descendant, part minimale du pied d'origine gardee sous la carte (0..1)."),
+	ECVF_Default);
+
+namespace RunnerCardAvoid
+{
+	/** Union des primitives visibles sous Ref (pile comprise), dans le repere de Ref. */
+	static FBox ComputeLocalBox(const USceneComponent* Ref)
+	{
+		FBox Box(ForceInit);
+		if (!IsValid(Ref)) return Box;
+		const FTransform RefTransform = Ref->GetComponentTransform();
+		TArray<USceneComponent*> Children;
+		Ref->GetChildrenComponents(true, Children);
+		for (const USceneComponent* C : Children)
+		{
+			const UPrimitiveComponent* P = Cast<UPrimitiveComponent>(C);
+			if (!P || !P->IsRegistered() || !P->IsVisible() || P->bHiddenInGame) continue;
+			const AActor* Owner = P->GetOwner();
+			if (Owner && Owner->IsHidden()) continue;
+			Box += P->CalcBounds(P->GetComponentTransform().GetRelativeTransform(RefTransform)).GetBox();
+		}
+		return Box;
+	}
+
+	/** Rectangle ecran d'une boite locale ; false si un coin est derriere la camera. */
+	static bool ProjectBox(const FBox& LocalBox, const FTransform& Ref, const FVector& WorldOffset,
+		const FMatrix& ViewProj, const FIntRect& ViewRect, FBox2D& Out)
+	{
+		Out = FBox2D(ForceInit);
+		for (int32 i = 0; i < 8; ++i)
+		{
+			const FVector Corner(
+				(i & 1) ? LocalBox.Max.X : LocalBox.Min.X,
+				(i & 2) ? LocalBox.Max.Y : LocalBox.Min.Y,
+				(i & 4) ? LocalBox.Max.Z : LocalBox.Min.Z);
+			FVector2D Screen;
+			if (!FSceneView::ProjectWorldToScreen(Ref.TransformPosition(Corner) + WorldOffset, ViewRect, ViewProj, Screen))
+			{
+				return false;
+			}
+			Out += Screen;
+		}
+		return Out.bIsValid;
+	}
+
+	static bool Overlaps(const FBox2D& A, const FBox2D& B, float Margin)
+	{
+		return A.Min.X < B.Max.X + Margin && A.Max.X > B.Min.X - Margin
+			&& A.Min.Y < B.Max.Y + Margin && A.Max.Y > B.Min.Y - Margin;
+	}
+
+	/**
+	 * Decalage vertical (pixels, Y ecran vers le bas) qui sort R de tous les panneaux.
+	 * Dir = -1 : vers le haut, +1 : vers le bas. Plusieurs passes : un panneau franchi peut en
+	 * faire toucher un autre.
+	 */
+	static float SolveShift(const FBox2D& R, const TArray<FBox2D>& Panels, int32 Dir, float Margin)
+	{
+		float Shift = 0.f;
+		for (int32 Pass = 0; Pass < 6; ++Pass)
+		{
+			const FBox2D Rs = R.ShiftBy(FVector2D(0.f, Shift));
+			bool bMoved = false;
+			for (const FBox2D& C : Panels)
+			{
+				if (!Overlaps(Rs, C, Margin * 0.5f)) continue;
+				const float Need = Dir < 0
+					? (C.Min.Y - Margin) - R.Max.Y
+					: (C.Max.Y + Margin) - R.Min.Y;
+				if (Dir < 0 ? Need < Shift : Need > Shift)
+				{
+					Shift = Need;
+					bMoved = true;
+				}
+			}
+			if (!bMoved) break;
+		}
+		return Shift;
+	}
+}
+
 void URunnerStackingSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
@@ -32,13 +143,18 @@ void URunnerStackingSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	if (UWorld* World = GetWorld(); World && World->IsGameWorld())
 	{
 		StartTimer();
+		PostActorTickHandle = FWorldDelegates::OnWorldPostActorTick.AddUObject(this, &URunnerStackingSubsystem::HandlePostActorTick);
 	}
 }
 
 void URunnerStackingSubsystem::Deinitialize()
 {
+	FWorldDelegates::OnWorldPostActorTick.Remove(PostActorTickHandle);
+	PostActorTickHandle.Reset();
 	StopTimer();
 	Entries.Reset();
+	CardStates.Reset();
+	CheckpointPanels.Reset();
 	Super::Deinitialize();
 }
 
@@ -153,6 +269,12 @@ void URunnerStackingSubsystem::UnregisterRunner(AActor* Runner)
 	{
 		DetachRunnerToTrack(R, Entries[Idx]);
 	}
+
+	if (IRunnerStackableInterface* SI = Cast<IRunnerStackableInterface>(Runner))
+	{
+		SI->SetStackCardLift(0.f);
+	}
+	CardStates.Remove(TObjectKey<AActor>(Runner));
 
 	Entries.RemoveAtSwap(Idx);
 	bDirty = true;
@@ -277,6 +399,7 @@ void URunnerStackingSubsystem::ApplyNewStackingState(
 		AActor* OldBaseActor = E.CurrentBase.Get();
 		if (IsValid(Runner) && IsValid(OldBaseActor) && OldBaseActor != NewBase[i].Get())
 		{
+			InvalidateCardBox(OldBaseActor);
 			DetachRunnerToTrack(Runner, E);
 			E.CurrentBase  = nullptr;
 			E.CurrentOrder = -1;
@@ -369,6 +492,13 @@ void URunnerStackingSubsystem::ApplyNewStackingState(
 		if (bBaseChanged && bOldStacked)
 		{
 			DetachRunnerToTrack(Runner, E);
+		}
+
+		// Contenu de pile modifie : les cartes des bases concernees changent de taille
+		if (bBaseChanged)
+		{
+			InvalidateCardBox(NewBaseActor);
+			InvalidateCardBox(OldBaseActor);
 		}
 
 		AttachRunnerToBase(Runner, E, NewBaseActor, *BaseEntry, NewO);
@@ -776,4 +906,200 @@ void URunnerStackingSubsystem::UpdateRunnerTrackState(AActor* Runner, const FTra
 void URunnerStackingSubsystem::MakeDirty()
 {
 	bDirty = true;
+}
+
+void URunnerStackingSubsystem::InvalidateCardBox(AActor* Runner)
+{
+	if (!Runner) return;
+	if (FCardAvoidState* S = CardStates.Find(TObjectKey<AActor>(Runner)))
+	{
+		S->LocalBox = FBox(ForceInit);
+	}
+}
+
+void URunnerStackingSubsystem::HandlePostActorTick(UWorld* InWorld, ELevelTick TickType, float DeltaSeconds)
+{
+	if (InWorld == GetWorld())
+	{
+		TickCardAvoidance(DeltaSeconds);
+	}
+}
+
+/**
+ * @brief Evitement runner / checkpoint, chaque image (apres le tick des acteurs : camera et
+ *        positions de l'image courante).
+ * @note  Rectangles ecran : boites locales mises en cache (rafraichies a tour de role, quelques
+ *        unes par image), puis 8 coins projetes par carte. Rien n'est calcule tant qu'aucun
+ *        panneau checkpoint n'est a l'ecran et qu'aucune carte n'est decalee.
+ */
+void URunnerStackingSubsystem::TickCardAvoidance(float DeltaSeconds)
+{
+	using namespace RunnerCardAvoid;
+
+	UWorld* World = GetWorld();
+	if (!World || Entries.Num() == 0) return;
+
+	const bool bEnabled = CVarCardAvoidEnable.GetValueOnGameThread() != 0;
+
+	// Liste des panneaux checkpoint (rarement modifiee : un balayage par seconde)
+	const double Now = World->GetTimeSeconds();
+	if (bEnabled && Now >= NextCheckpointScanTime)
+	{
+		NextCheckpointScanTime = Now + 1.0;
+		TArray<FCheckpointPanel> Found;
+		for (TActorIterator<AActor> It(World); It; ++It)
+		{
+			const ICheckpointInterface* CI = Cast<ICheckpointInterface>(*It);
+			USceneComponent* Panel = CI ? CI->GetPanelComponent() : nullptr;
+			if (!Panel) continue;
+			FCheckpointPanel& P = Found.AddDefaulted_GetRef();
+			P.Panel = Panel;
+			// Garde la boite deja calculee
+			for (const FCheckpointPanel& Old : CheckpointPanels)
+			{
+				if (Old.Panel.Get() == Panel) { P.LocalBox = Old.LocalBox; break; }
+			}
+		}
+		CheckpointPanels = MoveTemp(Found);
+	}
+
+	// Projection de la vue du joueur
+	APlayerController* PC = World->GetFirstPlayerController();
+	ULocalPlayer* LP = PC ? PC->GetLocalPlayer() : nullptr;
+	FViewport* Viewport = (LP && LP->ViewportClient) ? LP->ViewportClient->Viewport : nullptr;
+	FSceneViewProjectionData ProjData;
+	if (!Viewport || !LP->GetProjectionData(Viewport, ProjData)) return;
+	const FMatrix ViewProj = ProjData.ComputeViewProjectionMatrix();
+	const FIntRect ViewRect = ProjData.GetConstrainedViewRect();
+
+	// Rectangles des panneaux checkpoint visibles
+	TArray<FBox2D, TInlineAllocator<16>> PanelRects;
+	if (bEnabled && CheckpointPanels.Num() > 0)
+	{
+		// Une boite rafraichie par image (le texte et la meteo changent rarement)
+		CheckpointBoxCursor = (CheckpointBoxCursor + 1) % CheckpointPanels.Num();
+		for (int32 i = 0; i < CheckpointPanels.Num(); ++i)
+		{
+			FCheckpointPanel& P = CheckpointPanels[i];
+			USceneComponent* Panel = P.Panel.Get();
+			if (!Panel) continue;
+			const AActor* Owner = Panel->GetOwner();
+			if (!Owner || Owner->IsHidden() || !Panel->IsVisible()) continue;
+			if (!P.LocalBox.IsValid || i == CheckpointBoxCursor)
+			{
+				P.LocalBox = ComputeLocalBox(Panel);
+			}
+			FBox2D R;
+			if (P.LocalBox.IsValid
+				&& ProjectBox(P.LocalBox, Panel->GetComponentTransform(), FVector::ZeroVector, ViewProj, ViewRect, R)
+				&& R.Max.X > ViewRect.Min.X && R.Min.X < ViewRect.Max.X
+				&& R.Max.Y > ViewRect.Min.Y && R.Min.Y < ViewRect.Max.Y)
+			{
+				PanelRects.Add(R);
+			}
+		}
+	}
+
+	if (PanelRects.Num() == 0 && !bAnyCardLifted) return;
+
+	const float Margin = FMath::Max(0.f, CVarCardAvoidMarginPx.GetValueOnGameThread());
+	const float Speed = FMath::Max(0.f, CVarCardAvoidSpeed.GetValueOnGameThread());
+	const float MinFoot = FMath::Clamp(CVarCardAvoidMinFoot.GetValueOnGameThread(), 0.f, 1.f);
+	// Boites des cartes : environ un huitieme des runners par image, a tour de role
+	const int32 BoxPeriod = FMath::Clamp(Entries.Num() / 2, 1, 8);
+	bool bAnyLifted = false;
+
+	for (int32 i = 0; i < Entries.Num(); ++i)
+	{
+		const FStackEntry& E = Entries[i];
+		AActor* Runner = E.Runner.Get();
+		IRunnerStackableInterface* SI = Runner ? Cast<IRunnerStackableInterface>(Runner) : nullptr;
+		if (!SI) continue;
+
+		const float Lift = SI->GetStackCardLift();
+		USceneComponent* Card = SI->GetStackCardComponent();
+		USceneComponent* Root = Runner->GetRootComponent();
+
+		// Enfant de pile, cache ou sans carte : a sa place tout de suite (il suit sa base)
+		if (!Card || !Root || Runner->IsHidden() || E.CurrentBase.IsValid())
+		{
+			if (!FMath::IsNearlyZero(Lift)) SI->SetStackCardLift(0.f);
+			if (FCardAvoidState* S = CardStates.Find(TObjectKey<AActor>(Runner))) { S->Target = 0.f; S->Side = 0; }
+			continue;
+		}
+
+		FCardAvoidState& S = CardStates.FindOrAdd(TObjectKey<AActor>(Runner));
+		float Target = 0.f;
+		int8 Side = 0;
+
+		if (PanelRects.Num() > 0)
+		{
+			// Boite de la carte (pile comprise)
+			if (!S.LocalBox.IsValid || (i % BoxPeriod) == (RunnerBoxCursor % BoxPeriod))
+			{
+				S.LocalBox = ComputeLocalBox(Card);
+			}
+
+			// Rectangle a la place d'origine (decalage courant retire)
+			const FVector UpPerUnit = Root->GetComponentTransform().TransformVector(FVector::UpVector);
+			FBox2D R;
+			if (S.LocalBox.IsValid
+				&& ProjectBox(S.LocalBox, Card->GetComponentTransform(), -UpPerUnit * Lift, ViewProj, ViewRect, R))
+			{
+				// Hysteresis : une carte deja decalee garde sa place tant qu'elle frole le panneau
+				const float TestMargin = S.Side != 0 ? Margin : 0.f;
+				bool bOverlap = false;
+				for (const FBox2D& C : PanelRects)
+				{
+					if (Overlaps(R, C, TestMargin)) { bOverlap = true; break; }
+				}
+
+				const float CardScaleZ = FMath::Max(KINDA_SMALL_NUMBER, FMath::Abs(Card->GetRelativeScale3D().Z));
+				const float HeightUnits = (S.LocalBox.Max.Z - S.LocalBox.Min.Z) * CardScaleZ;
+				const float PxPerUnit = HeightUnits > KINDA_SMALL_NUMBER ? R.GetSize().Y / HeightUnits : 0.f;
+
+				if (bOverlap && PxPerUnit > KINDA_SMALL_NUMBER)
+				{
+					const FBox2D Expanded(R.Min - FVector2D(Margin, 0.f), R.Max + FVector2D(Margin, 0.f));
+					const float UpPx = SolveShift(Expanded, PanelRects, -1, Margin);
+					const float DownPx = SolveShift(Expanded, PanelRects, +1, Margin);
+
+					// Au-dessus : la carte doit rester dans l'image
+					const bool bUpFree = R.Min.Y + UpPx >= ViewRect.Min.Y;
+					// En dessous : dans l'image, et le pied garde une part de sa hauteur
+					const float CardBottomUnits = (Card->GetRelativeLocation().Z - Lift) + S.LocalBox.Min.Z * CardScaleZ;
+					const float MaxDown = FMath::Max(0.f, CardBottomUnits * (1.f - MinFoot));
+					const float DownLift = -DownPx / PxPerUnit;
+					const bool bDownFree = R.Max.Y + DownPx <= ViewRect.Max.Y && DownLift >= -MaxDown;
+
+					if (S.Side < 0 && bDownFree)        Side = -1; // garde le cote deja choisi
+					else if (bUpFree)                   Side = +1;
+					else if (bDownFree)                 Side = -1;
+					else                                Side = FMath::Abs(UpPx) <= FMath::Abs(DownPx) ? +1 : -1;
+
+					Target = Side > 0 ? -UpPx / PxPerUnit : FMath::Max(DownLift, -MaxDown);
+				}
+			}
+			else
+			{
+				// Derriere la camera : on ne change rien
+				Target = S.Target;
+				Side = S.Side;
+			}
+		}
+
+		S.Target = Target;
+		S.Side = Side;
+
+		float NewLift = Speed > 0.f ? FMath::FInterpTo(Lift, Target, DeltaSeconds, Speed) : Target;
+		if (FMath::Abs(NewLift - Target) < 0.5f) NewLift = Target;
+		if (!FMath::IsNearlyEqual(NewLift, Lift, 0.01f))
+		{
+			SI->SetStackCardLift(NewLift);
+		}
+		bAnyLifted |= !FMath::IsNearlyZero(NewLift);
+	}
+
+	RunnerBoxCursor = (RunnerBoxCursor + 1) % 8;
+	bAnyCardLifted = bAnyLifted;
 }

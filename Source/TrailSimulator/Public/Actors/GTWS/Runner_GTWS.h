@@ -25,6 +25,10 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	// Pied recalé par FitFoot (bas du dernier fond visible) en tenant compte du décalage de la carte
+	virtual void ApplyFootForCardLift() override;
+	/** Barre du club affichée au dernier calage du pied (évite de résoudre le template à chaque image). */
+	bool bFootClubBar = true;
 	// Photo
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta=(AllowPrivateAccess=true))
 	TObjectPtr<class USceneComponent> PhotoHook;

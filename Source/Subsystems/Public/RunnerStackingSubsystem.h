@@ -2,6 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
+#include "Engine/EngineBaseTypes.h"
+#include "UObject/ObjectKey.h"
 #include "TrailSharedTypes.h"
 #include "RunnerStackingSubsystem.generated.h"
 
@@ -75,4 +77,31 @@ private:
 
 	void AttachRunnerToBase(AActor* Runner, const FStackEntry& RunnerEntry, AActor* Base, const FStackEntry& BaseEntry, int32 Order);
 	void DetachRunnerToTrack(AActor* Runner, const FStackEntry& RunnerEntry);
-};
+
+	// ------------------------------------------------------------
+	// Evitement des panneaux checkpoint : chaque image, la carte d'un runner (ou de sa pile) qui
+	// recouvre un panneau checkpoint a l'ecran monte au-dessus si la place est libre, sinon
+	// descend dessous, avec un decalage lisse.
+	// ------------------------------------------------------------
+	struct FCardAvoidState
+	{
+		FBox LocalBox = FBox(ForceInit); // carte (+ enfants de la pile) dans le repere du composant carte
+		float Target = 0.f;              // decalage vise (unites locales de l'acteur)
+		int8 Side = 0;                   // +1 au-dessus, -1 en dessous, 0 a sa place
+	};
+	struct FCheckpointPanel
+	{
+		TWeakObjectPtr<USceneComponent> Panel;
+		FBox LocalBox = FBox(ForceInit);
+	};
+	TMap<TObjectKey<AActor>, FCardAvoidState> CardStates;
+	TArray<FCheckpointPanel> CheckpointPanels;
+	double NextCheckpointScanTime = 0.0;
+	int32 CheckpointBoxCursor = 0;
+	int32 RunnerBoxCursor = 0;
+	bool bAnyCardLifted = false;
+	FDelegateHandle PostActorTickHandle;
+
+	void HandlePostActorTick(UWorld* InWorld, ELevelTick TickType, float DeltaSeconds);
+	void TickCardAvoidance(float DeltaSeconds);
+	void InvalidateCardBox(AActor* Runner);

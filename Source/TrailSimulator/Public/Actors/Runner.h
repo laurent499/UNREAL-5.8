@@ -61,6 +61,10 @@ public:
 	virtual void SetIsStacked(bool bInStacked) override;
 	UFUNCTION()
 	virtual bool IsStacked() const override;
+	// Evitement des panneaux checkpoint (URunnerStackingSubsystem)
+	virtual USceneComponent* GetStackCardComponent() const override { return PresentationRoot; }
+	virtual void SetStackCardLift(float Lift) override;
+	virtual float GetStackCardLift() const override { return CardLift; }
 	UPROPERTY()
 	bool bStackedState;
 	UPROPERTY()
@@ -193,6 +197,17 @@ protected:
 	TObjectPtr<class USceneComponent> MainRootComponent;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta=(AllowPrivateAccess=true))
 	TObjectPtr<class USceneComponent> PresentationRoot;
+
+	// Decalage vertical courant de la carte (evitement des checkpoints) et position d'origine
+	// de PresentationRoot (relevee au premier decalage)
+	float CardLift = 0.f;
+	FVector PresentationBaseLocation = FVector::ZeroVector;
+	bool bHasPresentationBase = false;
+	// Pied a decalage nul, releve quand la carte quitte sa place (implementation generique)
+	FVector FootBaseScale = FVector::OneVector;
+	FVector FootBaseLocation = FVector::ZeroVector;
+	/** Le pied suit la carte decalee : haut du pied = haut d'origine + CardLift, bas inchange. */
+	virtual void ApplyFootForCardLift();
 	
 	// Foot
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta=(AllowPrivateAccess=true))
