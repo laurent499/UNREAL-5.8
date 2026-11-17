@@ -96,35 +96,44 @@ static bool ClubBarShown_RunnerGTWS(bool bClubVisible, const FRunnerStruct& Data
 
 /**
  * @brief Pied (tige sous la carte) : touche le bas de la dernière barre visible.
- * @note Le pied d'origine monte jusqu'au bas de la barre du club. Barre du club masquée (club vide
- *       avec le drapeau dans le nom, ou choix opérateur) : il s'allonge de l'écart entre le bas du
- *       club et le bas du nom, le bas du pied (ancrage au sol) ne bougeant pas. Barre du club
- *       affichée : échelle et position d'origine (celles du CDO). La photo n'entre pas en compte.
+ * @note Barre du club masquée (club vide avec le drapeau dans le nom, ou choix opérateur) : le haut
+ *       du pied est calé sur le bas du fond du nom, mesuré dans le repère du parent du pied ; son bas
+ *       (ancrage au sol) ne bouge pas. Le fond du club n'entre pas dans le calcul : masqué, il n'est
+ *       plus mis en forme et ses bornes ne disent rien. Barre du club affichée : échelle et position
+ *       d'origine (celles du CDO). La photo n'entre pas en compte.
  */
 static void FitFoot_RunnerGTWS(UStaticMeshComponent* Foot, const UStaticMeshComponent* DefaultFoot,
-	const UPrimitiveComponent* NameBkg, const UPrimitiveComponent* ClubBkg, bool bClubBar)
+	const UPrimitiveComponent* NameBkg, bool bClubBar)
 {
 	if (!Foot || !DefaultFoot || !Foot->GetStaticMesh()) return;
 	const FVector DefaultScale = DefaultFoot->GetRelativeScale3D();
 	const FVector DefaultLocation = DefaultFoot->GetRelativeLocation();
 	FVector Scale = DefaultScale;
 	FVector Location = DefaultLocation;
-	if (!bClubBar && NameBkg && ClubBkg && !FMath::IsNearlyZero(DefaultScale.Z))
+	if (!bClubBar && NameBkg && DefaultScale.Z > KINDA_SMALL_NUMBER)
 	{
-		// Mesures dans le repère du parent du pied (indépendant de l'échelle de l'acteur)
+		// Repère du parent du pied : unités de sa position et de son échelle relatives
+		// (indépendant de l'échelle automatique de l'acteur, qui s'applique à tout)
 		const USceneComponent* Parent = Foot->GetAttachParent();
 		const FTransform Ref = Parent ? Parent->GetComponentTransform() : FTransform::Identity;
 		const FBox NameBox = BoxIn_RunnerGTWS(NameBkg, Ref, false);
-		const FBox ClubBox = BoxIn_RunnerGTWS(ClubBkg, Ref, false);
+		// Bornes du mesh du pied, quel que soit son pivot (centre ou extrémité)
 		const FBox MeshBox = Foot->GetStaticMesh()->GetBoundingBox();
 		const float MeshHeight = MeshBox.Max.Z - MeshBox.Min.Z;
-		const float Extra = (NameBox.IsValid && ClubBox.IsValid) ? NameBox.Min.Z - ClubBox.Min.Z : 0.f;
-		if (Extra > KINDA_SMALL_NUMBER && MeshHeight > KINDA_SMALL_NUMBER)
+		const float Bottom = DefaultLocation.Z + MeshBox.Min.Z * DefaultScale.Z;
+		const float DefaultTop = DefaultLocation.Z + MeshBox.Max.Z * DefaultScale.Z;
+		if (NameBox.IsValid && MeshHeight > KINDA_SMALL_NUMBER && NameBox.Min.Z > DefaultTop)
 		{
-			// Hauteur du pied dans le parent = MeshHeight x Scale.Z : on l'allonge de Extra, puis on
-			// recale la position pour que le bas (MeshBox.Min.Z) reste au même endroit
-			Scale.Z = DefaultScale.Z + FMath::Sign(DefaultScale.Z) * Extra / MeshHeight;
-			Location.Z = DefaultLocation.Z + MeshBox.Min.Z * (DefaultScale.Z - Scale.Z);
+			Scale.Z = (NameBox.Min.Z - Bottom) / MeshHeight;
+			Location.Z = Bottom - MeshBox.Min.Z * Scale.Z;
+		}
+		// TEMPORAIRE (diagnostic du pied) : à retirer une fois le rendu validé
+		if (!Foot->GetRelativeScale3D().Equals(Scale, 1e-4f))
+		{
+			UE_LOG(LogTemp, Log, TEXT("[FootFit] %s Name Z %.1f..%.1f | foot mesh Z %.1f..%.1f, defaut loc %.1f scale %.3f (haut %.1f, bas %.1f) | courant loc %.1f scale %.3f -> loc %.1f scale %.3f"),
+				*GetNameSafe(Foot->GetOwner()), NameBox.Min.Z, NameBox.Max.Z, MeshBox.Min.Z, MeshBox.Max.Z,
+				DefaultLocation.Z, DefaultScale.Z, DefaultTop, Bottom,
+				Foot->GetRelativeLocation().Z, Foot->GetRelativeScale3D().Z, Location.Z, Scale.Z);
 		}
 	}
 	if (!Foot->GetRelativeScale3D().Equals(Scale, 1e-4f)) Foot->SetRelativeScale3D(Scale);
@@ -385,7 +394,7 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 	{
 		const ARunner_GTWS* Defaults = GetClass()->GetDefaultObject<ARunner_GTWS>();
 		FitFoot_RunnerGTWS(FootComponent, Defaults ? Defaults->GetFootMesh() : nullptr,
-			NameComponent->NameBkgComponent, ClubComponent->ClubBkgComponent, bClubBar);
+			NameComponent->NameBkgComponent, bClubBar);
 	}
 }
 
@@ -404,7 +413,7 @@ void ARunner_GTWS::ToggleClub(bool bDisplay)
 		{
 			const ARunner_GTWS* Defaults = GetClass()->GetDefaultObject<ARunner_GTWS>();
 			FitFoot_RunnerGTWS(FootComponent, Defaults ? Defaults->GetFootMesh() : nullptr,
-				NameComponent->NameBkgComponent, ClubComponent->ClubBkgComponent, bClubBar);
+				NameComponent->NameBkgComponent, bClubBar);
 		}
 	}
 }
