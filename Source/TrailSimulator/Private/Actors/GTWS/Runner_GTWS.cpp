@@ -14,6 +14,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/SplineMeshComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Engine/StaticMesh.h"
 
 /**
  * @brief Fond de panneau avec coins arrondis : M_PlainRounded (même rendu que M_Plain, qui
@@ -90,6 +92,43 @@ static bool ClubBarShown_RunnerGTWS(bool bClubVisible, const FRunnerStruct& Data
 {
 	if (!bClubVisible) return false;
 	return !(Style.FlagPosition.Equals(TEXT("name"), ESearchCase::IgnoreCase) && Datas.club.TrimStartAndEnd().IsEmpty());
+}
+
+/**
+ * @brief Pied (tige sous la carte) : touche le bas de la dernière barre visible.
+ * @note Le pied d'origine monte jusqu'au bas de la barre du club. Barre du club masquée (club vide
+ *       avec le drapeau dans le nom, ou choix opérateur) : il s'allonge de l'écart entre le bas du
+ *       club et le bas du nom, le bas du pied (ancrage au sol) ne bougeant pas. Barre du club
+ *       affichée : échelle et position d'origine (celles du CDO). La photo n'entre pas en compte.
+ */
+static void FitFoot_RunnerGTWS(UStaticMeshComponent* Foot, const UStaticMeshComponent* DefaultFoot,
+	const UPrimitiveComponent* NameBkg, const UPrimitiveComponent* ClubBkg, bool bClubBar)
+{
+	if (!Foot || !DefaultFoot || !Foot->GetStaticMesh()) return;
+	const FVector DefaultScale = DefaultFoot->GetRelativeScale3D();
+	const FVector DefaultLocation = DefaultFoot->GetRelativeLocation();
+	FVector Scale = DefaultScale;
+	FVector Location = DefaultLocation;
+	if (!bClubBar && NameBkg && ClubBkg && !FMath::IsNearlyZero(DefaultScale.Z))
+	{
+		// Mesures dans le repère du parent du pied (indépendant de l'échelle de l'acteur)
+		const USceneComponent* Parent = Foot->GetAttachParent();
+		const FTransform Ref = Parent ? Parent->GetComponentTransform() : FTransform::Identity;
+		const FBox NameBox = BoxIn_RunnerGTWS(NameBkg, Ref, false);
+		const FBox ClubBox = BoxIn_RunnerGTWS(ClubBkg, Ref, false);
+		const FBox MeshBox = Foot->GetStaticMesh()->GetBoundingBox();
+		const float MeshHeight = MeshBox.Max.Z - MeshBox.Min.Z;
+		const float Extra = (NameBox.IsValid && ClubBox.IsValid) ? NameBox.Min.Z - ClubBox.Min.Z : 0.f;
+		if (Extra > KINDA_SMALL_NUMBER && MeshHeight > KINDA_SMALL_NUMBER)
+		{
+			// Hauteur du pied dans le parent = MeshHeight x Scale.Z : on l'allonge de Extra, puis on
+			// recale la position pour que le bas (MeshBox.Min.Z) reste au même endroit
+			Scale.Z = DefaultScale.Z + FMath::Sign(DefaultScale.Z) * Extra / MeshHeight;
+			Location.Z = DefaultLocation.Z + MeshBox.Min.Z * (DefaultScale.Z - Scale.Z);
+		}
+	}
+	if (!Foot->GetRelativeScale3D().Equals(Scale, 1e-4f)) Foot->SetRelativeScale3D(Scale);
+	if (!Foot->GetRelativeLocation().Equals(Location, 0.01f)) Foot->SetRelativeLocation(Location);
 }
 
 ARunner_GTWS::ARunner_GTWS()
@@ -340,6 +379,14 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 			}
 		}
 	}
+
+	// Pied : jusqu'au bas de la dernière barre visible (une fois les crochets posés)
+	if (NameComponent && ClubComponent)
+	{
+		const ARunner_GTWS* Defaults = GetClass()->GetDefaultObject<ARunner_GTWS>();
+		FitFoot_RunnerGTWS(FootComponent, Defaults ? Defaults->GetFootMesh() : nullptr,
+			NameComponent->NameBkgComponent, ClubComponent->ClubBkgComponent, bClubBar);
+	}
 }
 
 void ARunner_GTWS::ToggleClub(bool bDisplay)
@@ -350,7 +397,15 @@ void ARunner_GTWS::ToggleClub(bool bDisplay)
 		// Même règle qu'UpdateRunner : pas de barre du club vide quand le drapeau est dans le nom
 		TOptional<FTrailTemplate> Storage;
 		const FTrailTemplateRunner& Style = UTemplateSubsystem::ResolveForRace(this, TemplateRaceSetup, Storage).Runner;
-		ClubComponent->ToggleClub(ClubBarShown_RunnerGTWS(IsClubVisible(), RunnerDatas, Style));
+		const bool bClubBar = ClubBarShown_RunnerGTWS(IsClubVisible(), RunnerDatas, Style);
+		ClubComponent->ToggleClub(bClubBar);
+		// Le pied suit tout de suite (sans attendre le prochain relevé)
+		if (NameComponent)
+		{
+			const ARunner_GTWS* Defaults = GetClass()->GetDefaultObject<ARunner_GTWS>();
+			FitFoot_RunnerGTWS(FootComponent, Defaults ? Defaults->GetFootMesh() : nullptr,
+				NameComponent->NameBkgComponent, ClubComponent->ClubBkgComponent, bClubBar);
+		}
 	}
 }
 
