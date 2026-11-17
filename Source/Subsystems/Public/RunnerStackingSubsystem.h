@@ -105,3 +105,4 @@ private:
 	void HandlePostActorTick(UWorld* InWorld, ELevelTick TickType, float DeltaSeconds);
 	void TickCardAvoidance(float DeltaSeconds);
 	void InvalidateCardBox(AActor* Runner);
+};
