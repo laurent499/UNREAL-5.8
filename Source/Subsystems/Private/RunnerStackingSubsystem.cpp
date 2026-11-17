@@ -997,7 +997,7 @@ void URunnerStackingSubsystem::TickCardAvoidance(float DeltaSeconds)
 		{
 			USceneComponent* Panel = nullptr;
 			if (const ICheckpointInterface* CI = Cast<ICheckpointInterface>(*It)) Panel = CI->GetPanelComponent();
-			else if (const IPoiInterface* PI = Cast<IPoiInterface>(*It)) Panel = PI->GetPanelComponent();
+			else if (const IPoiInterface* PoiI = Cast<IPoiInterface>(*It)) Panel = PoiI->GetPanelComponent();
 			if (!Panel) continue;
 			FCheckpointPanel& P = Found.AddDefaulted_GetRef();
 			P.Panel = Panel;
