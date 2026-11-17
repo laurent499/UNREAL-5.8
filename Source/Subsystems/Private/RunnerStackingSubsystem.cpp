@@ -111,7 +111,7 @@ namespace RunnerCardAvoid
 	 * Dir = -1 : vers le haut, +1 : vers le bas. Plusieurs passes : un panneau franchi peut en
 	 * faire toucher un autre.
 	 */
-	static float SolveShift(const FBox2D& R, const TArray<FBox2D>& Panels, int32 Dir, float Margin)
+	static float SolveShift(const FBox2D& R, TArrayView<const FBox2D> Panels, int32 Dir, float Margin)
 	{
 		float Shift = 0.f;
 		for (int32 Pass = 0; Pass < 6; ++Pass)
