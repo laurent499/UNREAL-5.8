@@ -13,6 +13,7 @@
 #include "Engine/GameViewportClient.h"
 #include "Components/PrimitiveComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "DrawDebugHelpers.h"
 
 // Ecart maximal le long du trace pour empiler deux runners. Sans ce garde-fou, seule la
 // distance 3D comptait : deux coureurs a des km l'un de l'autre sur le parcours, mais proches a vol
@@ -52,6 +53,12 @@ static TAutoConsoleVariable<float> CVarCardAvoidSpeed(
 	TEXT("Vitesse du glissement de la carte (interpolation par image, plus grand = plus rapide)."),
 	ECVF_Default);
 
+static TAutoConsoleVariable<int32> CVarCardAvoidDebug(
+	TEXT("Trail.CardAvoid.Debug"),
+	0,
+	TEXT("1 = dessine les boites testees (cyan : panneaux checkpoint, jaune : cartes, rouge : cartes decalees) et journalise les cartes decalees. 2 = journalise aussi les composants de chaque boite."),
+	ECVF_Default);
+
 static TAutoConsoleVariable<float> CVarCardAvoidMinFoot(
 	TEXT("Trail.CardAvoid.MinFoot"),
 	0.25f,
@@ -61,22 +68,48 @@ static TAutoConsoleVariable<float> CVarCardAvoidMinFoot(
 namespace RunnerCardAvoid
 {
 	/** Union des primitives visibles sous Ref (pile comprise), dans le repere de Ref. */
+	/** Visible en jeu, parents compris jusqu'a Ref (un parent masque masque ses enfants). */
+	static bool IsShownUnder(const USceneComponent* C, const USceneComponent* Ref)
+	{
+		for (const USceneComponent* It = C; It && It != Ref; It = It->GetAttachParent())
+		{
+			if (!It->IsVisible() || It->bHiddenInGame) return false;
+		}
+		return true;
+	}
+
+	/** Union des primitives visibles sous Ref (pile comprise), dans le repere de Ref. */
 	static FBox ComputeLocalBox(const USceneComponent* Ref)
 	{
 		FBox Box(ForceInit);
 		if (!IsValid(Ref)) return Box;
+		const bool bLog = CVarCardAvoidDebug.GetValueOnGameThread() >= 2;
 		const FTransform RefTransform = Ref->GetComponentTransform();
 		TArray<USceneComponent*> Children;
 		Ref->GetChildrenComponents(true, Children);
 		for (const USceneComponent* C : Children)
 		{
 			const UPrimitiveComponent* P = Cast<UPrimitiveComponent>(C);
-			if (!P || !P->IsRegistered() || !P->IsVisible() || P->bHiddenInGame) continue;
+			if (!P || !P->IsRegistered() || P->IsEditorOnly() || P->IsVisualizationComponent()) continue;
+			if (!IsShownUnder(P, Ref)) continue;
 			const AActor* Owner = P->GetOwner();
 			if (Owner && Owner->IsHidden()) continue;
-			Box += P->CalcBounds(P->GetComponentTransform().GetRelativeTransform(RefTransform)).GetBox();
+			const FBox B = P->CalcBounds(P->GetComponentTransform().GetRelativeTransform(RefTransform)).GetBox();
+			if (bLog)
+			{
+				UE_LOG(LogTemp, Log, TEXT("[CardAvoid]   %s.%s Z %.0f..%.0f Y %.0f..%.0f"),
+					*GetNameSafe(Owner), *P->GetName(), B.Min.Z, B.Max.Z, B.Min.Y, B.Max.Y);
+			}
+			Box += B;
 		}
 		return Box;
+	}
+
+	static void DrawBox(UWorld* World, const FBox& LocalBox, const FTransform& Ref, const FVector& Offset, const FColor& Color)
+	{
+		if (!LocalBox.IsValid) return;
+		DrawDebugBox(World, Ref.TransformPosition(LocalBox.GetCenter()) + Offset,
+			LocalBox.GetExtent() * Ref.GetScale3D().GetAbs(), Ref.GetRotation(), Color, false, -1.f, SDPG_Foreground, 2.f);
 	}
 
 	/** Rectangle ecran d'une boite locale ; false si un coin est derriere la camera. */
@@ -972,6 +1005,12 @@ void URunnerStackingSubsystem::TickCardAvoidance(float DeltaSeconds)
 	const FMatrix ViewProj = ProjData.ComputeViewProjectionMatrix();
 	const FIntRect ViewRect = ProjData.GetConstrainedViewRect();
 
+	const int32 DebugLevel = CVarCardAvoidDebug.GetValueOnGameThread();
+	const bool bDebug = DebugLevel > 0;
+	static double LastDebugLog = 0.0;
+	const bool bDebugLog = bDebug && Now - LastDebugLog > 0.5;
+	if (bDebugLog) LastDebugLog = Now;
+
 	// Rectangles des panneaux checkpoint visibles
 	TArray<FBox2D, TInlineAllocator<16>> PanelRects;
 	if (bEnabled && CheckpointPanels.Num() > 0)
@@ -988,6 +1027,10 @@ void URunnerStackingSubsystem::TickCardAvoidance(float DeltaSeconds)
 			if (!P.LocalBox.IsValid || i == CheckpointBoxCursor)
 			{
 				P.LocalBox = ComputeLocalBox(Panel);
+			}
+			if (bDebug)
+			{
+				DrawBox(World, P.LocalBox, Panel->GetComponentTransform(), FVector::ZeroVector, FColor::Cyan);
 			}
 			FBox2D R;
 			if (P.LocalBox.IsValid
@@ -1078,6 +1121,24 @@ void URunnerStackingSubsystem::TickCardAvoidance(float DeltaSeconds)
 					else                                Side = FMath::Abs(UpPx) <= FMath::Abs(DownPx) ? +1 : -1;
 
 					Target = Side > 0 ? -UpPx / PxPerUnit : FMath::Max(DownLift, -MaxDown);
+				}
+				if (bDebug)
+				{
+					DrawBox(World, S.LocalBox, Card->GetComponentTransform(), FVector::ZeroVector,
+						FMath::IsNearlyZero(Lift) ? FColor::Yellow : FColor::Red);
+				}
+				if (bDebugLog && (bOverlap || !FMath::IsNearlyZero(Lift)))
+				{
+					UE_LOG(LogTemp, Log, TEXT("[CardAvoid] %s rect %.0f,%.0f-%.0f,%.0f (boite Z %.0f..%.0f, %.3f px/u) lift %.0f -> %.0f cote %d"),
+						*Runner->GetName(), R.Min.X, R.Min.Y, R.Max.X, R.Max.Y, S.LocalBox.Min.Z, S.LocalBox.Max.Z,
+						PxPerUnit, Lift, Target, Side);
+					for (const FBox2D& C : PanelRects)
+					{
+						if (Overlaps(R, C, Margin))
+						{
+							UE_LOG(LogTemp, Log, TEXT("[CardAvoid]   panneau %.0f,%.0f-%.0f,%.0f"), C.Min.X, C.Min.Y, C.Max.X, C.Max.Y);
+						}
+					}
 				}
 			}
 			else
