@@ -132,14 +132,6 @@ static void FitFoot_RunnerGTWS(UStaticMeshComponent* Foot, const UStaticMeshComp
 			Location.Z = Bottom - MeshBox.Min.Z * Scale.Z;
 			bFitted = true;
 		}
-		// TEMPORAIRE (diagnostic du pied) : à retirer une fois le rendu validé
-		if (FMath::IsNearlyZero(Lift) && !Foot->GetRelativeScale3D().Equals(Scale, 1e-4f))
-		{
-			UE_LOG(LogTemp, Log, TEXT("[FootFit] %s Name Z %.1f..%.1f | foot mesh Z %.1f..%.1f, defaut loc %.1f scale %.3f (haut %.1f, bas %.1f) | courant loc %.1f scale %.3f -> loc %.1f scale %.3f"),
-				*GetNameSafe(Foot->GetOwner()), NameBox.Min.Z, NameBox.Max.Z, MeshBox.Min.Z, MeshBox.Max.Z,
-				DefaultLocation.Z, DefaultScale.Z, DefaultTop, Bottom,
-				Foot->GetRelativeLocation().Z, Foot->GetRelativeScale3D().Z, Location.Z, Scale.Z);
-		}
 	}
 	// Pied d'origine et carte décalée : le haut suit le décalage, le bas reste au sol
 	if (!bFitted && !FMath::IsNearlyZero(Lift) && Foot->GetStaticMesh() && DefaultScale.Z > KINDA_SMALL_NUMBER)
@@ -374,25 +366,11 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 	UPrimitiveComponent* NameBarBkg = NameComponent ? NameComponent->NameBkgComponent.Get() : nullptr;
 	const FBox NameBarBox = NameBarBkg ? BoxIn_RunnerGTWS(NameBarBkg, NameRef, false) : FBox(ForceInit);
 
-	// Photo au-dessus de la barre du nom : posée sur son bord haut, alignée sur son bord gauche
-	if (PhotoHook)
-	{
-		PhotoHook->SetRelativeLocation(PhotoLeftLocation_RunnerGTWS);
-		if (bPhotoAbove && PhotoComponent && IsPhotoVisible() && NameBarBox.IsValid)
-		{
-			const FBox PhotoBox = BoxIn_RunnerGTWS(PhotoComponent, NameRef);
-			if (PhotoBox.IsValid)
-			{
-				PhotoHook->AddRelativeLocation(FVector(0.f, NameBarBox.Max.Y - PhotoBox.Max.Y, NameBarBox.Max.Z - PhotoBox.Min.Z));
-			}
-		}
-	}
-
 	// Drapeau dans la barre du nom : juste avant le nom, centré sur la hauteur de la barre
+	UTextRenderComponent* NameText = NameComponent ? NameText_RunnerGTWS(NameComponent) : nullptr;
 	if (FlagComponent)
 	{
 		FlagComponent->SetRelativeLocation(FlagClubLocation_RunnerGTWS);
-		UTextRenderComponent* NameText = NameComponent ? NameText_RunnerGTWS(NameComponent) : nullptr;
 		if (bFlagInName && NameText && NameBarBox.IsValid)
 		{
 			const FBox FlagBox = BoxIn_RunnerGTWS(FlagComponent, NameRef);
@@ -403,6 +381,29 @@ void ARunner_GTWS::UpdateRunner(FRunnerStruct Runner, FRaceSetup RaceSetup)
 					TextBox.Max.Y + FlagNameGap_RunnerGTWS - FlagBox.Min.Y,
 					NameBarBox.GetCenter().Z - FlagBox.GetCenter().Z);
 				FlagComponent->AddWorldOffset(NameRef.TransformVector(Delta));
+			}
+		}
+	}
+
+	// Photo au-dessus de la barre du nom : posée sur son bord haut. Son bord gauche s'aligne sur
+	// celui du drapeau quand il est dans le nom (mesuré après son placement ci-dessus), sinon sur
+	// le début du texte du nom ; PhotoOffset (cm, positif vers la droite) affine ensuite.
+	// Le bord gauche du fond ne sert pas : avec le biseau, le fond visible commence plus à droite.
+	if (PhotoHook)
+	{
+		PhotoHook->SetRelativeLocation(PhotoLeftLocation_RunnerGTWS);
+		if (bPhotoAbove && PhotoComponent && IsPhotoVisible() && NameBarBox.IsValid)
+		{
+			const FBox PhotoBox = BoxIn_RunnerGTWS(PhotoComponent, NameRef);
+			const FBox FlagBox = bFlagInName ? BoxIn_RunnerGTWS(FlagComponent, NameRef) : FBox(ForceInit);
+			const FBox TextBox = NameText ? BoxIn_RunnerGTWS(NameText, NameRef, false) : FBox(ForceInit);
+			// Gauche de l'écran = +Y dans le repère de NameHook
+			const float LeftEdge = FlagBox.IsValid ? FlagBox.Max.Y : (TextBox.IsValid ? TextBox.Max.Y : NameBarBox.Max.Y);
+			if (PhotoBox.IsValid)
+			{
+				PhotoHook->AddRelativeLocation(FVector(0.f,
+					LeftEdge - PhotoBox.Max.Y - Style.PhotoOffset,
+					NameBarBox.Max.Z - PhotoBox.Min.Z));
 			}
 		}
 	}

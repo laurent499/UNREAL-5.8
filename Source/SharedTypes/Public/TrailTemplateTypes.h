@@ -71,6 +71,8 @@ struct SHAREDTYPES_API FTrailTemplateRunner
 	UPROPERTY(BlueprintReadOnly) float Height = 100.f;
 	/** Photo : "left" (dans la marge gauche des fonds, d'origine) ou "above" (posée sur la barre du nom). */
 	UPROPERTY(BlueprintReadOnly) FString PhotoPosition = TEXT("left");
+	/** Photo au-dessus : décalage horizontal en cm (positif vers la droite) après l'alignement sur le drapeau ou le nom. */
+	UPROPERTY(BlueprintReadOnly) float PhotoOffset = 0.f;
 	/** Drapeau : "club" (dans la barre du club, d'origine) ou "name" (dans la barre du nom, avant le nom). */
 	UPROPERTY(BlueprintReadOnly) FString FlagPosition = TEXT("club");
 	/** Dégradé gauche -> droite sur le fond du nom, de NameGradientFrom à NameGradientTo (sinon NameBkg uni). */
