@@ -13,6 +13,11 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 
+// Une en-tête Windows (Cesium) laisse passer la macro GetEnvironmentVariable -> GetEnvironmentVariableW (build packagé)
+#ifdef GetEnvironmentVariable
+#undef GetEnvironmentVariable
+#endif
+
 DEFINE_LOG_CATEGORY_STATIC(LogCartoImagery, Log, All);
 
 namespace CartoImagery

@@ -155,6 +155,12 @@ void UScaleSubsystem::Tick(float DeltaTime)
 			Entries.RemoveAtSwap(i);
 			continue;
 		}
+		// Acteur cache (coureurs masques par la regie) : rien a l'ecran, on ne le redimensionne pas.
+		// Sinon ~110 SetActorScale3D par image pendant un survol (4,3 ms de thread de jeu, trace du 18/11).
+		// Il reprend sa taille a l'image ou il redevient visible.
+		if (A->IsHidden()) { E.bWasHidden = true; continue; }
+		const bool bJustShown = E.bWasHidden;
+		E.bWasHidden = false;
 
 		UWorld* World = A->GetWorld();
 		APlayerController* PC = World ? World->GetFirstPlayerController() : nullptr;
@@ -176,7 +182,7 @@ void UScaleSubsystem::Tick(float DeltaTime)
 
 		// Optionnel : interp
 		FVector NewScale = TargetScale;
-		if (Cfg.bInterp)
+		if (Cfg.bInterp && !bJustShown)
 		{
 			// DeltaTime réel => beaucoup plus smooth
 			NewScale = FMath::VInterpTo(A->GetActorScale3D(), TargetScale, DeltaTime, Cfg.InterpSpeed);

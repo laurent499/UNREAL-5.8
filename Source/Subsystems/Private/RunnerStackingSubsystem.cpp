@@ -103,7 +103,10 @@ namespace RunnerCardAvoid
 		for (const USceneComponent* C : Children)
 		{
 			const UPrimitiveComponent* P = Cast<UPrimitiveComponent>(C);
-			if (!P || !P->IsRegistered() || P->IsEditorOnly() || P->IsVisualizationComponent()) continue;
+			if (!P || !P->IsRegistered() || P->IsEditorOnly()) continue;
+#if WITH_EDITOR
+			if (P->IsVisualizationComponent()) continue; // n'existe que dans les builds editeur
+#endif
 			if (!IsShownUnder(P, Ref)) continue;
 			const AActor* Owner = P->GetOwner();
 			if (Owner && Owner->IsHidden()) continue;

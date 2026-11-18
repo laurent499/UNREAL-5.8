@@ -764,6 +764,8 @@ struct SHAREDTYPES_API FEntry
 	FVector OriginalScale = FVector(1.f);
 	FDistanceScaleConfig OverrideConfig;
 	FMinMax CurrentMinMax; 
+	/** Cache a l'image precedente : a la reapparition, la taille est posee directement (sans interpolation). */
+	bool bWasHidden = false;
 };
 
 // Stacking
