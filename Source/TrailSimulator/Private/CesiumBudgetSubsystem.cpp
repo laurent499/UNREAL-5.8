@@ -20,8 +20,9 @@ static TAutoConsoleVariable<float> CVarCesiumUnloadBudgetMs(
 
 static TAutoConsoleVariable<bool> CVarCesiumAutoReload(
 	TEXT("ts.Cesium.AutoReload"),
-	true,
-	TEXT("Recharge automatiquement les tilesets Google quand leurs tuiles sont refusees (session Google expiree, HTTP 400/401/403)."));
+	false,
+	TEXT("Recharge automatiquement les tilesets Google quand leurs tuiles sont refusees (session Google expiree, HTTP 400/401/403). "
+		 "Coupe par defaut : le decor disparait quelques secondes a l'antenne, le rechargement se fait depuis la regie."));
 
 static TAutoConsoleVariable<int32> CVarCesiumAutoReloadErrors(
 	TEXT("ts.Cesium.AutoReloadErrors"),
@@ -120,7 +121,7 @@ void UCesiumBudgetSubsystem::Tick(float DeltaTime)
 		{
 			if (!CVarCesiumAutoReload.GetValueOnGameThread())
 			{
-				UE_LOG(LogTemp, Warning, TEXT("[Cesium] %d tuiles refusees en 30 s (session Google expiree ?) : rechargement auto desactive, utiliser ts.Cesium.Reload"), Rejected);
+				UE_LOG(LogTemp, Warning, TEXT("[Cesium] %d tuiles refusees en 30 s (session Google expiree ?) : rechargement auto coupe, recharger depuis la regie (ts.Cesium.Reload)"), Rejected);
 			}
 			else if (TimeSinceAutoReload >= CVarCesiumAutoReloadCooldownS.GetValueOnGameThread())
 			{
