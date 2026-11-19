@@ -14,6 +14,7 @@
 #include "SettingsSubsystem.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
+#include "Engine/Engine.h"
 #include "Dom/JsonObject.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
@@ -1178,6 +1179,35 @@ bool UHttpGatewaySubsystem::HandleCommandRequest(
                 if (!bSet) Styles->ReloadStyle();
                 else if (!StyleData.IsEmpty()) Styles->ApplyStyleJson(StyleName, StyleData);
                 else Styles->ApplyStyle(StyleName);
+            });
+        }
+    }
+
+    /*** CESIUM COMMANDS ***/
+    // group=cesium&action=reload : recharge les tuiles Cesium sans relancer le jeu (nouvelle session Google)
+    //   [&name=google : seulement les tuiles Google]
+    // group=cesium&action=autoreload&show=1 : rechargement automatique quand Google refuse les tuiles
+    if (Group.Equals(TEXT("cesium"), ESearchCase::IgnoreCase))
+    {
+        FString Command;
+        if (Action.Equals(TEXT("reload"), ESearchCase::IgnoreCase))
+        {
+            const FString* NameStr = Request.QueryParams.Find(TEXT("name"));
+            Command = (NameStr && NameStr->Equals(TEXT("google"), ESearchCase::IgnoreCase))
+                ? TEXT("ts.Cesium.Reload google") : TEXT("ts.Cesium.Reload");
+        }
+        else if (Action.Equals(TEXT("autoreload"), ESearchCase::IgnoreCase))
+        {
+            const FString* ShowStr = Request.QueryParams.Find(TEXT("show"));
+            if (ShowStr) Command = FString::Printf(TEXT("ts.Cesium.AutoReload %d"), FCString::Atoi(**ShowStr) != 0 ? 1 : 0);
+        }
+        if (!Command.IsEmpty())
+        {
+            TWeakObjectPtr<UGameInstance> WeakGI(GetGameInstance());
+            AsyncTask(ENamedThreads::GameThread, [WeakGI, Command]()
+            {
+                UWorld* World = WeakGI.IsValid() ? WeakGI->GetWorld() : nullptr;
+                if (World && GEngine) GEngine->Exec(World, *Command);
             });
         }
     }
